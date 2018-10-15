@@ -6,6 +6,8 @@
  */
 
 require_once('_init.php');
+require_once('navigation.php');
+
 const PPP = 10, NEW_DAY = 7;
 $ret = $store->getPostsByPage($q['page'] - 1, PPP, ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']], NEW_DAY);
 
@@ -39,7 +41,12 @@ include('../part/header.php');
 			</li>
 <?php endforeach ?>
 		</ul>
-<?php include('_nav_pagination.php'); the_pagination($t_pgUrl, $t_size, $t_cur, PPP); ?>
+<?php the_pagination($t_pgUrl, $t_size, $t_cur, PPP); ?>
 	</section>
-<?php include('_nav_filter.php'); the_filter($t_dates, $t_cats, $t_searchQuery); ?>
-<?php include('../part/footer.php'); ?>
+<?php the_filter($t_dates, $t_cats, $t_searchQuery); ?>
+	</main><!-- site-main -->
+	<footer class="site-footer">
+	</footer>
+</div><!-- site -->
+</body>
+</html>

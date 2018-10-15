@@ -2,9 +2,7 @@
 
 @import "variable";
 @import "content";
-@import "header-footer";
 @import "nt";
-@import "front";
 
 
 :root {
@@ -22,22 +20,4 @@ body {
 
 	max-width: 100%;
 	overflow-x: hidden;
-}
-
-.site {
-	@include sticky-footer-site;
-
-	width: 100%;
-	overflow-x: hidden;
-
-	.site-header {}
-	.site-main {
-		@include sticky-footer-site-content;
-		display: flex;
-		flex-direction: column;
-
-		max-width: 100%;
-		overflow: hidden;
-	}
-	.site-footer {}
 }

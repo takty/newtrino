@@ -1,4 +1,4 @@
-<?php include('./topics/recent.php'); ?>
+<?php include('./topic/recent.php'); ?>
 <?php $PAGE_CLASS = 'front-page';  include('./part/header.php'); ?>
 		<section>
 			<h2>About</h2>
@@ -10,7 +10,12 @@
 				<ul class="nt-recent-list"><?php the_recent(6, '', 7); ?></ul>
 			</div>
 			<nav class="bar">
-				<a href="topics/" class="btn">Show More...</a>
+				<a href="topic/" class="btn">Show More...</a>
 			</nav>
 		</section>
-<?php include('./part/footer.php'); ?>
+	</main><!-- site-main -->
+	<footer class="site-footer">
+	</footer>
+</div><!-- site -->
+</body>
+</html>

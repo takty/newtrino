@@ -11,7 +11,7 @@ function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = fal
 	global $store;
 
 	$ret = $store->getPosts(0, $ppp, ['cat' => $cat], $new_day, $omitFinishedEvent);
-	$t_url = 'topics/view.php?id=';
+	$t_url = 'topic/view.php?id=';
 
 	foreach($ret['posts'] as $p) {
 ?>

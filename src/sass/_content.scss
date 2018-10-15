@@ -151,13 +151,7 @@
 		@include neat-width($size-text-width + 3rem);
 		box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
 		padding: 1.5rem;
-	    text-align: left;
-	}
-
-	@include list;
-
-	table {
-		@include table;
+		text-align: left;
 	}
 
 	// Inline Elements ########################################################

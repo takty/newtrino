@@ -6,6 +6,8 @@
  */
 
 require_once('_init.php');
+require_once('navigation.php');
+
 $t_ps = $store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);
 $url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 if (!$t_ps) {
@@ -45,7 +47,12 @@ include('../part/header.php');
 		<footer>
 			<div class="date"><?=_h(L_PUBLISHED_DATE_BEFORE)?><?=_h($t_p->getPublishedDate()) ?><?=_h(L_PUBLISHED_DATE_AFTER)?></div>
 		</footer>
-<?php include('_nav_postlink.php'); the_postlink($t_iUrl, $t_pUrl, $t_ps[0], $t_ps[2]); ?>
+<?php the_postlink($t_iUrl, $t_pUrl, $t_ps[0], $t_ps[2]); ?>
 	</section>
-<?php include('_nav_filter.php'); the_filter($t_dates, $t_cats, $t_searchQuery); ?>
-<?php include('../part/footer.php'); ?>
+<?php the_filter($t_dates, $t_cats, $t_searchQuery); ?>
+	</main><!-- site-main -->
+	<footer class="site-footer">
+	</footer>
+</div><!-- site -->
+</body>
+</html>
