@@ -1,72 +1,91 @@
-var gulp     = require('gulp');
-var plumber  = require('gulp-plumber');
-var sass     = require('gulp-sass');
-var cleanCSS = require('gulp-clean-css');
-var concat   = require('gulp-concat');
-var uglify   = require('gulp-uglify');
-var rename   = require('gulp-rename');
+'use strict';
 
-gulp.task('js', function() {
-	gulp.src('src/js/**/*.js')
-	.pipe(plumber())
-	.pipe(uglify())
-	.pipe(rename({extname: '.min.js'}))
-	.pipe(gulp.dest('./dist/js'));
+const fs = require('fs-extra');
+const glob = require('glob');
+const path = require('path');
+const gulp = require('gulp');
+const $ = require('gulp-load-plugins')({pattern:['gulp-*']});
+
+function copySync(from, to) {
+	const isToDir = to.endsWith('/');
+	const files = glob.sync(from);
+	for (let f of files) {
+		if (isToDir) {
+			const fn = path.basename(f);
+			fs.copySync(f, path.join(to, fn));
+		} else {
+			fs.copySync(f, to);
+		}
+	}
+}
+
+const PATH_DIST = './dist/topic/private/asset/';
+
+gulp.task('copy-jssha', (done) => {
+	copySync('./node_modules/jssha/src/sha256.js', PATH_DIST + 'js/jssha/');
+	done();
 });
 
-gulp.task('sass', function() {
-	gulp.src('src/sass/style.scss')
-	.pipe(plumber())
-	.pipe(sass())
-	.pipe(cleanCSS())
-	.pipe(gulp.dest('./dist/css'));
+gulp.task('copy-flatpickr', (done) => {
+	copySync('./node_modules/flatpickr/dist/flatpickr.min.js', PATH_DIST + 'js/flatpickr/');
+	copySync('./node_modules/flatpickr/dist/flatpickr.min.css', PATH_DIST + 'css/flatpickr/');
+	copySync('./node_modules/flatpickr/dist/l10n/ja.js', PATH_DIST + 'js/flatpickr/');
+	done();
 });
 
-gulp.task('js-private', function() {
-	gulp.src('src/topic/private/asset/js/**/*.js')
-	.pipe(plumber())
-	.pipe(uglify())
-	.pipe(rename({extname: '.min.js'}))
-	.pipe(gulp.dest('./dist/topic/private/asset/js'));
+gulp.task('copy-tinymce', (done) => {
+	copySync('./node_modules/tinymce/tinymce.min.js', PATH_DIST + 'js/tinymce/');
+	copySync('./node_modules/tinymce/plugins/**/*', PATH_DIST + 'js/tinymce/plugins/');
+	copySync('./node_modules/tinymce/skins/**/*', PATH_DIST + 'js/tinymce/skins/');
+	copySync('./node_modules/tinymce/themes/**/*', PATH_DIST + 'js/tinymce/themes/');
+	copySync('./node_modules/tinymce-i18n/langs/ja.js', PATH_DIST + 'js/tinymce/langs/');
+	done();
 });
 
-gulp.task('sass-private', function() {
-	gulp.src('src/topic/private/asset/sass/style.scss')
-	.pipe(plumber())
-	.pipe(sass())
-	.pipe(cleanCSS())
-	.pipe(gulp.dest('./dist/topic/private/asset/css/'));
+gulp.task('copy-lib', gulp.parallel(
+	'copy-jssha',
+	'copy-flatpickr',
+	'copy-tinymce',
+));
 
-	gulp.src('src/topic/private/asset/sass/editor-style.scss')
-	.pipe(plumber())
-	.pipe(sass())
-	.pipe(cleanCSS())
-	.pipe(gulp.dest('./dist/topic/private/asset/css/'));
+gulp.task('copy-src', (done) => {
+	copySync('./src', './dist');
+	fs.removeSync('./dist/topics/post/*');
+	done();
 });
 
-gulp.task('sass-private-image', function() {
-	gulp.src(['src/topic/private/asset/sass/*.svg'])
-	.pipe(gulp.dest('dist/topic/private/asset/css'));
+gulp.task('copy-res', (done) => {
+	copySync('./src/topic/private/asset/sass/*.svg', PATH_DIST + 'css');
+	fs.removeSync('./dist/topics/post/*');
+	done();
 });
 
-gulp.task('lib', function() {
-	gulp.src(['src/lib/**/*.js']).pipe(gulp.dest('dist/lib'));
+gulp.task('copy', gulp.series('copy-src', 'copy-lib', 'copy-res'));
+
+gulp.task('js-private', () => {
+	return gulp.src(['src/topic/private/asset/js/**/*.js'])
+		.pipe($.plumber())
+		.pipe($.uglify())
+		.pipe($.rename({extname: '.min.js'}))
+		.pipe(gulp.dest('./dist/topic/private/asset/js'));
 });
 
-gulp.task('others', function() {
-	gulp.src(['src/img/**/*'])                    .pipe(gulp.dest('dist/img'));
-	gulp.src(['src/part/**/*'])                   .pipe(gulp.dest('dist/part'));
-	gulp.src(['src/*.php'])                       .pipe(gulp.dest('dist'));
-	gulp.src(['src/topic/*.php'])                 .pipe(gulp.dest('dist/topic'));
-	gulp.src(['src/topic/private/*.php'])         .pipe(gulp.dest('dist/topic/private'));
-	gulp.src(['src/topic/private/data/*'])        .pipe(gulp.dest('dist/topic/private/data'));
-	gulp.src(['src/topic/private/asset/php/**/*']).pipe(gulp.dest('dist/topic/private/asset/php'));
-})
-
-gulp.task('watch', function() {
-	gulp.watch('./src/**/*.scss', ['sass', 'sass-private']);
-	gulp.watch('./src/**/*.js', ['js', 'js-private']);
-	gulp.watch('./src/**/*.php', ['others']);
+gulp.task('sass-private', () => {
+	return gulp.src(['src/topic/private/asset/sass/style.scss', 'src/topic/private/asset/sass/editor-style.scss'])
+		.pipe($.plumber())
+		.pipe($.sass({outputStyle: 'compressed'}))
+		.pipe($.autoprefixer({browsers: ['ie >= 11'], remove: false}))
+		.pipe(gulp.dest('./dist/topic/private/asset/css/'));
 });
 
-gulp.task('default', ['others', 'lib', 'js', 'js-private', 'sass', 'sass-private', 'watch']);
+// gulp.task('others', function() {
+// 	gulp.src(['src/img/**/*'])                    .pipe(gulp.dest('dist/img'));
+// 	gulp.src(['src/part/**/*'])                   .pipe(gulp.dest('dist/part'));
+// 	gulp.src(['src/*.php'])                       .pipe(gulp.dest('dist'));
+// 	gulp.src(['src/topic/*.php'])                 .pipe(gulp.dest('dist/topic'));
+// 	gulp.src(['src/topic/private/*.php'])         .pipe(gulp.dest('dist/topic/private'));
+// 	gulp.src(['src/topic/private/data/*'])        .pipe(gulp.dest('dist/topic/private/data'));
+// 	gulp.src(['src/topic/private/asset/php/**/*']).pipe(gulp.dest('dist/topic/private/asset/php'));
+// })
+
+gulp.task('default', gulp.series('copy', 'js-private', 'sass-private'));

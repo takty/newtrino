@@ -6,31 +6,10 @@
     "cms",
     "flat-file"
   ],
-  "author": "Takuto Yanagida",
+  "author": "Space-Time Inc.",
   "license": "MIT",
   "scripts": {
-    "build": "npm-run-all copy:flatpickr copy:tinymce copy:tinymce-i18n copy:jssha",
-    "clean": "npm-run-all clean:flatpickr clean:tinymce clean:jssha",
-    "mkdir": "mkdirp dist/topic/post && mkdirp dist/topic/private/var",
-    "copy": "npm-run-all copy:main copy:topic copy:topic:asset",
-    "copy:main": "cpx src/img/**/* dist/img/ && cpx src/part/**/* dist/part/ && cpx src/*.php dist/",
-    "copy:topic": "cpx src/topic/*.php dist/topic/ && cpx src/topic/private/*.php dist/topic/private/ && cpx src/topic/private/data/* dist/topic/private/data/",
-    "copy:topic:asset": "cpx src/topic/private/asset/php/**/* dist/topic/private/asset/php/",
-    "copy:flatpickr": "npm-run-all copy:flatpickr:*",
-    "copy:flatpickr:js": "cpx node_modules/flatpickr/dist/flatpickr.min.js dist/topic/private/asset/js/flatpickr && cpx node_modules/flatpickr/dist/l10n/ja.js dist/topic/private/asset/js/flatpickr",
-    "copy:flatpickr:css": "cpx node_modules/flatpickr/dist/flatpickr.min.css dist/topic/private/asset/css/flatpickr",
-    "copy:tinymce": "cpx node_modules/tinymce/tinymce.min.js dist/topic/private/asset/js/tinymce && npm run copy:tinymce:dirs",
-    "copy:tinymce:dirs": "cpx node_modules/tinymce/plugins/**/* dist/topic/private/asset/js/tinymce/plugins && cpx node_modules/tinymce/skins/**/* dist/topic/private/asset/js/tinymce/skins && cpx node_modules/tinymce/themes/**/* dist/topic/private/asset/js/tinymce/themes",
-    "copy:tinymce-i18n": "cpx node_modules/tinymce-i18n/langs/ja.js dist/topic/private/asset/js/tinymce/langs",
-    "copy:jssha": "cpx node_modules/jssha/src/sha256.js dist/topic/private/asset/js/jssha",
-    "copy:weblib": "npm-run-all copy:weblib:*",
-    "copy:weblib:stile": "cpx node_modules/stile/dist/**/* src/lib/stile/",
-    "copy:weblib:stomp": "cpx node_modules/stomp/dist/**/* src/lib/stomp/",
-    "copy:weblib:stool": "cpx node_modules/stool/dist/**/* src/lib/stool/",
-    "clean:flatpickr": "rimraf dist/topic/private/asset/*/flatpickr",
-    "clean:tinymce": "rimraf dist/topic/private/asset/js/tinymce",
-    "clean:jssha": "rimraf dist/topic/private/asset/js/jssha",
-    "clean:weblib": "rimraf src/lib/*"
+    "dev": "gulp"
   },
   "dependencies": {
     "flatpickr": "^4.0.4",
@@ -39,19 +18,15 @@
     "tinymce-i18n": "^17.8.5"
   },
   "devDependencies": {
-    "cpx": "^1.5.0",
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^3.9.0",
+    "fs-extra": "^7.0.0",
+    "glob": "^7.1.3",
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^6.0.0",
     "gulp-concat": "^2.6.1",
-    "gulp-plumber": "^1.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^3.1.0",
-    "gulp-uglify": "^3.0.0",
-    "mkdirp": "^0.5.1",
-    "npm-run-all": "^4.1.1",
-    "rimraf": "^2.6.2",
-    "stile": "github:takty/stile",
-    "stomp": "github:takty/stomp",
-    "stool": "github:takty/stool"
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-plumber": "^1.2.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-uglify": "^3.0.0"
   }
 }
