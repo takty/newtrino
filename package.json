@@ -9,7 +9,8 @@
   "author": "Space-Time Inc.",
   "license": "MIT",
   "scripts": {
-    "dev": "gulp"
+    "postinstall": "gulp",
+    "build": "gulp"
   },
   "dependencies": {
     "flatpickr": "^4.0.4",

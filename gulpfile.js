@@ -19,7 +19,7 @@ function copySync(from, to) {
 	}
 }
 
-const PATH_DIST = './dist/topic/private/asset/';
+const PATH_DIST = './dist/topic/private/';
 
 gulp.task('copy-jssha', (done) => {
 	copySync('./node_modules/jssha/src/sha256.js', PATH_DIST + 'js/jssha/');
@@ -50,42 +50,33 @@ gulp.task('copy-lib', gulp.parallel(
 
 gulp.task('copy-src', (done) => {
 	copySync('./src', './dist');
-	fs.removeSync('./dist/topics/post/*');
+	fs.removeSync('./dist/topic/post/*');
+	fs.removeSync('./dist/topic/private/sass');
 	done();
 });
 
 gulp.task('copy-res', (done) => {
-	copySync('./src/topic/private/asset/sass/*.svg', PATH_DIST + 'css');
-	fs.removeSync('./dist/topics/post/*');
+	copySync('./src/topic/private/sass/*.svg', PATH_DIST + 'css');
 	done();
 });
 
 gulp.task('copy', gulp.series('copy-src', 'copy-lib', 'copy-res'));
 
-gulp.task('js-private', () => {
-	return gulp.src(['src/topic/private/asset/js/**/*.js'])
+gulp.task('js', () => {
+	return gulp.src(['src/topic/private/js/**/*.js'])
 		.pipe($.plumber())
 		.pipe($.uglify())
 		.pipe($.rename({extname: '.min.js'}))
-		.pipe(gulp.dest('./dist/topic/private/asset/js'));
+		.pipe(gulp.dest('./dist/topic/private/js'));
 });
 
-gulp.task('sass-private', () => {
-	return gulp.src(['src/topic/private/asset/sass/style.scss', 'src/topic/private/asset/sass/editor-style.scss'])
+gulp.task('sass', () => {
+	return gulp.src(['src/topic/private/sass/style.scss', 'src/topic/private/sass/editor-style.scss'])
 		.pipe($.plumber())
 		.pipe($.sass({outputStyle: 'compressed'}))
 		.pipe($.autoprefixer({browsers: ['ie >= 11'], remove: false}))
-		.pipe(gulp.dest('./dist/topic/private/asset/css/'));
+		.pipe($.rename({extname: '.min.css'}))
+		.pipe(gulp.dest('./dist/topic/private/css/'));
 });
 
-// gulp.task('others', function() {
-// 	gulp.src(['src/img/**/*'])                    .pipe(gulp.dest('dist/img'));
-// 	gulp.src(['src/part/**/*'])                   .pipe(gulp.dest('dist/part'));
-// 	gulp.src(['src/*.php'])                       .pipe(gulp.dest('dist'));
-// 	gulp.src(['src/topic/*.php'])                 .pipe(gulp.dest('dist/topic'));
-// 	gulp.src(['src/topic/private/*.php'])         .pipe(gulp.dest('dist/topic/private'));
-// 	gulp.src(['src/topic/private/data/*'])        .pipe(gulp.dest('dist/topic/private/data'));
-// 	gulp.src(['src/topic/private/asset/php/**/*']).pipe(gulp.dest('dist/topic/private/asset/php'));
-// })
-
-gulp.task('default', gulp.series('copy', 'js-private', 'sass-private'));
+gulp.task('default', gulp.series('copy', 'js', 'sass'));
