@@ -1,0 +1,23 @@
+@charset "utf-8";
+
+.site-header {
+	@include sticky-footer-site-header;
+	padding-top: 1rem;
+
+	.branding {
+		@include neat-width($size-width, $size-side-margin);
+		padding: 1rem 0;
+		a {@include link($color-heading);}
+
+		h1 {
+			display: inline-block;
+			margin: 0;
+		}
+	}
+}
+
+.site-footer {
+	padding-top: 3rem;
+	max-width: 100%;
+	overflow: hidden;
+}

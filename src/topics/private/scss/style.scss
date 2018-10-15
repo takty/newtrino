@@ -1,0 +1,518 @@
+/**
+ *
+ * Stlye for Private Area (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2017-07-24
+ *
+ */
+
+
+@charset 'utf-8';
+
+@mixin flex-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@mixin ui-elm {
+	border: 1px solid #ccc;
+	border-radius: 0.25rem;
+	color: #333;
+	&:disabled {
+		border-color: #ccc;
+		color: #aaa;
+	}
+	white-space: nowrap;
+}
+
+@mixin btn-elm {
+	min-width: 2.5rem;
+
+	font-size: 0.9rem;
+	text-decoration: none;
+	text-align: center;
+	line-height: 1.25;
+	&:hover {
+		border-color: #666;
+	}
+}
+
+@mixin btn {
+	@include ui-elm;
+	@include btn-elm;
+	padding: 0.5rem 0.75rem;
+	display: inline-block;
+}
+
+@mixin btn-li {
+	@include ui-elm;
+	@include btn-elm;
+	@include flex-center;
+	color: #ccc;
+	min-height: 2.5rem;
+	height: 2.5rem;
+
+	a {
+		@include btn-elm;
+		@include flex-center;
+		color: #333;
+		min-height: 2.5rem;
+
+		padding: 0.5rem 0.75rem;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+@mixin private-body {
+	border-top: 0.75rem solid darkslateblue;
+	border-bottom: 0.75rem solid darkslateblue;
+}
+
+
+// Common ---------------------------------------------------------------------
+
+html, body {
+	min-height: 100vh;
+	margin: 0;
+}
+
+body {
+	padding: 1rem;
+	font-family: sans-serif;
+}
+
+.container {
+	max-width: 64rem;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+
+@mixin frame-inside {
+	> *:not(form) {
+		display: block;
+		margin: 1rem;
+	}
+	> div:last-of-type {
+		text-align: right;
+		> *:not(:first-child) {
+			margin-left: 0.75rem;
+		}
+	}
+}
+
+.frame {
+	border: 1px solid #ccc;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.15);
+	border-radius: 0.25rem;
+	font-size: 0.9rem;
+
+	@include frame-inside;
+	> form {
+		@include frame-inside;
+	}
+}
+
+.header-row {
+	display: flex;
+	justify-content: space-between;
+
+	> h1 {
+		flex-grow: 1;
+	}
+	> a:last-of-type {
+		margin-left: 1rem;
+	}
+}
+
+.btn-row {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+h1 {
+	font-size: 1.5rem;
+	margin: 0;
+}
+
+h2 {
+	font-size: 1.15rem;
+}
+
+h3 {
+	font-size: 1rem;
+}
+
+input[type=button] {
+	@include btn;
+}
+
+input[type=text], input[type=password] {
+	@include ui-elm;
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+	box-shadow: 0 1px 1px #ccc inset;
+}
+
+select {
+	@include ui-elm;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.9rem;
+}
+
+button {
+	@include btn;
+	font-family: sans-serif;
+}
+
+.btn {
+	@include btn;
+}
+
+.btn-delete {
+	background: pink;
+}
+
+.btn-new, .btn-update {
+	background-color: lightBlue;
+}
+
+// Login -----------------------------------------------------------------------
+
+body.login {
+	@include private-body;
+	@include flex-center;
+	height: 100vh;
+}
+
+.login-frame {
+	width: 100%;
+	max-width: 24rem;
+
+	dt {
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+	input[type=text], input[type=password] {
+		width: 100%;
+	}
+	> form > div:last-child {
+		margin-top: 2rem;
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+// Index ----------------------------------------------------------------------
+
+body.list {
+	@include private-body;
+}
+
+.flatpickr {
+	display: inline-block;
+	margin: 0;
+
+	input {
+		max-width: 9rem;
+	}
+	.input-button {
+		@include btn;
+		&:before {
+			content: "\002573";
+		}
+	}
+}
+
+table.list {
+	margin-top: 2rem;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	width: 100%;
+
+	th {
+		border-bottom: 1px solid #ccc;
+	}
+	th, td {
+		padding: 0.75rem 0.75rem;
+		white-space: nowrap;
+	}
+	td {
+		&:nth-child(2) {
+			width: 9em;
+			font-size: 0.75rem;
+			a {
+				color: #666;
+				text-decoration: none;
+			}
+		}
+		&:nth-child(3) {
+			width: 100%;
+			white-space: normal;
+		}
+		&:nth-child(n+4) {
+			color: #666;
+			width: 9em;
+			font-size: 0.75rem;
+		}
+	}
+}
+
+.list-ops {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	margin-left: -0.5rem;
+	margin-right: -0.5rem;
+
+	> * {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+	}
+	h3 {
+		margin-top: 0;
+		margin-bottom: 0.5rem;
+	}
+}
+
+.pagination-nav {
+	margin-top: 2rem;
+	padding: 0;
+	@include flex-center;
+
+	li {
+		@include btn-li;
+		&:not(:first-child) {
+			margin-left: 1rem;
+		}
+	}
+}
+
+// Edit -----------------------------------------------------------------------
+
+body.edit {
+	@include private-body;
+	display: flex;
+	flex-direction: column;
+}
+
+.container-edit {
+	height: 100%;
+	flex-grow: 1;
+
+	display: flex;
+	flex-direction: column;
+}
+
+.column {
+	display: flex;
+	flex-grow: 1;
+
+	.column-main {
+		width: 75%;
+	}
+	.column-sub {
+		width: 25%;
+		margin-left: 2rem;
+		min-width: 14rem;
+
+		> .frame:not(:first-child) {
+			margin-top: 2rem;
+		}
+	}
+}
+
+.form-post {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	#post_title {
+		width: 100%;
+		padding: 0.5rem 0.75rem;
+	}
+	#post_content {
+		width: 100%;
+		padding: 0.5rem 0.75rem;
+		flex-grow: 1;
+		border: 1px solid #ccc;
+		border-radius: 0.25rem;
+	}
+}
+
+#message {
+	display: none;
+	margin: 1rem 0 0 0;
+}
+
+#dialog-placeholder {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+	justify-content: center;
+	align-items: center;
+	z-index: 999;
+
+	& > iframe {
+		@include ui-elm;
+	}
+}
+
+#post_published_date {
+	max-width: 12rem;
+}
+
+#frame-event-duration {
+	.flatpickr {
+		input {
+			max-width: 9rem;
+		}
+	}
+	.to {
+		margin-top: -1rem;
+		margin-bottom: -1rem;
+		text-align: center;
+		transform: rotate(90deg);
+		pointer-events: none;
+	}
+}
+
+.mce-tinymce {
+	div[aria-label="Bullet list"], div[aria-label="Numbered list"] {
+		.mce-open {
+			display: none;
+		}
+	}
+}
+
+// Media ----------------------------------------------------------------------
+
+body.media {
+	display: flex;
+	flex-direction: column;
+	background-color: white;
+
+	> *:not(:first-child) {
+		margin-top: 1rem;
+	}
+	> div:last-of-type {
+		text-align: right;
+		> *:not(:first-child) {
+			margin-left: 0.75rem;
+		}
+	}
+}
+
+.media-list {
+	@include ui-elm;
+	width: 100%;
+	overflow-y: scroll;
+	flex: 1 0 1px;
+}
+
+.image-option {
+	@include ui-elm;
+	padding: 0.5rem 0.75rem;
+	display: flex;
+	justify-content: space-around;
+
+	> div {
+		flex: 0 0 auto;
+		font-size: 0.9rem;
+
+		h2 {
+			margin: 0 0 0.5rem 0;
+		}
+		input[type=radio]:not(:first-of-type) {
+			margin-left: 0.5rem;
+		}
+	}
+}
+
+.filechooser {
+	display: flex;
+	flex-wrap: wrap;
+
+	.item {
+		margin: 1rem;
+		text-align: center;
+
+		input {
+			margin-left: -0.25rem;
+		}
+	}
+	.icon {
+		@include flex-center;
+		margin: 0 auto;
+		width: 6rem;
+		height: 6rem;
+
+		border: 1px solid #ccc;
+		border-radius: 0.15rem;
+
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+}
+
+// Preview --------------------------------------------------------------------
+
+body.preview {
+	@include private-body;
+}
+
+.topic-post {
+	margin-top: 1rem;
+
+	header {
+		display: flex;
+		align-items: flex-end;
+
+		h3 {
+			margin: 0 2rem 0 0;
+			flex-grow: 1;
+		}
+		.date, .cat {
+			text-align: right;
+			color: #666;
+			font-size: 0.9rem;
+		}
+	}
+}
+
+.post-content {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	border-top: 1px solid #ccc;
+
+	&:after {
+		content: " ";
+		display: block;
+		clear: both;
+	}
+
+	.pos-left {
+		float: left;
+		margin: 0 1% 2rem 0;
+	}
+
+	.pos-center {
+		text-align: center;
+		width: 100%;
+		display: block;
+		margin-bottom: 2rem;
+	}
+
+	.pos-right {
+		float: right;
+		margin: 0 0 2rem 1%;
+	}
+}

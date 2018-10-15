@@ -1,0 +1,43 @@
+@charset "utf-8";
+
+@import "variable";
+@import "content";
+@import "header-footer";
+@import "nt";
+@import "front";
+
+
+:root {
+	font-size: 14px;
+	@include for-tablet-up { font-size: 16px; }
+	cursor: auto;
+}
+
+body {
+	@include font-family;
+	@include font-proportional;
+	@include font-visible-font-chrome;
+
+	color: $color-text;
+
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+.site {
+	@include sticky-footer-site;
+
+	width: 100%;
+	overflow-x: hidden;
+
+	.site-header {}
+	.site-main {
+		@include sticky-footer-site-content;
+		display: flex;
+		flex-direction: column;
+
+		max-width: 100%;
+		overflow: hidden;
+	}
+	.site-footer {}
+}
