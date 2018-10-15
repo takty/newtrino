@@ -1,12 +1,17 @@
 <?php
-/*
- * index.php
- * 2017-03-01
+/**
+ * 
+ * Index
+ * 
+ * @author Space-Time Inc.
+ * @version 2018-10-15
  *
  */
 
-require_once('_init.php');
-require_once('navigation.php');
+
+require_once(dirname(__FILE__) . '/_init.php');
+require_once(dirname(__FILE__) . '/_navigation.php');
+
 
 const PPP = 10, NEW_DAY = 7;
 $ret = $store->getPostsByPage($q['page'] - 1, PPP, ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']], NEW_DAY);

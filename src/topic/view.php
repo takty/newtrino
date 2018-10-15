@@ -1,12 +1,17 @@
 <?php
-/*
- * view.php
- * 2017-02-22
+/**
+ * 
+ * View of One Post
+ * 
+ * @author Space-Time Inc.
+ * @version 2018-10-15
  *
  */
 
-require_once('_init.php');
-require_once('navigation.php');
+
+require_once(dirname(__FILE__) . '/_init.php');
+require_once(dirname(__FILE__) . '/_navigation.php');
+
 
 $t_ps = $store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);
 $url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
