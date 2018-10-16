@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2017-07-24
+ * @version 2018-10-16
  *
  */
 
@@ -25,9 +25,9 @@ function doLogin(event, showKey) {
 	var url = document.getElementById('url').value;
 	var nonce = document.getElementById('nonce').value;
 
-	var a1 = forge_sha256(user + ':' + realm + ':' + pw);
-	var a2 = forge_sha256(method + ':' + url);
-	var digest = forge_sha256(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
+	var a1 = hash(user + ':' + realm + ':' + pw);
+	var a2 = hash(method + ':' + url);
+	var digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
 
 	if (showKey && event.altKey && event.ctrlKey && event.shiftKey) {
 		console.log(url + '\n' + user + '\t' + a1);
@@ -47,4 +47,10 @@ function createNonce() {
 		ret += str.charAt(Math.random() * 23456789 % len);
 	}
 	return ret;
+}
+
+function hash(str) {
+	var sha256 = new jsSHA('SHA-256', 'TEXT');
+	sha256.update(str);
+	return sha256.getHash('HEX');
 }
