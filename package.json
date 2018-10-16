@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "gulp",
-    "build": "gulp"
+    "start": "gulp"
   },
   "dependencies": {
     "flatpickr": "^4.0.4",
