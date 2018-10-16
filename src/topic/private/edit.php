@@ -4,11 +4,13 @@
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2017-08-29
+ * @version 2018-10-16
  *
  */
 
+
 require_once('_init.php');
+
 
 $mode = $q['mode'];
 $t_msg = '';
@@ -47,7 +49,7 @@ header('Content-Type: text/html;charset=utf-8');
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Post Edit</title>
 <link rel="stylesheet" href="css/sanitize.min.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/flatpickr.l10n.ja.js"></script>

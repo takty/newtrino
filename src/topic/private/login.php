@@ -4,7 +4,7 @@
  * Login (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2017-08-29
+ * @version 2018-10-16
  *
  */
 
@@ -74,8 +74,8 @@ if (!empty($q['digest'])) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>User Authentication</title>
 <link rel="stylesheet" href="css/sanitize.min.css">
-<link rel="stylesheet" href="css/style.css">
-<script src="js/forge/forge-sha256.min.js"></script>
+<link rel="stylesheet" href="css/style.min.css">
+<script src="js/jssha/sha256.js"></script>
 <script src="js/login.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initLogin('loginBtn');});console.log('<?=$error?>');</script>
 </head>
