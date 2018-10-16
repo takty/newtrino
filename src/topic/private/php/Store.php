@@ -1,9 +1,13 @@
 <?php
-/*
+/**
+ *
  * Store
- * 2016-11-22
+ *
+ * @author Space-Time Inc.
+ * @version 2018-10-15
  *
  */
+
 
 class Store {
 
