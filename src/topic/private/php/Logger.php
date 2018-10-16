@@ -1,21 +1,26 @@
 <?php
 namespace nt;
-/*
+/**
+ * 
  * Logger
- * 2016-11-04
+ * 
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-16
  *
  */
 
+
 class Logger {
 
-	const MAX_LOG_FILE_SIZE = 4000;
+	const MAX_SIZE   = 4000;
 	const DEBUG_VIEW = false;
+	const LOG_FILE   = __DIR__ . '/../var/log/log.txt';
 
 	static function output($msg) {
-		$fileName = LOG_FILE;
+		$fileName = self::LOG_FILE;
 
 		$fsize = @filesize($fileName);
-		if ($fsize > self::MAX_LOG_FILE_SIZE) {
+		if ($fsize > self::MAX_SIZE) {
 			$pi = pathinfo($fileName);
 			$ext = '.' . $pi['extension'];
 			$fn = $pi['filename'];

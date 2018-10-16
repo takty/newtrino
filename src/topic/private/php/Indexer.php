@@ -17,7 +17,7 @@ require_once(__DIR__ . '/Logger.php');
 class Indexer {
 
 	static function segmentSearchQuery($searchQuery) {
-		$ts = new TinySegmenter();
+		$ts = new \TinySegmenter();
 		$ws = $ts->segment($searchQuery);
 		foreach ($ws as &$w) {
 			$w = mb_convert_kana($w, 'acHV');
@@ -27,7 +27,7 @@ class Indexer {
 	}
 
 	static function updateSearchIndex($text, $fdPath, $mode) {
-		$ts = new TinySegmenter();
+		$ts = new \TinySegmenter();
 		$ws = $ts->segment($text);
 		$sum = [];
 		foreach ($ws as $w) {

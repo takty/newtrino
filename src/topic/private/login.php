@@ -1,4 +1,5 @@
 <?php
+namespace nt;
 /**
  *
  * Login (PHP)
@@ -14,7 +15,6 @@ define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . 
 define('SESSION_PATH', __DIR__ . '/var/session/');
 define('POST_PATH',    __DIR__ . '/../post/');
 define('DATA_PATH',    __DIR__ . '/data/');
-define('LOG_FILE',     __DIR__ . '/var/log/log.txt');
 
 date_default_timezone_set('Asia/Tokyo');
 mb_language('Japanese');

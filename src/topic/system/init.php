@@ -25,11 +25,9 @@ if (array_shift($ifs) === __FILE__) {
 	header("Location: $url/");
 	exit(1);
 }
-?>
-<?php
+
 define('POST_PATH', __DIR__ . '/../post/');
 define('DATA_PATH', __DIR__ . '/../private/data/');
-define('LOG_FILE',  __DIR__ . '/../private/var/log/log.txt');
 
 $dir = dirname($_SERVER['PHP_SELF']);
 $url = SERVER_HOST_URL . rtrim($dir, '/\\') . '/post/';
