@@ -242,7 +242,7 @@ function insertMedia(name, src, w, h, pos, size, isImage) {
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
 	if (isImage) {
 		var imgstr = '<a href="' + src + '" class="' + vc + '"><img src="' + src + '"';
-		if (size !== '') {
+		if (size !== 'o') {  // Not Original Size
 			var r = wh_min
 			if (size === "l") r *= 3;
 			if (size === "m") r *= 2;
