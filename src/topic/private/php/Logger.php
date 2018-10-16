@@ -1,4 +1,5 @@
 <?php
+namespace nt;
 /*
  * Logger
  * 2016-11-04

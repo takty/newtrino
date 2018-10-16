@@ -1,9 +1,18 @@
 <?php
-/*
+namespace nt;
+/**
+ * 
  * Indexer
- * 2018-10-16
+ * 
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-16
  *
  */
+
+
+require_once(__DIR__ . '/util/TinySegmenter.php');
+require_once(__DIR__ . '/Logger.php');
+
 
 class Indexer {
 

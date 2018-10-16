@@ -1,4 +1,5 @@
 <?php
+namespace nt;
 /**
  *
  * Post
@@ -7,6 +8,14 @@
  * @version 2018-10-16
  *
  */
+
+
+require_once(__DIR__ . '/util/simple_html_dom.php');
+require_once(__DIR__ . '/util/url_resolver.php');
+require_once(__DIR__ . '/Indexer.php');
+require_once(__DIR__ . '/Logger.php');
+require_once(__DIR__ . '/Media.php');
+
 
 class Post {
 
@@ -318,7 +327,7 @@ class Post {
 		}
 		if (empty($this->_content)) return '';
 
-		$dom = simplehtmldom_1_5\str_get_html($this->_content);
+		$dom = \simplehtmldom_1_5\str_get_html($this->_content);
 		foreach($dom->find('img') as &$elm) {
 			$elm->src = $this->convertToActualUrl($elm->src);
 		}
@@ -335,7 +344,7 @@ class Post {
 		$base = SERVER_HOST_URL . rtrim($_SERVER['PHP_SELF'], '/\\');
 
 		$urlLen = strlen($this->_postUrl);
-		$dom = simplehtmldom_1_5\str_get_html($val);
+		$dom = \simplehtmldom_1_5\str_get_html($val);
 
 		if (empty($val)) {
 			$this->_content = '';

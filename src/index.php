@@ -16,7 +16,7 @@ header('Content-Type: text/html;charset=utf-8');
 		<h1>Newtrino Sample Website</h1>
 	</header>
 	<main>
-		<ul><?php the_recent(6, '', 7); ?></ul>
+		<ul><?php \nt\the_recent(6, '', 7); ?></ul>
 		<nav>
 			<a href="topic/">Show More...</a>
 		</nav>

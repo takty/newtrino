@@ -1,4 +1,5 @@
 <?php
+namespace nt;
 /*
  * Media Manager
  * 2017-01-27

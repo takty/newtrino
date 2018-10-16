@@ -1,4 +1,5 @@
 <?php
+namespace nt;
 /**
  *
  * Recent Posts

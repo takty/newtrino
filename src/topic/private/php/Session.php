@@ -1,4 +1,5 @@
 <?php
+namespace nt;
 /**
  *
  * Session Manager
@@ -7,6 +8,9 @@
  * @version 2018-10-16
  *
  */
+
+
+require_once(__DIR__ . '/Logger.php');
 
 
 class Session {
