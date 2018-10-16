@@ -90,7 +90,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<div class="column-sub">
 				<div class="frame">
 					<h3>Publish</h3>
-					<input form="form-post" type="text" name="post_published_date" id="post_published_date" value="<?=_h($t_p->getPublishedDate())?>">
+					<input form="form-post" type="text" name="post_published_date" id="post_published_date" value="<?=_h($t_p->getPublishedDateTime())?>">
 					<div class="btn-row">
 						<select form="form-post" name="post_state" id="post_state">
 							<option id="post_state_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>>Published</option>
