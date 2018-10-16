@@ -4,7 +4,7 @@
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2017-07-24
+ * @version 2018-10-16
  *
  */
 
@@ -82,7 +82,7 @@ class Session {
 
 	private function cleanUp() {
 		$fns = [];
-		if ($handle = opendir($this->sessionDirPath)) {
+		if ($handle = $this->openDir($this->sessionDirPath)) {
 			while (($fn = readdir($handle)) !== false) {
 				if (is_file($this->sessionDirPath . $fn)) $fns[] = $fn;
 			}
@@ -154,6 +154,19 @@ class Session {
 			return false;
 		}
 		return true;
+	}
+
+	// ------------------------------------------------------------------------
+
+	private function openDir($path) {
+		if (file_exists($path)) {
+			return opendir($path);
+		}
+		if (mkdir($path, 0755, true)) {
+			chmod($path, 0755);
+			return opendir($path);
+		}
+		return false;
 	}
 
 }
