@@ -1,7 +1,7 @@
 <?php
 /*
  * Indexer
- * 2016-11-11
+ * 2018-10-16
  *
  */
 
@@ -60,7 +60,7 @@ class Indexer {
 			$key = $keyCount[0];
 			for ($i = 0; $i < count($words); $i += 1) {
 				if (mb_strpos($key, $words[$i]) !== false) {
-					$score += $keyCount[1] / $count;
+					$score += intval($keyCount[1]) / $count;
 					$matchCount[$i] = 1;
 				}
 			}
