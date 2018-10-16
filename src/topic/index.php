@@ -1,16 +1,16 @@
 <?php
 /**
- * 
+ *
  * Index
- * 
+ *
  * @author Space-Time Inc.
  * @version 2018-10-15
  *
  */
 
 
-require_once(dirname(__FILE__) . '/_init.php');
-require_once(dirname(__FILE__) . '/_navigation.php');
+require_once(dirname(__FILE__) . '/system/init.php');
+require_once(dirname(__FILE__) . '/system/navigation.php');
 
 
 const PPP = 10, NEW_DAY = 7;

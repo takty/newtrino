@@ -1,15 +1,15 @@
 <?php
 /**
- * 
+ *
  * Recent Posts
- * 
+ *
  * @author Space-Time Inc.
  * @version 2018-10-15
  *
  */
 
 
-require_once(dirname(__FILE__) . '/_init.php');
+require_once(dirname(__FILE__) . '/system/init.php');
 
 
 function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = false) {
