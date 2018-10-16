@@ -1,63 +1,43 @@
 <?php
-/**
- *
- * View of One Post
- *
- * @author Space-Time Inc.
- * @version 2018-10-15
- *
- */
-
-
-require_once(dirname(__FILE__) . '/system/init.php');
-require_once(dirname(__FILE__) . '/system/navigation.php');
-
-
-$t_ps = $store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);
-$url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-if (!$t_ps) {
-	header("Location: $url/");
+require_once(__DIR__ . '/system/init.php');
+global $nt_post;
+if ($nt_post === false) {
+	header("Location: {$_SERVER['PHP_SELF']}/../");
 	exit(1);
 }
-$t_p = $t_ps[1];
-
-$qurl = query_str($q, ['page', 'date', 'cat', 'search_word']);
-$t_iUrl = 'index.php' . (empty($qurl) ? '' : ('?' . substr($qurl, 1)));
-$t_pUrl = 'view.php?id=<>' . $qurl;
-$t_link = $url . '/view.php?id=' . $t_p->getId();
-
-$t_dates = $store->getCountByDate($q['date']);
-$t_cats = $store->getCategoryData($q['cat']);
-$t_searchQuery = $q['search_word'];
-
-
 
 
 header('Content-Type: text/html;charset=utf-8');
-$PAGE_TITLE = $t_p->getTitle();
-$PAGE_CLASS = 'nt-view';
-include('../part/header.php');
 ?>
-	<section class="nt-topic-post">
-		<h2><?=_h($t_p->getCategoryName()) ?></h2>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?=_h($nt_post->getTitle())?> - Newtrino Sample Website</title>
+</head>
+<body>
+	<header>
+		<a href="../"><h1>Newtrino Sample Website</h1></a>
+	</header>
+	<main>
 		<header>
-			<div class="header-main">
-				<h3><?=_h($t_p->getTitle()) ?></h3>
+			<div><?=_h($nt_post->getCategoryName())?></div>
+			<div>
+				<h2><?=_h($nt_post->getTitle())?></h2>
 			</div>
-<?php if ($t_p->getCategory() === 'event'): ?>
-			<div class="event-term <?=_h($t_p->getEventState()); ?>"><?=_h(L_EVENT_DATE)?><?=_h($t_p->getEventDateBgn()) ?><?=_h(L_EVENT_DATE_TO)?><?=_h($t_p->getEventDateEnd()) ?></div>
+<?php if ($nt_post->getCategory() === 'event'): ?>
+			<div class="event-term <?=_h($nt_post->getEventState())?>">
+				Event Date<?=_h($nt_post->getEventDateBgn())?> - <?=_h($nt_post->getEventDateEnd())?>
+			</div>
 <?php endif ?>
 		</header>
-		<section class="nt-post-content"><?=$t_p->getContent()?></section>
+		<section><?=$nt_post->getContent()?></section>
 		<footer>
-			<div class="date"><?=_h(L_PUBLISHED_DATE_BEFORE)?><?=_h($t_p->getPublishedDate()) ?><?=_h(L_PUBLISHED_DATE_AFTER)?></div>
+			<div class="date">Updated: <?=_h($nt_post->getPublishedDate())?></div>
 		</footer>
-<?php the_postlink($t_iUrl, $t_pUrl, $t_ps[0], $t_ps[2]); ?>
-	</section>
-<?php the_filter($t_dates, $t_cats, $t_searchQuery); ?>
-	</main><!-- site-main -->
-	<footer class="site-footer">
-	</footer>
-</div><!-- site -->
+<?php the_postlink(); ?>
+<?php the_filter(); ?>
+	</main>
 </body>
 </html>

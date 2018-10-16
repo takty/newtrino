@@ -1,14 +1,19 @@
 <?php
-/*
+/**
+ *
  * Navigations
- * 
+ *
  * @author Space-Time Inc.
  * @version 2018-10-15
  *
  */
 
 
-function the_filter($dates, $cats, $searchQuery) {
+function the_filter($dates = false, $cats = false, $searchQuery = false) {
+	global $store, $q;
+	if (!$dates)       $dates       = $store->getCountByDate($q['date']);
+	if (!$cats)        $cats        = $store->getCategoryData($q['cat']);
+	if (!$searchQuery) $searchQuery = $q['search_word'];
 ?>
 <div class="nt-filter-bar">
 	<nav class="nt-filter">
@@ -48,7 +53,14 @@ function the_filter($dates, $cats, $searchQuery) {
 
 const PG_MAX = 7;
 
-function the_pagination($pgUrl, $size, $cur, $ppp, $maxPg = PG_MAX) {
+function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = false, $maxPg = PG_MAX) {
+	global $store, $q;
+	global $nt_posts, $nt_size, $nt_page;
+	if (!$pgUrl) $pgUrl = 'index.php?page=<>' . query_str($q, ['date', 'cat', 'search_word']);
+	if (!$size)  $size  = $nt_size;
+	if (!$cur)   $cur   = $nt_page + 1;
+	if (!$ppp)   $ppp   = NT_POSTS_PER_PAGE;
+
 	if ($ppp >= $size) return;
 
 	$pageSize = ceil($size / $ppp);
@@ -80,7 +92,7 @@ function the_pagination($pgUrl, $size, $cur, $ppp, $maxPg = PG_MAX) {
 				<li class="nt-ellipsis">...</li>
 <?php endif ?>
 <?php foreach($t_pgs as $pg): ?>
-				<li<?php if (!$pg['href']) echo(' class="nt-current"')?>><?php t_wrap($pg['href'], '<a href="' . $pg['href'] . '">', $pg['page'], '</a>') ?></li>
+				<li <?php if (!$pg['href']) echo(' class="nt-current"')?>><?php t_wrap($pg['href'], '<a href="' . $pg['href'] . '">', $pg['page'], '</a>') ?></li>
 <?php endforeach ?>
 <?php if ($t_eh): ?>
 				<li class="nt-ellipsis">...</li>
@@ -93,7 +105,15 @@ function the_pagination($pgUrl, $size, $cur, $ppp, $maxPg = PG_MAX) {
 <?php
 }
 
-function the_postlink($iUrl, $pUrl, $prev, $next) {
+function the_postlink() {
+	global $store, $q, $nt_prev_post, $nt_next_post;
+	$qurl = query_str($q, ['page', 'date', 'cat', 'search_word']);
+	$iUrl = 'index.php' . (empty($qurl) ? '' : ('?' . substr($qurl, 1)));
+	$pUrl = 'view.php?id=<>' . $qurl;
+
+	$prev = $nt_prev_post;
+	$next = $nt_next_post;
+
 	$prevUrl = null;
 	$nextUrl = null;
 

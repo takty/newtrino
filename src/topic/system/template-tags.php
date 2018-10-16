@@ -9,7 +9,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/system/init.php');
+require_once(dirname(__FILE__) . '/init.php');
 
 
 function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = false) {
