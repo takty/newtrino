@@ -233,25 +233,30 @@ function closeMediaChooser() {
 
 var wh_min = 220;
 
-function insertMedia(src, w, h, pos, size) {
+function insertMedia(name, src, w, h, pos, size, isImage) {
 	closeMediaChooser();
 	var vc = "";
 	if (pos == "l") vc = "pos-left";
 	if (pos == "c") vc = "pos-center";
 	if (pos == "r") vc = "pos-right";
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
-	var imgstr = '<a href="' + src + '" class="' + vc + '"><img src="' + src + '"';
-	if (size !== '') {
-		var r = wh_min
-		if (size === "l") r *= 3;
-		if (size === "m") r *= 2;
-		var vw = Math.round(getSizeW(r, w, h));
-		var vh = Math.round(getSizeH(r, w, h));
-		var is = ' width="' + vw + '" height="' + vh + '" ';
-		imgstr = imgstr + is;
+	if (isImage) {
+		var imgstr = '<a href="' + src + '" class="' + vc + '"><img src="' + src + '"';
+		if (size !== '') {
+			var r = wh_min
+			if (size === "l") r *= 3;
+			if (size === "m") r *= 2;
+			var vw = Math.round(getSizeW(r, w, h));
+			var vh = Math.round(getSizeH(r, w, h));
+			var is = ' width="' + vw + '" height="' + vh + '" ';
+			imgstr = imgstr + is;
+		}
+		imgstr += "></a>";
+		tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
+	} else {
+		var linkStr = '<a href="' + src + '" class="' + vc + '">' + name + '</a>';
+		tinymce.activeEditor.execCommand('mceInsertContent', false, linkStr);
 	}
-	imgstr += "></a>";
-	tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
 }
 
 function getSizeW(wh, w, h) {
@@ -274,21 +279,23 @@ function getSizeH(wh, w, h) {
 
 // for Media ------------------------------------------------------------------
 
-var file_name = '';
-var file_url  = '';
-var image_cx  = '';
-var image_cy  = '';
+var file_name   = '';
+var file_url    = '';
+var file_is_img = false;
+var image_cx    = '';
+var image_cy    = '';
 
 function initMedia() {
 	document.getElementById('delete').disabled = true;
 	document.getElementById('insert').disabled = true;
 }
 
-function setFile(fileName, url, width, height) {
-	file_name = fileName;
-	file_url = url;
-	image_cx = width;
-	image_cy = height;
+function setFile(fileName, url, width, height, isImage) {
+	file_name   = fileName;
+	file_url    = url;
+	file_is_img = isImage;
+	image_cx    = width;
+	image_cy    = height;
 	document.getElementById('delete').disabled = false;
 	document.getElementById('insert').disabled = false;
 }
@@ -302,7 +309,7 @@ function deleteFile() {
 function insert() {
 	var pos = checkRadio('pos');
 	var size = checkRadio('size');
-	window.parent.insertMedia(file_url, image_cx, image_cy, pos, size);
+	window.parent.insertMedia(file_name, file_url, image_cx, image_cy, pos, size, file_is_img);
 }
 
 function checkRadio(tag) {

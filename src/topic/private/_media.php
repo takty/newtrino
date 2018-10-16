@@ -1,7 +1,7 @@
 <?php
 /*
  * Media
- * 2017-02-22
+ * 2018-10-16
  *
  */
 
@@ -65,13 +65,16 @@ header('Content-Type: text/html;charset=utf-8');
 <?php for ($i = 0; $i < count($t_items); $i += 1): $item = $t_items[$i]; ?>
 		<div class="item">
 			<label for="item<?=$i?>">
-<?php if (!empty($item['img'])): ?>
+<?php
+$is_img = !empty($item['img']);
+if ($is_img):
+?>
 				<div class="icon" style="background-image: url(<?=_u($item['url'])?>)"></div>
 <?php else: ?>
 				<div class="icon"><?=_h($item['ext'])?></div>
 <?php endif ?>
 			</label><br>
-			<input type="radio" id="item<?=$i?>" value="<?=_h($item['caption'])?>" onclick="setFile('<?=_h($item['file'])?>', '<?=_h($item['url'])?>', <?=_h($item['width'])?>, <?=_h($item['height'])?>)">
+			<input type="radio" id="item<?=$i?>" value="<?=_h($item['caption'])?>" onclick="setFile('<?=_h($item['file'])?>', '<?=_h($item['url'])?>', <?=_h($item['width'])?>, <?=_h($item['height'])?>, <?=$is_img?>)">
 			<label for="item<?=$i?>"><?=_h($item['caption'])?></label>
 		</div>
 <?php endfor ?>
