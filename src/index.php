@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/topic/system/init.php');
+require_once(__DIR__ . '/topic/core/init.php');
 
 
 header('Content-Type: text/html;charset=utf-8');

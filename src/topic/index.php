@@ -1,6 +1,6 @@
 <?php
 const NT_POSTS_PER_PAGE = 10;
-require_once(__DIR__ . '/system/init.php');
+require_once(__DIR__ . '/core/init.php');
 global $nt_posts;
 
 

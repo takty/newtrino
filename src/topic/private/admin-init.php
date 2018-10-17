@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/../system/function.php');
+require_once(__DIR__ . '/../core/function.php');
 require_once(__DIR__ . '/php/Session.php');
 require_once(__DIR__ . '/php/Store.php');
 

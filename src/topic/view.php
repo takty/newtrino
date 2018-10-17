@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/system/init.php');
+require_once(__DIR__ . '/core/init.php');
 global $nt_post;
 if ($nt_post === false) {
 	header("Location: {$_SERVER['PHP_SELF']}/../");

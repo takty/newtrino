@@ -12,8 +12,7 @@ namespace nt;
 
 require_once(__DIR__ . '/lang.php');
 require_once(__DIR__ . '/function.php');
-require_once(__DIR__ . '/template-tags.php');
-require_once(__DIR__ . '/navigation.php');
+require_once(__DIR__ . '/tag.php');
 require_once(__DIR__ . '/../private/php/Store.php');
 
 

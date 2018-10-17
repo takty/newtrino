@@ -43,7 +43,7 @@ function prepareDefaultQuery($opt = []) {
 }
 
 
-// -----------------------------------------------------------------------------
+// Utility Functions -----------------------------------------------------------
 
 
 function query_str($q, $keys) {
@@ -63,10 +63,10 @@ function t_wrap($flag, $before, $cont, $after) {
 }
 
 
-// Utility Functions -----------------------------------------------------------
+// Output Functions ------------------------------------------------------------
 
 
-function _h($str)  {
+function _h($str) {
 	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
