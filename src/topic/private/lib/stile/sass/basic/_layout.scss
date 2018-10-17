@@ -1,0 +1,279 @@
+/**
+ *
+ * Layout Mixins 
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-08-16
+ *
+ */
+
+
+@mixin layout-side-margin($max_width, $side_margin: false) {
+	margin-left: auto;
+	margin-right: auto;
+
+	max-width: $max_width;  // must be max-width for Android Chrome
+
+	@if $side_margin == false {
+		width: 100%;  // must be width for Android Chrome
+	} @else {
+		width: calc(100% - #{$side_margin * 2});  // must be width for Android Chrome
+	}
+}
+
+@mixin layout-width-breakpoint($min_width, $breakpoint, $max_width) {
+	min-width: $min_width;
+	width: calc(($breakpoint - 100%) * 1000);
+	max-width: $max_width;
+}
+
+@mixin layout-full-width() {
+	margin-left: calc((100vw - 100%) / -2);
+	margin-right: calc((100vw - 100%) / -2);
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-centering($inline: false) {
+	@if $inline == false {
+		display: flex;
+	} @else {
+		display: inline-flex;
+	}
+	align-items: center;
+	justify-content: center;
+}
+
+@mixin layout-centering-self($horizontal: true, $vertical: true, $position: absolute) {
+	position: $position;
+	@if $horizontal == true and $vertical == true {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	} @else if $horizontal == true {
+		left: 50%;
+		transform: translateX(-50%);
+	} @else if $vertical == true {
+		top: 50%;
+		transform: translateY(-50%);
+	}
+}
+
+@mixin layout-fill-self($position: absolute, $by_height: false) {
+	position: $position;
+	top: 0;
+	left: 0;
+	right: 0;
+
+	@if $by_height == false {
+		bottom: 0;
+	} @else {
+		min-height: 100%;
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-aspect($width, $height, $by_height: false) {
+	position: relative;
+
+	&:before {
+		content: '';
+		display: block;
+		padding-top: ($height / $width * 100%);
+	}
+
+	> *:first-child {
+		@include layout-fill-self(absolute, $by_height);
+	}
+}
+
+@mixin layout-aspect-gold {
+	@include layout-aspect(1.618, 1);
+}
+
+@mixin layout-minimum-aspect($width, $height) {
+	position: relative;
+
+	&::before {
+		content: '';
+		display: block;
+		padding-top: ($height / $width * 100%);
+		float: right;
+	}
+	> * { clear: none; }
+	&::after {
+		content: '';
+		display: block;
+		clear: both;
+	}
+}
+
+@mixin layout-minimum-aspect-gold {
+	@include layout-minimum-aspect(1.618, 1);
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-gap($x, $y) {
+	margin-right: -$x;
+	margin-bottom: -$y;
+
+	> *:not(:empty) {
+		margin-right: $x;
+		margin-bottom: $y;
+	}
+}
+
+@mixin layout-wrap($gap: false, $align: center) {
+	$gap_x: $gap;
+	$gap_y: $gap;
+	@if $gap != false and length($gap) == 2 {
+		$gap_x: nth($gap, 1);
+		$gap_y: nth($gap, 2);
+	}
+	@if $gap != false {
+		@include layout-gap($gap_x, $gap_y);
+	}
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: $align;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-spacer() {
+	> *:empty {  // for Spacer
+		visibility: hidden;
+		height: 0px;
+		padding: 0;
+		margin-bottom: 0;
+		border: none;
+		&::before { content: none; }
+	}
+}
+
+@mixin layout-column($n, $gap: false) {
+	$cw: 100% / $n;
+
+	display: flex;
+	flex-direction: row;
+
+	@if $gap != false {
+		margin-right: -$gap;
+	}
+	> * {
+		flex-grow: 1;
+		flex-shrink: 1;
+
+		@if $gap != false {
+			margin-right: $gap;
+			flex-basis: calc(#{$cw} - #{$gap});
+		} @else {
+			flex-basis: #{$cw};
+		}
+	}
+}
+
+@mixin layout-column-cancel($gap: false) {
+	display: flex;
+	flex-direction: column;
+
+	@if $gap != false {
+		margin-bottom: -$gap;
+	}
+	> * {
+		flex-basis: auto;
+
+		@if $gap != false {
+			margin-bottom: $gap;
+		}
+	}
+	@include layout-spacer;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-card($n, $gap: false, $align_left: true) {
+	$gap_x: $gap;
+	$gap_y: $gap;
+	@if $gap != false and length($gap) == 2 {
+		$gap_x: nth($gap, 1);
+		$gap_y: nth($gap, 2);
+	}
+	$cw: 100% / $n;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	@if $gap != false {
+		margin-right : -$gap_x;
+		margin-bottom: -$gap_y;
+	}
+	> * {
+		flex-grow: 1;
+		flex-shrink: 1;
+
+		@if $gap != false {
+			margin-right: $gap_x;
+			flex-basis: calc(#{$cw} - #{$gap_x});
+			@include for-ie { flex-basis: calc(#{floor($cw)} - #{$gap_x}); }
+			width: calc(#{$cw} - #{$gap_x});  // for Safari
+
+			&:not(:empty) {
+				margin-bottom: $gap_y;
+			}
+		} @else {
+			flex-basis: calc(#{$cw});
+			@include for-ie { flex-basis: #{floor($cw)}; }
+			width: #{$cw};  // for Safari
+		}
+	}
+	@include layout-spacer;
+
+	@if $align_left {
+		@for $i from 1 through $n {
+			> *:nth-child(#{$n}n+#{$i}):last-child {
+				@if $gap_x == false {
+					margin-right: #{$cw * ($n - $i)};
+				} @else {
+					margin-right: calc(#{$cw * ($n - $i)} + #{$gap_x});
+				}
+			}
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-masonry($n, $gap: false) {
+	column-count: $n;
+	column-gap: $gap;
+	line-height: 0;
+
+	@if $gap != false {
+		margin-bottom: -$gap;
+	}
+	> * {
+		display: inline-block;
+		line-height: 1;
+		width: 100%;
+
+		@if $gap != false {
+			margin-bottom: $gap;
+		}
+	}
+}

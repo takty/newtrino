@@ -1,0 +1,156 @@
+/**
+ *
+ * List Style (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-06-04
+ *
+ */
+
+
+@import '../basic/base';
+@import '../basic/font';
+
+$stile-list-color-mark      : rgba(#777, 0.9) !default;
+$stile-list-rate-mark       : 0.45 !default;
+$stile-list-rate-square-mark: 0.44 !default;
+
+
+@mixin stile-list {
+	@include stile-list-ul;
+	@include stile-list-ol;
+	@include stile-list-dl;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-list-ul {
+	ul:not([class]),
+	ul.stile {
+		list-style: none;
+
+		padding-left: base-vr(4);
+		&[data-stile ~= 'no-indent'] { padding-left: base-vr(2); }
+		@include for-phone-only      { padding-left: base-vr(2); }
+
+		> li {
+			position: relative;
+			line-height: base-vr(2);
+		}
+
+		> li::before {
+			content: '';
+			position: absolute;
+			display: block;
+			box-sizing: border-box;
+
+			top: calc(#{base-vr(1)} - 0.01rem);
+			left: - base-vr(2);
+
+			width: 1em;
+			height: 1em;
+		}
+
+		&:not([style]):not([data-stile *= 'list-']) > li::before,
+		&[data-stile ~= 'list-disc'] > li::before {
+			transform: translateY(-0.5em) scale(#{$stile-list-rate-mark});
+			border-radius: 50%;
+
+			background-color: $stile-list-color-mark;
+		}
+
+		&[data-stile ~= 'list-circle'] > li::before {
+			transform: translateY(-0.5em) scale(#{$stile-list-rate-mark});
+			border: 0.2rem solid;
+			border-radius: 50%;
+
+			border-color: $stile-list-color-mark;
+		}
+
+		&[data-stile ~= 'list-square'] > li::before {
+			transform: translateY(-0.5em) scale(#{$stile-list-rate-square-mark});
+			border-radius: 20%;
+
+			background-color: $stile-list-color-mark;
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-list-ol {
+	ol:not([class]),
+	ol.stile {
+		padding-left: base-vr(1);
+		&[data-stile ~= 'no-indent'] { padding-left: 0; }
+		@include for-phone-only      { padding-left: 0; }
+
+		> li {
+			counter-increment: li;
+			display: table-row;
+			line-height: base-vr(2);
+		}
+
+		> li::before {
+			content: counter(li) '.';
+			display: table-cell;
+
+			min-width: base-vr(3);
+			padding-right: base-vr(1);
+			text-align: right;
+
+			@include font-bold;
+			
+			color: $stile-list-color-mark;
+		}
+		&[data-stile ~= 'no-indent'] > li::before { min-width: base-vr(2); }
+		@include for-phone-only { > li::before { min-width: base-vr(2); } }
+
+		&[data-stile ~= 'list-lower-alpha'] > li::before {
+			content: counter(li, lower-alpha) '.';
+		}
+
+		&[data-stile ~= 'list-lower-greek'] > li::before {
+			content: counter(li, lower-greek) '.';
+		}
+
+		&[data-stile ~= 'list-lower-roman'] > li::before {
+			content: counter(li, lower-roman) '.';
+		}
+
+		&[data-stile ~= 'list-upper-alpha'] > li::before {
+			content: counter(li, upper-alpha) '.';
+		}
+
+		&[data-stile ~= 'list-upper-roman'] > li::before {
+			content: counter(li, upper-roman) '.';
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-list-dl {
+	dl:not([class]),
+	dl.stile {
+		padding-left: base-vr(2);
+		&[data-stile ~= 'no-indent'] { padding-left: 0; }
+		@include for-phone-only      { padding-left: 0; }
+
+		line-height: base-vr(2);
+
+		> dt {
+			@include font-bold;
+		
+			color: $stile-list-color-mark; 
+		}
+
+		> dd { padding-left: base-vr(2); }
+	}
+}

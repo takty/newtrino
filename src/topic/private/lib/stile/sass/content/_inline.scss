@@ -1,0 +1,129 @@
+/**
+ *
+ * Inline Style
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-07-05
+ *
+ */
+
+
+@import '../basic/base';
+@import '../basic/font';
+@import '../basic/layout';
+
+$stile-inline-color-strong       : rgba(#000, 0.95) !default;
+$stile-inline-color-underline    : rgba(#fd0, 0.9) !default;
+$stile-inline-color-del          : rgba(#f40, 0.9) !default;
+$stile-inline-color-abbr         : rgba(#12f, 0.9) !default;
+$stile-inline-color-broken-image : $stile-inline-color-del !default;
+$stile-inline-size-font-small    : 0.85em !default;
+$stile-inline-size-font-subscript: 0.75em !default;
+$stile-inline-size-font-monospace: 0.95em !default;
+
+
+@mixin stile-inline {
+	img {
+		max-width: 100%;
+		height: auto;
+
+		// for broken images (does not work on IE11 and Edge)
+		&[alt]::after {
+			content: attr(src);
+			@include layout-centering(true);
+
+			padding: base-vr(0.5) base-vr(1);
+			border: 1px dashed $stile-inline-color-broken-image;
+			min-height: base-vr(2);
+			
+			color: $stile-inline-color-broken-image;
+			font-size: 0.85em;
+			line-height: 1.35em;
+			word-break: break-all;
+			text-decoration: line-through;
+
+			vertical-align: text-bottom;
+		}
+
+		transition: opacity 0.2s;  // for lazy loading
+	}
+
+	strong, b {
+		@include font-bold;
+	}
+
+	em {
+		font-style: italic;
+	}
+	
+	p, li {
+		> {
+			strong, b, em { color: $stile-inline-color-strong; }
+		}
+	}
+
+	u, span[data-stile ~= 'inline-underline'] {
+		text-decoration: none;
+		background: linear-gradient(
+			transparent 75%,
+			rgba($stile-inline-color-underline, 0.4) 75%,
+			$stile-inline-color-underline 100%
+		);
+	}
+
+	small {
+		font-size: $stile-inline-size-font-small;
+	}
+	
+	sub, sup {
+		position: relative;
+		display: inline-block;  // for neat line height
+		vertical-align: inherit;
+		line-height: 1;
+		margin-right: 0.1em;
+		font-size: $stile-inline-size-font-subscript;
+	}
+
+	sub {
+		bottom: -0.25em;
+		margin-bottom: -0.25em;
+	}
+
+	sup {
+		top: -0.75em;
+		margin-top: -0.75em;
+	}
+
+	abbr[title] {
+		text-decoration: none;
+		border-bottom: 2px dotted $stile-inline-color-abbr;
+	}
+
+	del {
+		text-decoration: none;
+		background: linear-gradient(
+			transparent 50%,
+			$stile-inline-color-del 50%,
+			$stile-inline-color-del 60%,
+			transparent 60%
+		);
+	}
+
+	code, var, samp, kbd {
+		@include font-family-monospace;
+		margin-left: 0.075rem;
+		margin-right: 0.075rem;
+		white-space: pre-wrap;
+		font-size: $stile-inline-size-font-monospace;
+	}
+
+	*[data-stile ~= 'iframe-wrapper'] {
+		display: inline-block;
+		width: 100%;
+		position: relative;
+		> iframe {
+			@include layout-fill-self;
+			height: 100%;
+		}
+	}
+}

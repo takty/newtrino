@@ -42,16 +42,24 @@ gulp.task('copy-tinymce', (done) => {
 	done();
 });
 
+gulp.task('copy-stile-sass', (done) => {
+	copySync('./node_modules/stile/dist/sass/*', './src/topic/private/lib/stile/sass/');
+	done();
+});
+
 gulp.task('copy-lib', gulp.parallel(
 	'copy-jssha',
 	'copy-flatpickr',
 	'copy-tinymce',
+	'copy-stile-sass',
 ));
 
 gulp.task('copy-src', (done) => {
 	copySync('./src', './dist');
 	fs.removeSync('./dist/topic/post/*');
 	fs.removeSync('./dist/topic/private/sass');
+	fs.removeSync('./dist/topic/private/lib');
+	for (let f of glob.sync('./dist/topic/private/js/*.js')) fs.removeSync(f);
 	done();
 });
 

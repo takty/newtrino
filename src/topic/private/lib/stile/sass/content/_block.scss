@@ -1,0 +1,109 @@
+/**
+ *
+ * Block Style
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-07-27
+ *
+ */
+
+
+@import '../basic/base';
+@import '../basic/query';
+@import '../basic/font';
+
+$stile-block-color-line      : rgba(#777, 0.9) !default;
+$stile-block-color-shade     : rgba($stile-block-color-line, 0.1) !default;
+$stile-block-size-line-width : 1px !default;
+$stile-block-size-max-width  : 36rem !default;
+$stile-block-level-figcaption: 0 !default;
+
+
+@mixin stile-block {
+	@include stile-block-main;
+	@include stile-block-figure;
+}
+
+@mixin stile-block-main {
+	p,
+	div:not([class]) {
+		text-align: left;
+		@include for-tablet-up {
+			text-align: justify;
+			text-justify: inter-ideograph;  // for Edge
+		}
+		@include for-ie { text-align: left; }
+		line-height: base-vr(2);
+		hyphens: auto;  // Autoprefixer is needed. 
+	}
+
+	hr {
+		height: calc(#{$stile-block-size-line-width} + 0.5px);
+		border: none;
+		border-top: $stile-block-size-line-width solid $stile-block-color-line;
+	}
+
+	blockquote {
+		padding-left: base-vr(4);
+		font-style: italic;
+
+		position: relative;
+		&::before {
+			content: '';
+			display: block;
+
+			position: absolute;
+			left: base-vr(2);
+
+			width: calc(#{$stile-block-size-line-width} + 0.5px);
+			height: 100%;
+			border-left: $stile-block-size-line-width solid $stile-block-color-line;
+		}
+
+		&[data-stile~='no-indent'] {
+			padding-left: base-vr(2);
+			&::before { left: 0; }
+		}
+	}
+
+	pre {
+		@include font-family-monospace;
+		display: block;
+		padding: base-vr(2);
+		overflow-x: auto;
+		line-height: base-vr(2);
+
+		background-color: $stile-block-color-shade;
+	}
+
+	pre > code {
+		padding: 0;
+		background-color: transparent;
+		white-space: pre;
+	}
+}
+
+@mixin stile-block-figure {
+	figure:not([class]) { max-width: 100%; }
+
+	figure img {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-height: 100vh;
+
+		// for broken images (does not work on IE11 and Edge)
+		&[alt]::after { width: 100%; }
+	}
+
+	figure {
+		text-align: center;  // for centering short caption
+	}
+
+	figcaption {
+		display: inline-block;
+		max-width: $stile-block-size-max-width;
+		@include font-size-level($stile-block-level-figcaption);
+		text-align: left;  // for left align of long caption
+	}
+}

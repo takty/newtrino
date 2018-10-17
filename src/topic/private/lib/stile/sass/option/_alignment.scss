@@ -1,0 +1,201 @@
+/**
+ *
+ * Alignment Classes (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-06-28
+ *
+ */
+
+
+@import '../basic/base';
+@import '../basic/query';
+
+$stile-alignment-size-min-text-width: 16rem !default;
+
+
+@mixin stile-alignment {
+	@include stile-alignment-main;
+	@include stile-alignment-margin;
+	@include stile-alignment-size;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-alignment-main {
+	.alignleft,
+	.alignright,
+	.aligncenter {
+		@include stile-alignment-center;
+	}
+
+	// Without Size Classes ----------------------------------------------------
+
+	@include for-tablet-up {
+		* { @include stile-alignment-float }
+	}
+
+	// With Size Classes -------------------------------------------------------
+
+	.size-thumbnail { @include stile-alignment-float(10rem); }
+
+	.size-small,
+	.size-medium,
+	.size-medium_large,
+	.size-large,
+	.size-full {
+		&.alignleft,
+		&.alignright {
+			@include stile-alignment-center;
+		}
+	}
+	.size-small {
+		@include for-tablet-portrait-up { @include stile-alignment-float(10rem); }
+	}
+	.size-medium {
+		@include for-tablet-portrait-up { @include stile-alignment-float(20rem); }
+	}
+	.size-medium_large {
+		@include for-tablet-landscape-up { @include stile-alignment-float(30rem); }
+	}
+	.size-large,
+	.size-full {
+		@include for-tablet-landscape-up { @include stile-alignment-float; }
+	}
+
+	// By Content Query --------------------------------------------------------
+
+	*[data-stile ~= 'alignleft'],
+	*[data-stile ~= 'alignright'] {
+		margin-top: 0;
+		margin-bottom: base-vr(1);
+		max-width: calc(100% - #{$stile-alignment-size-min-text-width});
+		transform: translateY(#{(base-vr(2) - 1rem) / 2});
+	}
+	*[data-stile ~= 'alignleft'] {
+		float: left;
+		margin-left: auto;
+		margin-right: base-vr(2);
+	}
+	*[data-stile ~= 'alignright'] {
+		float: right;
+		margin-left: base-vr(2);
+		margin-right: auto;
+	}
+	*[data-stile ~= 'aligncenter'] {
+		&.alignleft,
+		&.alignright {
+			@include stile-alignment-center;
+			&:not(.size-thumbnail):not(.size-small):not(.size-medium):not(.size-medium_large):not(.size-large):not(.size-full) {
+				max-width: initial;
+			}
+		}
+	}
+}
+
+@mixin stile-alignment-center {
+	display: block;
+	float: none;
+	margin: base-vr(2) auto;
+	transform: initial;
+	text-align: center;
+	clear: both;
+}
+
+@mixin stile-alignment-float($max-width: false) {
+	&.alignleft,
+	&.alignright {
+		margin-top: 0;
+		margin-bottom: base-vr(1);
+		@if $max-width == false {
+			$max-width: calc(100% - #{$stile-alignment-size-min-text-width});
+		}
+		max-width: $max-width;
+		transform: translateY(#{(base-vr(2) - 1rem) / 2});
+		clear: none;
+	}
+	&.alignleft {
+		float: left;
+		margin-right: base-vr(2);
+	}
+	&.alignright {
+		float: right;
+		margin-left: base-vr(2);
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-alignment-margin {
+	* + .alignleft,
+	* + .alignright,
+	.alignleft + *,
+	.alignright + * {
+		margin-top: base-vr(1);
+	}
+
+	* + figure.alignleft,
+	* + figure.alignright,
+	figure.alignleft + *,
+	figure.alignright + * {
+		margin-top: base-vr(4);  // for Centering View
+	}
+
+	@include for-tablet-up {
+		* + figure.alignleft,
+		* + figure.alignright,
+		figure.alignleft + *,
+		figure.alignright + * {
+			margin-top: base-vr(1);  // for Actual Floating View
+		}
+	}
+
+	@include stile-alignment-define-figure-margin(h1, 6);
+	@include stile-alignment-define-figure-margin(h2, 5);
+	@include stile-alignment-define-figure-margin(h3, 4);
+	@include stile-alignment-define-figure-margin(h4, 3);
+	@include stile-alignment-define-figure-margin(h5, 2);
+	@include stile-alignment-define-figure-margin(h6, 1);
+}
+
+@mixin stile-alignment-define-figure-margin($tag, $top) {
+	#{$tag} { & + figure.alignright, & + figure.alignleft { margin-top: base-vr($top); } }
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-alignment-size {
+	.size-thumbnail {
+		max-width: 10rem;
+		width: 50%;  // Can be the half size
+	}
+	.size-small {
+		max-width: 10rem;
+		width: 100%;
+	}
+	.size-medium {
+		max-width: 20rem;
+		width: 100%;
+	}
+	.size-medium_large {  // This naming is compatible with WordPress-embed image size name.
+		max-width: 30rem;
+		width: 100%;
+	}
+	.size-large {
+		max-width: 40rem;
+		width: 100%;
+	}
+	td, th {
+		.size-thumbnail    { min-width: 5rem; }
+		.size-small        { min-width: 5rem; }
+		.size-medium       { min-width: 10rem; }
+		.size-medium_large { min-width: 15rem; }
+		.size-large        { min-width: 20rem; }
+	}
+}

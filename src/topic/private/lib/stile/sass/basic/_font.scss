@@ -1,0 +1,289 @@
+/**
+ *
+ * Font Mixins
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-08
+ *
+ */
+
+
+@import 'base';
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,400i,700i');  // Laten
+@import url('https://fonts.googleapis.com/css?family=Spectral:300,600,300i,600i');  // Laten Serif
+
+$stile-font-sans-serif-laten: 'Open Sans';
+$stile-font-serif-laten     : 'Spectral';
+
+
+$stile-font-sans-serif:
+	$stile-font-sans-serif-laten,
+	'Yu Gothic C', 'Yu Gothic Medium', 'Yu Gothic', 'YuGothic',  // 'Yu Gothic Medium' is for Chrome
+	Verdana, Meiryo, sans-serif;
+
+$stile-font-sans-serif-ie:
+	$stile-font-sans-serif-laten,
+	Verdana, Meiryo, sans-serif;
+
+$stile-font-sans-serif-ios:
+	-apple-system, sans-serif;
+
+$stile-font-sans-serif-android:
+	Verdana, sans-serif;
+
+
+$stile-font-serif:
+	$stile-font-serif-laten, 
+	'Yu Mincho',
+	'Hiragino Mincho ProN', 'Hiragino Mincho Pro', 'HG Mincho',
+	Georgia, Meiryo, serif;
+
+$stile-font-serif-ie:
+	$stile-font-serif-laten, 
+	'HG Mincho',
+	Georgia, Meiryo, serif;
+
+$stile-font-serif-ios:
+	serif;
+
+$stile-font-serif-android:
+	Verdana, sans-serif;
+
+
+$stile-font-monospace:
+	'Noto Sans Mono CJK JP', 'Source Han Code JP N', 'IPA Gothic',
+	Monaco, Consolas, Courier, 'Courier New',
+	'Osaka-Mono',
+	monospace;
+
+
+// -----------------------------------------------------------------------------
+
+
+@font-face {
+	font-family: 'Yu Gothic C';
+	font-weight: 100;
+	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Gothic C';
+	font-weight: 200;
+	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Gothic C';
+	font-weight: 300;
+	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Gothic C';
+	font-weight: 400;
+	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Gothic C';
+	font-weight: normal;
+	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Gothic C';
+	font-weight: bold;
+	src: local('Yu Gothic Bold'), local('YuGothic-Bold');
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@font-face {
+	font-family: 'Yu Mincho';
+	font-weight: 100;
+	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Mincho';
+	font-weight: 200;
+	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Mincho';
+	font-weight: 300;
+	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Mincho';
+	font-weight: 400;
+	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Mincho';
+	font-weight: normal;
+	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
+}
+
+@font-face {
+	font-family: 'Yu Mincho';
+	font-weight: bold;
+	src: local('Yu Mincho Demibold'), local('YuMincho-Demibold');
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@font-face {  // for Italic Japanese on IE11
+	font-family: Meiryo;
+	font-weight: normal;
+	src: local('Meiryo');
+}
+
+@font-face {  // for Bold Japanese on IE11
+	font-family: Meiryo;
+	font-weight: bold;
+	src: local('Meiryo Bold');
+}
+
+@font-face {  // for Serif Japanese on IE11 but bad quality when small size
+	font-family: 'HG Mincho';
+	font-weight: normal;
+	src: local('HGMinchoB');
+}
+
+@font-face {  // for Serif Japanese on IE11 but bad quality when small size
+	font-family: 'HG Mincho';
+	font-weight: bold;
+	src: local('HGMinchoE');
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin font-family {
+	font-family: $stile-font-sans-serif;
+	@include for-ie {
+		font-family: $stile-font-sans-serif-ie;
+	}
+	&.ios, .ios & {  // need to use user-agent.js
+		font-family: $stile-font-sans-serif-ios;
+	}
+	&.android, .android & {  // need to use user-agent.js
+		font-family: $stile-font-sans-serif-android;
+	}
+}
+
+@mixin font-family-serif {
+	font-family: $stile-font-serif;
+	@include for-ie {
+		font-family: $stile-font-serif-ie;
+	}
+	&.ios, .ios & {  // need to use user-agent.js
+		font-family: $stile-font-serif-ios;
+	}
+	&.android, .android & {  // need to use user-agent.js
+		font-family: $stile-font-serif-android;
+	}
+}
+
+@mixin font-family-monospace {
+	font-family: $stile-font-monospace;
+}
+
+@mixin font-proportional {
+	font-feature-settings: 'pkna' 1;
+}
+
+@mixin font-smoothing {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+@mixin font-visible-chrome {
+	@include for-chrome {
+		-webkit-text-stroke-width: 0.15px;
+	}
+}
+
+@mixin font-visible-chrome-cancel {
+	@include for-chrome {
+		-webkit-text-stroke-width: initial;
+	}
+}
+
+@mixin font-bold {
+	@include font-visible-chrome-cancel;
+	font-weight: bold;
+}
+
+@mixin font-bold-cancel {
+	@include font-visible-chrome;
+	font-weight: normal;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin font-responsive-size($min-vw, $max-vw, $min-value, $max-value) {
+	font-size: $min-value;
+	@media screen and (min-width: $min-vw) {
+		font-size: calc(#{$min-value} + #{base-strip-unit($max-value - $min-value)} * (100vw - #{$min-vw}) / #{base-strip-unit($max-vw - $min-vw)});
+	}
+	@media screen and (min-width: $max-vw) {
+		font-size: $max-value;
+	}
+}
+
+@mixin font-responsive-size-interval($min-vw, $max-vw, $min-value, $max-value) {
+	@media screen and (min-width: $min-vw) and (max-width: $max-vw)  {
+		font-size: calc(#{$min-value} + #{base-strip-unit($max-value - $min-value)} * (100vw - #{$min-vw}) / #{base-strip-unit($max-vw - $min-vw)});
+	}
+}
+
+@mixin font-size-level($level, $set-line-height: true) {
+	$sizes: (
+		0: 0.850rem, // 1.5
+		1: 1.000rem, // 2.0
+		2: 1.125rem, // 2.0
+		3: 1.250rem, // 2.0
+		4: 1.500rem, // 3.0
+		5: 2.000rem, // 3.0
+		6: 2.500rem, // 4.0
+	);
+	$level_f: floor($level);
+	$fs: 0;
+
+	@if $level_f == $level {
+		$fs: map-get($sizes, $level);
+	} @else {
+		$level_c: ceil($level);
+		$fs_f: map-get($sizes, $level_f);
+		$fs_c: map-get($sizes, $level_c);
+		$fs: $fs_f * ($level_c - $level) + $fs_c * ($level - $level_f);
+	}
+	font-size: $fs;
+
+	@if $set-line-height {
+		@if $level < 1 {
+			line-height: base-vr(1.5);
+		} @else {
+			line-height: font-line-height($fs, $stile-size-unit);
+		}
+	}
+}
+
+@function font-line-height($font-size, $line-height-unit) {
+	$vr: ceil($font-size / $line-height-unit + 0.5);
+	@return $vr * $line-height-unit;
+}

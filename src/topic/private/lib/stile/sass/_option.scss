@@ -1,0 +1,22 @@
+/**
+ *
+ * Optional Style
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-06-01
+ *
+ */
+
+
+@import 'option/alignment';
+@import 'option/container';
+@import 'option/image-box';
+@import 'option/tab-page';
+
+
+@mixin stile-option {
+	@include stile-alignment;
+	@include stile-container;
+	@include stile-image-box;
+	@include stile-tab-page;
+}

@@ -1,0 +1,198 @@
+/**
+ *
+ * Table Style (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-08-28
+ *
+ */
+
+
+@import '../basic/base';
+@import '../basic/query';
+@import '../basic/font';
+
+$stile-table-color-rule-horizontal      : rgba(#777, 0.35) !default;
+$stile-table-color-rule-horizontal-edge : $stile-table-color-rule-horizontal !default;
+$stile-table-color-rule-vertical        : rgba($stile-table-color-rule-horizontal, 0.1) !default;
+$stile-table-color-header-text          : rgba(#000, 0.95) !default;
+$stile-table-color-header-background    : rgba(#eee, 0.75) !default;  // Must have transparency for scroll shadow.
+$stile-table-color-scrollbar-thumb      : $stile-table-color-rule-horizontal !default;
+$stile-table-color-scrollbar-background : $stile-table-color-header-background !default;
+$stile-table-color-enlarge-button       : rgba($stile-table-color-rule-horizontal, 0.5) !default;
+$stile-table-color-enlarge-button-opened: rgba($stile-table-color-rule-horizontal, 0.25) !default;
+$stile-table-color-background-enlarged  : #fff !default;
+$stile-table-size-rule-horizontal-edge  : 2px !default;
+
+
+@mixin stile-table {
+
+	table {
+		position: relative;
+		display: inline-block;
+		margin-left: auto;
+		margin-right: auto;
+
+		max-width: 100%;
+		vertical-align: top;
+
+		overflow-x: hidden;
+		overflow-y: auto;
+
+		-webkit-overflow-scrolling: touch;
+	}
+
+	// Design ------------------------------------------------------------------
+
+	thead, tbody:first-child, colgroup + tbody {
+		border-top: $stile-table-size-rule-horizontal-edge solid;
+		border-top-color: $stile-table-color-rule-horizontal-edge;
+
+		> tr:first-child {
+			th, td { border-top: none; }
+		}
+	}
+
+	tbody, tfoot {
+		border-bottom: $stile-table-size-rule-horizontal-edge solid;
+		border-bottom-color: $stile-table-color-rule-horizontal-edge;
+	}
+
+	th, td {
+		padding: base-vr(0.5) base-vr(1);  // This half vr is irregular but needed.
+		@include font-size-level(1);
+		@include font-proportional;
+
+		border-top: 1px solid;
+		border-top-color: $stile-table-color-rule-horizontal;
+
+		&:not(:first-child) {
+			border-left: 1px solid;
+			border-left-color: $stile-table-color-rule-vertical;
+		}
+		&:first-child[rowspan] {
+			border-right: 1px solid;
+			border-right-color: $stile-table-color-rule-vertical;
+		}
+	}
+
+	thead td,
+	th {
+		@include font-bold;
+		text-align: center;
+
+		color: $stile-table-color-header-text;
+		background-color: $stile-table-color-header-background;
+	}
+
+	table:not([class]):not([data-stile ~= "no-neat-wrap"]) {
+		td, th {
+			white-space: nowrap;
+		}
+	}
+
+	td p:not([class]) {
+		text-align: initial;
+	}
+
+	// Fixed Header ------------------------------------------------------------
+
+	div[data-stile ~= "fixed-table-header-container"] {
+		position: fixed;
+		top: 0px;
+		z-index: 99;
+		margin: 0;
+		overflow-x: hidden;
+
+		@media print { display: none !important; }
+	}
+
+	div[data-stile ~= "fixed-table-header-table"] {
+		display: table;
+		margin: 0;
+
+		overflow-x: hidden;
+		pointer-events: none;
+		backdrop-filter: blur(0.1rem);  // for iOS
+
+		border-collapse: collapse;
+		border-spacing: 0;
+
+		thead td,
+		th {
+			@include for-ie   { border-bottom-width: $stile-table-size-rule-horizontal-edge; }
+			@include for-edge { border-bottom-width: $stile-table-size-rule-horizontal-edge; }
+	
+			color: $stile-table-color-header-text;
+			background-color: $stile-table-color-header-background;
+		}
+	}
+
+
+	// Pseudo Scroll Bars ------------------------------------------------------
+
+	div[data-stile ~= "fixed-table-scroll-bar"] {
+		position: fixed;
+		bottom: 0;
+		z-index: 99;
+		margin: 0;
+		overflow-x: auto;
+		overflow-y: hidden;  // for IE11 & Edge
+
+		height: calc(#{base-vr(1)} + 2px);  // for Safari
+		border: 1px solid;  // for Safari
+
+		border: 1px solid rgba($stile-table-color-scrollbar-background, 0.1);  // for Safari
+
+		@media print { display: none !important; }
+	}
+
+	// Scroll Bars Design ------------------------------------------------------
+
+	table::-webkit-scrollbar,
+	div[data-stile ~= "fixed-table-scroll-bar"]::-webkit-scrollbar {
+		height: base-vr(1);
+		background-color: $stile-table-color-scrollbar-background;
+	}
+
+	div[data-stile ~= "fixed-table-scroll-bar"]::-webkit-scrollbar {
+		border-radius: base-vr(1) / 2;
+	}
+
+	table::-webkit-scrollbar-thumb,
+	div[data-stile ~= "fixed-table-scroll-bar"]::-webkit-scrollbar-thumb {
+		border-radius: base-vr(1) / 2;
+		background-color: $stile-table-color-scrollbar-thumb;
+	}
+
+	table, div[data-stile ~= "fixed-table-scroll-bar"] {  // for IE11
+		scrollbar-face-color: $stile-table-color-scrollbar-thumb;
+		scrollbar-shadow-color: $stile-table-color-scrollbar-thumb;
+	}
+
+	// Enlarger ----------------------------------------------------------------
+
+	table[data-stile ~= "table-enlarged"] > * {
+		background-color: $stile-table-color-background-enlarged;
+	}
+
+	table,
+	div[data-stile ~= "fixed-table-header-container"] {
+		div[data-stile ~= "enlarger-button"] {
+			position: absolute;
+			z-index: 999;
+			width: base-vr(1.5);
+			height: base-vr(1.5);
+			top: 0;
+			right: 0;
+			cursor: ew-resize;
+
+			background: linear-gradient(to top right, transparent 50%, $stile-table-color-enlarge-button 50.1%) no-repeat top left/100% 100%
+		}
+		&[data-stile ~= "table-enlarged"] {
+			div[data-stile ~= "enlarger-button"] {
+				background: linear-gradient(to bottom left, transparent 50%, $stile-table-color-enlarge-button-opened 50.1%) no-repeat top left/100% 100%
+			}
+		}
+	}
+}

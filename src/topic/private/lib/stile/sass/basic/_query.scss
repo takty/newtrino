@@ -1,0 +1,144 @@
+/**
+ *
+ * Query Mixins for Responsive and Browsers
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-05-31
+ *
+ * https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
+ *
+ */
+
+
+@import 'base';
+
+
+@mixin for-size-down($high_px, $high_mm) {
+	@media screen and (max-width: #{$high_px - 1}), print and (max-width: #{base-to-px($high_mm) - 1}) {
+		@content;
+	}
+}
+
+@mixin for-size-only($low_px, $high_px, $low_mm, $high_mm) {
+	@media screen and (min-width: $low_px) and (max-width: #{$high_px - 1}), print and (min-width: base-to-px($low_mm)) and (max-width: #{base-to-px($high_mm) - 1}) {
+		@content;
+	}
+}
+
+@mixin for-size-up($low_px, $low_mm) {
+	@media screen and (min-width: $low_px), print and (min-width: base-to-px($low_mm)) {
+		@content;
+	}
+}
+
+@mixin for-phone-only {
+	@include for-size-down(600px, 148) { @content; }
+}
+
+@mixin for-tablet-up {
+	@include for-size-up(600px, 148) { @content; }
+}
+
+@mixin for-tablet-only {
+	@include for-size-only(600px, 1200px, 148, 297) { @content; }
+}
+
+@mixin for-tablet-portrait-up {
+	@include for-size-up(600px, 148) { @content; }
+}
+
+@mixin for-tablet-portrait-only {
+	@include for-size-only(600px, 900px, 148, 210) { @content; }
+}
+
+@mixin for-tablet-landscape-up {
+	@include for-size-up(900px, 210) { @content; }
+}
+
+@mixin for-tablet-landscape-only {
+	@include for-size-only(900px, 1200px, 210, 297) { @content; }
+}
+
+@mixin for-desktop-up {
+	@include for-size-up(1200px, 297) { @content; }
+}
+
+@mixin for-desktop-only {
+	@include for-size-only(1200px, 1800px, 297, 420) { @content; }
+}
+
+@mixin for-big-desktop-up {
+	@include for-size-up(1800px, 420) { @content; }
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin for-size-height-down($high_px, $high_mm) {
+	@media screen and (max-height: #{$high_px - 1}), print and (max-height: #{base-to-px($high_mm) - 1}) {
+		@content;
+	}
+}
+
+@mixin for-size-height-only($low_px, $high_px, $low_mm, $high_mm) {
+	@media screen and (min-height: $low_px) and (max-height: #{$high_px - 1}), print and (min-height: base-to-px($low_mm)) and (max-height: #{base-to-px($high_mm) - 1}) {
+		@content;
+	}
+}
+
+@mixin for-size-height-up($low_px, $low_mm) {
+	@media screen and (min-height: $low_px), print and (min-height: base-to-px($low_mm)) {
+		@content;
+	}
+}
+
+@mixin for-small-height-only {
+	@include for-size-height-down(950px, 257) { @content; }
+}
+
+@mixin for-medium-height-up {
+	@include for-size-height-up(950px, 257) { @content; }
+}
+
+@mixin for-medium-height-only {
+	@include for-size-height-only(950px, 1200px, 257, 297) { @content; }
+}
+
+@mixin for-large-height-up {
+	@include for-size-height-up(1200px, 297) { @content; }
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin for-chrome {
+	@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+		@content;
+	}
+}
+
+@mixin for-firefox {
+	@media (min--moz-device-pixel-ratio: 0) and (min-resolution: 3e1dpcm) {
+		@content;
+	}
+}
+
+@mixin for-safari {
+	@media not all and (min-resolution: .001dpcm) { @supports (-webkit-appearance: none) {
+		@content;
+	} }
+}
+
+@mixin for-edge {
+	@supports (-ms-ime-align: auto) {
+		@content;
+	}
+}
+
+@mixin for-ie {
+	@media (-ms-high-contrast: none) {
+		@content;
+	}
+}
