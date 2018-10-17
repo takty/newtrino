@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/Logger.php');
+require_once(__DIR__ . '/../core/class-logger.php');
 
 
 class Session {
@@ -26,10 +26,10 @@ class Session {
 	const SESSION_ALIVE_TIME = 7200;  // 7200 = 120 minutes * 60 seconds
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
-	const SESSION_PATH       = __DIR__ . '/../var/session/';
+	const SESSION_PATH       = __DIR__ . '/var/session/';
 	const ACCOUNT_PATH       = __DIR__ . '/../data/';
 
-	function __construct($postDirPath) {
+	function __construct($postDirPath = false) {  // False is permitted only when login
 		$this->accountDirPath = self::ACCOUNT_PATH;
 		$this->postDirPath    = $postDirPath;
 		$this->sessionDirPath = self::SESSION_PATH;
@@ -117,7 +117,7 @@ class Session {
 		$curTime = time();
 		$sessionTime = array_shift($lines);
 		if (self::SESSION_ALIVE_TIME < $curTime - $sessionTime) {
-			if (0 < count($lines)) {
+			if ($this->postDirPath !== false && 0 < count($lines)) {
 				foreach ($lines as $id) {
 					$temp_post_path = $this->postDirPath . $id;
 					if (file_exists($temp_post_path)) Store::deleteAll($temp_post_path);

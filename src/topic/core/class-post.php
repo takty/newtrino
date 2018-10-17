@@ -10,11 +10,10 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/util/simple_html_dom.php');
-require_once(__DIR__ . '/util/url_resolver.php');
-require_once(__DIR__ . '/Indexer.php');
-require_once(__DIR__ . '/Logger.php');
-require_once(__DIR__ . '/Media.php');
+require_once(__DIR__ . '/lib/simple-html-dom.php');
+require_once(__DIR__ . '/class-indexer.php');
+require_once(__DIR__ . '/class-logger.php');
+require_once(__DIR__ . '/class-media.php');
 
 
 class Post {

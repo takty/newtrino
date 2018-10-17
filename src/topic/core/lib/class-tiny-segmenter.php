@@ -1,13 +1,16 @@
 <?php
-/*
-	PHP Version of TinySegmenter
+/**
+ *
+ * PHP Version of TinySegmenter
+ *
+ * The Original is:
+ * TinySegmenter 0.1 -- Super compact Japanese tokenizer in Javascript
+ * (c) 2008 Taku Kudo <taku@chasen.org>
+ * TinySegmenter is freely distributable under the terms of a new BSD licence.
+ * For details, see http://chasen.org/~taku/software/TinySegmenter/LICENCE.txt
+ *
+ */
 
-	The Original is:
-	TinySegmenter 0.1 -- Super compact Japanese tokenizer in Javascript
-	(c) 2008 Taku Kudo <taku@chasen.org>
-	TinySegmenter is freely distributable under the terms of a new BSD licence.
-	For details, see http://chasen.org/~taku/software/TinySegmenter/LICENCE.txt
-*/
 
 class TinySegmenter {
 
@@ -186,4 +189,3 @@ class TinySegmenter {
 		return $result;
 	}
 }
-?>

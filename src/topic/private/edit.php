@@ -5,12 +5,12 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-16
+ * @version 2018-10-17
  *
  */
 
 
-require_once('admin_init.php');
+require_once('admin-init.php');
 
 
 $mode = $q['mode'];

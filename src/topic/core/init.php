@@ -10,10 +10,12 @@ namespace nt;
  */
 
 
+if (!defined('NT_LANG')) define('NT_LANG', 'en');
+
 require_once(__DIR__ . '/lang.php');
 require_once(__DIR__ . '/function.php');
 require_once(__DIR__ . '/tag.php');
-require_once(__DIR__ . '/../private/php/Store.php');
+require_once(__DIR__ . '/class-store.php');
 
 
 reject_direct_access(__FILE__, 2);
@@ -24,6 +26,7 @@ $purl = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/'
 define('POST_URL', $purl);
 
 setLocaleSetting();
+loadResource();
 prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
 
 $store = new Store(POST_PATH, POST_URL);

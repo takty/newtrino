@@ -5,12 +5,12 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-16
+ * @version 2018-10-17
  *
  */
 
 
-require_once('admin_init.php');
+require_once('admin-init.php');
 
 
 if ($q['mode'] === 'delete') {
@@ -83,7 +83,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<select onchange="changeCategory(this.value);">
 				<option value="">Select Category</option>
 <?php foreach($t_cats as $c): ?>
-					<option value="<?=_h($c['slug'])?>"<?php if ($c['cur']) _eh(' selected')?>><?=_h($c['name'])?></option>
+					<option value="<?=_h($c['slug'])?>"<?php if ($c['cur']) _eh(' selected')?>><?=_h($c['name'], 'category')?></option>
 <?php endforeach; ?>
 			</select>
 		</nav>

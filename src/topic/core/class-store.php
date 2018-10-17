@@ -10,9 +10,9 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/Logger.php');
-require_once(__DIR__ . '/Indexer.php');
-require_once(__DIR__ . '/Post.php');
+require_once(__DIR__ . '/class-logger.php');
+require_once(__DIR__ . '/class-indexer.php');
+require_once(__DIR__ . '/class-post.php');
 
 
 class Store {
@@ -251,8 +251,10 @@ class Store {
 	public function categorySlugToName($slug) {
 		$catName = '';
 		$cd = $this->_loadCategoryData();
-		foreach ($cd as $c) {
-			if ($c['slug'] === $slug) return $c['name'];
+		if ($cd !== false) {
+			foreach ($cd as $c) {
+				if ($c['slug'] === $slug) return $c['name'];
+			}
 		}
 		return '';
 	}

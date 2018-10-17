@@ -11,27 +11,24 @@ namespace nt;
 
 
 require_once(__DIR__ . '/../core/function.php');
-require_once(__DIR__ . '/php/Session.php');
+require_once(__DIR__ . '/class-session.php');
 
 
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-define('POST_PATH',    __DIR__ . '/../post/');
 
 setLocaleSetting();
 prepareDefaultQuery();
 
-$url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-
-$t_url = "$url/";
+$t_url   = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
 $t_realm = 'newtrino';
 $t_nonce = Session::getNonce();
-$t_msg = '';
-$error = '';
+$t_msg   = '';
+$error   = '';
 
 header('Content-Type: text/html;charset=utf-8');
 
 if (!empty($q['digest'])) {
-	$session = new Session(POST_PATH);
+	$session = new Session();
 	$sid = $session->login($q['user'], $q['digest'], $q['nonce'], $q['cnonce'], $error);
 	if ($sid !== false) {
 ?>
