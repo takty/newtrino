@@ -161,7 +161,6 @@ function showMediaChooser() {
 	win.src = 'media.php?sid=' + sid + '&id=' + pid;
 	win.style.width = '800px';
 	win.style.height = '700px';
-	win.style.position = 'absolute';
 
 	dialogPlaceholder.appendChild(win);
 	dialogPlaceholder.style.display = 'flex';
