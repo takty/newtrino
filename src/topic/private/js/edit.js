@@ -1,70 +1,13 @@
+/**
+ *
+ * Edit (JS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Yusuke Manabe   @ Space-Time Inc.
+ * @version 2018-10-17
+ *
+ */
 
-// for Index ------------------------------------------------------------------
-
-function initIndex() {
-	document.getElementById('ppp').value = document.getElementById('posts_per_page').value;
-	var bgn = document.getElementById('date_bgn').value;
-	var end = document.getElementById('date_end').value;
-	document.getElementById('fp-date-bgn').value = bgn ? (bgn.substring(0, 4) + '-' + bgn.substring(4, 6) + '-' + bgn.substring(6, 8)) : null;
-	document.getElementById('fp-date-end').value = end ? (end.substring(0, 4) + '-' + end.substring(4, 6) + '-' + end.substring(6, 8)) : null;
-	flatpickr('.flatpickr', {wrap: true, dateFormat: 'YmdHiS', altInput: true, altFormat: 'Y-m-d'});
-}
-
-function changeDateRange() {
-	document.getElementById('date_bgn').value = document.getElementById('fp-date-bgn').value;
-	document.getElementById('date_end').value = document.getElementById('fp-date-end').value;
-	document.forms[0].action = 'index.php';
-	document.forms[0].submit();
-}
-
-function changeCategory(cat) {
-	document.getElementById('cat').value = cat;
-	document.forms[0].action = 'index.php';
-	document.forms[0].submit();
-}
-
-function changePpp(ppp) {
-	document.getElementById('posts_per_page').value = ppp;
-	document.forms[0].action = 'index.php';
-	document.forms[0].submit();
-}
-
-function submitPage(page) {
-	document.getElementById('page').value = page;
-	document.forms[0].action = 'index.php';
-	document.forms[0].submit();
-}
-
-function editPost(id) {
-	document.getElementById('id').value = id;
-	document.forms[0].action = 'edit.php';
-	document.forms[0].submit();
-}
-
-function newPost() {
-	document.getElementById('mode').value = 'new';
-	document.forms[0].action = 'edit.php';
-	document.forms[0].submit();
-}
-
-function deletePost(id, date, title) {
-	if (!confirm(date + 'Do you want to delete "' + title + '"?')) return false;
-	document.getElementById('mode').value = 'delete';
-	document.getElementById('id').value = id;
-	document.forms[0].action = 'index.php';
-	document.forms[0].submit();
-}
-
-function setPostState(id, state) {
-	var sid = document.getElementById('sid').value;
-	var req = new XMLHttpRequest();
-	req.addEventListener('load', function (e) {});  // for debugging
-	req.open('post', '_responder.php', true);
-	req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	req.send('mode=set_state' + '&sid=' + sid + '&id=' + id + '&state=' + state + '&cache=' + Date.now());
-}
-
-// for Edit -------------------------------------------------------------------
 
 function initEdit() {
 	var fp = flatpickr('#post_published_date', {
@@ -177,7 +120,7 @@ function showPreview() {
 	window.open('about:blank', 'preview', 'scrollbars=yes', 'windowStyle');
 	var fp = document.getElementById('form-post');
 	fp.target = 'preview';
-	fp.action = '_preview.php';
+	fp.action = 'preview.php';
 	fp.submit();
 }
 
@@ -215,7 +158,7 @@ function showMediaChooser() {
 
 	var win = document.createElement('iframe');
 	win.id = 'mediaChooser';
-	win.src = '_media.php?sid=' + sid + '&id=' + pid;
+	win.src = 'media.php?sid=' + sid + '&id=' + pid;
 	win.style.width = '800px';
 	win.style.height = '700px';
 	win.style.position = 'absolute';
@@ -275,51 +218,4 @@ function getSizeH(wh, w, h) {
 		var p = parseFloat(h) / parseFloat(w);
 		return parseFloat(wh) * parseFloat(p);
 	}
-}
-
-// for Media ------------------------------------------------------------------
-
-var file_name   = '';
-var file_url    = '';
-var file_is_img = false;
-var image_cx    = '';
-var image_cy    = '';
-
-function initMedia() {
-	document.getElementById('delete').disabled = true;
-	document.getElementById('insert').disabled = true;
-}
-
-function setFile(fileName, url, width, height, isImage) {
-	file_name   = fileName;
-	file_url    = url;
-	file_is_img = isImage;
-	image_cx    = width;
-	image_cy    = height;
-	document.getElementById('delete').disabled = false;
-	document.getElementById('insert').disabled = false;
-}
-
-function deleteFile() {
-	if (!confirm('Do you want to delete it?')) return;
-	document.getElementById('deleted_file').value = file_name;
-	document.getElementById('deleteForm').submit();
-}
-
-function insert() {
-	var pos = checkRadio('pos');
-	var size = checkRadio('size');
-	window.parent.insertMedia(file_name, file_url, image_cx, image_cy, pos, size, file_is_img);
-}
-
-function checkRadio(tag) {
-	var radioList = document.getElementsByName(tag);
-	for (var i = 0; i < radioList.length; i += 1) {
-		if (radioList[i].checked) return radioList[i].value;
-	}
-	return '';
-}
-
-function cancel() {
-	window.parent.closeMediaChooser();
 }

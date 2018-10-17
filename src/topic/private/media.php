@@ -5,7 +5,8 @@ namespace nt;
  * Media Chooser
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-16
+ * @author Yusuke Manabe   @ Space-Time Inc.
+ * @version 2018-10-17
  *
  */
 
@@ -43,13 +44,13 @@ header('Content-Type: text/html;charset=utf-8');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.min.css">
-<script src="js/newtrino.js"></script>
+<script src="js/media.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
 <body class="media">
 <h1><?= _ht('Insert Media', 'admin') ?></h1>
 <div class="header-row">
-	<form action="_media.php" method="post" enctype="multipart/form-data" id="uploadForm">
+	<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
 		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
 		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="upload">
@@ -58,7 +59,7 @@ header('Content-Type: text/html;charset=utf-8');
 		</div>
 		<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New', 'admin') ?></button>
 	</form>
-	<form action="_media.php" method="post" id="deleteForm">
+	<form action="media.php" method="post" id="deleteForm">
 		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
 		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="delete">

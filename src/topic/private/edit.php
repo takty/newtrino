@@ -54,7 +54,7 @@ header('Content-Type: text/html;charset=utf-8');
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/newtrino.js"></script>
+<script src="js/edit.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initEdit();});</script>
 </head>
 <body class="edit">

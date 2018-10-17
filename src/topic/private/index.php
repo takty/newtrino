@@ -56,7 +56,7 @@ header('Content-Type: text/html;charset=utf-8');
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
-<script src="js/newtrino.js"></script>
+<script src="js/index.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initIndex();});</script>
 </head>
 <body class='list'>
