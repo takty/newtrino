@@ -2,32 +2,24 @@
 namespace nt;
 /**
  *
- * Login (PHP)
+ * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-16
+ * @version 2018-10-17
  *
  */
 
 
+require_once(__DIR__ . '/../system/function.php');
+require_once(__DIR__ . '/php/Session.php');
+
+
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 
-define('SESSION_PATH', __DIR__ . '/var/session/');
 define('POST_PATH',    __DIR__ . '/../post/');
 define('DATA_PATH',    __DIR__ . '/data/');
 
-date_default_timezone_set('Asia/Tokyo');
-mb_language('Japanese');
-mb_internal_encoding('utf-8');
-mb_http_output('utf-8');
-mb_http_input('utf-8');
-mb_regex_encoding('utf-8');
-
-if (!function_exists('_h')) {function _h($str) {return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');}}
-
-require_once(__DIR__ . '/php/Logger.php');
-require_once(__DIR__ . '/php/Session.php');
-require_once(__DIR__ . '/php/Store.php');
+setLocaleSetting();
 
 $q = $_POST;
 $url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
@@ -41,7 +33,7 @@ $error = '';
 header('Content-Type: text/html;charset=utf-8');
 
 if (!empty($q['digest'])) {
-	$session = new Session(DATA_PATH, SESSION_PATH, POST_PATH);
+	$session = new Session(DATA_PATH, POST_PATH);
 	$sid = $session->login($q['user'], $q['digest'], $q['nonce'], $q['cnonce'], $error);
 	if ($sid !== false) {
 ?>
@@ -73,7 +65,6 @@ if (!empty($q['digest'])) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>User Authentication</title>
-<link rel="stylesheet" href="css/sanitize.min.css">
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.js"></script>

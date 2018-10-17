@@ -4,8 +4,8 @@ namespace nt;
  *
  * Init
  *
- * @author Space-Time Inc.
- * @version 2018-10-16
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-17
  *
  */
 
@@ -17,14 +17,8 @@ require_once(__DIR__ . '/navigation.php');
 require_once(__DIR__ . '/../private/php/Store.php');
 
 
+reject_direct_access(__FILE__, 2);
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-
-$ifs = get_included_files();
-if (array_shift($ifs) === __FILE__) {
-	$url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-	header("Location: $url/");
-	exit(1);
-}
 
 define('POST_PATH', __DIR__ . '/../post/');
 define('DATA_PATH', __DIR__ . '/../private/data/');
@@ -33,12 +27,7 @@ $dir = dirname($_SERVER['PHP_SELF']);
 $url = SERVER_HOST_URL . rtrim($dir, '/\\') . '/post/';
 define('POST_URL', $url);
 
-date_default_timezone_set('Asia/Tokyo');
-mb_language('Japanese');
-mb_internal_encoding('utf-8');
-mb_http_output('utf-8');
-mb_http_input('utf-8');
-mb_regex_encoding('utf-8');
+setLocaleSetting();
 
 $q = empty($_POST) ? $_GET : $_POST;
 $q += ['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7];
