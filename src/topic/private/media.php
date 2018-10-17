@@ -76,7 +76,7 @@ header('Content-Type: text/html;charset=utf-8');
 $is_img = !empty($item['img']);
 if ($is_img):
 ?>
-				<div class="icon" style="background-image: url(<?=_u($item['url'])?>)"></div>
+				<div class="icon" style="background-image: url(<?=_h($item['url'])?>)"></div>
 <?php else: ?>
 				<div class="icon"><?= _h($item['ext']) ?></div>
 <?php endif ?>
