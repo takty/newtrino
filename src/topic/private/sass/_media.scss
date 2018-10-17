@@ -1,0 +1,81 @@
+/**
+ *
+ * Media Chooser (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-17
+ *
+ */
+
+
+@charset 'utf-8';
+
+
+body.media {
+	display: flex;
+	flex-direction: column;
+	background-color: white;
+
+	> *:not(:first-child) {
+		margin-top: 1rem;
+	}
+	> div:last-of-type {
+		text-align: right;
+		> *:not(:first-child) {
+			margin-left: 0.75rem;
+		}
+	}
+}
+
+.media-list {
+	@include ui-elm;
+	width: 100%;
+	overflow-y: scroll;
+	flex: 1 0 1px;
+}
+
+.image-option {
+	@include ui-elm;
+	padding: 0.5rem 0.75rem;
+	display: flex;
+	justify-content: space-around;
+
+	> div {
+		flex: 0 0 auto;
+		font-size: 0.9rem;
+
+		h2 {
+			margin: 0 0 0.5rem 0;
+		}
+		input[type=radio]:not(:first-of-type) {
+			margin-left: 0.5rem;
+		}
+	}
+}
+
+.filechooser {
+	display: flex;
+	flex-wrap: wrap;
+
+	.item {
+		margin: 1rem;
+		text-align: center;
+
+		input {
+			margin-left: -0.25rem;
+		}
+	}
+	.icon {
+		@include flex-center;
+		margin: 0 auto;
+		width: 6rem;
+		height: 6rem;
+
+		border: 1px solid #ccc;
+		border-radius: 0.15rem;
+
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+}

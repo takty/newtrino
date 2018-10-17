@@ -1,0 +1,64 @@
+/**
+ *
+ * Preview (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-17
+ *
+ */
+
+
+@charset 'utf-8';
+
+
+body.preview {
+	@include private-body;
+}
+
+.topic-post {
+	margin-top: 1rem;
+
+	header {
+		display: flex;
+		align-items: flex-end;
+
+		h3 {
+			margin: 0 2rem 0 0;
+			flex-grow: 1;
+		}
+		.date, .cat {
+			text-align: right;
+			color: #666;
+			font-size: 0.9rem;
+		}
+	}
+}
+
+.post-content {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	border-top: 1px solid #ccc;
+
+	&:after {
+		content: " ";
+		display: block;
+		clear: both;
+	}
+
+	.pos-left {
+		float: left;
+		margin: 0 1% 2rem 0;
+	}
+
+	.pos-center {
+		text-align: center;
+		width: 100%;
+		display: block;
+		margin-bottom: 2rem;
+	}
+
+	.pos-right {
+		float: right;
+		margin: 0 0 2rem 1%;
+	}
+}

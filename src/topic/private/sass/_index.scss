@@ -1,0 +1,99 @@
+/**
+ *
+ * Index (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-17
+ *
+ */
+
+
+@charset 'utf-8';
+
+
+body.list {
+	@include private-body;
+}
+
+.flatpickr {
+	display: inline-block;
+	margin: 0;
+
+	input {
+		max-width: 9rem;
+	}
+	.input-button {
+		@include btn;
+		&:before {
+			content: "\002573";
+		}
+	}
+}
+
+table.list {
+	margin-top: 2rem;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	width: 100%;
+
+	th {
+		border-bottom: 1px solid #ccc;
+	}
+	th, td {
+		padding: 0.75rem 0.75rem;
+		white-space: nowrap;
+	}
+	td {
+		&:nth-child(2) {
+			width: 9em;
+			font-size: 0.75rem;
+			a {
+				color: #666;
+				text-decoration: none;
+			}
+		}
+		&:nth-child(3) {
+			width: 100%;
+			white-space: normal;
+			text-decoration: underline;
+		}
+		&:nth-child(n+4) {
+			color: #666;
+			width: 9em;
+			font-size: 0.75rem;
+			line-height: 1.25;
+		}
+	}
+}
+
+.list-ops {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+
+	margin-top: 1rem;
+	margin-left: -0.5rem;
+	margin-right: -0.5rem;
+
+	> * {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+	}
+	h3 {
+		margin-top: 0;
+		margin-bottom: 0.5rem;
+	}
+}
+
+.pagination-nav {
+	margin-top: 2rem;
+	padding: 0;
+	@include flex-center;
+
+	li {
+		@include btn-li;
+		&:not(:first-child) {
+			margin-left: 1rem;
+		}
+	}
+}

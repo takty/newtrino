@@ -1,0 +1,73 @@
+/**
+ *
+ * Mixin (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-17
+ *
+ */
+
+
+@charset 'utf-8';
+
+
+@mixin flex-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@mixin ui-elm {
+	border: 1px solid #ccc;
+	border-radius: 0.25rem;
+	color: #333;
+	&:disabled {
+		border-color: #ccc;
+		color: #aaa;
+	}
+	white-space: nowrap;
+}
+
+@mixin btn-elm {
+	min-width: 2.5rem;
+
+	font-size: 0.9rem;
+	text-decoration: none;
+	text-align: center;
+	line-height: 1.25;
+	&:hover {
+		border-color: #666;
+	}
+}
+
+@mixin btn {
+	@include ui-elm;
+	@include btn-elm;
+	padding: 0.5rem 0.75rem;
+	display: inline-block;
+}
+
+@mixin btn-li {
+	@include ui-elm;
+	@include btn-elm;
+	@include flex-center;
+	color: #ccc;
+	min-height: 2.5rem;
+	height: 2.5rem;
+
+	a {
+		@include btn-elm;
+		@include flex-center;
+		color: #333;
+		min-height: 2.5rem;
+
+		padding: 0.5rem 0.75rem;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+@mixin private-body {
+	border-top: 0.75rem solid darkslateblue;
+	border-bottom: 0.75rem solid darkslateblue;
+}
