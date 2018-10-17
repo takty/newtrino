@@ -36,6 +36,12 @@ function setLocaleSetting() {
 	mb_regex_encoding('utf-8');
 }
 
+function prepareDefaultQuery($opt = []) {
+	global $q;
+	$q = empty($_POST) ? $_GET : $_POST;
+	$q += $opt;
+}
+
 
 // -----------------------------------------------------------------------------
 

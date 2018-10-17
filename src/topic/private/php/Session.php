@@ -27,9 +27,10 @@ class Session {
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
 	const SESSION_PATH       = __DIR__ . '/../var/session/';
+	const ACCOUNT_PATH       = __DIR__ . '/../data/';
 
-	function __construct($accountDirPath, $postDirPath) {
-		$this->accountDirPath = $accountDirPath;
+	function __construct($postDirPath) {
+		$this->accountDirPath = self::ACCOUNT_PATH;
 		$this->postDirPath    = $postDirPath;
 		$this->sessionDirPath = self::SESSION_PATH;
 	}

@@ -18,20 +18,18 @@ require_once(__DIR__ . '/../private/php/Store.php');
 
 
 reject_direct_access(__FILE__, 2);
-define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 
+define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 define('POST_PATH', __DIR__ . '/../post/');
 define('DATA_PATH', __DIR__ . '/../private/data/');
 
-$dir = dirname($_SERVER['PHP_SELF']);
-$url = SERVER_HOST_URL . rtrim($dir, '/\\') . '/post/';
-define('POST_URL', $url);
+$purl = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/';
+define('POST_URL', $purl);
 
 setLocaleSetting();
+prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
 
-$q = empty($_POST) ? $_GET : $_POST;
-$q += ['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7];
-$store = new Store(POST_PATH, POST_URL, DATA_PATH);
+$store = new Store(POST_PATH, POST_URL);
 
 if (!empty($q['id'])) {
 	$ret = $store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);

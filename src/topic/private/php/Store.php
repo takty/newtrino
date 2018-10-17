@@ -53,10 +53,12 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
-	function __construct($postPath, $postUrl, $dataPath) {
+	const DATA_PATH = __DIR__ . '/../data/';
+
+	function __construct($postPath, $postUrl) {
 		$this->_postPath = $postPath;
-		$this->_postUrl = $postUrl;
-		$this->_dataPath = $dataPath;
+		$this->_postUrl  = $postUrl;
+		$this->_dataPath = DATA_PATH;
 	}
 
 	// ------------------------------------------------------------------------

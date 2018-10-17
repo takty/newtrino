@@ -15,13 +15,11 @@ require_once(__DIR__ . '/php/Session.php');
 
 
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-
 define('POST_PATH',    __DIR__ . '/../post/');
-define('DATA_PATH',    __DIR__ . '/data/');
 
 setLocaleSetting();
+prepareDefaultQuery();
 
-$q = $_POST;
 $url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
 $t_url = "$url/";
@@ -33,7 +31,7 @@ $error = '';
 header('Content-Type: text/html;charset=utf-8');
 
 if (!empty($q['digest'])) {
-	$session = new Session(DATA_PATH, POST_PATH);
+	$session = new Session(POST_PATH);
 	$sid = $session->login($q['user'], $q['digest'], $q['nonce'], $q['cnonce'], $error);
 	if ($sid !== false) {
 ?>

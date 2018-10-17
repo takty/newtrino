@@ -49,11 +49,10 @@ header('Content-Type: text/html;charset=utf-8');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Post Edit</title>
-<link rel="stylesheet" href="css/sanitize.min.css">
 <link rel="stylesheet" href="css/style.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <script src="js/flatpickr/flatpickr.min.js"></script>
-<script src="js/flatpickr/flatpickr.l10n.ja.js"></script>
+<script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/newtrino.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initEdit();});</script>
