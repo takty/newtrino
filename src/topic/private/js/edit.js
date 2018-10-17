@@ -51,7 +51,7 @@ function initEdit() {
 			'insertdatetime media table contextmenu paste code'
 		],
 		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-		content_css: '../data/editor-style.css',
+		content_css: 'css/editor-style.css',
 		language: 'ja',
 		setup: function (ed) {
 			ed.on('change', function (ed) {

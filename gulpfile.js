@@ -56,6 +56,7 @@ gulp.task('copy-lib', gulp.parallel(
 
 gulp.task('copy-src', (done) => {
 	copySync('./src', './dist');
+	copySync('./src/topic/private/sass/*.css', './dist/topic/private/css/');
 	fs.removeSync('./dist/topic/post/*');
 	fs.removeSync('./dist/topic/private/sass');
 	fs.removeSync('./dist/topic/private/lib');
@@ -79,7 +80,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('sass', () => {
-	return gulp.src(['src/topic/private/sass/style.scss', 'src/topic/private/sass/editor-style.scss'])
+	return gulp.src(['src/topic/private/sass/style.scss'])
 		.pipe($.plumber())
 		.pipe($.sass({outputStyle: 'compressed'}))
 		.pipe($.autoprefixer({browsers: ['ie >= 11'], remove: false}))
