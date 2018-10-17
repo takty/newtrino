@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -341,8 +341,6 @@ class Post {
 
 	function setContent($val) {
 		$base = SERVER_HOST_URL . rtrim($_SERVER['PHP_SELF'], '/\\');
-
-		$urlLen = strlen($this->_postUrl);
 		$dom = \simplehtmldom_1_5\str_get_html($val);
 
 		if (empty($val)) {
