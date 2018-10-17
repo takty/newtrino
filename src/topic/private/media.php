@@ -44,7 +44,7 @@ header('Content-Type: text/html;charset=utf-8');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.min.css">
-<script src="js/media.js"></script>
+<script src="js/media.min.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
 <body class="media">

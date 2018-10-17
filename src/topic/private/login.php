@@ -65,7 +65,7 @@ if (!empty($q['digest'])) {
 <title><?= _h('User Authentication') ?></title>
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
-<script src="js/login.js"></script>
+<script src="js/login.min.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initLogin();});console.log('<?=$error?>');</script>
 </head>
 <body class="login">
