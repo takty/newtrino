@@ -49,7 +49,7 @@ if (!empty($q['digest'])) {
 <?php
 		exit(1);
 	}
-	$t_msg = \nt\translate('User name or password is wrong.');
+	$t_msg = 'User name or password is wrong.';
 }
 
 
@@ -66,7 +66,7 @@ if (!empty($q['digest'])) {
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function () {initLogin('loginBtn');});console.log('<?=$error?>');</script>
+<script>document.addEventListener('DOMContentLoaded', function () {initLogin();});console.log('<?=$error?>');</script>
 </head>
 <body class="login">
 <div class="frame login-frame">
@@ -82,7 +82,7 @@ if (!empty($q['digest'])) {
 		<input type="hidden" name="url" id="url" value="<?= _h($t_url) ?>">
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
-		<p><?= _h($t_msg) ?></p>
+		<p><?= _ht($t_msg, 'admin') ?></p>
 		<div><a class="btn" href="../"><?= _ht('Back To Top Page', 'admin') ?></a><button type="submit" id="loginBtn"><?= _ht('Login', 'admin') ?></button></div>
 	</form>
 </div>

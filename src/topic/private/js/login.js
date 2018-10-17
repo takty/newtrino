@@ -8,7 +8,7 @@
  */
 
 
-function initLogin(loginBtn) {
+function initLogin() {
 	document.getElementById('loginBtn').addEventListener('click', doLogin);
 	document.getElementById('loginBtn').addEventListener('contextmenu', function (e) {doLogin(e, true);});
 }
