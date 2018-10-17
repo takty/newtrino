@@ -12,7 +12,6 @@ namespace nt;
 
 if (!defined('NT_LANG')) define('NT_LANG', 'en');
 
-require_once(__DIR__ . '/lang.php');
 require_once(__DIR__ . '/function.php');
 require_once(__DIR__ . '/tag.php');
 require_once(__DIR__ . '/class-store.php');
