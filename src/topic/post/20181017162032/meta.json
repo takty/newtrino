@@ -1,0 +1,10 @@
+{
+    "title": "Test Event",
+    "category": "event",
+    "state": "published",
+    "created_date": "2018-10-17 16:20:56",
+    "modified_date": "2018-10-17 16:20:56",
+    "published_date": "2018-10-17 16:20:32",
+    "event_date_bgn": "2018-10-17",
+    "event_date_end": "2018-10-31"
+}

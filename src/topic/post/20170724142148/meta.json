@@ -1,10 +1,8 @@
 {
-    "title": "test",
-    "category": "event",
+    "title": "Test Post",
+    "category": "news",
     "state": "published",
-    "created_date": "2017-08-29 17:55:19",
-    "modified_date": "2017-08-29 17:55:19",
-    "published_date": "2017-08-29 00:00:00",
-    "event_date_bgn": "2017-08-08",
-    "event_date_end": "2017-08-31"
+    "created_date": "2018-10-17 16:21:56",
+    "modified_date": "2018-10-17 16:21:56",
+    "published_date": "2017-08-29 00:00:00"
 }
