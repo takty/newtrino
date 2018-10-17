@@ -19,7 +19,7 @@ if ($mode === 'update') {
 	$p = $store->getPost($q['id']);
 	$p->assign($q);
 	$t_p = $store->writePost($p);
-	$t_msg = 'Update Complete';
+	$t_msg = _ht('Update Complete', 'admin');
 } else if ($mode === 'new') {
 	$t_p = $store->createNewPost();
 	$session->addTempPostId($t_p->getId());
