@@ -13,11 +13,11 @@ namespace nt;
 require_once('admin-init.php');
 
 
-if ($q['mode'] === 'delete') {
-	$nt_store->delete($q['id']);
+if ($nt_q['mode'] === 'delete') {
+	$nt_store->delete($nt_q['id']);
 }
-$ppp = $q['posts_per_page'];
-$ret = $nt_store->getPostsByPage($q['page'] - 1, $ppp, ['cat' => $q['cat'], 'date' => $q['date'], 'date_bgn' => $q['date_bgn'], 'date_end' => $q['date_end'], 'published_only' => false]);
+$ppp = $nt_q['posts_per_page'];
+$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'date_bgn' => $nt_q['date_bgn'], 'date_end' => $nt_q['date_end'], 'published_only' => false]);
 $t_posts = $ret['posts'];
 $page = $ret['page'] + 1;
 
@@ -30,14 +30,14 @@ if ($ppp < $ret['size']) {
 	if ($page > 1) $t_pg_prev = $page - 1;
 	if ($page < $maxPage) $t_pg_next = $page + 1;
 }
-$t_sid      = $q['sid'];
-$t_ppp      = $q['posts_per_page'];
-$t_cat      = $q['cat'];
-$t_date     = $q['date'];
-$t_date_bgn = $q['date_bgn'];
-$t_date_end = $q['date_end'];
+$t_sid      = $nt_q['sid'];
+$t_ppp      = $nt_q['posts_per_page'];
+$t_cat      = $nt_q['cat'];
+$t_date     = $nt_q['date'];
+$t_date_bgn = $nt_q['date_bgn'];
+$t_date_end = $nt_q['date_end'];
 
-$t_cats = $nt_store->getCategoryData($q['cat']);
+$t_cats = $nt_store->getCategoryData($nt_q['cat']);
 $t_page = $page;
 header('Content-Type: text/html;charset=utf-8');
 

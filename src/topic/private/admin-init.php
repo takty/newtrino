@@ -24,12 +24,12 @@ define('POST_URL', SERVER_HOST_URL . rtrim(dirname(dirname($_SERVER['PHP_SELF'])
 
 setLocaleSetting();
 loadResource();
-prepareDefaultQuery(['mode' => '', 'id' => 0, 'page' => 1, 'posts_per_page' => 10, 'cat' => '', 'date' => '', 'date_bgn' => '', 'date_end' => '']);
 
+$nt_q       = prepareDefaultQuery(['mode' => '', 'id' => 0, 'page' => 1, 'posts_per_page' => 10, 'cat' => '', 'date' => '', 'date_bgn' => '', 'date_end' => '']);
 $nt_store   = new Store(POST_PATH, POST_URL);
 $nt_session = new Session(POST_PATH);
 
-if (!$nt_session->check($q)) {
+if (!$nt_session->check($nt_q)) {
 	$url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 	header("Location: $url/login.php");
 	exit(1);

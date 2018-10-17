@@ -13,10 +13,10 @@ namespace nt;
 require_once('admin-init.php');
 
 
-$t_title = $q['post_title'];
-$t_pdate = $q['post_published_date'];
-$t_cat = $nt_store->categorySlugToName($q['post_cat']);
-$t_content = $q['post_content'];
+$t_title = $nt_q['post_title'];
+$t_pdate = $nt_q['post_published_date'];
+$t_cat = $nt_store->categorySlugToName($nt_q['post_cat']);
+$t_content = $nt_q['post_content'];
 header('Content-Type: text/html;charset=utf-8');
 
 

@@ -5,7 +5,7 @@ namespace nt;
  * Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -48,9 +48,9 @@ function loadResource() {
 }
 
 function prepareDefaultQuery($opt = []) {
-	global $q;
 	$q = empty($_POST) ? $_GET : $_POST;
 	$q += $opt;
+	return $q;
 }
 
 

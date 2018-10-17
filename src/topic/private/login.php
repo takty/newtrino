@@ -20,7 +20,8 @@ define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . 
 
 setLocaleSetting();
 loadResource();
-prepareDefaultQuery();
+
+$nt_q = prepareDefaultQuery();
 
 $t_url   = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
 $t_realm = 'newtrino';
@@ -30,9 +31,9 @@ $error   = '';
 
 header('Content-Type: text/html;charset=utf-8');
 
-if (!empty($q['digest'])) {
+if (!empty($nt_q['digest'])) {
 	$nt_session = new Session();
-	$sid = $nt_session->login($q['user'], $q['digest'], $q['nonce'], $q['cnonce'], $error);
+	$sid = $nt_session->login($nt_q['user'], $nt_q['digest'], $nt_q['nonce'], $nt_q['cnonce'], $error);
 	if ($sid !== false) {
 ?>
 <!DOCTYPE html>

@@ -24,12 +24,12 @@ define('POST_URL', SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\')
 
 setLocaleSetting();
 loadResource();
-prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
 
+$nt_q     = prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
 $nt_store = new Store(POST_PATH, POST_URL);
 
-if (!empty($q['id'])) {
-	$ret = $nt_store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);
+if (!empty($nt_q['id'])) {
+	$ret = $nt_store->getPostWithNextAndPrevious($nt_q['id'], ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
 
 	global $nt_prev_post, $nt_next_post, $nt_post;
 	if ($ret === false) {
@@ -39,9 +39,9 @@ if (!empty($q['id'])) {
 		$nt_post      = $ret[1];
 		$nt_next_post = $ret[2];
 	}
-} else if (!empty($q['page'])) {
+} else if (!empty($nt_q['page'])) {
 	$ppp = defined('NT_POSTS_PER_PAGE') ? NT_POSTS_PER_PAGE : 10;
-	$ret = $nt_store->getPostsByPage($q['page'] - 1, $ppp, ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']], 7);
+	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']], 7);
 
 	global $nt_posts, $nt_size, $nt_page;
 	$nt_posts = $ret['posts'];

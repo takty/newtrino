@@ -13,11 +13,11 @@ namespace nt;
 require_once('admin-init.php');
 
 
-$mode = $q['mode'];
+$mode = $nt_q['mode'];
 $t_msg = '';
 if ($mode === 'update') {
-	$p = $nt_store->getPost($q['id']);
-	$p->assign($q);
+	$p = $nt_store->getPost($nt_q['id']);
+	$p->assign($nt_q);
 	$t_p = $nt_store->writePost($p);
 	$t_msg = _ht('Update Complete', 'admin');
 } else if ($mode === 'new') {
@@ -25,16 +25,16 @@ if ($mode === 'update') {
 	$nt_session->addTempPostId($t_p->getId());
 	$t_p->setPublishedDate('now');
 } else {
-	$t_p = $nt_store->getPost($q['id']);
+	$t_p = $nt_store->getPost($nt_q['id']);
 }
-$t_sid      = $q['sid'];
-$t_ppp      = $q['posts_per_page'];
-$t_cat      = $q['cat'];
-$t_date     = $q['date'];
-$t_date_bgn = $q['date_bgn'];
-$t_date_end = $q['date_end'];
+$t_sid      = $nt_q['sid'];
+$t_ppp      = $nt_q['posts_per_page'];
+$t_cat      = $nt_q['cat'];
+$t_date     = $nt_q['date'];
+$t_date_bgn = $nt_q['date_bgn'];
+$t_date_end = $nt_q['date_end'];
 
-$t_page = $q['page'];
+$t_page = $nt_q['page'];
 $t_cats = $nt_store->getCategoryData($t_p->getCategory());
 header('Content-Type: text/html;charset=utf-8');
 

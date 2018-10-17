@@ -6,7 +6,7 @@ namespace nt;
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe   @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -14,22 +14,22 @@ namespace nt;
 require_once(__DIR__ . '/admin-init.php');
 
 
-$media = new Media(POST_PATH, POST_URL, $q['id']);
+$media = new Media(POST_PATH, POST_URL, $nt_q['id']);
 
-if ($q['mode'] === 'delete') {
-	$file = $q['deleted_file'];
+if ($nt_q['mode'] === 'delete') {
+	$file = $nt_q['deleted_file'];
 	if (!empty($file)) {
 		$media->remove($file);
 	}
-} else if ($q['mode'] === 'upload') {
+} else if ($nt_q['mode'] === 'upload') {
 	if (!isset($_FILES['uploadFile']['error']) || !is_int($_FILES['uploadFile']['error'])) {
 		// error
 	} else if (isset($_FILES['uploadFile'])) {
 		$media->upload($_FILES['uploadFile']);
 	}
 }
-$t_sid   = $q['sid'];
-$t_pid   = $q['id'];
+$t_sid   = $nt_q['sid'];
+$t_pid   = $nt_q['id'];
 $t_items = $media->getItemList();
 header('Content-Type: text/html;charset=utf-8');
 

@@ -35,10 +35,10 @@ function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = fal
 }
 
 function the_filter($dates = false, $cats = false, $searchQuery = false) {
-	global $nt_store, $q;
-	if (!$dates)       $dates       = $nt_store->getCountByDate($q['date']);
-	if (!$cats)        $cats        = $nt_store->getCategoryData($q['cat']);
-	if (!$searchQuery) $searchQuery = $q['search_word'];
+	global $nt_store, $nt_q;
+	if (!$dates)       $dates       = $nt_store->getCountByDate($nt_q['date']);
+	if (!$cats)        $cats        = $nt_store->getCategoryData($nt_q['cat']);
+	if (!$searchQuery) $searchQuery = $nt_q['search_word'];
 ?>
 <div class="nt-filter-bar">
 	<nav class="nt-filter">
@@ -77,9 +77,9 @@ function the_filter($dates = false, $cats = false, $searchQuery = false) {
 }
 
 function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = false, $maxPg = 7) {
-	global $nt_store, $q;
+	global $nt_store, $nt_q;
 	global $nt_posts, $nt_size, $nt_page;
-	if (!$pgUrl) $pgUrl = 'index.php?page=<>' . query_str($q, ['date', 'cat', 'search_word']);
+	if (!$pgUrl) $pgUrl = 'index.php?page=<>' . query_str($nt_q, ['date', 'cat', 'search_word']);
 	if (!$size)  $size  = $nt_size;
 	if (!$cur)   $cur   = $nt_page + 1;
 	if (!$ppp)   $ppp   = NT_POSTS_PER_PAGE;
@@ -129,8 +129,8 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = fals
 }
 
 function the_postlink() {
-	global $nt_store, $q, $nt_prev_post, $nt_next_post;
-	$qurl = query_str($q, ['page', 'date', 'cat', 'search_word']);
+	global $nt_store, $nt_q, $nt_prev_post, $nt_next_post;
+	$qurl = query_str($nt_q, ['page', 'date', 'cat', 'search_word']);
 	$iUrl = 'index.php' . (empty($qurl) ? '' : ('?' . substr($qurl, 1)));
 	$pUrl = 'view.php?id=<>' . $qurl;
 
@@ -164,7 +164,7 @@ function the_postlink() {
 }
 
 function get_permalink($base, $post) {
-	global $q;
-	$t_pUrl = $base . '?id=<>' . query_str($q, ['page', 'date', 'cat', 'search_word']);
+	global $nt_q;
+	$t_pUrl = $base . '?id=<>' . query_str($nt_q, ['page', 'date', 'cat', 'search_word']);
 	return str_replace('<>', $post->getId(), $t_pUrl);
 }
