@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -15,7 +15,7 @@ require_once('admin-init.php');
 
 $t_title = $q['post_title'];
 $t_pdate = $q['post_published_date'];
-$t_cat = $store->categorySlugToName($q['post_cat']);
+$t_cat = $nt_store->categorySlugToName($q['post_cat']);
 $t_content = $q['post_content'];
 header('Content-Type: text/html;charset=utf-8');
 

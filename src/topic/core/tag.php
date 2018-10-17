@@ -5,15 +5,15 @@ namespace nt;
  * Template Tags
  *
  * @author Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
 
 function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = false) {
-	global $store;
+	global $nt_store;
 
-	$ret = $store->getPosts(0, $ppp, ['cat' => $cat], $new_day, $omitFinishedEvent);
+	$ret = $nt_store->getPosts(0, $ppp, ['cat' => $cat], $new_day, $omitFinishedEvent);
 	$t_url = 'topic/view.php?id=';
 
 	foreach ($ret['posts'] as $p) {
@@ -35,9 +35,9 @@ function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = fal
 }
 
 function the_filter($dates = false, $cats = false, $searchQuery = false) {
-	global $store, $q;
-	if (!$dates)       $dates       = $store->getCountByDate($q['date']);
-	if (!$cats)        $cats        = $store->getCategoryData($q['cat']);
+	global $nt_store, $q;
+	if (!$dates)       $dates       = $nt_store->getCountByDate($q['date']);
+	if (!$cats)        $cats        = $nt_store->getCategoryData($q['cat']);
 	if (!$searchQuery) $searchQuery = $q['search_word'];
 ?>
 <div class="nt-filter-bar">
@@ -77,7 +77,7 @@ function the_filter($dates = false, $cats = false, $searchQuery = false) {
 }
 
 function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = false, $maxPg = 7) {
-	global $store, $q;
+	global $nt_store, $q;
 	global $nt_posts, $nt_size, $nt_page;
 	if (!$pgUrl) $pgUrl = 'index.php?page=<>' . query_str($q, ['date', 'cat', 'search_word']);
 	if (!$size)  $size  = $nt_size;
@@ -129,7 +129,7 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = fals
 }
 
 function the_postlink() {
-	global $store, $q, $nt_prev_post, $nt_next_post;
+	global $nt_store, $q, $nt_prev_post, $nt_next_post;
 	$qurl = query_str($q, ['page', 'date', 'cat', 'search_word']);
 	$iUrl = 'index.php' . (empty($qurl) ? '' : ('?' . substr($qurl, 1)));
 	$pUrl = 'view.php?id=<>' . $qurl;

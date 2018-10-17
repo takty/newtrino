@@ -5,7 +5,7 @@ namespace nt;
  * Responder
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -17,9 +17,9 @@ $mode = $q['mode'];
 $result = 'NG';
 
 if ($mode === 'set_state') {
-	$post = $store->getPost($q['id']);
+	$post = $nt_store->getPost($q['id']);
 	$post->setState($q['state']);
-	$store->writePost($post);
+	$nt_store->writePost($post);
 	$result = 'OK';
 }
 ?>

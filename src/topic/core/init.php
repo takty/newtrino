@@ -5,7 +5,7 @@ namespace nt;
  * Init
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -16,22 +16,20 @@ require_once(__DIR__ . '/function.php');
 require_once(__DIR__ . '/tag.php');
 require_once(__DIR__ . '/class-store.php');
 
-
 reject_direct_access(__FILE__, 2);
 
 define('POST_PATH', __DIR__ . '/../post/');
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-$purl = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/';
-define('POST_URL', $purl);
+define('POST_URL', SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/');
 
 setLocaleSetting();
 loadResource();
 prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
 
-$store = new Store(POST_PATH, POST_URL);
+$nt_store = new Store(POST_PATH, POST_URL);
 
 if (!empty($q['id'])) {
-	$ret = $store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);
+	$ret = $nt_store->getPostWithNextAndPrevious($q['id'], ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']]);
 
 	global $nt_prev_post, $nt_next_post, $nt_post;
 	if ($ret === false) {
@@ -43,7 +41,7 @@ if (!empty($q['id'])) {
 	}
 } else if (!empty($q['page'])) {
 	$ppp = defined('NT_POSTS_PER_PAGE') ? NT_POSTS_PER_PAGE : 10;
-	$ret = $store->getPostsByPage($q['page'] - 1, $ppp, ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']], 7);
+	$ret = $nt_store->getPostsByPage($q['page'] - 1, $ppp, ['cat' => $q['cat'], 'date' => $q['date'], 'search_word' => $q['search_word']], 7);
 
 	global $nt_posts, $nt_size, $nt_page;
 	$nt_posts = $ret['posts'];

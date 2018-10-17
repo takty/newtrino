@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -31,8 +31,8 @@ $error   = '';
 header('Content-Type: text/html;charset=utf-8');
 
 if (!empty($q['digest'])) {
-	$session = new Session();
-	$sid = $session->login($q['user'], $q['digest'], $q['nonce'], $q['cnonce'], $error);
+	$nt_session = new Session();
+	$sid = $nt_session->login($q['user'], $q['digest'], $q['nonce'], $q['cnonce'], $error);
 	if ($sid !== false) {
 ?>
 <!DOCTYPE html>

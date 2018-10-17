@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -16,16 +16,16 @@ require_once('admin-init.php');
 $mode = $q['mode'];
 $t_msg = '';
 if ($mode === 'update') {
-	$p = $store->getPost($q['id']);
+	$p = $nt_store->getPost($q['id']);
 	$p->assign($q);
-	$t_p = $store->writePost($p);
+	$t_p = $nt_store->writePost($p);
 	$t_msg = _ht('Update Complete', 'admin');
 } else if ($mode === 'new') {
-	$t_p = $store->createNewPost();
-	$session->addTempPostId($t_p->getId());
+	$t_p = $nt_store->createNewPost();
+	$nt_session->addTempPostId($t_p->getId());
 	$t_p->setPublishedDate('now');
 } else {
-	$t_p = $store->getPost($q['id']);
+	$t_p = $nt_store->getPost($q['id']);
 }
 $t_sid      = $q['sid'];
 $t_ppp      = $q['posts_per_page'];
@@ -35,7 +35,7 @@ $t_date_bgn = $q['date_bgn'];
 $t_date_end = $q['date_end'];
 
 $t_page = $q['page'];
-$t_cats = $store->getCategoryData($t_p->getCategory());
+$t_cats = $nt_store->getCategoryData($t_p->getCategory());
 header('Content-Type: text/html;charset=utf-8');
 
 

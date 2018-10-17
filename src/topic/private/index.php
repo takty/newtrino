@@ -5,7 +5,7 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -14,10 +14,10 @@ require_once('admin-init.php');
 
 
 if ($q['mode'] === 'delete') {
-	$store->delete($q['id']);
+	$nt_store->delete($q['id']);
 }
 $ppp = $q['posts_per_page'];
-$ret = $store->getPostsByPage($q['page'] - 1, $ppp, ['cat' => $q['cat'], 'date' => $q['date'], 'date_bgn' => $q['date_bgn'], 'date_end' => $q['date_end'], 'published_only' => false]);
+$ret = $nt_store->getPostsByPage($q['page'] - 1, $ppp, ['cat' => $q['cat'], 'date' => $q['date'], 'date_bgn' => $q['date_bgn'], 'date_end' => $q['date_end'], 'published_only' => false]);
 $t_posts = $ret['posts'];
 $page = $ret['page'] + 1;
 
@@ -37,7 +37,7 @@ $t_date     = $q['date'];
 $t_date_bgn = $q['date_bgn'];
 $t_date_end = $q['date_end'];
 
-$t_cats = $store->getCategoryData($q['cat']);
+$t_cats = $nt_store->getCategoryData($q['cat']);
 $t_page = $page;
 header('Content-Type: text/html;charset=utf-8');
 
