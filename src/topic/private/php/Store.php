@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Space-Time Inc.
- * @version 2018-10-16
+ * @version 2018-10-17
  *
  */
 
@@ -58,7 +58,7 @@ class Store {
 	function __construct($postPath, $postUrl) {
 		$this->_postPath = $postPath;
 		$this->_postUrl  = $postUrl;
-		$this->_dataPath = DATA_PATH;
+		$this->_dataPath = self::DATA_PATH;
 	}
 
 	// ------------------------------------------------------------------------
