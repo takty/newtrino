@@ -5,7 +5,7 @@
  *
  */
 
-require_once('_init.php');
+require_once('admin_init.php');
 $media = new Media(POST_PATH, POST_URL, $q['id']);
 
 if ($q['mode'] === 'delete') {

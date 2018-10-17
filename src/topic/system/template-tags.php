@@ -2,10 +2,10 @@
 namespace nt;
 /**
  *
- * Recent Posts
+ * Template Tags
  *
  * @author Space-Time Inc.
- * @version 2018-10-15
+ * @version 2018-10-17
  *
  */
 
@@ -34,4 +34,10 @@ function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = fal
 </li>
 <?php
 	}
+}
+
+function get_permalink($base, $post) {
+	global $q;
+	$t_pUrl = $base . '?id=<>' . query_str($q, ['page', 'date', 'cat', 'search_word']);
+	return str_replace('<>', $post->getId(), $t_pUrl);
 }

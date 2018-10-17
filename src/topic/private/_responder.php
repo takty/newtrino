@@ -5,7 +5,7 @@
  *
  */
 
-require_once('_init.php');
+require_once('admin_init.php');
 
 $mode = $q['mode'];
 $result = 'NG';

@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once('_init.php');
+require_once('admin_init.php');
 
 
 if ($q['mode'] === 'delete') {

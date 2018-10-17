@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-16
+ * @version 2018-10-17
  *
  */
 
@@ -427,12 +427,6 @@ class Post {
 		if ($this->isNewItem()) $cs[] = 'new';
 		if ($this->getCategory() === 'event') $cs[] = $this->getEventState();
 		return implode(' ', $cs);
-	}
-
-	function getPermalink($base) {
-		global $q;
-		$t_pUrl = $base . '?id=<>' . query_str($q, ['page', 'date', 'cat', 'search_word']);
-		return str_replace('<>', $this->getId(), $t_pUrl);
 	}
 
 }

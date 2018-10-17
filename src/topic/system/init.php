@@ -19,10 +19,8 @@ require_once(__DIR__ . '/../private/php/Store.php');
 
 reject_direct_access(__FILE__, 2);
 
-define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 define('POST_PATH', __DIR__ . '/../post/');
-define('DATA_PATH', __DIR__ . '/../private/data/');
-
+define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 $purl = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/';
 define('POST_URL', $purl);
 

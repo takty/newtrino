@@ -5,7 +5,7 @@
  *
  */
 
-require_once('_init.php');
+require_once('admin_init.php');
 $t_title = $q['post_title'];
 $t_pdate = $q['post_published_date'];
 $t_cat = $store->categorySlugToName($q['post_cat']);
