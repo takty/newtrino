@@ -1,11 +1,17 @@
 <?php
-/*
+namespace nt;
+/**
+ *
  * Responder
- * 2017-02-22
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-17
  *
  */
 
-require_once('admin_init.php');
+
+require_once('admin-init.php');
+
 
 $mode = $q['mode'];
 $result = 'NG';
@@ -19,5 +25,5 @@ if ($mode === 'set_state') {
 ?>
 <?="<?xml version='1.0' encoding='utf-8' standalone='yes'?>"?>
 <result>
-<?=$result?>
+<?= $result ?>
 </result>

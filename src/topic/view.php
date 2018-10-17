@@ -23,19 +23,19 @@ header('Content-Type: text/html;charset=utf-8');
 	</header>
 	<main>
 		<header>
-			<div><?=\nt\_h($nt_post->getCategoryName(), 'category')?></div>
+			<div><?=\nt\_ht($nt_post->getCategoryName(), 'category')?></div>
 			<div>
 				<h2><?=\nt\_h($nt_post->getTitle())?></h2>
 			</div>
 <?php if ($nt_post->getCategory() === 'event'): ?>
 			<div class="event-term <?=\nt\_h($nt_post->getEventState())?>">
-				<?= \nt\_h('Event Date: ') ?><?=\nt\_h($nt_post->getEventDateBgn())?> - <?=\nt\_h($nt_post->getEventDateEnd())?>
+				<?= \nt\_ht('Event Date: ') ?><?=\nt\_h($nt_post->getEventDateBgn())?> - <?=\nt\_h($nt_post->getEventDateEnd())?>
 			</div>
 <?php endif ?>
 		</header>
 		<section><?=$nt_post->getContent()?></section>
 		<footer>
-			<div class="date"><?= \nt\_h('Updated: ') ?><?=\nt\_h($nt_post->getPublishedDate())?></div>
+			<div class="date"><?= \nt\_ht('Updated: ') ?><?=\nt\_h($nt_post->getPublishedDate())?></div>
 		</footer>
 <?php \nt\the_postlink(); ?>
 <?php \nt\the_filter(); ?>

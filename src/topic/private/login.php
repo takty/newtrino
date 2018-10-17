@@ -10,6 +10,8 @@ namespace nt;
  */
 
 
+if (!defined('NT_LANG')) define('NT_LANG', 'ja');
+
 require_once(__DIR__ . '/../core/function.php');
 require_once(__DIR__ . '/class-session.php');
 
@@ -17,6 +19,7 @@ require_once(__DIR__ . '/class-session.php');
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 
 setLocaleSetting();
+loadResource();
 prepareDefaultQuery();
 
 $t_url   = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
@@ -35,18 +38,18 @@ if (!empty($q['digest'])) {
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Logining...</title>
+	<title><?= _ht('Logining...', 'admin') ?></title>
 </head>
 <body onload="document.forms[0].submit();">
 	<form method="post" action="index.php">
-		<input type="hidden" name="sid" value="<?=_h($sid)?>">
+		<input type="hidden" name="sid" value="<?= _h($sid) ?>">
 	</form>
 </body>
 </html>
 <?php
 		exit(1);
 	}
-	$t_msg = 'User name or password is wrong.';
+	$t_msg = \nt\translate('User name or password is wrong.');
 }
 
 
@@ -59,7 +62,7 @@ if (!empty($q['digest'])) {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>User Authentication</title>
+<title><?= _h('User Authentication') ?></title>
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.js"></script>
@@ -67,20 +70,20 @@ if (!empty($q['digest'])) {
 </head>
 <body class="login">
 <div class="frame login-frame">
-	<h1>Topics Management Page</h1>
-	<h2>User Authentication</h2>
+	<h1><?= _ht('Newtrino Management Page', 'admin') ?></h1>
+	<h2><?= _ht('User Authentication', 'admin') ?></h2>
 	<form action="login.php" method="post">
 		<dl>
-			<dt>User Name:</dt><dd><input type="text" name="user" id="user"></dd>
-			<dt>Password:</dt><dd><input type="password" id="pw"></dd>
+			<dt><?= _ht('User Name: ', 'admin') ?></dt><dd><input type="text" name="user" id="user"></dd>
+			<dt><?= _ht('Password: ', 'admin') ?></dt><dd><input type="password" id="pw"></dd>
 		</dl>
-		<input type="hidden" name="realm" id="realm" value="<?=_h($t_realm)?>">
-		<input type="hidden" name="nonce" id="nonce" value="<?=_h($t_nonce)?>">
-		<input type="hidden" name="url" id="url" value="<?=_h($t_url)?>">
+		<input type="hidden" name="realm" id="realm" value="<?= _h($t_realm) ?>">
+		<input type="hidden" name="nonce" id="nonce" value="<?= _h($t_nonce) ?>">
+		<input type="hidden" name="url" id="url" value="<?= _h($t_url) ?>">
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
-		<p><?=_h($t_msg)?></p>
-		<div><a class="btn" href="../">Back To Index</a><button type="submit" id="loginBtn">Login</button></div>
+		<p><?= _h($t_msg) ?></p>
+		<div><a class="btn" href="../"><?= _ht('Back To Top Page', 'admin') ?></a><button type="submit" id="loginBtn"><?= _ht('Login', 'admin') ?></button></div>
 	</form>
 </div>
 </body>

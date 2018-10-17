@@ -1,11 +1,18 @@
 <?php
-/*
- * Media
- * 2018-10-16
+namespace nt;
+/**
+ *
+ * Media Chooser
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-16
  *
  */
 
-require_once('admin_init.php');
+
+require_once(__DIR__ . '/admin-init.php');
+
+
 $media = new Media(POST_PATH, POST_URL, $q['id']);
 
 if ($q['mode'] === 'delete') {
@@ -14,7 +21,7 @@ if ($q['mode'] === 'delete') {
 		$media->remove($file);
 	}
 } else if ($q['mode'] === 'upload') {
-   	if (!isset($_FILES['uploadFile']['error']) || !is_int($_FILES['uploadFile']['error'])) {
+	if (!isset($_FILES['uploadFile']['error']) || !is_int($_FILES['uploadFile']['error'])) {
 		// error
 	} else if (isset($_FILES['uploadFile'])) {
 		$media->upload($_FILES['uploadFile']);
@@ -35,29 +42,28 @@ header('Content-Type: text/html;charset=utf-8');
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/sanitize.min.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.min.css">
 <script src="js/newtrino.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
 <body class="media">
-<h1>Insert Media</h1>
+<h1><?= _ht('Insert Media', 'admin') ?></h1>
 <div class="header-row">
 	<form action="_media.php" method="post" enctype="multipart/form-data" id="uploadForm">
-		<input type="hidden" name="sid" value="<?=_h($t_sid)?>">
-		<input type="hidden" name="id" value="<?=_h($t_pid)?>">
+		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
+		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="upload">
 		<div style="display: none">
 			<input type="file" name="uploadFile" id="uploadFile" onchange="if (this.value !== '') document.getElementById('uploadForm').submit();">
 		</div>
-		<button type="button" onclick="document.getElementById('uploadFile').click();">Add New</button>
+		<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New', 'admin') ?></button>
 	</form>
 	<form action="_media.php" method="post" id="deleteForm">
-		<input type="hidden" name="sid" value="<?=_h($t_sid)?>">
-		<input type="hidden" name="id" value="<?=_h($t_pid)?>">
+		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
+		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="delete">
 		<input type="hidden" name="deleted_file" id="deleted_file">
-		<button class="btn-delete" type="button" id="delete" onClick="deleteFile();">Permanently Delete</button>
+		<button class="btn-delete" type="button" id="delete" onClick="deleteFile();"><?= _ht('Permanently Delete', 'admin') ?></button>
 	</form>
 </div>
 <div class="media-list">
@@ -71,33 +77,33 @@ if ($is_img):
 ?>
 				<div class="icon" style="background-image: url(<?=_u($item['url'])?>)"></div>
 <?php else: ?>
-				<div class="icon"><?=_h($item['ext'])?></div>
+				<div class="icon"><?= _h($item['ext']) ?></div>
 <?php endif ?>
 			</label><br>
-			<input type="radio" id="item<?=$i?>" value="<?=_h($item['caption'])?>" onclick="setFile('<?=_h($item['file'])?>', '<?=_h($item['url'])?>', <?=_h($item['width'])?>, <?=_h($item['height'])?>, <?=$is_img?>)">
-			<label for="item<?=$i?>"><?=_h($item['caption'])?></label>
+			<input type="radio" id="item<?=$i?>" value="<?= _h($item['caption']) ?>" onclick="setFile('<?= _h($item['file']) ?>', '<?= _h($item['url']) ?>', <?= _h($item['width']) ?>, <?= _h($item['height']) ?>, <?= $is_img ?>)">
+			<label for="item<?=$i?>"><?= _h($item['caption']) ?></label>
 		</div>
 <?php endfor ?>
 	</div>
 </div>
 <div class="image-option">
 	<div style="display: none;">
-		<h2>Image Alignment</h2>
-		<input type="radio" name="pos" id="pos_c" value="c" checked><label for="pos_c">Center</label>
-		<input type="radio" name="pos" id="pos_l" value="l"><label for="pos_l">Left</label>
-		<input type="radio" name="pos" id="pos_r" value="r"><label for="pos_r">Right</label>
+		<h2><?= _ht('Image Alignment', 'admin') ?></h2>
+		<input type="radio" name="pos" id="pos_c" value="c" checked><label for="pos_c"><?= _ht('Center', 'admin') ?></label>
+		<input type="radio" name="pos" id="pos_l" value="l"><label for="pos_l"><?= _ht('Left', 'admin') ?></label>
+		<input type="radio" name="pos" id="pos_r" value="r"><label for="pos_r"><?= _ht('Right', 'admin') ?></label>
 	</div>
 	<div>
-		<h2>Image Size</h2>
-		<input type="radio" name="size" id="size_o" value="o"><label for="size_o">Original Size</label>
-		<input type="radio" name="size" id="size_l" value="l"><label for="size_l">Large (660px)</label>
-		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m">Medium (440px)</label>
-		<input type="radio" name="size" id="size_s" value="s"><label for="size_s">Small (220px)</label>
+		<h2><?= _ht('Image Size', 'admin') ?></h2>
+		<input type="radio" name="size" id="size_o" value="o"><label for="size_o"><?= _ht('Original Size', 'admin') ?></label>
+		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"><?= _ht('Large (660px)', 'admin') ?></label>
+		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"><?= _ht('Medium (440px)', 'admin') ?></label>
+		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"><?= _ht('Small (220px)', 'admin') ?></label>
 	</div>
 </div>
 <div>
-	<button type="button" onClick="cancel();">Close</button>
-	<button type="button" id="insert" onClick="insert();">Insert Into Post</button>
+	<button type="button" onClick="cancel();"><?= _ht('Close', 'admin') ?></button>
+	<button type="button" id="insert" onClick="insert();"><?= _ht('Insert Into Post', 'admin') ?></button>
 </div>
 </body>
 </html>

@@ -21,13 +21,13 @@ function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = fal
 ?>
 <li class="<?= _h($p->getStateClasses()) ?>">
 	<a href="<?= _h($t_url.$p->getId()) ?>">
-		<span class="nt-cat<?= _h($cls) ?>"><?= _h($p->getCategoryName(), 'category') ?></span>
+		<span class="nt-cat<?= _h($cls) ?>"><?= _ht($p->getCategoryName(), 'category') ?></span>
 <?php if ($p->getCategory() === 'event'): ?>
-		<span class="nt-event-term"><?= _h('Event Date: ') ?><?= _h($p->getEventDateBgn()) ?><?= _h(' to ') ?><?= _h($p->getEventDateEnd()) ?></span>
+		<span class="nt-event-term"><?= _ht('Event Date: ') ?><?= _h($p->getEventDateBgn()) ?><?= _ht(' to ') ?><?= _h($p->getEventDateEnd()) ?></span>
 <?php endif ?>
 		<div class="nt-title"><?= _h($p->getTitle(true)) ?></div>
 		<div class="nt-excerpt"><?= $p->getExcerpt(60) ?></div>
-		<div class="nt-date"><?= _h('Updated: ') ?><?= _h($p->getPublishedDate()) ?></div>
+		<div class="nt-date"><?= _ht('Updated: ') ?><?= _h($p->getPublishedDate()) ?></div>
 	</a>
 </li>
 <?php
@@ -46,21 +46,21 @@ function the_filter($dates = false, $cats = false, $searchQuery = false) {
 			<form action="index.php" method="get">
 				<label class="select" for="date">
 					<select name="date">
-						<option value=""><?= _h('Month') ?></option>
+						<option value=""><?= _ht('Month') ?></option>
 <?php foreach ($dates as $d): ?>
-						<option value="<?= _h($d['date']) ?>"<?php if ($d['cur']) _eh(' selected') ?>><?= _h($d['name']) ?><?= _h(' (', 'post-count') . $d['count'] . _h(')', 'post-count') ?></option>
+						<option value="<?= _h($d['date']) ?>"<?php if ($d['cur']) _eh(' selected') ?>><?= _h($d['name']) ?><?= _ht(' (', 'post-count') . $d['count'] . _ht(')', 'post-count') ?></option>
 <?php endforeach; ?>
 					</select>
 				</label>
 				<label class="select" for="cat">
 					<select name="cat">
-						<option value=""><?= _h('Category') ?></option>
+						<option value=""><?= _ht('Category') ?></option>
 <?php foreach ($cats as $c): ?>
-						<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _h($c['name'], 'category') ?></option>
+						<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _ht($c['name'], 'category') ?></option>
 <?php endforeach; ?>
 					</select>
 				</label>
-				<input type="submit" value="<?= _h('View') ?>">
+				<input type="submit" value="<?= _ht('View') ?>">
 			</form>
 		</div>
 		<div>
@@ -68,7 +68,7 @@ function the_filter($dates = false, $cats = false, $searchQuery = false) {
 				<label class="search" for="search_word">
 					<input type="text" name="search_word" id="search_word" value="<?= _h($searchQuery) ?>">
 				</label>
-				<input type="submit" value="<?= _h('Search') ?>">
+				<input type="submit" value="<?= _ht('Search') ?>">
 			</form>
 		</div>
 	</nav>
@@ -106,7 +106,7 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = fals
 		<nav class="nt-pagination">
 			<ul>
 <?php if ($t_prev): ?>
-				<li><a href="<?= $t_prev ?>"><?= _h('Previous') ?></a></li>
+				<li><a href="<?= $t_prev ?>"><?= _ht('Previous') ?></a></li>
 <?php endif ?>
 <?php if ($t_pg1): ?>
 				<li><?php t_wrap($t_pg1['href'], '<a href="' . $t_pg1['href'] . '">', $t_pg1['page'], '</a>') ?></li>
@@ -121,7 +121,7 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = fals
 				<li class="nt-ellipsis">...</li>
 <?php endif ?>
 <?php if ($t_next): ?>
-				<li><a href="<?= $t_next ?>"><?= _h('Next') ?></a></li>
+				<li><a href="<?= $t_next ?>"><?= _ht('Next') ?></a></li>
 <?php endif ?>
 			</ul>
 		</nav>
@@ -154,7 +154,7 @@ function the_postlink() {
 <?php if ($prev): ?>
 				<li class="prev"><a  href="<?= $prevUrl ?>"><?= _h($prevTitle) ?></a></li>
 <?php endif ?>
-				<li class="list"><a href="<?= $iUrl ?>"><span><?= _h('List') ?></span></a></li>
+				<li class="list"><a href="<?= $iUrl ?>"><span><?= _ht('List') ?></span></a></li>
 <?php if ($next): ?>
 				<li class="next"><a  href="<?= $nextUrl ?>"><?= _h($nextTitle) ?></a></li>
 <?php endif ?>

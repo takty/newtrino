@@ -24,7 +24,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<li <?php if ($p->isNewItem()) \nt\_eh(' class="new"')?>>
 				<span class="date"><?=\nt\_h($p->getPublishedDate())?></span>
 				<a href="<?=\nt\_h(\nt\get_permalink('view.php', $p))?>"><?=\nt\_h($p->getTitle())?></a>
-				<span class="cat<?php if ($p->getCategory() === 'event') \nt\_eh(' ' . $p->getEventState()); ?>"><?=\nt\_h($p->getCategoryName(), 'category')?></span>
+				<span class="cat<?php if ($p->getCategory() === 'event') \nt\_eh(' ' . $p->getEventState()); ?>"><?=\nt\_ht($p->getCategoryName(), 'category')?></span>
 			</li>
 <?php endforeach ?>
 		</ul>

@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-if (!defined('NT_LANG')) define('NT_LANG', 'en');
+if (!defined('NT_LANG')) define('NT_LANG', 'ja');
 
 require_once(__DIR__ . '/../core/function.php');
 require_once(__DIR__ . '/../core/class-store.php');

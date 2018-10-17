@@ -121,19 +121,35 @@ function resolve_url($target, $base) {
 // Output Functions ------------------------------------------------------------
 
 
-function _h($str, $context = 'default') {
+function _h($str) {
+	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
+function _eh($str) {
+	echo htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
+function _u($str) {
+	return rawurlencode($str);
+}
+
+function _eu($str) {
+	echo rawurlencode($str);
+}
+
+function _ht($str, $context = 'default') {
 	return htmlspecialchars(translate($str, $context), ENT_QUOTES, 'UTF-8');
 }
 
-function _eh($str, $context = 'default') {
+function _eht($str, $context = 'default') {
 	echo htmlspecialchars(translate($str, $context), ENT_QUOTES, 'UTF-8');
 }
 
-function _u($str, $context = 'default') {
+function _ut($str, $context = 'default') {
 	return rawurlencode(translate($str, $context));
 }
 
-function _eu($str, $context = 'default') {
+function _eut($str, $context = 'default') {
 	echo rawurlencode(translate($str, $context));
 }
 
