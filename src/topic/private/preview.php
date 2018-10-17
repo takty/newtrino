@@ -30,8 +30,7 @@ header('Content-Type: text/html;charset=utf-8');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= _ht('Preview', 'admin') ?></title>
-<link rel="stylesheet" href="css/sanitize.min.css">
-<link rel="stylesheet" media="all" href="css/style.css" />
+<link rel="stylesheet" media="all" href="css/style.min.css" />
 </head>
 <body class="preview">
 <div class="container">
