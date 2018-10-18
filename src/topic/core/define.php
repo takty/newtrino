@@ -10,15 +10,19 @@ namespace nt;
  */
 
 
+define('NT_DIR_BASE', __DIR__ . '/../');
 define('NT_DIR_DATA', __DIR__ . '/../data/');
 define('NT_DIR_POST', __DIR__ . '/../post/');
+
 define('NT_URL_HOST', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 define('NT_URL_POST', NT_URL_HOST . get_url_from_path(NT_DIR_POST) . '/');
+define('NT_URL_BASE', NT_URL_HOST . get_url_from_path(NT_DIR_BASE) . '/');
 
 if (defined('NT_PRIVATE')) {
 	define('NT_DIR_PRIVATE', __DIR__ . '/../private/');
 	define('NT_DIR_ACCOUNT', NT_DIR_DATA);
 	define('NT_DIR_SESSION', NT_DIR_PRIVATE . 'var/session/');
+
 	define('NT_URL_PRIVATE', NT_URL_HOST . get_url_from_path(NT_DIR_PRIVATE) . '/');
 }
 
