@@ -39,16 +39,13 @@ $t_date_end = $nt_q['date_end'];
 
 $t_cats = $nt_store->getCategoryData($nt_q['cat']);
 $t_page = $page;
+
+
 header('Content-Type: text/html;charset=utf-8');
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= _ht('Post List', 'admin') ?></title>

@@ -17,16 +17,13 @@ $t_title = $nt_q['post_title'];
 $t_pdate = $nt_q['post_published_date'];
 $t_cat = $nt_store->categorySlugToName($nt_q['post_cat']);
 $t_content = $nt_q['post_content'];
+
+
 header('Content-Type: text/html;charset=utf-8');
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= _ht('Preview', 'admin') ?></title>

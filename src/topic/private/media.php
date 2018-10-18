@@ -31,16 +31,13 @@ if ($nt_q['mode'] === 'delete') {
 $t_sid   = $nt_q['sid'];
 $t_pid   = $nt_q['id'];
 $t_items = $media->getItemList();
+
+
 header('Content-Type: text/html;charset=utf-8');
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.min.css">
