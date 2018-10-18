@@ -38,7 +38,7 @@ function setLocaleSetting() {
 
 function loadResource() {
 	global $nt_resource;
-	$path = PATH_DATA . 'text.' . NT_LANG . '.json';
+	$path = NT_PATH_DATA . 'text.' . NT_LANG . '.json';
 	if (file_exists($path)) {
 		$json = file_get_contents($path);
 		$nt_resource = json_decode($json, true);
@@ -75,44 +75,37 @@ function t_wrap($flag, $before, $cont, $after) {
 
 function resolve_url($target, $base) {
 	$comp = parse_url($base);
-	$dir = preg_replace('!/[^/]*$!', '/', $comp["path"]);
-	$uri = '';
+	$dir = preg_replace('!/[^/]*$!', '/', $comp['path']);
 
 	switch (true) {
-	case preg_match("/^http/", $target):
-		$uri =  $target;
-		break;
-	case preg_match("/^\/\/.+/", $target):
-		$uri =  $comp["scheme"].":".$target;
-		break;
-	case preg_match("/^\/[^\/].+/", $target):
-		$uri =  $comp["scheme"]."://".$comp["host"].$target;
-		break;
-	case preg_match("/^\.\/(.+)/", $target,$maches):
-		$uri =  $comp["scheme"]."://".$comp["host"].$dir.$maches[1];
-		break;
-	case preg_match("/^([^\.\/]+)(.*)/", $target,$maches):
-		$uri =  $comp["scheme"]."://".$comp["host"].$dir.$maches[1].$maches[2];
-		break;
-	case preg_match("/^\.\.\/.+/", $target):
-		preg_match_all("!\.\./!", $target, $matches);
-		$nest =  count($matches[0]);
+	case preg_match('/^http/', $target):
+		return $target;
+	case preg_match('/^\/\/.+/', $target):
+		return $comp['scheme'] . ':' . $target;
+	case preg_match('/^\/[^\/].+/', $target):
+		return $comp['scheme'] . '://' . $comp['host'] . $target;
+	case preg_match('/^\.\/(.+)/', $target, $maches):
+		return $comp['scheme'] . '://' . $comp['host'] . $dir . $maches[1];
+	case preg_match('/^([^\.\/]+)(.*)/', $target, $maches):
+		return $comp['scheme'] . '://' . $comp['host'] . $dir . $maches[1] . $maches[2];
+	case preg_match('/^\.\.\/.+/', $target):
+		preg_match_all('!\.\./!', $target, $matches);
+		$nest = count($matches[0]);
 
-		$dir = preg_replace('!/[^/]*$!', '/', $comp["path"])."\n";
-		$dir_array = explode("/",$dir);
+		$dir = preg_replace('!/[^/]*$!', '/', $comp['path']) . '\n';
+		$dir_array = explode('/', $dir);
 		array_shift($dir_array);
 		array_pop($dir_array);
 		$dir_count = count($dir_array);
 		$count = $dir_count - $nest;
-		$pathto = "";
+		$pathto = '';
 		$i = 0;
 		while ($i < $count) {
-			$pathto .= "/" . $dir_array[$i];
+			$pathto .= '/' . $dir_array[$i];
 			$i++;
 		}
-		$file = str_replace("../", "", $target);
-		$uri =  $comp["scheme"] . "://" . $comp["host"] . $pathto . "/" . $file;
-		break;
+		$file = str_replace('../', '', $target);
+		return $comp['scheme'] . '://' . $comp['host'] . $pathto . '/' . $file;
 	}
 	return $uri;
 }
