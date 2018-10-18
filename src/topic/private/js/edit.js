@@ -115,7 +115,7 @@ var formatDate = function(date, format) {
 };
 
 function showPreview() {
-	window.open('about:blank', 'preview', 'scrollbars=yes', 'windowStyle');
+	window.open('about:blank', 'preview');
 	var fp = document.getElementById('form-post');
 	fp.target = 'preview';
 	fp.action = 'preview.php';
