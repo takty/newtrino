@@ -25,9 +25,8 @@ $success = true;
 $error   = '';
 
 header('Content-Type: text/html;charset=utf-8');
-
 if (!empty($nt_q['digest'])) {
-	$nt_session = new Session();
+	$nt_session = new Session(NT_URL_PRIVATE, false, NT_DIR_ACCOUNT, NT_DIR_SESSION);
 	$sid = $nt_session->login($nt_q['user'], $nt_q['digest'], $nt_q['nonce'], $nt_q['cnonce'], $error);
 	if ($sid !== false) {
 ?>

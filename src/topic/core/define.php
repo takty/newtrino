@@ -10,20 +10,17 @@ namespace nt;
  */
 
 
-define('NT_PATH_DATA', __DIR__ . '/../data/');
-define('NT_PATH_POST', __DIR__ . '/../post/');
-
+define('NT_DIR_DATA', __DIR__ . '/../data/');
+define('NT_DIR_POST', __DIR__ . '/../post/');
 define('NT_URL_HOST', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-define('NT_URL_POST', NT_URL_HOST . get_url_from_path(NT_PATH_POST) . '/');
+define('NT_URL_POST', NT_URL_HOST . get_url_from_path(NT_DIR_POST) . '/');
 
 if (defined('NT_PRIVATE')) {
-	define('NT_PATH_PRIVATE', __DIR__ . '/../private/');
-	define('NT_PATH_ACCOUNT', NT_PATH_DATA);
-	define('NT_PATH_SESSION', NT_PATH_PRIVATE . 'var/session/');
-
-	define('NT_URL_PRIVATE', NT_URL_HOST . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/');
+	define('NT_DIR_PRIVATE', __DIR__ . '/../private/');
+	define('NT_DIR_ACCOUNT', NT_DIR_DATA);
+	define('NT_DIR_SESSION', NT_DIR_PRIVATE . 'var/session/');
+	define('NT_URL_PRIVATE', NT_URL_HOST . get_url_from_path(NT_DIR_PRIVATE) . '/');
 }
-
 
 function get_right_intersection($str1, $str2) {
 	$str1_len = mb_strlen($str1);
@@ -37,10 +34,6 @@ function get_right_intersection($str1, $str2) {
 	if ($i === 0) return '';
 	return $temp;
 }
-
-// function normalize_separator($path) {
-// 	return str_replace(DIRECTORY_SEPARATOR, '/', $path);
-// }
 
 function get_url_from_path($target) {
 	$target = str_replace('/', DIRECTORY_SEPARATOR, $target);

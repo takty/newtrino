@@ -53,17 +53,17 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
-	function __construct($postUrl) {
-		$this->_postUrl  = $postUrl;
-		$this->_postPath = NT_PATH_POST;
-		$this->_dataPath = NT_PATH_DATA;
+	function __construct($urlPost, $dirPost, $dirData) {
+		$this->_urlPost = $urlPost;
+		$this->_dirPost = $dirPost;
+		$this->_dirData = $dirData;
 	}
 
 	// ------------------------------------------------------------------------
 
 	public function getPost($id, $newDay = 0) {
-		$post = new Post($this->_postUrl, $id);
-		if (!$post->load($this->_postPath)) return false;
+		$post = new Post($this->_urlPost, $id);
+		if (!$post->load($this->_dirPost)) return false;
 		$post->setCategoryName($this->categorySlugToName($post->getCategory()));
 		$pd = date('YmdHis') - $post->getDateTimeNumber();
 		if ($newDay > 0) $post->setNewItem($pd < $newDay * 1000000);
@@ -200,11 +200,11 @@ class Store {
 
 	private function _loadPostsAll($published_only) {
 		$posts = [];
-		if ($dir = opendir($this->_postPath)) {
+		if ($dir = opendir($this->_dirPost)) {
 			while (($fn = readdir($dir)) !== false) {
-				if (strpos($fn, '.') !== 0 && is_dir($this->_postPath . $fn)) {
-					$post = new Post($this->_postUrl, $fn);
-					$post->load($this->_postPath);
+				if (strpos($fn, '.') !== 0 && is_dir($this->_dirPost . $fn)) {
+					$post = new Post($this->_urlPost, $fn);
+					$post->load($this->_dirPost);
 					$post->setCategoryName($this->categorySlugToName($post->getCategory()));
 					if (!$published_only || $post->isPublished()) $posts[] = $post;
 				}
@@ -259,7 +259,7 @@ class Store {
 
 	private function _loadCategoryData() {
 		if (isset($this->_catData)) return $this->_catData;
-		$path = $this->_dataPath . 'category';
+		$path = $this->_dirData . 'category';
 		$lines = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if ($lines === false) {
 			Logger::output('Error (Store::getCategoryData file) [' . $path . ']');
@@ -276,7 +276,7 @@ class Store {
 	// ------------------------------------------------------------------------
 
 	public function createNewPost() {
-		if ($dir = opendir($this->_postPath)) {
+		if ($dir = opendir($this->_dirPost)) {
 			$date = date('YmdHis');
 			$id = $date;
 			flock($dir, LOCK_EX);
@@ -287,9 +287,9 @@ class Store {
 				}
 			}
 			if ($this->_checkIdExists($id)) return false;  // when the loop finished without break
-			$post = new Post($this->_postUrl, '.' . $id);
+			$post = new Post($this->_urlPost, '.' . $id);
 			$post->setPublishedDate('now');
-			$post->save($this->_postPath);
+			$post->save($this->_dirPost);
 			flock($dir, LOCK_UN);
 			return $post;
 		}
@@ -297,25 +297,25 @@ class Store {
 	}
 
 	private function _checkIdExists($id) {
-		return file_exists($this->_postPath . $id) || file_exists($this->_postPath . '.' . $id);
+		return file_exists($this->_dirPost . $id) || file_exists($this->_dirPost . '.' . $id);
 	}
 
 	// ------------------------------------------------------------------------
 
 	public function writePost($post) {
-		$post->save($this->_postPath);
+		$post->save($this->_dirPost);
 		if (strpos($post->getId(), '.') === 0) {
 			$newId = substr($post->getId(), 1);
-			rename($this->_postPath . $post->getId(), $this->_postPath . $newId);
+			rename($this->_dirPost . $post->getId(), $this->_dirPost . $newId);
 			$post->setId($newId);
-			$post->save($this->_postPath);
+			$post->save($this->_dirPost);
 		}
 		return $post;
 	}
 
 	public function delete($id) {
 		// We plan to add Trash function
-		$pdir = $this->_postPath . $id;
+		$pdir = $this->_dirPost . $id;
 		self::deleteAll($pdir);
 	}
 

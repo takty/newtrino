@@ -22,7 +22,7 @@ set_locale_setting();
 
 $nt_res   = load_resource();
 $nt_q     = prepare_query(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
-$nt_store = new Store(NT_URL_POST);
+$nt_store = new Store(NT_URL_POST, NT_DIR_POST, NT_DIR_DATA);
 
 if (!empty($nt_q['id'])) {
 	$ret = $nt_store->getPostWithNextAndPrevious($nt_q['id'], ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);

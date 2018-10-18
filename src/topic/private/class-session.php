@@ -27,10 +27,11 @@ class Session {
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
 
-	function __construct() {  // False is permitted only when login
-		$this->postDirPath    = NT_PATH_POST;
-		$this->accountDirPath = NT_PATH_ACCOUNT;
-		$this->sessionDirPath = NT_PATH_SESSION;
+	function __construct($urlPrivate, $dirPost, $dirAccount, $dirSession) {
+		$this->_urlPrivate = $urlPrivate;
+		$this->_dirPost    = $dirPost;
+		$this->_dirAccount = $dirAccount;
+		$this->_dirSession = $dirSession;
 	}
 
 	// ------------------------------------------------------------------------
@@ -42,10 +43,10 @@ class Session {
 		}
 		$this->cleanUp();
 
-		$url = NT_URL_PRIVATE;
+		$url = $this->_urlPrivate;
 		$a2 = hash(self::HASH_ALGORITHM, 'post:' . $url);
 
-		$accountPath = $this->accountDirPath . self::ACCOUNT_FILE_NAME;
+		$accountPath = $this->_dirAccount . self::ACCOUNT_FILE_NAME;
 		if (file_exists($accountPath) === false) {
 			Logger::output('Error (Session::login file_exists) [' . $accountPath . ']');
 			$error = 'Account file does not exist.';
@@ -86,9 +87,9 @@ class Session {
 
 	private function cleanUp() {
 		$fns = [];
-		if ($handle = $this->openDir($this->sessionDirPath)) {
+		if ($handle = $this->openDir($this->_dirSession)) {
 			while (($fn = readdir($handle)) !== false) {
-				if (is_file($this->sessionDirPath . $fn)) $fns[] = $fn;
+				if (is_file($this->_dirSession . $fn)) $fns[] = $fn;
 			}
 			closedir($handle);
 		}
@@ -115,9 +116,9 @@ class Session {
 		$curTime = time();
 		$sessionTime = array_shift($lines);
 		if (self::SESSION_ALIVE_TIME < $curTime - $sessionTime) {
-			if ($this->postDirPath !== false && 0 < count($lines)) {
+			if ($this->_dirPost !== false && 0 < count($lines)) {
 				foreach ($lines as $id) {
-					$temp_post_path = $this->postDirPath . $id;
+					$temp_post_path = $this->_dirPost . $id;
 					if (file_exists($temp_post_path)) Store::deleteAll($temp_post_path);
 				}
 			}
@@ -132,7 +133,7 @@ class Session {
 	}
 
 	private function loadSessionFile($sid) {
-		$path = $this->sessionDirPath . $sid;
+		$path = $this->_dirSession . $sid;
 		if (file_exists($path) === false) return false;
 		$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if ($lines === false) {
@@ -143,7 +144,7 @@ class Session {
 	}
 
 	private function removeSessionFile($sid) {
-		$path = $this->sessionDirPath . $sid;
+		$path = $this->_dirSession . $sid;
 		$res = unlink($path);
 		if ($res === false) {
 			Logger::output('Error (Session::removeSessionFile unlink) [' . $path . ']');
@@ -151,7 +152,7 @@ class Session {
 	}
 
 	private function saveSessionFile($sid, $lines) {
-		$path = $this->sessionDirPath . $sid;
+		$path = $this->_dirSession . $sid;
 		$cont = implode("\n", $lines);
 		if (file_put_contents($path, $cont, LOCK_EX) === false) {
 			Logger::output('Error (Session::saveSessionFile file_put_contents) [' . $path . ']');

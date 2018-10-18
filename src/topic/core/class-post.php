@@ -48,8 +48,8 @@ class Post {
 	private $_postPath = '';
 	private $_id;
 
-	function __construct($postUrl, $id) {
-		$this->_postUrl = $postUrl;
+	function __construct($urlPost, $id) {
+		$this->_urlPost = $urlPost;
 		$this->_id = $id;
 	}
 
@@ -360,10 +360,10 @@ class Post {
 		$sp = strpos($url, '/');
 		if ($sp === 0) {
 			$sub = substr($url, 1);
-			return $this->_postUrl . $sub;
+			return $this->_urlPost . $sub;
 		} else {
 			if (strpos($url, Media::MEDIA_DIR_NAME . '/') === 0){
-				return $this->_postUrl . $this->_id . '/' . $url;
+				return $this->_urlPost . $this->_id . '/' . $url;
 			}
 		}
 		return $url;
@@ -371,8 +371,8 @@ class Post {
 
 	private function convertToPortableUrl($url) {
 		$url = resolve_url($url, NT_URL_PRIVATE);
-		if (strpos($url, $this->_postUrl) === 0) {
-			$url = substr($url, strlen($this->_postUrl) - 1);
+		if (strpos($url, $this->_urlPost) === 0) {
+			$url = substr($url, strlen($this->_urlPost) - 1);
 			$pu = '/' . $this->_id . '/' . Media::MEDIA_DIR_NAME . '/';
 			if (strpos($url, $pu) === 0) {
 				$url = substr($url, strlen($pu) - strlen(Media::MEDIA_DIR_NAME . '/'));

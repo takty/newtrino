@@ -20,8 +20,7 @@ function reject_direct_access($path, $depth = 1) {
 		for ($i = 0; $i < $depth; ++$i) {
 			$to = dirname($to);
 		}
-		$host = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-		$url = $host . rtrim($to, '/\\');
+		$url = NT_URL_HOST . rtrim($to, '/\\');
 		header("Location: $url/");
 		exit(1);
 	}
@@ -37,7 +36,7 @@ function set_locale_setting() {
 }
 
 function load_resource() {
-	$path = NT_PATH_DATA . 'text.' . NT_LANG . '.json';
+	$path = NT_DIR_DATA . 'text.' . NT_LANG . '.json';
 	if (file_exists($path)) {
 		$json = file_get_contents($path);
 		return json_decode($json, true);
