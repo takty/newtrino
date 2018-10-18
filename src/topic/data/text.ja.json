@@ -63,9 +63,9 @@
 		"Left": "左",
 		"Right": "右",
 		"Original Size": "元のサイズ",
-		"Large (660px)": "大（660px）",
-		"Medium (440px)": "中（440px）",
-		"Small (220px)": "小（220px）",
+		"Large": "大",
+		"Medium": "中",
+		"Small": "小",
 		"Update Complete": "更新完了",
 		"Enter Title Here": "ここにタイトルを入力",
 		"The title is blank.": "タイトルが空です。"

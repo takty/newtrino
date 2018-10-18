@@ -94,9 +94,9 @@ if ($is_img):
 	<div>
 		<h2><?= _ht('Image Size', 'admin') ?></h2>
 		<input type="radio" name="size" id="size_o" value="o"><label for="size_o"><?= _ht('Original Size', 'admin') ?></label>
-		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"><?= _ht('Large (660px)', 'admin') ?></label>
-		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"><?= _ht('Medium (440px)', 'admin') ?></label>
-		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"><?= _ht('Small (220px)', 'admin') ?></label>
+		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"><?= _ht('Large', 'admin') ?></label>
+		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"><?= _ht('Medium', 'admin') ?></label>
+		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"><?= _ht('Small', 'admin') ?></label>
 	</div>
 </div>
 <div>

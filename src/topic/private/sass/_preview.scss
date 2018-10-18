@@ -61,4 +61,19 @@ body.preview {
 		display: block;
 		margin-bottom: 2rem;
 	}
+
+	.size-small {
+		max-width: 10rem;
+		width: 100%;
+	}
+
+	.size-medium {
+		max-width: 20rem;
+		width: 100%;
+	}
+
+	.size-large {
+		max-width: 40rem;
+		width: 100%;
+	}
 }

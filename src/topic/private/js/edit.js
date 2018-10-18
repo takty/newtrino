@@ -174,13 +174,19 @@ var wh_min = 220;
 
 function insertMedia(name, src, w, h, align, size, isImage) {
 	closeMediaChooser();
-	var vc = '';
-	if (align === 'l') vc = 'alignleft';
-	if (align === 'r') vc = 'alignright';
-	if (align === 'c') vc = 'aligncenter';
+	var cs = [];
+	if (align === 'l') cs.push('alignleft');
+	if (align === 'r') cs.push('alignright');
+	if (align === 'c') cs.push('aligncenter');
+
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
 	if (isImage) {
-		var imgstr = '<a href="' + src + '" class="' + vc + '"><img src="' + src + '"';
+		if (size === 'o') cs.push('size-full');
+		if (size === 'l') cs.push('size-large');
+		if (size === 'm') cs.push('size-medium');
+		if (size === 's') cs.push('size-small');
+
+		var imgstr = '<a href="' + src + '" class="' + cs.join(' ') + '"><img src="' + src + '"';
 		if (size !== 'o') {  // Not Original Size
 			var r = wh_min
 			if (size === "l") r *= 3;
@@ -193,7 +199,7 @@ function insertMedia(name, src, w, h, align, size, isImage) {
 		imgstr += "></a>";
 		tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
 	} else {
-		var linkStr = '<a href="' + src + '" class="' + vc + '">' + name + '</a>';
+		var linkStr = '<a href="' + src + '" class="' + cs.join(' ') + '">' + name + '</a>';
 		tinymce.activeEditor.execCommand('mceInsertContent', false, linkStr);
 	}
 }
