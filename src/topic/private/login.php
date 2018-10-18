@@ -10,8 +10,8 @@ namespace nt;
  */
 
 
-if (!defined('NT_PRIVATE')) define('NT_PRIVATE', true);
-if (!defined('NT_LANG')) define('NT_LANG', 'ja');
+define('NT_PRIVATE', true);
+define('NT_LANG', 'ja');
 
 require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');
@@ -20,8 +20,7 @@ require_once(__DIR__ . '/class-session.php');
 setLocaleSetting();
 loadResource();
 
-$nt_q = prepareDefaultQuery();
-
+$nt_q    = prepareDefaultQuery();
 $success = true;
 $error   = '';
 

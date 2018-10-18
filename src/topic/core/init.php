@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-if (!defined('NT_LANG')) define('NT_LANG', 'en');
+define('NT_LANG', 'en');
 
 require_once(__DIR__ . '/define.php');
 require_once(__DIR__ . '/function.php');
