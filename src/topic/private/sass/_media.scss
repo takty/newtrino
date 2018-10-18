@@ -3,7 +3,7 @@
  * Media Chooser (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -15,6 +15,7 @@ body.media {
 	display: flex;
 	flex-direction: column;
 	background-color: white;
+	height: 100vh;
 
 	> *:not(:first-child) {
 		margin-top: 1rem;
