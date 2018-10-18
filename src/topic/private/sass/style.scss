@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -38,7 +38,7 @@ body {
 }
 
 @mixin frame-inside {
-	> *:not(form) {
+	> *:not(form):not(.message) {
 		display: block;
 		margin: 1rem;
 	}

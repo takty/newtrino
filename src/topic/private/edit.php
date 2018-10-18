@@ -77,7 +77,7 @@ header('Content-Type: text/html;charset=utf-8');
 					<input type="hidden" name="date_bgn" id="date_bgn" value="<?= _h($t_date_bgn) ?>">
 					<input type="hidden" name="date_end" id="date_end" value="<?= _h($t_date_end) ?>">
 
-					<input placeholder="Enter Title Here" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
+					<input placeholder="<?= _ht('Enter Title Here', 'admin') ?>" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
 					<div class="btn-row"><a class="btn" href="#" id="upload" onClick="showMediaChooser();"><?= _ht('Insert Media', 'admin') ?></a></div>
 					<textarea name="post_content" id="post_content"><?= _h($t_p->getContent()) ?></textarea>
 				</div>
@@ -97,7 +97,7 @@ header('Content-Type: text/html;charset=utf-8');
 						<a class="btn" href="#" onClick="showPreview();"><?= _ht('Preview', 'admin') ?></a>
 						<a class="btn btn-update" href="#" id="update" onClick="update();"><?= _ht('Update', 'admin') ?></a>
 					</div>
-					<p id="message"></p>
+					<p class="message" id="message_enter_title"><?= _ht('The title is blank.', 'admin') ?></p>
 				</div>
 				<div class="frame">
 					<h3><?= _ht('Category', 'admin') ?></h3>

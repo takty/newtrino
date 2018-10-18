@@ -3,8 +3,8 @@
  * Edit (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @author Yusuke Manabe   @ Space-Time Inc.
- * @version 2018-10-17
+ * @author Yusuke Manabe @ Space-Time Inc.
+ * @version 2018-10-18
  *
  */
 
@@ -61,9 +61,8 @@ function initEdit() {
 	});
 	document.getElementById('post_title').addEventListener('change', function () {
 		if (this.value !== '') {
-			var elm = document.getElementById('message');
-			elm.innerText = '';
-			elm.style.display = 'none';
+			var elms = document.getElementsByClassName('message');
+			for (var i = 0; i < elms.length; i += 1) elms[i].style.display = '';
 		}
 		onChanged();
 	});
@@ -97,9 +96,8 @@ var changed = false;
 var onChanged = function () {
 	if (changed === false) {
 		changed = true;
-		var elm = document.getElementById('message');
-		elm.innerText = '';
-		elm.style.display = 'none';
+		var elms = document.getElementsByClassName('message');
+		for (var i = 0; i < elms.length; i += 1) elms[i].style.display = '';
 		var um = document.getElementById('update-msg');
 		um.innerText = '';
 	}
@@ -126,8 +124,7 @@ function showPreview() {
 
 function update() {
 	if (document.getElementById('post_title').value === '') {
-		var elm = document.getElementById('message');
-		elm.innerText = 'The title is blank.';
+		var elm = document.getElementById('message_enter_title');
 		elm.style.display = 'block';
 		return false;
 	}
