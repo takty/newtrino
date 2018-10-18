@@ -17,10 +17,10 @@ require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');
 require_once(__DIR__ . '/class-session.php');
 
-setLocaleSetting();
-loadResource();
+set_locale_setting();
 
-$nt_q    = prepareDefaultQuery();
+$nt_res  = load_resource();
+$nt_q    = prepare_query();
 $success = true;
 $error   = '';
 

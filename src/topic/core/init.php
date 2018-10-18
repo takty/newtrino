@@ -11,6 +11,8 @@ namespace nt;
 
 
 if (!defined('NT_LANG')) define('NT_LANG', 'en');
+define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
+define('POST_URL', SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/');
 
 require_once(__DIR__ . '/define.php');
 require_once(__DIR__ . '/function.php');
@@ -18,14 +20,10 @@ require_once(__DIR__ . '/tag.php');
 require_once(__DIR__ . '/class-store.php');
 
 reject_direct_access(__FILE__, 2);
+set_locale_setting();
 
-define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-define('POST_URL', SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/');
-
-setLocaleSetting();
-loadResource();
-
-$nt_q     = prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
+$nt_res   = load_resource();
+$nt_q     = prepare_query(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
 $nt_store = new Store(POST_URL);
 
 if (!empty($nt_q['id'])) {

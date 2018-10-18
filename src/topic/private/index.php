@@ -127,7 +127,7 @@ header('Content-Type: text/html;charset=utf-8');
 				<li><a href="#" onClick="submitPage(<?= _h($t_pg_prev) ?>);"><?= _ht('Next', 'admin') ?></a></li>
 <?php endif ?>
 <?php foreach($t_pgs as $pg): ?>
-				<li><?php t_wrap($pg['index'], '<a href="#" onclick="submitPage(' . $pg['page'] . ')">', $pg['page'], '</a>') ?></li>
+				<li><?php wrap($pg['index'], '<a href="#" onclick="submitPage(' . $pg['page'] . ')">', $pg['page'], '</a>') ?></li>
 <?php endforeach ?>
 <?php if ($t_pg_next): ?>
 				<li><a href="#" onClick="submitPage(<?= _h($t_pg_next) ?>);"><?= _ht('Previous', 'admin') ?></a></li>

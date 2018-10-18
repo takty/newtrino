@@ -109,13 +109,13 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = fals
 				<li><a href="<?= $t_prev ?>"><?= _ht('Previous') ?></a></li>
 <?php endif ?>
 <?php if ($t_pg1): ?>
-				<li><?php t_wrap($t_pg1['href'], '<a href="' . $t_pg1['href'] . '">', $t_pg1['page'], '</a>') ?></li>
+				<li><?php wrap($t_pg1['href'], '<a href="' . $t_pg1['href'] . '">', $t_pg1['page'], '</a>') ?></li>
 <?php endif ?>
 <?php if ($t_el): ?>
 				<li class="nt-ellipsis">...</li>
 <?php endif ?>
 <?php foreach($t_pgs as $pg): ?>
-				<li <?php if (!$pg['href']) echo(' class="nt-current"')?>><?php t_wrap($pg['href'], '<a href="' . $pg['href'] . '">', $pg['page'], '</a>') ?></li>
+				<li <?php if (!$pg['href']) echo(' class="nt-current"')?>><?php wrap($pg['href'], '<a href="' . $pg['href'] . '">', $pg['page'], '</a>') ?></li>
 <?php endforeach ?>
 <?php if ($t_eh): ?>
 				<li class="nt-ellipsis">...</li>

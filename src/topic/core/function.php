@@ -27,7 +27,7 @@ function reject_direct_access($path, $depth = 1) {
 	}
 }
 
-function setLocaleSetting() {
+function set_locale_setting() {
 	date_default_timezone_set('Asia/Tokyo');
 	mb_language('Japanese');
 	mb_internal_encoding('utf-8');
@@ -36,18 +36,16 @@ function setLocaleSetting() {
 	mb_regex_encoding('utf-8');
 }
 
-function loadResource() {
-	global $nt_resource;
+function load_resource() {
 	$path = NT_PATH_DATA . 'text.' . NT_LANG . '.json';
 	if (file_exists($path)) {
 		$json = file_get_contents($path);
-		$nt_resource = json_decode($json, true);
-	} else {
-		$nt_resource = [];
+		return json_decode($json, true);
 	}
+	return [];
 }
 
-function prepareDefaultQuery($opt = []) {
+function prepare_query($opt = []) {
 	$q = empty($_POST) ? $_GET : $_POST;
 	$q += $opt;
 	return $q;
@@ -65,7 +63,7 @@ function query_str($q, $keys) {
 	return $ret;
 }
 
-function t_wrap($flag, $before, $cont, $after) {
+function wrap($flag, $before, $cont, $after) {
 	if ($flag) {
 		echo $before . $cont . $after;
 	} else {
@@ -147,16 +145,16 @@ function _eut($str, $context = 'default') {
 }
 
 function translate($str, $context = 'default') {
-	global $nt_resource;
-	if (isset($nt_resource[$context])) {
-		if (isset($nt_resource[$context][$str])) {
-			return $nt_resource[$context][$str];
+	global $nt_res;
+	if (isset($nt_res[$context])) {
+		if (isset($nt_res[$context][$str])) {
+			return $nt_res[$context][$str];
 		}
 	}
 	if ($context !== 'default') {
-		if (isset($nt_resource['default'])) {
-			if (isset($nt_resource['default'][$str])) {
-				return $nt_resource['default'][$str];
+		if (isset($nt_res['default'])) {
+			if (isset($nt_res['default'][$str])) {
+				return $nt_res['default'][$str];
 			}
 		}
 	}
