@@ -11,7 +11,7 @@ namespace nt;
 
 
 define('NT_PRIVATE', true);
-define('NT_LANG', 'ja');
+if (!defined('NT_LANG')) define('NT_LANG', 'en');
 
 require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');
