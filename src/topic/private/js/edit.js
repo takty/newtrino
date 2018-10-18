@@ -172,12 +172,12 @@ function closeMediaChooser() {
 
 var wh_min = 220;
 
-function insertMedia(name, src, w, h, pos, size, isImage) {
+function insertMedia(name, src, w, h, align, size, isImage) {
 	closeMediaChooser();
-	var vc = "";
-	if (pos == "l") vc = "pos-left";
-	if (pos == "c") vc = "pos-center";
-	if (pos == "r") vc = "pos-right";
+	var vc = '';
+	if (align === 'l') vc = 'alignleft';
+	if (align === 'r') vc = 'alignright';
+	if (align === 'c') vc = 'aligncenter';
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
 	if (isImage) {
 		var imgstr = '<a href="' + src + '" class="' + vc + '"><img src="' + src + '"';

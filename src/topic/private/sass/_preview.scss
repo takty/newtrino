@@ -3,7 +3,7 @@
  * Preview (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -40,25 +40,25 @@ body.preview {
 	border-top: 1px solid #ccc;
 
 	&:after {
-		content: " ";
+		content: ' ';
 		display: block;
 		clear: both;
 	}
 
-	.pos-left {
+	.alignleft {
 		float: left;
 		margin: 0 1% 2rem 0;
 	}
 
-	.pos-center {
+	.alignright {
+		float: right;
+		margin: 0 0 2rem 1%;
+	}
+
+	.aligncenter {
 		text-align: center;
 		width: 100%;
 		display: block;
 		margin-bottom: 2rem;
-	}
-
-	.pos-right {
-		float: right;
-		margin: 0 0 2rem 1%;
 	}
 }

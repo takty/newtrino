@@ -1,0 +1,16 @@
+.alignleft {
+	float: left;
+	margin: 0 1% 2rem 0;
+}
+
+.alignright {
+	float: right;
+	margin: 0 0 2rem 1%;
+}
+
+.aligncenter {
+	text-align: center;
+	width: 100%;
+	display: block;
+	margin-bottom: 2rem;
+}

@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -37,9 +37,9 @@ function deleteFile() {
 }
 
 function insert() {
-	var pos = checkRadio('pos');
+	var align = checkRadio('align');
 	var size = checkRadio('size');
-	window.parent.insertMedia(file_name, file_url, image_cx, image_cy, pos, size, file_is_img);
+	window.parent.insertMedia(file_name, file_url, image_cx, image_cy, align, size, file_is_img);
 }
 
 function checkRadio(tag) {

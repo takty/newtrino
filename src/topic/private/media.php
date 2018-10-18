@@ -85,11 +85,11 @@ if ($is_img):
 	</div>
 </div>
 <div class="image-option">
-	<div style="display: none;">
+	<div>
 		<h2><?= _ht('Image Alignment', 'admin') ?></h2>
-		<input type="radio" name="pos" id="pos_c" value="c" checked><label for="pos_c"><?= _ht('Center', 'admin') ?></label>
-		<input type="radio" name="pos" id="pos_l" value="l"><label for="pos_l"><?= _ht('Left', 'admin') ?></label>
-		<input type="radio" name="pos" id="pos_r" value="r"><label for="pos_r"><?= _ht('Right', 'admin') ?></label>
+		<input type="radio" name="align" id="align_c" value="c" checked><label for="align_c"><?= _ht('Center', 'admin') ?></label>
+		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"><?= _ht('Left', 'admin') ?></label>
+		<input type="radio" name="align" id="align_r" value="r"><label for="align_r"><?= _ht('Right', 'admin') ?></label>
 	</div>
 	<div>
 		<h2><?= _ht('Image Size', 'admin') ?></h2>
