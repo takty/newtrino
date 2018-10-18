@@ -5,7 +5,7 @@ namespace nt;
  * Media Chooser
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @author Yusuke Manabe   @ Space-Time Inc.
+ * @author Yusuke Manabe @ Space-Time Inc.
  * @version 2018-10-18
  *
  */
