@@ -13,15 +13,15 @@ namespace nt;
 require_once(__DIR__ . 'init-admin.php');
 
 
-$result = 'NG';
+$res = 'NG';
 if ($nt_q['mode'] === 'set_state') {
-	$post = $nt_store->getPost($nt_q['id']);
-	$post->setState($nt_q['state']);
-	$nt_store->writePost($post);
-	$result = 'OK';
+	$p = $nt_store->getPost($nt_q['id']);
+	$p->setState($nt_q['state']);
+	$nt_store->writePost($p);
+	$res = 'OK';
 }
 ?>
-<?="<?xml version='1.0' encoding='utf-8' standalone='yes'?>"?>
+<?= "<?xml version='1.0' encoding='utf-8' standalone='yes'?>" ?>
 <result>
-<?= $result ?>
+<?= $res ?>
 </result>
