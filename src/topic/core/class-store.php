@@ -55,8 +55,8 @@ class Store {
 
 	function __construct($postUrl) {
 		$this->_postUrl  = $postUrl;
-		$this->_postPath = PATH_POST;
-		$this->_dataPath = PATH_DATA;
+		$this->_postPath = NT_PATH_POST;
+		$this->_dataPath = NT_PATH_DATA;
 	}
 
 	// ------------------------------------------------------------------------

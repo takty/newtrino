@@ -28,9 +28,9 @@ class Session {
 	const HASH_ALGORITHM     = 'sha256';
 
 	function __construct() {  // False is permitted only when login
-		$this->accountDirPath = PATH_DATA;
-		$this->postDirPath    = PATH_POST;
-		$this->sessionDirPath = PATH_SESSION;
+		$this->postDirPath    = NT_PATH_POST;
+		$this->accountDirPath = NT_PATH_ACCOUNT;
+		$this->sessionDirPath = NT_PATH_SESSION;
 	}
 
 	// ------------------------------------------------------------------------
@@ -42,7 +42,7 @@ class Session {
 		}
 		$this->cleanUp();
 
-		$url = SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
+		$url = NT_URL_PRIVATE;
 		$a2 = hash(self::HASH_ALGORITHM, 'post:' . $url);
 
 		$accountPath = $this->accountDirPath . self::ACCOUNT_FILE_NAME;

@@ -10,9 +10,15 @@ namespace nt;
  */
 
 
-define('PATH_DATA',    __DIR__ . '/../data/');
-define('PATH_POST',    __DIR__ . '/../post/');
-define('PATH_PRIVATE', __DIR__ . '/../private/');
+define('NT_PATH_DATA',    __DIR__ . '/../data/');
+define('NT_PATH_POST',    __DIR__ . '/../post/');
 
-define('PATH_ACCOUNT', PATH_DATA);
-define('PATH_SESSION', PATH_PRIVATE . 'var/session/');
+if (defined('NT_PRIVATE')) {
+	define('NT_PATH_PRIVATE', __DIR__ . '/../private/');
+	define('NT_PATH_ACCOUNT', NT_PATH_DATA);
+	define('NT_PATH_SESSION', NT_PATH_PRIVATE . 'var/session/');
+
+	$host = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+
+	define('NT_URL_PRIVATE', $host . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/');
+}

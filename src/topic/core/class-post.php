@@ -340,18 +340,16 @@ class Post {
 	}
 
 	function setContent($val) {
-		$base = SERVER_HOST_URL . rtrim($_SERVER['PHP_SELF'], '/\\');
-		$dom = \simplehtmldom_1_5\str_get_html($val);
-
 		if (empty($val)) {
 			$this->_content = '';
 			return;
 		}
+		$dom = \simplehtmldom_1_5\str_get_html($val);
 		foreach($dom->find('img') as &$elm) {
-			$elm->src = $this->convertToPortableUrl($elm->src, $base);
+			$elm->src = $this->convertToPortableUrl($elm->src);
 		}
 		foreach($dom->find('a') as &$elm) {
-			$elm->href = $this->convertToPortableUrl($elm->href, $base);
+			$elm->href = $this->convertToPortableUrl($elm->href);
 		}
 		$this->_content = $dom->save();
 		$dom->clear();
@@ -371,8 +369,8 @@ class Post {
 		return $url;
 	}
 
-	private function convertToPortableUrl($url, $base) {
-		$url = resolve_url($url, $base);
+	private function convertToPortableUrl($url) {
+		$url = resolve_url($url, NT_URL_PRIVATE);
 		if (strpos($url, $this->_postUrl) === 0) {
 			$url = substr($url, strlen($this->_postUrl) - 1);
 			$pu = '/' . $this->_id . '/' . Media::MEDIA_DIR_NAME . '/';

@@ -14,7 +14,7 @@ namespace nt;
 require_once(__DIR__ . '/admin-init.php');
 
 
-$media = new Media(PATH_POST, POST_URL, $nt_q['id']);
+$media = new Media(NT_PATH_POST, POST_URL, $nt_q['id']);
 
 if ($nt_q['mode'] === 'delete') {
 	$file = $nt_q['deleted_file'];
