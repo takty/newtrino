@@ -5,7 +5,7 @@ namespace nt;
  * Template Tags
  *
  * @author Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -16,15 +16,20 @@ function get_permalink($base, $post) {
 	return str_replace('<>', $post->getId(), $t_pUrl);
 }
 
+function get_recent($count = 10, $cat = '', $omitFinishedEvent = false) {
+	global $nt_store;
+	$ret = $nt_store->getPosts(0, $count, ['cat' => $cat, 'omit_finished_event' => $omitFinishedEvent]);
+	return $ret['posts'];
+}
+
 
 // -----------------------------------------------------------------------------
 
 
-function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = false) {
-	global $nt_store;
-	$ret = $nt_store->getPosts(0, $ppp, ['cat' => $cat], $new_day, $omitFinishedEvent);
+function the_recent($count = 10, $cat = '', $omitFinishedEvent = false) {
+	$posts = get_recent($count, $cat, $omitFinishedEvent);
 
-	foreach ($ret['posts'] as $p) {
+	foreach ($posts as $p) {
 		$cls = ($p->getCategory() === 'event') ? (' ' . $p->getEventState()) : '';
 ?>
 <li class="<?= _h($p->getStateClasses()) ?>">
@@ -41,6 +46,10 @@ function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = fal
 <?php
 	}
 }
+
+
+// -----------------------------------------------------------------------------
+
 
 function the_filter($dates = false, $cats = false, $searchQuery = false) {
 	global $nt_store, $nt_q;

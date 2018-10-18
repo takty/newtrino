@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -57,21 +57,39 @@ class Store {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
 		$this->_dirData = $dirData;
+
+		$this->_conf = $this->loadConfig();
+		var_dump($this->_conf);
+	}
+
+	private function loadConfig() {
+		$conf = [];
+		$path = $this->_dirData . 'config.json';
+		if (file_exists($path)) {
+			$json = file_get_contents($path);
+			$conf = json_decode($json, true);
+		}
+		// Default Config
+		$conf += ['newly_arrived_day' => 3];
+		return $conf;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function getPost($id, $newDay = 0) {
+	public function getPost($id) {
 		$post = new Post($this->_urlPost, $id);
 		if (!$post->load($this->_dirPost)) return false;
 		$post->setCategoryName($this->categorySlugToName($post->getCategory()));
+
 		$pd = date('YmdHis') - $post->getDateTimeNumber();
-		if ($newDay > 0) $post->setNewItem($pd < $newDay * 1000000);
+		if ($this->_conf['newly_arrived_day'] > 0) {
+			$post->setNewItem($pd < $this->_conf['newly_arrived_day'] * 1000000);
+		}
 		return $post;
 	}
 
-	public function getPostWithNextAndPrevious($id, $cond = [], $newDay = 0) {
-		$posts = $this->_getPostsByCond($cond, $newDay);
+	public function getPostWithNextAndPrevious($id, $cond = []) {
+		$posts = $this->_getPostsByCond($cond);
 		$idIndex = null;
 		for ($i = 0; $i < count($posts); $i += 1) {
 			$p = $posts[$i];
@@ -87,8 +105,8 @@ class Store {
 		return [$prev, $posts[$idIndex], $next];
 	}
 
-	public function getPosts($start, $count, $cond = [], $newDay = 0, $omitFinishedEvent = false) {
-		$posts = $this->_getPostsByCond($cond, $newDay, $omitFinishedEvent);
+	public function getPosts($start, $count, $cond = []) {
+		$posts = $this->_getPostsByCond($cond);
 
 		$size = count($posts);
 		$start = intval($start);
@@ -101,8 +119,8 @@ class Store {
 		return ['posts' => $ret, 'size' => $size, 'start' => $start];
 	}
 
-	public function getPostsByPage($page, $count, $cond = [], $newDay = 0) {
-		$posts = $this->_getPostsByCond($cond, $newDay);
+	public function getPostsByPage($page, $count, $cond = []) {
+		$posts = $this->_getPostsByCond($cond);
 
 		$size = count($posts);
 		$page = intval($page);
@@ -117,8 +135,8 @@ class Store {
 		return ['posts' => $ret, 'size' => $size, 'page' => $page];
 	}
 
-	private function _getPostsByCond($cond, $newDay = 0, $omitFinishedEvent = false) {
-		$cond += ['cat' => '', 'date' => '', 'date_bgn' => '', 'date_end' => '', 'published_only' => true, 'search_word' => ''];
+	private function _getPostsByCond($cond) {
+		$cond += ['cat' => '', 'date' => '', 'date_bgn' => '', 'date_end' => '', 'published_only' => true, 'search_word' => '', 'omit_finished_event' => false];
 		$cat = $cond['cat'];
 		$date = self::dateToNumber($cond['date']);
 		$date_bgn = self::dateToNumber($cond['date_bgn']);
@@ -138,23 +156,23 @@ class Store {
 				// TODO Allow multiple categories to be specified
 				if ($cat[0] === '-') {
 					if ($p->getCategory() !== substr($cat, 1)) {
-						if ($omitFinishedEvent && $p->getEventState() === Post::EVENT_STATE_FINISHED) continue;
+						if ($cond['omit_finished_event'] && $p->getEventState() === Post::EVENT_STATE_FINISHED) continue;
 						$temp[] = $p;
 					}
 				} else {
 					if ($p->getCategory() === $cat) {
-						if ($omitFinishedEvent && $p->getEventState() === Post::EVENT_STATE_FINISHED) continue;
+						if ($cond['omit_finished_event'] && $p->getEventState() === Post::EVENT_STATE_FINISHED) continue;
 						$temp[] = $p;
 					}
 				}
 			}
 			$posts = $temp;
 		}
-		if ($newDay > 0) {
+		if ($this->_conf['newly_arrived_day'] > 0) {
 			$now = date('YmdHis');
 			foreach ($posts as $p) {
 				$pd = $now - $p->getDateTimeNumber();
-				$p->setNewItem($pd < $newDay * 1000000);
+				$p->setNewItem($pd < $this->_conf['newly_arrived_day'] * 1000000);
 			}
 		}
 		usort($posts, '\nt\Post::compareDate');

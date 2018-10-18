@@ -5,7 +5,7 @@ namespace nt;
  * Init
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -37,7 +37,7 @@ if (!empty($nt_q['id'])) {
 	}
 } else if (!empty($nt_q['page'])) {
 	$ppp = defined('NT_POSTS_PER_PAGE') ? NT_POSTS_PER_PAGE : 10;
-	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']], 7);
+	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
 
 	global $nt_posts, $nt_size, $nt_page;
 	$nt_posts = $ret['posts'];
