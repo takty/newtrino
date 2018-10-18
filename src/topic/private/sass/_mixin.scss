@@ -3,7 +3,7 @@
  * Mixin (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -19,7 +19,7 @@
 
 @mixin ui-elm {
 	border: 1px solid #ccc;
-	border-radius: 0.25rem;
+	border-radius: 2px;
 	color: #333;
 	&:disabled {
 		border-color: #ccc;
@@ -38,6 +38,7 @@
 	&:hover {
 		border-color: #666;
 	}
+	box-shadow: 0 2px 6px #999;
 }
 
 @mixin btn {
@@ -68,6 +69,6 @@
 }
 
 @mixin private-body {
-	border-top: 0.75rem solid darkslateblue;
-	border-bottom: 0.75rem solid darkslateblue;
+	border-top: 0.75rem solid orange;
+	border-bottom: 0.75rem solid orange;
 }

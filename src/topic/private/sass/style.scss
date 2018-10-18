@@ -112,7 +112,9 @@ select {
 	font-size: 0.9rem;
 }
 
-button {
+nav button,
+.media button,
+.frame button {
 	@include btn;
 	font-family: sans-serif;
 }
