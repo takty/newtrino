@@ -21,10 +21,10 @@ header('Content-Type: text/html;charset=utf-8');
 	<main>
 		<ul>
 <?php foreach($nt_posts as $p): ?>
-			<li <?php if ($p->isNewItem()) \nt\_eh(' class="new"')?>>
-				<span class="date"><?=\nt\_h($p->getPublishedDate())?></span>
-				<a href="<?=\nt\_h(\nt\get_permalink('view.php', $p))?>"><?=\nt\_h($p->getTitle())?></a>
-				<span class="cat<?php if ($p->getCategory() === 'event') \nt\_eh(' ' . $p->getEventState()); ?>"><?=\nt\_ht($p->getCategoryName(), 'category')?></span>
+			<li <?php if ($p->isNewItem()) \nt\_eh(' class="new"') ?>>
+				<span class="date"><?= \nt\_h($p->getPublishedDate()) ?></span>
+				<a href="<?= \nt\_h(\nt\get_permalink('view.php', $p)) ?>"><?= \nt\_h($p->getTitle()) ?></a>
+				<span class="cat<?php if ($p->getCategory() === 'event') \nt\_eh(' ' . $p->getEventState()); ?>"><?= \nt\_ht($p->getCategoryName(), 'category') ?></span>
 			</li>
 <?php endforeach ?>
 		</ul>

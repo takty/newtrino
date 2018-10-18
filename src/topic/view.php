@@ -15,7 +15,7 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?=\nt\_h($nt_post->getTitle())?> - Newtrino Sample Website</title>
+<title><?= \nt\_h($nt_post->getTitle()) ?> - Newtrino Sample Website</title>
 </head>
 <body>
 	<header>
@@ -23,19 +23,17 @@ header('Content-Type: text/html;charset=utf-8');
 	</header>
 	<main>
 		<header>
-			<div><?=\nt\_ht($nt_post->getCategoryName(), 'category')?></div>
-			<div>
-				<h2><?=\nt\_h($nt_post->getTitle())?></h2>
-			</div>
+			<div><?= \nt\_ht($nt_post->getCategoryName(), 'category') ?></div>
+			<h2><?= \nt\_h($nt_post->getTitle()) ?></h2>
 <?php if ($nt_post->getCategory() === 'event'): ?>
-			<div class="event-term <?=\nt\_h($nt_post->getEventState())?>">
-				<?= \nt\_ht('Event Date: ') ?><?=\nt\_h($nt_post->getEventDateBgn())?> - <?=\nt\_h($nt_post->getEventDateEnd())?>
+			<div class="event-term <?= \nt\_h($nt_post->getEventState()) ?>">
+				<?= \nt\_ht('Event Date: ') ?><?= \nt\_h($nt_post->getEventDateBgn()) ?> - <?= \nt\_h($nt_post->getEventDateEnd()) ?>
 			</div>
 <?php endif ?>
 		</header>
-		<section><?=$nt_post->getContent()?></section>
+		<section><?= $nt_post->getContent() ?></section>
 		<footer>
-			<div class="date"><?= \nt\_ht('Updated: ') ?><?=\nt\_h($nt_post->getPublishedDate())?></div>
+			<div><?= \nt\_ht('Updated: ') ?><?= \nt\_h($nt_post->getPublishedDate()) ?></div>
 		</footer>
 <?php \nt\the_postlink(); ?>
 <?php \nt\the_filter(); ?>
