@@ -10,17 +10,25 @@ namespace nt;
  */
 
 
+function get_permalink($base, $post) {
+	global $nt_q;
+	$t_pUrl = $base . '?id=<>' . query_str($nt_q, ['page', 'date', 'cat', 'search_word']);
+	return str_replace('<>', $post->getId(), $t_pUrl);
+}
+
+
+// -----------------------------------------------------------------------------
+
+
 function the_recent($ppp = 10, $cat = '', $new_day = 7, $omitFinishedEvent = false) {
 	global $nt_store;
-
 	$ret = $nt_store->getPosts(0, $ppp, ['cat' => $cat], $new_day, $omitFinishedEvent);
-	$t_url = 'topic/view.php?id=';
 
 	foreach ($ret['posts'] as $p) {
 		$cls = ($p->getCategory() === 'event') ? (' ' . $p->getEventState()) : '';
 ?>
 <li class="<?= _h($p->getStateClasses()) ?>">
-	<a href="<?= _h($t_url.$p->getId()) ?>">
+	<a href="<?= _h(\nt\get_permalink(NT_URL_BASE . 'view.php', $p)) ?>">
 		<span class="nt-cat<?= _h($cls) ?>"><?= _ht($p->getCategoryName(), 'category') ?></span>
 <?php if ($p->getCategory() === 'event'): ?>
 		<span class="nt-event-term"><?= _ht('Event Date: ') ?><?= _h($p->getEventDateBgn()) ?><?= _ht(' to ') ?><?= _h($p->getEventDateEnd()) ?></span>
@@ -161,10 +169,4 @@ function the_postlink() {
 			</ul>
 		</nav>
 <?php
-}
-
-function get_permalink($base, $post) {
-	global $nt_q;
-	$t_pUrl = $base . '?id=<>' . query_str($nt_q, ['page', 'date', 'cat', 'search_word']);
-	return str_replace('<>', $post->getId(), $t_pUrl);
 }
