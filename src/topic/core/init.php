@@ -12,13 +12,13 @@ namespace nt;
 
 if (!defined('NT_LANG')) define('NT_LANG', 'en');
 
+require_once(__DIR__ . '/define.php');
 require_once(__DIR__ . '/function.php');
 require_once(__DIR__ . '/tag.php');
 require_once(__DIR__ . '/class-store.php');
 
 reject_direct_access(__FILE__, 2);
 
-define('POST_PATH', __DIR__ . '/../post/');
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
 define('POST_URL', SERVER_HOST_URL . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/post/');
 
@@ -26,7 +26,7 @@ setLocaleSetting();
 loadResource();
 
 $nt_q     = prepareDefaultQuery(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
-$nt_store = new Store(POST_PATH, POST_URL);
+$nt_store = new Store(POST_URL);
 
 if (!empty($nt_q['id'])) {
 	$ret = $nt_store->getPostWithNextAndPrevious($nt_q['id'], ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);

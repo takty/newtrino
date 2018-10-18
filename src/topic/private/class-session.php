@@ -5,7 +5,7 @@ namespace nt;
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -26,13 +26,11 @@ class Session {
 	const SESSION_ALIVE_TIME = 7200;  // 7200 = 120 minutes * 60 seconds
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
-	const SESSION_PATH       = __DIR__ . '/var/session/';
-	const ACCOUNT_PATH       = __DIR__ . '/../data/';
 
-	function __construct($postDirPath = false) {  // False is permitted only when login
-		$this->accountDirPath = self::ACCOUNT_PATH;
-		$this->postDirPath    = $postDirPath;
-		$this->sessionDirPath = self::SESSION_PATH;
+	function __construct() {  // False is permitted only when login
+		$this->accountDirPath = PATH_DATA;
+		$this->postDirPath    = PATH_POST;
+		$this->sessionDirPath = PATH_SESSION;
 	}
 
 	// ------------------------------------------------------------------------

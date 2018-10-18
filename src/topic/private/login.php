@@ -12,6 +12,7 @@ namespace nt;
 
 if (!defined('NT_LANG')) define('NT_LANG', 'ja');
 
+require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');
 require_once(__DIR__ . '/class-session.php');
 

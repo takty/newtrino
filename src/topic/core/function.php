@@ -38,7 +38,7 @@ function setLocaleSetting() {
 
 function loadResource() {
 	global $nt_resource;
-	$path = __DIR__ . '/../data/lang.' . NT_LANG . '.json';
+	$path = PATH_DATA . 'text.' . NT_LANG . '.json';
 	if (file_exists($path)) {
 		$json = file_get_contents($path);
 		$nt_resource = json_decode($json, true);

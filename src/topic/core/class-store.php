@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-18
  *
  */
 
@@ -53,12 +53,10 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
-	const DATA_PATH = __DIR__ . '/../data/';
-
-	function __construct($postPath, $postUrl) {
-		$this->_postPath = $postPath;
+	function __construct($postUrl) {
 		$this->_postUrl  = $postUrl;
-		$this->_dataPath = self::DATA_PATH;
+		$this->_postPath = PATH_POST;
+		$this->_dataPath = PATH_DATA;
 	}
 
 	// ------------------------------------------------------------------------
