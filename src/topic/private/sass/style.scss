@@ -97,6 +97,7 @@ h3 {
 
 input[type=button] {
 	@include btn;
+	max-height: 2.5rem;
 }
 
 input[type=text], input[type=password] {
@@ -105,12 +106,15 @@ input[type=text], input[type=password] {
 	text-align: left;
 	box-shadow: 0 1px 1px #ccc inset;
 	font-size: 0.9rem;
+	max-height: 2.5rem;
 }
 
 select {
 	@include ui-elm;
 	padding: 0.5rem 0.75rem;
 	font-size: 0.9rem;
+	box-shadow: 0 2px 6px #999;
+	max-height: 2.5rem;
 }
 
 nav button,

@@ -38,13 +38,13 @@
 	&:hover {
 		border-color: #666;
 	}
-	box-shadow: 0 2px 6px #999;
+	box-shadow: 0 2px 6px #aaa;
 }
 
 @mixin btn {
 	@include ui-elm;
 	@include btn-elm;
-	padding: 0.5rem 0.75rem;
+	padding: 0.66rem 0.75rem;
 	display: inline-block;
 }
 
