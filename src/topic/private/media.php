@@ -11,7 +11,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/admin-init.php');
+require_once(__DIR__ . '/init-admin.php');
 
 
 $media = new Media(NT_PATH_POST, POST_URL, $nt_q['id']);

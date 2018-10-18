@@ -10,13 +10,11 @@ namespace nt;
  */
 
 
-require_once('admin-init.php');
+require_once(__DIR__ . 'init-admin.php');
 
 
-$mode = $nt_q['mode'];
 $result = 'NG';
-
-if ($mode === 'set_state') {
+if ($nt_q['mode'] === 'set_state') {
 	$post = $nt_store->getPost($nt_q['id']);
 	$post->setState($nt_q['state']);
 	$nt_store->writePost($post);
