@@ -13,7 +13,7 @@ namespace nt;
 define('NT_PRIVATE', true);
 if (!defined('NT_LANG')) define('NT_LANG', 'ja');
 define('SERVER_HOST_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']);
-define('POST_URL', SERVER_HOST_URL . rtrim(dirname(dirname($_SERVER['PHP_SELF'])), '/\\') . '/post/');
+define('POST_URL', SERVER_HOST_URL . rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/\\') . '/post/');
 
 require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');

@@ -16,7 +16,7 @@ namespace nt;
 function reject_direct_access($path, $depth = 1) {
 	$ifs = get_included_files();
 	if (array_shift($ifs) === $path) {
-		$to = $_SERVER['PHP_SELF'];
+		$to = $_SERVER['SCRIPT_NAME'];
 		for ($i = 0; $i < $depth; ++$i) {
 			$to = dirname($to);
 		}

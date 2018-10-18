@@ -20,5 +20,5 @@ if (defined('NT_PRIVATE')) {
 
 	$host = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 
-	define('NT_URL_PRIVATE', $host . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/');
+	define('NT_URL_PRIVATE', $host . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/');
 }
