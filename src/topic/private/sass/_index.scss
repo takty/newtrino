@@ -34,10 +34,14 @@ table.list {
 
 	th {
 		border-bottom: 1px solid #ccc;
+		text-align: center;
 	}
 	th, td {
 		padding: 0.75rem 0.75rem;
 		white-space: nowrap;
+
+		&:first-child { padding-left: 1px; }
+		&:last-child { padding-right: 1px; }
 	}
 	td {
 		&:nth-child(2) {
