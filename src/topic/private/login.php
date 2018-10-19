@@ -11,7 +11,6 @@ namespace nt;
 
 
 define('NT_PRIVATE', true);
-if (!defined('NT_LANG')) define('NT_LANG', 'ja');
 
 require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');
@@ -19,10 +18,11 @@ require_once(__DIR__ . '/class-session.php');
 
 set_locale_setting();
 
-$nt_res  = load_resource();
-$nt_q    = prepare_query();
-$success = true;
-$error   = '';
+$nt_config = load_config(NT_DIR_DATA);
+$nt_res    = load_resource(NT_DIR_DATA, $nt_config['language']);
+$nt_q      = prepare_query();
+$success   = true;
+$error     = '';
 
 header('Content-Type: text/html;charset=utf-8');
 if (!empty($nt_q['digest'])) {

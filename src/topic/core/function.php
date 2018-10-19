@@ -5,7 +5,7 @@ namespace nt;
  * Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -13,14 +13,14 @@ namespace nt;
 // Functions Used in Initial Process -------------------------------------------
 
 
-function reject_direct_access($path, $depth = 1) {
+function reject_direct_access($urlHost, $path, $depth = 1) {
 	$ifs = get_included_files();
 	if (array_shift($ifs) === $path) {
 		$to = $_SERVER['SCRIPT_NAME'];
 		for ($i = 0; $i < $depth; ++$i) {
 			$to = dirname($to);
 		}
-		$url = NT_URL_HOST . rtrim($to, '/\\');
+		$url = $urlHost . rtrim($to, '/\\');
 		header("Location: $url/");
 		exit(1);
 	}
@@ -35,8 +35,25 @@ function set_locale_setting() {
 	mb_regex_encoding('utf-8');
 }
 
-function load_resource() {
-	$path = NT_DIR_DATA . 'text.' . NT_LANG . '.json';
+function load_config($dirData) {
+	$conf = [];
+	$path = $dirData . 'config.json';
+	if (file_exists($path)) {
+		$json = file_get_contents($path);
+		$conf = json_decode($json, true);
+	}
+	// Default Config
+	$conf += [
+		'language' => 'en',
+		'language_private' => 'en',
+		'posts_per_page' => 10,
+		'newly_arrived_day' => 3
+	];
+	return $conf;
+}
+
+function load_resource($dirData, $lang) {
+	$path = $dirData . 'text.' . $lang . '.json';
 	if (file_exists($path)) {
 		$json = file_get_contents($path);
 		return json_decode($json, true);

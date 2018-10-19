@@ -53,29 +53,12 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
-	public function __construct($urlPost, $dirPost, $dirData) {
+	public function __construct($urlPost, $dirPost, $dirData, $conf) {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
 		$this->_dirData = $dirData;
 
-		$this->_conf = $this->loadConfig();
-		var_dump($this->_conf);
-	}
-
-	private function loadConfig() {
-		$conf = [];
-		$path = $this->_dirData . 'config.json';
-		if (file_exists($path)) {
-			$json = file_get_contents($path);
-			$conf = json_decode($json, true);
-		}
-		// Default Config
-		$conf += ['posts_per_page' => 10, 'newly_arrived_day' => 3];
-		return $conf;
-	}
-
-	public function getConfig($key) {
-		return $this->_conf[$key];
+		$this->_conf = $conf;
 	}
 
 	// ------------------------------------------------------------------------

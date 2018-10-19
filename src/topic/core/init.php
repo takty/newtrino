@@ -10,19 +10,18 @@ namespace nt;
  */
 
 
-if (!defined('NT_LANG')) define('NT_LANG', 'en');
-
 require_once(__DIR__ . '/define.php');
 require_once(__DIR__ . '/function.php');
 require_once(__DIR__ . '/tag.php');
 require_once(__DIR__ . '/class-store.php');
 
-reject_direct_access(__FILE__, 2);
+reject_direct_access(NT_URL_HOST, __FILE__, 2);
 set_locale_setting();
 
-$nt_res   = load_resource();
-$nt_q     = prepare_query(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
-$nt_store = new Store(NT_URL_POST, NT_DIR_POST, NT_DIR_DATA);
+$nt_config = load_config(NT_DIR_DATA);
+$nt_res    = load_resource(NT_DIR_DATA, $nt_config['language']);
+$nt_q      = prepare_query(['id' => '', 'page' => '1', 'cat' => '', 'date' => '', 'search_word' => '', 'new_day' => 7]);
+$nt_store  = new Store(NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config);
 
 if (!empty($nt_q['id'])) {
 	$ret = $nt_store->getPostWithNextAndPrevious($nt_q['id'], ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
@@ -36,7 +35,7 @@ if (!empty($nt_q['id'])) {
 		$nt_next_post = $ret[2];
 	}
 } else if (!empty($nt_q['page'])) {
-	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $nt_store->getConfig('posts_per_page'), ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
+	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $nt_config['posts_per_page'], ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
 
 	global $nt_posts, $nt_size, $nt_page;
 	$nt_posts = $ret['posts'];
