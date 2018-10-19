@@ -50,7 +50,7 @@ if (!empty($nt_q['digest'])) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('User Authentication') ?></title>
+<title><?= _ht('User Authentication') ?> - Newtrino</title>
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.min.js"></script>
@@ -58,7 +58,7 @@ if (!empty($nt_q['digest'])) {
 </head>
 <body class="login">
 <div class="login-frame">
-	<h1><?= _ht('Newtrino Management Page') ?></h1>
+	<h1>Newtrino</h1>
 	<h2><?= _ht('User Authentication') ?></h2>
 	<form action="login.php" method="post">
 		<dl>

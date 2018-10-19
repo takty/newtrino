@@ -48,7 +48,7 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('Post List') ?></title>
+<title><?= _ht('Post List') ?> - Newtrino</title>
 <link rel="stylesheet" href="css/style.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <script src="js/flatpickr/flatpickr.min.js"></script>
@@ -59,7 +59,7 @@ header('Content-Type: text/html;charset=utf-8');
 <body class='list'>
 <div class="container">
 	<div class="header-row">
-		<h1><?= _ht('Newtrino Management Page') ?></h1>
+		<h1>Newtrino</h1>
 		<a href="login.php" class="btn"><?= _ht('Log Out') ?></a>
 	</div>
 	<h2><?= _ht('Post List') ?></h2>
