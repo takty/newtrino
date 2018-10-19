@@ -62,12 +62,8 @@ function initEdit() {
 		}
 		onChanged();
 	});
-	document.getElementById('post_published_date').addEventListener('change', function () {
-		onChanged();
-	});
-	document.getElementById('post_state').addEventListener('change', function () {
-		onChanged();
-	});
+	document.getElementById('post_published_date').addEventListener('change', onChanged);
+	document.getElementById('post_state').addEventListener('change', onChanged);
 	document.getElementById('post_cat').addEventListener('change', function () {
 		onChanged();
 		const isEvent = document.getElementById('post_cat').value === 'event';
