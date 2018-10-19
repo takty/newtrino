@@ -3,7 +3,7 @@
  * Edit (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -18,7 +18,7 @@ body.edit {
 }
 
 .container-edit {
-	height: 100%;
+	min-height: calc(100vh - 3.5rem);
 	flex-grow: 1;
 
 	display: flex;
@@ -44,6 +44,12 @@ body.edit {
 	}
 }
 
+#form-post {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
 .form-post {
 	display: flex;
 	flex-direction: column;
@@ -52,13 +58,6 @@ body.edit {
 	#post_title {
 		width: 100%;
 		padding: 0.5rem 0.75rem;
-	}
-	#post_content {
-		width: 100%;
-		padding: 0.5rem 0.75rem;
-		flex-grow: 1;
-		border: 1px solid #ccc;
-		border-radius: 0.25rem;
 	}
 }
 
