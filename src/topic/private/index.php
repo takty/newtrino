@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/init-admin.php');
+require_once(__DIR__ . '/init-private.php');
 
 
 if ($nt_q['mode'] === 'delete') {
@@ -48,7 +48,7 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('Post List', 'admin') ?></title>
+<title><?= _ht('Post List', 'private') ?></title>
 <link rel="stylesheet" href="css/style.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <script src="js/flatpickr/flatpickr.min.js"></script>
@@ -59,13 +59,13 @@ header('Content-Type: text/html;charset=utf-8');
 <body class='list'>
 <div class="container">
 	<div class="header-row">
-		<h1><?= _ht('Newtrino Management Page', 'admin') ?></h1>
-		<a href="login.php" class="btn"><?= _ht('Log Out', 'admin') ?></a>
+		<h1><?= _ht('Newtrino Management Page', 'private') ?></h1>
+		<a href="login.php" class="btn"><?= _ht('Log Out', 'private') ?></a>
 	</div>
-	<h2><?= _ht('Post List', 'admin') ?></h2>
+	<h2><?= _ht('Post List', 'private') ?></h2>
 	<div class="list-ops">
 		<nav>
-			<h3><?= _ht('Display Period', 'admin') ?></h3>
+			<h3><?= _ht('Display Period', 'private') ?></h3>
 			<p class="flatpickr">
 				<input type="text" id="fp-date-bgn" size="12" value="" data-input><a class="input-button" data-clear></a>
 			</p>
@@ -73,19 +73,19 @@ header('Content-Type: text/html;charset=utf-8');
 			<p class="flatpickr">
 				<input type="text" id="fp-date-end" size="12" value="" data-input><a class="input-button" data-clear></a>
 			</p>
-			<button type="button" onclick="changeDateRange();"><?= _ht('Filter', 'admin') ?></button>
+			<button type="button" onclick="changeDateRange();"><?= _ht('Filter', 'private') ?></button>
 		</nav>
 		<nav>
-			<h3><?= _ht('Category', 'admin') ?></h3>
+			<h3><?= _ht('Category', 'private') ?></h3>
 			<select onchange="changeCategory(this.value);">
-				<option value=""><?= _ht('Select Category', 'admin') ?></option>
+				<option value=""><?= _ht('Select Category', 'private') ?></option>
 <?php foreach($t_cats as $c): ?>
 					<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _ht($c['name'], 'category') ?></option>
 <?php endforeach; ?>
 			</select>
 		</nav>
 		<nav>
-			<h3><?= _ht('View Count', 'admin') ?></h3>
+			<h3><?= _ht('View Count', 'private') ?></h3>
 			<select id="ppp" onchange="changePpp(this.value);">
 				<option value="10">10</option>
 				<option value="20">20</option>
@@ -93,20 +93,20 @@ header('Content-Type: text/html;charset=utf-8');
 				<option value="100">100</option>
 			</select>
 		</nav>
-		<div><a class="btn btn-new" href="#" onclick="newPost();"><?= _ht("New Post", 'admin') ?></a></div>
+		<div><a class="btn btn-new" href="#" onclick="newPost();"><?= _ht("New Post", 'private') ?></a></div>
 	</div>
 	<table class="list">
-		<tr><th><?= _ht('State', 'admin') ?></th><th><?= _ht('Date', 'admin') ?></th><th><?= _ht('Title', 'admin') ?></th><th><?= _ht('Category', 'admin') ?></th><th><?= _ht('Updated', 'admin') ?></th><th></th></tr>
+		<tr><th><?= _ht('State', 'private') ?></th><th><?= _ht('Date', 'private') ?></th><th><?= _ht('Title', 'private') ?></th><th><?= _ht('Category', 'private') ?></th><th><?= _ht('Updated', 'private') ?></th><th></th></tr>
 <?php foreach($t_posts as $p): ?>
 		<tr>
 			<td>
 				<select onchange="setPostState(<?= _h($p->getId()) ?>, this.value);">
 <?php if ($p->canPublished()): ?>
-					<option value="published"<?php if ($p->isPublished()) _eh(' selected'); ?>><?= _ht('Published', 'admin') ?></option>
+					<option value="published"<?php if ($p->isPublished()) _eh(' selected'); ?>><?= _ht('Published', 'private') ?></option>
 <?php else: ?>
-					<option value="reserved"<?php if ($p->isReserved()) _eh(' selected'); ?>><?= _ht('Reserved', 'admin') ?></option>
+					<option value="reserved"<?php if ($p->isReserved()) _eh(' selected'); ?>><?= _ht('Reserved', 'private') ?></option>
 <?php endif ?>
-					<option value="draft"<?php if ($p->isDraft()) _eh(' selected'); ?>><?= _ht('Draft', 'admin') ?></option>
+					<option value="draft"<?php if ($p->isDraft()) _eh(' selected'); ?>><?= _ht('Draft', 'private') ?></option>
 				</select>
 			</td>
 			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getPublishedDate()) ?></a></td>
@@ -117,20 +117,20 @@ header('Content-Type: text/html;charset=utf-8');
 			<td><?= _ht($p->getCategoryName(), 'category') ?></td>
 <?php endif ?>
 			<td><?= _h($p->getModifiedDateTime()) ?></td>
-			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete', 'admin') ?></a></td>
+			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete', 'private') ?></a></td>
 		</tr>
 <?php endforeach ?>
 	</table>
 	<nav>
 		<ul class="pagination-nav">
 <?php if ($t_pg_prev): ?>
-				<li><a href="#" onClick="submitPage(<?= _h($t_pg_prev) ?>);"><?= _ht('Next', 'admin') ?></a></li>
+				<li><a href="#" onClick="submitPage(<?= _h($t_pg_prev) ?>);"><?= _ht('Next', 'private') ?></a></li>
 <?php endif ?>
 <?php foreach($t_pgs as $pg): ?>
 				<li><?php wrap($pg['index'], '<a href="#" onclick="submitPage(' . $pg['page'] . ')">', $pg['page'], '</a>') ?></li>
 <?php endforeach ?>
 <?php if ($t_pg_next): ?>
-				<li><a href="#" onClick="submitPage(<?= _h($t_pg_next) ?>);"><?= _ht('Previous', 'admin') ?></a></li>
+				<li><a href="#" onClick="submitPage(<?= _h($t_pg_next) ?>);"><?= _ht('Previous', 'private') ?></a></li>
 <?php endif ?>
 		</ul>
 	</nav>

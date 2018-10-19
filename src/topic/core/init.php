@@ -36,8 +36,7 @@ if (!empty($nt_q['id'])) {
 		$nt_next_post = $ret[2];
 	}
 } else if (!empty($nt_q['page'])) {
-	$ppp = defined('NT_POSTS_PER_PAGE') ? NT_POSTS_PER_PAGE : 10;
-	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
+	$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $nt_store->getConfig('posts_per_page'), ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'search_word' => $nt_q['search_word']]);
 
 	global $nt_posts, $nt_size, $nt_page;
 	$nt_posts = $ret['posts'];

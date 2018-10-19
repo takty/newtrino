@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/init-admin.php');
+require_once(__DIR__ . '/init-private.php');
 
 
 $mode = $nt_q['mode'];
@@ -19,7 +19,7 @@ if ($mode === 'update') {
 	$p = $nt_store->getPost($nt_q['id']);
 	$p->assign($nt_q);
 	$t_p = $nt_store->writePost($p);
-	$t_msg = _ht('Update Complete', 'admin');
+	$t_msg = _ht('Update Complete', 'private');
 } else if ($mode === 'new') {
 	$t_p = $nt_store->createNewPost();
 	$nt_session->addTempPostId($t_p->getId());
@@ -45,7 +45,7 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('Post Edit', 'admin') ?></title>
+<title><?= _ht('Post Edit', 'private') ?></title>
 <link rel="stylesheet" href="css/style.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <script src="js/flatpickr/flatpickr.min.js"></script>
@@ -58,11 +58,11 @@ header('Content-Type: text/html;charset=utf-8');
 <div id="dialog-placeholder"></div>
 <div class="container container-edit">
 	<div class="header-row">
-		<h1><?= _ht('Newtrino Management Page', 'admin') ?></h1>
-		<a class="btn" href="#" id="show-list" onClick="showList();"><?= _ht('Post List', 'admin') ?></a>
-		<a class="btn" href="#" id="show-post" onClick="showPost();"><?= _ht('Show Post', 'admin') ?></a>
+		<h1><?= _ht('Newtrino Management Page', 'private') ?></h1>
+		<a class="btn" href="#" id="show-list" onClick="showList();"><?= _ht('Post List', 'private') ?></a>
+		<a class="btn" href="#" id="show-post" onClick="showPost();"><?= _ht('Show Post', 'private') ?></a>
 	</div>
-	<h2><?= _ht('Post Edit', 'admin') ?>  <span id="update-msg"><?= _h($t_msg) ?></span></h2>
+	<h2><?= _ht('Post Edit', 'private') ?>  <span id="update-msg"><?= _h($t_msg) ?></span></h2>
 	<form name="form-post" id="form-post" action="edit.php" method="post">
 		<div class="column">
 			<div class="column-main">
@@ -77,30 +77,30 @@ header('Content-Type: text/html;charset=utf-8');
 					<input type="hidden" name="date_bgn" id="date_bgn" value="<?= _h($t_date_bgn) ?>">
 					<input type="hidden" name="date_end" id="date_end" value="<?= _h($t_date_end) ?>">
 
-					<input placeholder="<?= _ht('Enter Title Here', 'admin') ?>" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
-					<div class="btn-row"><a class="btn" href="#" id="upload" onClick="showMediaChooser();"><?= _ht('Insert Media', 'admin') ?></a></div>
+					<input placeholder="<?= _ht('Enter Title Here', 'private') ?>" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
+					<div class="btn-row"><a class="btn" href="#" id="upload" onClick="showMediaChooser();"><?= _ht('Insert Media', 'private') ?></a></div>
 					<textarea name="post_content" id="post_content"><?= _h($t_p->getContent()) ?></textarea>
 				</div>
 			</div>
 			<div class="column-sub">
 				<div class="frame">
-					<h3><?= _ht('Publish', 'admin') ?></h3>
+					<h3><?= _ht('Publish', 'private') ?></h3>
 					<input form="form-post" type="text" name="post_published_date" id="post_published_date" value="<?= _h($t_p->getPublishedDateTime()) ?>">
 					<div class="btn-row">
 						<select form="form-post" name="post_state" id="post_state">
-							<option id="post_state_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>><?= _ht('Published', 'admin') ?></option>
-							<option id="post_state_reserved" value="reserved"<?php if ($t_p->isReserved()) {_eh(' selected');} ?>><?= _ht('Reserved', 'admin') ?></option>
-							<option id="post_state_draft" value="draft"<?php if ($t_p->isDraft()) {_eh(' selected');} ?>><?= _ht('Draft', 'admin') ?></option>
+							<option id="post_state_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>><?= _ht('Published', 'private') ?></option>
+							<option id="post_state_reserved" value="reserved"<?php if ($t_p->isReserved()) {_eh(' selected');} ?>><?= _ht('Reserved', 'private') ?></option>
+							<option id="post_state_draft" value="draft"<?php if ($t_p->isDraft()) {_eh(' selected');} ?>><?= _ht('Draft', 'private') ?></option>
 						</select>
 					</div>
 					<div>
-						<a class="btn" href="#" onClick="showPreview();"><?= _ht('Preview', 'admin') ?></a>
-						<a class="btn btn-update" href="#" id="update" onClick="update();"><?= _ht('Update', 'admin') ?></a>
+						<a class="btn" href="#" onClick="showPreview();"><?= _ht('Preview', 'private') ?></a>
+						<a class="btn btn-update" href="#" id="update" onClick="update();"><?= _ht('Update', 'private') ?></a>
 					</div>
-					<p class="message" id="message_enter_title"><?= _ht('The title is blank.', 'admin') ?></p>
+					<p class="message" id="message_enter_title"><?= _ht('The title is blank.', 'private') ?></p>
 				</div>
 				<div class="frame">
-					<h3><?= _ht('Category', 'admin') ?></h3>
+					<h3><?= _ht('Category', 'private') ?></h3>
 					<select form="form-post" name="post_cat" id="post_cat">
 <?php foreach($t_cats as $c): ?>
 						<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected'); ?>><?= _ht($c['name'], 'category') ?></option>
@@ -108,7 +108,7 @@ header('Content-Type: text/html;charset=utf-8');
 					</select>
 				</div>
 				<div class="frame" id="frame-event-duration">
-					<h3><?= _ht('Event Duration', 'admin') ?></h3>
+					<h3><?= _ht('Event Duration', 'private') ?></h3>
 					<p class="flatpickr">
 						<input form="form-post" type="text" name="event_date_bgn" id="event_date_bgn" value="<?= _h($t_p->getEventDateBgn()) ?>" data-input>
 						<a class="input-button" data-clear></a>

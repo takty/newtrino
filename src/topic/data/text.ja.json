@@ -21,7 +21,7 @@
 		"News": "ニュース",
 		"Columns": "コラム"
 	},
-	"admin": {
+	"private": {
 		"Logining...": "ログイン中...",
 		"User name or password is wrong.": "ユーザー名かパスワードが異なります。",
 		"Newtrino Management Page": "Newtrino 管理ページ",

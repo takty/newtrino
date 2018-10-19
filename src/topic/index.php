@@ -1,6 +1,5 @@
 <?php
 define('NT_LANG', 'ja');
-define('NT_POSTS_PER_PAGE', 10);
 require_once(__DIR__ . '/core/init.php');
 global $nt_posts;
 

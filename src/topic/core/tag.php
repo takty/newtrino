@@ -93,14 +93,14 @@ function the_filter($dates = false, $cats = false, $searchQuery = false) {
 <?php
 }
 
-function the_pagination($pgUrl = false, $size = false, $cur = false, $ppp = false, $maxPg = 7) {
+function the_pagination($pgUrl = false, $size = false, $cur = false, $maxPg = 7) {
 	global $nt_store, $nt_q;
 	global $nt_posts, $nt_size, $nt_page;
 	if (!$pgUrl) $pgUrl = 'index.php?page=<>' . query_str($nt_q, ['date', 'cat', 'search_word']);
 	if (!$size)  $size  = $nt_size;
 	if (!$cur)   $cur   = $nt_page + 1;
-	if (!$ppp)   $ppp   = NT_POSTS_PER_PAGE;
 
+	$ppp = $nt_store->getConfig('posts_per_page');
 	if ($ppp >= $size) return;
 
 	$pageSize = ceil($size / $ppp);

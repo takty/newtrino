@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/init-admin.php');
+require_once(__DIR__ . '/init-private.php');
 
 
 $res = 'NG';

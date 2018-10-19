@@ -2,10 +2,10 @@
 namespace nt;
 /**
  *
- * Init for Admin
+ * Init for Private
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 

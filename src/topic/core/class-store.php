@@ -17,7 +17,7 @@ require_once(__DIR__ . '/class-post.php');
 
 class Store {
 
-	static function dateToNumber($date) {
+	static public function dateToNumber($date) {
 		if (mb_eregi("^(\d+)[/|-](.*)", $date, $regs)) {
 			$ret = sprintf('%04d', $regs[1]);;
 			$lv = $regs[2];
@@ -31,7 +31,7 @@ class Store {
 		return $date;
 	}
 
-	static function deleteAll($dir) {
+	static public function deleteAll($dir) {
 		if (!file_exists($dir)) {
 			Logger::output('File Does Not Exist (Store::deleteAll file_exists) [' . $dir . ']');
 			return false;
@@ -53,7 +53,7 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
-	function __construct($urlPost, $dirPost, $dirData) {
+	public function __construct($urlPost, $dirPost, $dirData) {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
 		$this->_dirData = $dirData;
@@ -70,8 +70,12 @@ class Store {
 			$conf = json_decode($json, true);
 		}
 		// Default Config
-		$conf += ['newly_arrived_day' => 3];
+		$conf += ['posts_per_page' => 10, 'newly_arrived_day' => 3];
 		return $conf;
+	}
+
+	public function getConfig($key) {
+		return $this->_conf[$key];
 	}
 
 	// ------------------------------------------------------------------------
