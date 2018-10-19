@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -26,13 +26,13 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('Preview', 'private') ?></title>
+<title><?= _ht('Preview') ?></title>
 <link rel="stylesheet" media="all" href="css/style.min.css" />
 </head>
 <body class="preview">
 <div class="container">
-	<h1><?= _ht('Newtrino Management Page', 'private') ?> - <?= _ht('Preview', 'private') ?></h1>
-	<h2><?= _ht('Preview', 'private') ?></h2>
+	<h1><?= _ht('Newtrino Management Page') ?> - <?= _ht('Preview') ?></h1>
+	<h2><?= _ht('Preview') ?></h2>
 	<main class="topic-post">
 		<header>
 			<h3><?= _h($t_title) ?></h3>

@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -32,7 +32,7 @@ if (!empty($nt_q['digest'])) {
 ?>
 <!DOCTYPE html>
 <html>
-<head><title><?= _ht('Logining...', 'private') ?></title></head>
+<head><title><?= _ht('Logining...') ?></title></head>
 <body onload="document.forms[0].submit();">
 <form method="post" action="index.php"><input type="hidden" name="sid" value="<?= _h($sid) ?>"></form>
 </body>
@@ -58,12 +58,12 @@ if (!empty($nt_q['digest'])) {
 </head>
 <body class="login">
 <div class="frame login-frame">
-	<h1><?= _ht('Newtrino Management Page', 'private') ?></h1>
-	<h2><?= _ht('User Authentication', 'private') ?></h2>
+	<h1><?= _ht('Newtrino Management Page') ?></h1>
+	<h2><?= _ht('User Authentication') ?></h2>
 	<form action="login.php" method="post">
 		<dl>
-			<dt><?= _ht('User Name: ', 'private') ?></dt><dd><input type="text" name="user" id="user"></dd>
-			<dt><?= _ht('Password: ', 'private') ?></dt><dd><input type="password" id="pw"></dd>
+			<dt><?= _ht('User Name: ') ?></dt><dd><input type="text" name="user" id="user"></dd>
+			<dt><?= _ht('Password: ') ?></dt><dd><input type="password" id="pw"></dd>
 		</dl>
 		<input type="hidden" name="realm" id="realm" value="<?= _h('newtrino') ?>">
 		<input type="hidden" name="nonce" id="nonce" value="<?= _h(Session::getNonce()) ?>">
@@ -71,9 +71,9 @@ if (!empty($nt_q['digest'])) {
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
 <?php if (!$success): ?>
-		<p><?= _ht('User name or password is wrong.', 'private') ?></p>
+		<p><?= _ht('User name or password is wrong.') ?></p>
 <?php endif; ?>
-		<div><a class="btn" href="../"><?= _ht('Back To Top Page', 'private') ?></a><button type="submit" id="loginBtn"><?= _ht('Login', 'private') ?></button></div>
+		<div><a class="btn" href="../"><?= _ht('Back To Top Page') ?></a><button type="submit" id="loginBtn"><?= _ht('Login') ?></button></div>
 	</form>
 </div>
 </body>

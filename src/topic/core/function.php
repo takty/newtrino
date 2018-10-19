@@ -144,6 +144,9 @@ function _eut($str, $context = 'default') {
 }
 
 function translate($str, $context = 'default') {
+	if (defined('NT_PRIVATE') && $context === 'default') {
+		$context = 'private';
+	}
 	global $nt_res;
 	if (isset($nt_res[$context])) {
 		if (isset($nt_res[$context][$str])) {

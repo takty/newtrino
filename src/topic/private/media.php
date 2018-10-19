@@ -6,7 +6,7 @@ namespace nt;
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -45,7 +45,7 @@ header('Content-Type: text/html;charset=utf-8');
 <script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
 <body class="media">
-<h1><?= _ht('Insert Media', 'private') ?></h1>
+<h1><?= _ht('Insert Media') ?></h1>
 <div class="header-row">
 	<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
 		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
@@ -54,14 +54,14 @@ header('Content-Type: text/html;charset=utf-8');
 		<div style="display: none">
 			<input type="file" name="uploadFile" id="uploadFile" onchange="if (this.value !== '') document.getElementById('uploadForm').submit();">
 		</div>
-		<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New', 'private') ?></button>
+		<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New') ?></button>
 	</form>
 	<form action="media.php" method="post" id="deleteForm">
 		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
 		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="delete">
 		<input type="hidden" name="deleted_file" id="deleted_file">
-		<button class="btn-delete" type="button" id="delete" onClick="deleteFile();"><?= _ht('Permanently Delete', 'private') ?></button>
+		<button class="btn-delete" type="button" id="delete" onClick="deleteFile();"><?= _ht('Permanently Delete') ?></button>
 	</form>
 </div>
 <div class="media-list">
@@ -86,22 +86,22 @@ if ($is_img):
 </div>
 <div class="image-option">
 	<div>
-		<h2><?= _ht('Image Alignment', 'private') ?></h2>
-		<input type="radio" name="align" id="align_c" value="c" checked><label for="align_c"><?= _ht('Center', 'private') ?></label>
-		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"><?= _ht('Left', 'private') ?></label>
-		<input type="radio" name="align" id="align_r" value="r"><label for="align_r"><?= _ht('Right', 'private') ?></label>
+		<h2><?= _ht('Image Alignment') ?></h2>
+		<input type="radio" name="align" id="align_c" value="c" checked><label for="align_c"><?= _ht('Center') ?></label>
+		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"><?= _ht('Left') ?></label>
+		<input type="radio" name="align" id="align_r" value="r"><label for="align_r"><?= _ht('Right') ?></label>
 	</div>
 	<div>
-		<h2><?= _ht('Image Size', 'private') ?></h2>
-		<input type="radio" name="size" id="size_o" value="o"><label for="size_o"><?= _ht('Original Size', 'private') ?></label>
-		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"><?= _ht('Large', 'private') ?></label>
-		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"><?= _ht('Medium', 'private') ?></label>
-		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"><?= _ht('Small', 'private') ?></label>
+		<h2><?= _ht('Image Size') ?></h2>
+		<input type="radio" name="size" id="size_o" value="o"><label for="size_o"><?= _ht('Original Size') ?></label>
+		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"><?= _ht('Large') ?></label>
+		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"><?= _ht('Medium') ?></label>
+		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"><?= _ht('Small') ?></label>
 	</div>
 </div>
 <div>
-	<button type="button" onClick="cancel();"><?= _ht('Close', 'private') ?></button>
-	<button type="button" id="insert" onClick="insert();"><?= _ht('Insert Into Post', 'private') ?></button>
+	<button type="button" onClick="cancel();"><?= _ht('Close') ?></button>
+	<button type="button" id="insert" onClick="insert();"><?= _ht('Insert Into Post') ?></button>
 </div>
 </body>
 </html>
