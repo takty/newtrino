@@ -204,7 +204,7 @@ class Store {
 		foreach ($posts as $p) {
 			if ($p->updateIndexScore($ws) > 0) $ret[] = $p;
 		}
-		usort($ret, ['Post', 'compareIndexScore']);
+		usort($ret, ['\nt\Post', 'compareIndexScore']);
 		return $ret;
 	}
 
