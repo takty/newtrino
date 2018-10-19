@@ -107,9 +107,9 @@ if ($is_img):
 		<input type="radio" name="size" id="size_f" value="f"><label for="size_f"> <?= _ht('Full Size') ?></label>
 	</div>
 </div>
-<div>
+<nav>
 	<button type="button" onClick="cancel();"><?= _ht('Close') ?></button>
 	<button type="button" id="insert" onClick="insert();"><?= _ht('Insert Into Post') ?></button>
-</div>
+</nav>
 </body>
 </html>

@@ -17,13 +17,15 @@ body.media {
 	background-color: #fff;
 	height: 100vh;
 
-	> *:not(:first-child) {
-		margin-top: 1rem;
-	}
-	> div:last-of-type {
-		text-align: right;
-		> *:not(:first-child) {
-			margin-left: 0.75rem;
+	> * + * { margin-top: 1rem; }
+
+	nav {
+		margin-top: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		> * + * {
+			margin-left: 1.5rem;
 		}
 	}
 }
@@ -37,7 +39,7 @@ body.media {
 
 .image-option {
 	@include frame-design;
-	padding: 0.5rem 0.75rem;
+	padding: 1rem;
 	display: flex;
 	justify-content: space-around;
 
@@ -49,7 +51,7 @@ body.media {
 			margin: 0 0 0.5rem 0;
 		}
 		input[type=radio]:not(:first-of-type) {
-			margin-left: 0.5rem;
+			margin-left: 1rem;
 		}
 	}
 }
@@ -73,7 +75,7 @@ body.media {
 		height: 6rem;
 
 		border: 1px solid #ccc;
-		border-radius: 0.15rem;
+		border-radius: 2px;
 
 		background-size: contain;
 		background-repeat: no-repeat;

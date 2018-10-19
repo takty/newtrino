@@ -166,8 +166,10 @@ function showMediaChooser() {
 	const win = document.createElement('iframe');
 	win.id = 'mediaChooser';
 	win.src = 'media.php?sid=' + sid + '&id=' + pid;
-	win.style.width = '800px';
-	win.style.height = '700px';
+	win.style.width     = '960px';
+	win.style.height    = '720px';
+	win.style.maxWidth  = '90vw';
+	win.style.maxHeight = '90vh';
 
 	dialogPlaceholder.appendChild(win);
 	dialogPlaceholder.style.display = 'flex';
