@@ -78,7 +78,7 @@ header('Content-Type: text/html;charset=utf-8');
 		<nav>
 			<h3><?= _ht('Category') ?></h3>
 			<select onchange="changeCategory(this.value);">
-				<option value=""><?= _ht('Select Category') ?></option>
+				<option value=""><?= _ht('All') ?></option>
 <?php foreach($t_cats as $c): ?>
 					<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _ht($c['name'], 'category') ?></option>
 <?php endforeach; ?>
