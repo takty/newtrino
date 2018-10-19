@@ -4,16 +4,16 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
 
-var file_name   = '';
-var file_url    = '';
-var file_is_img = false;
-var image_cx    = '';
-var image_cy    = '';
+let file_name   = '';
+let file_url    = '';
+let file_is_img = false;
+let image_cx    = '';
+let image_cy    = '';
 
 function initMedia() {
 	document.getElementById('delete').disabled = true;
@@ -37,14 +37,14 @@ function deleteFile() {
 }
 
 function insert() {
-	var align = checkRadio('align');
-	var size = checkRadio('size');
+	const align = checkRadio('align');
+	const size = checkRadio('size');
 	window.parent.insertMedia(file_name, file_url, image_cx, image_cy, align, size, file_is_img);
 }
 
 function checkRadio(tag) {
-	var radioList = document.getElementsByName(tag);
-	for (var i = 0; i < radioList.length; i += 1) {
+	const radioList = document.getElementsByName(tag);
+	for (let i = 0; i < radioList.length; i += 1) {
 		if (radioList[i].checked) return radioList[i].value;
 	}
 	return '';

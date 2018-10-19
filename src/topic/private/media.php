@@ -68,18 +68,25 @@ header('Content-Type: text/html;charset=utf-8');
 	<div class="filechooser">
 <?php for ($i = 0; $i < count($t_items); $i += 1): $item = $t_items[$i]; ?>
 		<div class="item">
-			<label for="item<?=$i?>">
+			<label for="item<?= $i ?>">
 <?php
 $is_img = !empty($item['img']);
+$params = [
+	"'" . addslashes($item['file']) . "'",
+	"'" . addslashes($item['url']) . "'",
+	$item['width'], $item['height'],
+	$is_img ? 'true' : 'false',
+];
+$on_click = "setFile(" . implode(', ', $params) . ")";
 if ($is_img):
 ?>
-				<div class="icon" style="background-image: url(<?=_h($item['url'])?>)"></div>
+				<div class="icon" style="background-image: url(<?= _h($item['url']) ?>)"></div>
 <?php else: ?>
 				<div class="icon"><?= _h($item['ext']) ?></div>
 <?php endif ?>
 			</label><br>
-			<input type="radio" id="item<?=$i?>" value="<?= _h($item['caption']) ?>" onclick="setFile('<?= _h($item['file']) ?>', '<?= _h($item['url']) ?>', <?= _h($item['width']) ?>, <?= _h($item['height']) ?>, <?= $is_img ?>)">
-			<label for="item<?=$i?>"><?= _h($item['caption']) ?></label>
+			<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h($item['caption']) ?>" onclick="<?= _h($on_click) ?>">
+			<label for="item<?= $i ?>"><?= _h($item['caption']) ?></label>
 		</div>
 <?php endfor ?>
 	</div>
