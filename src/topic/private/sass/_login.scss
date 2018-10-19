@@ -3,7 +3,7 @@
  * Login (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-19
  *
  */
 
@@ -12,25 +12,36 @@
 
 
 body.login {
-	@include private-body;
-	@include flex-center;
+	@include layout-centering;
 	height: 100vh;
 }
 
 .login-frame {
+	@include frame-design;
+
+	> * + * { margin-top: 1rem; }
+	> form {
+		> * + * { margin-top: 1rem; }
+	}
+
+	margin-bottom: 10vh;
 	width: 100%;
 	max-width: 24rem;
+	padding: 1rem;
 
 	dt {
 		margin-top: 0.5rem;
 		margin-bottom: 0.5rem;
 	}
+	dd + dt { margin-top: 1rem; }
+
 	input[type=text], input[type=password] {
 		width: 100%;
 	}
-	> form > div:last-child {
+	nav {
 		margin-top: 2rem;
 		display: flex;
+		align-items: center;
 		justify-content: space-between;
 	}
 }

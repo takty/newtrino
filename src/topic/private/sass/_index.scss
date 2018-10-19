@@ -3,17 +3,13 @@
  * Index (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-19
  *
  */
 
 
 @charset 'utf-8';
 
-
-body.list {
-	@include private-body;
-}
 
 .flatpickr {
 	display: inline-block;
@@ -86,9 +82,9 @@ table.list {
 }
 
 .pagination-nav {
+	@include layout-centering;
 	margin-top: 2rem;
 	padding: 0;
-	@include flex-center;
 
 	li {
 		@include btn-li;

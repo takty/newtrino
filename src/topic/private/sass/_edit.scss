@@ -12,7 +12,6 @@
 
 
 body.edit {
-	@include private-body;
 	display: flex;
 	flex-direction: column;
 }
@@ -79,7 +78,7 @@ body.edit {
 	z-index: 999;
 
 	& > iframe {
-		@include ui-elm;
+		@include clickable-design;
 	}
 }
 

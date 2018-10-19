@@ -3,7 +3,7 @@
  * Media Chooser (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -14,7 +14,7 @@
 body.media {
 	display: flex;
 	flex-direction: column;
-	background-color: white;
+	background-color: #fff;
 	height: 100vh;
 
 	> *:not(:first-child) {
@@ -29,14 +29,14 @@ body.media {
 }
 
 .media-list {
-	@include ui-elm;
+	@include frame-design;
 	width: 100%;
 	overflow-y: scroll;
 	flex: 1 0 1px;
 }
 
 .image-option {
-	@include ui-elm;
+	@include frame-design;
 	padding: 0.5rem 0.75rem;
 	display: flex;
 	justify-content: space-around;
@@ -67,7 +67,7 @@ body.media {
 		}
 	}
 	.icon {
-		@include flex-center;
+		@include layout-centering;
 		margin: 0 auto;
 		width: 6rem;
 		height: 6rem;

@@ -3,14 +3,14 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
 
 @charset 'utf-8';
 
-@import '../lib/stile/sass/basic/reset';
+@import '../lib/stile/sass/basic';
 @import 'mixin';
 
 @import 'edit';
@@ -23,6 +23,16 @@
 html, body {
 	min-height: 100vh;
 	margin: 0;
+}
+
+body:not(.dialog) {
+	border-top: 0.75rem solid orange;
+	border-bottom: 0.75rem solid orange;
+}
+
+a {
+	text-decoration: underline;
+	color: #12f;
 }
 
 body {
@@ -38,7 +48,7 @@ body {
 }
 
 @mixin frame-inside {
-	> *:not(form):not(.message) {
+	> *:not(form):not(.message):not(nav) {
 		display: block;
 		margin: 1rem;
 	}
@@ -51,11 +61,7 @@ body {
 }
 
 .frame {
-	border: 1px solid #ccc;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.15);
-	border-radius: 0.25rem;
-	font-size: 0.9rem;
-
+	@include frame-design;
 	@include frame-inside;
 	> form {
 		@include frame-inside;
@@ -105,7 +111,7 @@ input[type=button] {
 }
 
 input[type=text], input[type=password] {
-	@include ui-elm;
+	@include clickable-design;
 	padding: 0.5rem 0.75rem;
 	text-align: left;
 	box-shadow: 0 1px 1px #ccc inset;
@@ -114,7 +120,7 @@ input[type=text], input[type=password] {
 }
 
 select {
-	@include ui-elm;
+	@include clickable-design;
 	padding: 0.5rem 0.75rem;
 	font-size: 0.9rem;
 	box-shadow: 0 2px 6px #999;
@@ -132,10 +138,12 @@ nav button,
 	@include btn;
 }
 
-.btn-delete {
+.btn-delete,
+button.btn-delete {
 	background: pink;
 }
 
-.btn-new, .btn-update {
+.btn-new, .btn-update,
+button.btn-new, button.btn-update {
 	background-color: lightBlue;
 }

@@ -3,7 +3,7 @@
  * Mixin (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -11,54 +11,56 @@
 @charset 'utf-8';
 
 
-@mixin flex-center {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-@mixin ui-elm {
+@mixin frame-design {
 	border: 1px solid #ccc;
 	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+	font-size: 0.9rem;
+}
+
+@mixin clickable-design {
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	box-shadow: 0 2px 6px #aaa;
+	font-size: 0.9rem;
+
+	background-color: #fff;
 	color: #333;
+	white-space: nowrap;
+
+	&:hover { border-color: #88f; }
 	&:disabled {
+		pointer-events: none;
 		border-color: #ccc;
 		color: #aaa;
 	}
-	white-space: nowrap;
 }
 
 @mixin btn-elm {
 	min-width: 2.5rem;
-
-	font-size: 0.9rem;
 	text-decoration: none;
 	text-align: center;
 	line-height: 1.25;
-	&:hover {
-		border-color: #666;
-	}
-	box-shadow: 0 2px 6px #aaa;
 }
 
 @mixin btn {
-	@include ui-elm;
+	@include clickable-design;
 	@include btn-elm;
 	padding: 0.66rem 0.75rem;
 	display: inline-block;
 }
 
 @mixin btn-li {
-	@include ui-elm;
+	@include clickable-design;
 	@include btn-elm;
-	@include flex-center;
+	@include layout-centering;
 	color: #ccc;
 	min-height: 2.5rem;
 	height: 2.5rem;
 
 	a {
 		@include btn-elm;
-		@include flex-center;
+		@include layout-centering;
 		color: #333;
 		min-height: 2.5rem;
 
@@ -66,9 +68,4 @@
 		width: 100%;
 		height: 100%;
 	}
-}
-
-@mixin private-body {
-	border-top: 0.75rem solid orange;
-	border-bottom: 0.75rem solid orange;
 }
