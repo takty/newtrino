@@ -66,14 +66,12 @@ header('Content-Type: text/html;charset=utf-8');
 	<div class="list-ops">
 		<nav>
 			<h3><?= _ht('Display Period') ?></h3>
-			<p class="flatpickr">
-				<input type="text" id="fp-date-bgn" size="12" value="" data-input><a class="input-button" data-clear></a>
-			</p>
-			-
-			<p class="flatpickr">
-				<input type="text" id="fp-date-end" size="12" value="" data-input><a class="input-button" data-clear></a>
-			</p>
-			<button type="button" onclick="changeDateRange();"><?= _ht('Filter') ?></button>
+			<div class="period-filter">
+				<p class="flatpickr"><input type="text" id="fp-date-bgn" size="12" value="" data-input><a class="input-button" data-clear></a></p>
+				<span>-</span>
+				<p class="flatpickr"><input type="text" id="fp-date-end" size="12" value="" data-input><a class="input-button" data-clear></a></p>
+				<button type="button" onclick="changeDateRange();"><?= _ht('Filter') ?></button>
+			</div>
 		</nav>
 		<nav>
 			<h3><?= _ht('Category') ?></h3>

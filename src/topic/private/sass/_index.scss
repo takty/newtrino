@@ -86,6 +86,13 @@ table.list {
 	}
 }
 
+.period-filter {
+	display: flex;
+	align-items: center;
+	span { margin: 0 0.5rem; }
+	button:last-child { margin-left: 0.75rem; }
+}
+
 .pagination-nav {
 	@include layout-centering;
 	margin-top: 2rem;
