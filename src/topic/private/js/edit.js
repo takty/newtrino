@@ -54,6 +54,8 @@ function initEdit() {
 		content_css: '../editor-style.css',
 		language: 'ja',
 		setup: function (ed) { ed.on('change', function (ed) { changed = true; }); },
+		code_dialog_width: 800,
+		code_dialog_height: 600
 	});
 	document.getElementById('post_title').addEventListener('change', function () {
 		if (this.value !== '') {
