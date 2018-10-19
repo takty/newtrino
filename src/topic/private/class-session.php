@@ -5,7 +5,7 @@ namespace nt;
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -167,8 +167,8 @@ class Session {
 		if (file_exists($path)) {
 			return opendir($path);
 		}
-		if (mkdir($path, 0755, true)) {
-			chmod($path, 0755);
+		if (mkdir($path, 0777, true)) {
+			chmod($path, 0777);
 			return opendir($path);
 		}
 		return false;
