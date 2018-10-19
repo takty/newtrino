@@ -89,12 +89,16 @@ function initEdit() {
 	function onResize() {
 		const clm = document.querySelector('.column-main');
 		const div = document.querySelector('.column-main .btn-row + div');
-		const r = div.getBoundingClientRect();
-		const h = clm.clientHeight - (0 | r.top);
-		tinymce.activeEditor.theme.resizeTo(null, h);
+		if (div) {
+			const r = div.getBoundingClientRect();
+			const h = clm.clientHeight - (0 | r.top);
+			tinymce.activeEditor.theme.resizeTo(null, h);
+		} else {
+			setTimeout(onResize, 100);
+		}
 	}
 	window.addEventListener('resize', onResize);
-	setTimeout(onResize, 100);
+	setTimeout(onResize, 200);
 }
 
 let changed = false;
@@ -182,18 +186,19 @@ function insertMedia(name, src, w, h, align, size, isImage) {
 	closeMediaChooser();
 	const cs = [];
 	if (align === 'l') cs.push('alignleft');
-	if (align === 'r') cs.push('alignright');
 	if (align === 'c') cs.push('aligncenter');
+	if (align === 'r') cs.push('alignright');
+	if (align === 'n') cs.push('alignnone');
 
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
 	if (isImage) {
-		if (size === 'o') cs.push('size-full');
-		if (size === 'l') cs.push('size-large');
-		if (size === 'm') cs.push('size-medium');
 		if (size === 's') cs.push('size-small');
+		if (size === 'm') cs.push('size-medium');
+		if (size === 'l') cs.push('size-large');
+		if (size === 'f') cs.push('size-full');
 
 		let imgstr = '<a href="' + src + '" class="' + cs.join(' ') + '"><img src="' + src + '"';
-		if (size !== 'o') {  // Not Original Size
+		if (size !== 'f') {  // Not Full Size
 			let r = wh_min
 			if (size === "l") r *= 3;
 			if (size === "m") r *= 2;

@@ -44,7 +44,7 @@ header('Content-Type: text/html;charset=utf-8');
 <script src="js/media.min.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
-<body class="media">
+<body class="media dialog">
 <h1><?= _ht('Insert Media') ?></h1>
 <div class="header-row">
 	<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
@@ -87,16 +87,17 @@ if ($is_img):
 <div class="image-option">
 	<div>
 		<h2><?= _ht('Image Alignment') ?></h2>
-		<input type="radio" name="align" id="align_c" value="c" checked><label for="align_c"><?= _ht('Center') ?></label>
-		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"><?= _ht('Left') ?></label>
-		<input type="radio" name="align" id="align_r" value="r"><label for="align_r"><?= _ht('Right') ?></label>
+		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"> <?= _ht('Left') ?></label>
+		<input type="radio" name="align" id="align_c" value="c" checked><label for="align_c"> <?= _ht('Center') ?></label>
+		<input type="radio" name="align" id="align_r" value="r"><label for="align_r"> <?= _ht('Right') ?></label>
+		<input type="radio" name="align" id="align_n" value="n"><label for="align_n"> <?= _ht('None') ?></label>
 	</div>
 	<div>
 		<h2><?= _ht('Image Size') ?></h2>
-		<input type="radio" name="size" id="size_o" value="o"><label for="size_o"><?= _ht('Original Size') ?></label>
-		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"><?= _ht('Large') ?></label>
-		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"><?= _ht('Medium') ?></label>
-		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"><?= _ht('Small') ?></label>
+		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"> <?= _ht('Small') ?></label>
+		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"> <?= _ht('Medium') ?></label>
+		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"> <?= _ht('Large') ?></label>
+		<input type="radio" name="size" id="size_f" value="f"><label for="size_f"> <?= _ht('Full Size') ?></label>
 	</div>
 </div>
 <div>
