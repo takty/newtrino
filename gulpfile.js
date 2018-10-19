@@ -74,6 +74,7 @@ gulp.task('copy', gulp.series('copy-src', 'copy-lib', 'copy-res'));
 gulp.task('js', () => {
 	return gulp.src(['src/topic/private/js/**/*.js'])
 		.pipe($.plumber())
+		.pipe($.babel({presets: [['env', {targets: {ie: 11}}]]}))
 		.pipe($.uglify())
 		.pipe($.rename({extname: '.min.js'}))
 		.pipe(gulp.dest('./dist/topic/private/js'));
