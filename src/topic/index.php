@@ -1,5 +1,4 @@
 <?php
-define('NT_LANG', 'ja');
 require_once(__DIR__ . '/core/init.php');
 global $nt_posts;
 

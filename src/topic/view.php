@@ -1,5 +1,4 @@
 <?php
-define('NT_LANG', 'ja');
 require_once(__DIR__ . '/core/init.php');
 global $nt_post;
 if ($nt_post === false) { header('Location: ../'); exit(1); }
