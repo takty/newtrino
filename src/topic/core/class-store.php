@@ -53,18 +53,23 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
-	public function __construct($urlPost, $dirPost, $dirData, $conf) {
+	public function __construct($urlPost, $dirPost, $dirData, $conf, $urlPrivate = false) {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
 		$this->_dirData = $dirData;
 
 		$this->_conf = $conf;
+		$this->_urlPrivate = $urlPrivate;  // Only In Private Area
+	}
+
+	private function createPost($id) {
+		return new Post($this->_urlPost, $id, $this->_urlPrivate);
 	}
 
 	// ------------------------------------------------------------------------
 
 	public function getPost($id) {
-		$post = new Post($this->_urlPost, $id);
+		$post = $this->createPost($id);
 		if (!$post->load($this->_dirPost)) return false;
 		$post->setCategoryName($this->categorySlugToName($post->getCategory()));
 
@@ -208,7 +213,7 @@ class Store {
 		if ($dir = opendir($this->_dirPost)) {
 			while (($fn = readdir($dir)) !== false) {
 				if (strpos($fn, '.') !== 0 && is_dir($this->_dirPost . $fn)) {
-					$post = new Post($this->_urlPost, $fn);
+					$post = $this->createPost($fn);
 					$post->load($this->_dirPost);
 					$post->setCategoryName($this->categorySlugToName($post->getCategory()));
 					if (!$published_only || $post->isPublished()) $posts[] = $post;
@@ -292,7 +297,7 @@ class Store {
 				}
 			}
 			if ($this->_checkIdExists($id)) return false;  // when the loop finished without break
-			$post = new Post($this->_urlPost, '.' . $id);
+			$post = $this->createPost('.' . $id);
 			$post->setPublishedDate('now');
 			$post->save($this->_dirPost);
 			flock($dir, LOCK_UN);

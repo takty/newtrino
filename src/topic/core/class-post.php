@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-18
+ * @version 2018-10-19
  *
  */
 
@@ -48,9 +48,10 @@ class Post {
 	private $_postPath = '';
 	private $_id;
 
-	function __construct($urlPost, $id) {
+	function __construct($urlPost, $id, $urlPrivate = false) {
 		$this->_urlPost = $urlPost;
 		$this->_id = $id;
+		$this->_urlPrivate = $urlPrivate;  // Only In Private Area
 	}
 
 	function getId() {
@@ -370,7 +371,7 @@ class Post {
 	}
 
 	private function convertToPortableUrl($url) {
-		$url = resolve_url($url, NT_URL_PRIVATE);
+		$url = resolve_url($url, $this->_urlPrivate);
 		if (strpos($url, $this->_urlPost) === 0) {
 			$url = substr($url, strlen($this->_urlPost) - 1);
 			$pu = '/' . $this->_id . '/' . Media::MEDIA_DIR_NAME . '/';
