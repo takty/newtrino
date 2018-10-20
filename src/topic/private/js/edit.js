@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-20
  *
  */
 
@@ -46,9 +46,8 @@ function initEdit() {
 	tinymce.init({
 		selector: '#post_content',
 		plugins: [
-			'advlist autolink lists link image charmap print preview anchor',
-			'searchreplace visualblocks code fullscreen',
-			'insertdatetime media table contextmenu paste code'
+			'advlist anchor autolink charmap code contextmenu fullscreen image insertdatetime',
+			'link lists media paste preview print searchreplace table visualblocks',
 		],
 		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
 		content_css: '../editor-style.css',
