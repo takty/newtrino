@@ -1,10 +1,10 @@
 'use strict';
 
-const fs = require('fs-extra');
+const fs   = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const gulp = require('gulp');
-const $ = require('gulp-load-plugins')({pattern:['gulp-*']});
+const $    = require('gulp-load-plugins')({pattern:['gulp-*']});
 
 function copySync(from, to) {
 	const isToDir = to.endsWith('/');
@@ -19,31 +19,59 @@ function copySync(from, to) {
 	}
 }
 
-const PATH_DIST = './dist/topic/private/';
+const SRC_PRIVATE = './src/topic/private/';
+const DIST_BASE = './dist/topic/';
+const DIST_PRIVATE = DIST_BASE + 'private/';
 
 gulp.task('copy-jssha', (done) => {
-	copySync('./node_modules/jssha/src/sha256.js', PATH_DIST + 'js/jssha/');
+	copySync('./node_modules/jssha/src/sha256.js', DIST_PRIVATE + 'js/jssha/');
 	done();
 });
 
 gulp.task('copy-flatpickr', (done) => {
-	copySync('./node_modules/flatpickr/dist/flatpickr.min.js', PATH_DIST + 'js/flatpickr/');
-	copySync('./node_modules/flatpickr/dist/flatpickr.min.css', PATH_DIST + 'css/flatpickr/');
-	copySync('./node_modules/flatpickr/dist/l10n/ja.js', PATH_DIST + 'js/flatpickr/');
+	const dir = './node_modules/flatpickr/dist/';
+	copySync(dir + 'flatpickr.min.js', DIST_PRIVATE + 'js/flatpickr/');
+	copySync(dir + 'flatpickr.min.css', DIST_PRIVATE + 'css/flatpickr/');
+	copySync(dir + 'l10n/ja.js', DIST_PRIVATE + 'js/flatpickr/');
 	done();
 });
 
 gulp.task('copy-tinymce', (done) => {
-	copySync('./node_modules/tinymce/tinymce.min.js', PATH_DIST + 'js/tinymce/');
-	copySync('./node_modules/tinymce/plugins/**/*', PATH_DIST + 'js/tinymce/plugins/');
-	copySync('./node_modules/tinymce/skins/**/*', PATH_DIST + 'js/tinymce/skins/');
-	copySync('./node_modules/tinymce/themes/**/*', PATH_DIST + 'js/tinymce/themes/');
-	copySync('./node_modules/tinymce-i18n/langs/ja.js', PATH_DIST + 'js/tinymce/langs/');
+	const dir = './node_modules/tinymce/';
+	copySync(dir + 'tinymce.min.js', DIST_PRIVATE + 'js/tinymce/');
+	copySync(dir + 'plugins/**/*', DIST_PRIVATE + 'js/tinymce/plugins/');
+	copySync(dir + 'skins/**/*', DIST_PRIVATE + 'js/tinymce/skins/');
+	copySync(dir + 'themes/**/*', DIST_PRIVATE + 'js/tinymce/themes/');
+	copySync('./node_modules/tinymce-i18n/langs/ja.js', DIST_PRIVATE + 'js/tinymce/langs/');
+	fs.removeSync(DIST_PRIVATE + 'js/tinymce/themes/inlite');
+	fs.removeSync(DIST_PRIVATE + 'js/tinymce/themes/mobile');
+	const ups = [
+		'autoresize',
+		'autosave',
+		'bbcode',
+		'codesample',
+		'colorpicker',
+		'directionality',
+		'emoticons',
+		'fullpage',
+		'help',
+		'imagetools',
+		'importcss',
+		'legacyoutput',
+		'noneditable',
+		'pagebreak',
+		'save',
+		'tabfocus',
+		'template',
+		'textpattern',
+		'wordcount',
+	];
+	for (let up of ups) fs.removeSync(DIST_PRIVATE + 'js/tinymce/plugins/' + up);
 	done();
 });
 
 gulp.task('copy-stile-sass', (done) => {
-	copySync('./node_modules/stile/dist/sass/*', './src/topic/private/lib/stile/sass/');
+	copySync('./node_modules/stile/dist/sass/*', SRC_PRIVATE + 'lib/stile/sass/');
 	done();
 });
 
@@ -56,37 +84,43 @@ gulp.task('copy-lib', gulp.parallel(
 
 gulp.task('copy-src', (done) => {
 	copySync('./src', './dist');
-	copySync('./src/topic/private/sass/*.css', './dist/topic/private/css/');
-	fs.removeSync('./dist/topic/post/*');
-	fs.removeSync('./dist/topic/private/sass');
-	fs.removeSync('./dist/topic/private/lib');
-	for (let f of glob.sync('./dist/topic/private/js/*.js')) fs.removeSync(f);
+	copySync(SRC_PRIVATE + 'sass/*.css', DIST_PRIVATE + 'css/');
+	fs.removeSync(DIST_BASE + 'post/*');
+	fs.removeSync(DIST_PRIVATE + 'sass');
+	fs.removeSync(DIST_PRIVATE + 'lib');
+	for (let f of glob.sync(DIST_PRIVATE + 'js/*.js')) fs.removeSync(f);
 	done();
 });
 
 gulp.task('copy-res', (done) => {
-	copySync('./src/topic/private/sass/*.svg', PATH_DIST + 'css');
+	copySync(SRC_PRIVATE + 'sass/*.svg', DIST_PRIVATE + 'css');
 	done();
 });
 
 gulp.task('copy', gulp.series('copy-src', 'copy-lib', 'copy-res'));
 
+gulp.task('delete-var', (done) => {
+	fs.removeSync(DIST_BASE + 'core/var/log');
+	fs.removeSync(DIST_PRIVATE + 'var/session');
+	done();
+});
+
 gulp.task('js', () => {
-	return gulp.src(['src/topic/private/js/**/*.js'])
+	return gulp.src([SRC_PRIVATE + 'js/**/*.js'])
 		.pipe($.plumber())
 		.pipe($.babel({presets: [['env', {targets: {ie: 11}}]]}))
 		.pipe($.uglify())
 		.pipe($.rename({extname: '.min.js'}))
-		.pipe(gulp.dest('./dist/topic/private/js'));
+		.pipe(gulp.dest(DIST_PRIVATE + 'js'));
 });
 
 gulp.task('sass', () => {
-	return gulp.src(['src/topic/private/sass/style.scss'])
+	return gulp.src([SRC_PRIVATE + 'sass/style.scss'])
 		.pipe($.plumber())
 		.pipe($.sass({outputStyle: 'compressed'}))
 		.pipe($.autoprefixer({browsers: ['ie >= 11'], remove: false}))
 		.pipe($.rename({extname: '.min.css'}))
-		.pipe(gulp.dest('./dist/topic/private/css/'));
+		.pipe(gulp.dest(DIST_PRIVATE + 'css/'));
 });
 
-gulp.task('default', gulp.series('copy', 'js', 'sass'));
+gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass'));
