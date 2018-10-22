@@ -5,7 +5,7 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-23
  *
  */
 
@@ -30,7 +30,6 @@ if ($ppp < $ret['size']) {
 	if ($page > 1) $t_pg_prev = $page - 1;
 	if ($page < $maxPage) $t_pg_next = $page + 1;
 }
-$t_sid      = $nt_q['sid'];
 $t_ppp      = $nt_q['posts_per_page'];
 $t_cat      = $nt_q['cat'];
 $t_date     = $nt_q['date'];
@@ -134,7 +133,6 @@ header('Content-Type: text/html;charset=utf-8');
 	</nav>
 	<form name="form" id="form" action="" method="post">
 		<input type="hidden" name="mode" id="mode" value="">
-		<input type="hidden" name="sid" id="sid" value="<?= _h($t_sid) ?>">
 		<input type="hidden" name="id" id="id" value="">
 		<input type="hidden" name="page" id="page" value="<?= _h($t_page) ?>">
 		<input type="hidden" name="posts_per_page" id="posts_per_page" value="<?= _h($t_ppp) ?>">

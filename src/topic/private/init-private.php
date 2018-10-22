@@ -5,7 +5,7 @@ namespace nt;
  * Init for Private
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-23
  *
  */
 
@@ -26,7 +26,7 @@ $nt_q       = prepare_query(['mode' => '', 'id' => 0, 'page' => 1, 'posts_per_pa
 $nt_store   = new Store(NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config, NT_URL_PRIVATE);
 $nt_session = new Session(NT_URL_PRIVATE, NT_DIR_POST, NT_DIR_ACCOUNT, NT_DIR_SESSION);
 
-if (!$nt_session->check($nt_q)) {
+if (!$nt_session->check()) {
 	header('Location: ' . NT_URL_PRIVATE . 'login.php');
 	exit(1);
 }

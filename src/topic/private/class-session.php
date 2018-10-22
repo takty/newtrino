@@ -5,7 +5,7 @@ namespace nt;
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-22
+ * @version 2018-10-23
  *
  */
 
@@ -23,6 +23,7 @@ class Session {
 		return bin2hex(openssl_random_pseudo_bytes(16));
 	}
 
+	const MODE_DIR           = 0777;
 	const SESSION_ALIVE_TIME = 7200;  // 7200 = 120 minutes * 60 seconds
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
@@ -81,7 +82,7 @@ class Session {
 		session_destroy();
 	}
 
-	public function check($query) {
+	public function check() {
 		session_start();
 		$sid = session_id();
 		if ($sid === '') return false;
@@ -119,7 +120,8 @@ class Session {
 	private function cleanUp() {
 		if (!file_exists($this->_dirSession)) return;
 		$fns = [];
-		if ($handle = $this->openDir($this->_dirSession)) {
+		$handle = $this->ensureDir($this->_dirSession) ? opendir($this->_dirSession) : false;
+		if ($handle) {
 			while (($fn = readdir($handle)) !== false) {
 				if (is_file($this->_dirSession . $fn)) $fns[] = $fn;
 			}
@@ -178,6 +180,7 @@ class Session {
 	}
 
 	private function removeSessionFile($sid) {
+		if (!file_exists($this->_dirSession)) return;
 		$path = $this->_dirSession . $sid;
 		$res = unlink($path);
 		if ($res === false) {
@@ -186,8 +189,9 @@ class Session {
 	}
 
 	private function saveSessionFile($sid, $lines) {
-		if (!file_exists($this->_dirSession)) {
-			mkdir($this->_dirSession, 0777);
+		if ($this->ensureDir($this->_dirSession) === false) {
+			Logger::output("Error (Session::saveSessionFile ensureDir) [$this->_dirSession]");
+			return false;
 		}
 		$path = $this->_dirSession . $sid;
 		$cont = implode("\n", $lines);
@@ -200,13 +204,16 @@ class Session {
 
 	// ------------------------------------------------------------------------
 
-	private function openDir($path) {
+	private function ensureDir($path) {
 		if (file_exists($path)) {
-			return opendir($path);
+			if (self::MODE_DIR !== (fileperms($path) & 0777)) {
+				chmod($path, self::MODE_DIR);
+			}
+			return true;
 		}
-		if (mkdir($path, 0777, true)) {
-			chmod($path, 0777);
-			return opendir($path);
+		if (mkdir($path, self::MODE_DIR, true)) {
+			chmod($path, self::MODE_DIR);
+			return true;
 		}
 		return false;
 	}

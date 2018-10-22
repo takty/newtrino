@@ -6,7 +6,7 @@ namespace nt;
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-23
  *
  */
 
@@ -28,7 +28,6 @@ if ($nt_q['mode'] === 'delete') {
 		$media->upload($_FILES['uploadFile']);
 	}
 }
-$t_sid   = $nt_q['sid'];
 $t_pid   = $nt_q['id'];
 $t_items = $media->getItemList();
 
@@ -48,7 +47,6 @@ header('Content-Type: text/html;charset=utf-8');
 <h1><?= _ht('Insert Media') ?></h1>
 <div class="header-row">
 	<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
-		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
 		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="upload">
 		<div style="display: none">
@@ -57,7 +55,6 @@ header('Content-Type: text/html;charset=utf-8');
 		<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New') ?></button>
 	</form>
 	<form action="media.php" method="post" id="deleteForm">
-		<input type="hidden" name="sid" value="<?= _h($t_sid) ?>">
 		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
 		<input type="hidden" name="mode" value="delete">
 		<input type="hidden" name="deleted_file" id="deleted_file">

@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-23
  *
  */
 
@@ -27,7 +27,6 @@ if ($mode === 'update') {
 } else {
 	$t_p = $nt_store->getPost($nt_q['id']);
 }
-$t_sid      = $nt_q['sid'];
 $t_ppp      = $nt_q['posts_per_page'];
 $t_cat      = $nt_q['cat'];
 $t_date     = $nt_q['date'];
@@ -68,7 +67,6 @@ header('Content-Type: text/html;charset=utf-8');
 			<div class="column-main">
 				<div class="form-post">
 					<input type="hidden" name="mode" id="mode" value="update">
-					<input type="hidden" name="sid" id="sid" value="<?= _h($t_sid) ?>">
 					<input type="hidden" name="id" id="id" value="<?= _h($t_p->getId()) ?>">
 					<input type="hidden" name="page" id="page" value="<?= _h($t_page) ?>">
 					<input type="hidden" name="posts_per_page" id="posts_per_page" value="<?= _h($t_ppp) ?>">

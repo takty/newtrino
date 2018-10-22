@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-23
  *
  */
 
@@ -63,10 +63,9 @@ function deletePost(id, date, title) {
 }
 
 function setPostState(id, state) {
-	var sid = document.getElementById('sid').value;
 	var req = new XMLHttpRequest();
 	req.addEventListener('load', function (e) {});  // for debugging
 	req.open('post', 'responder.php', true);
 	req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	req.send('mode=set_state' + '&sid=' + sid + '&id=' + id + '&state=' + state + '&cache=' + Date.now());
+	req.send('mode=set_state' + '&id=' + id + '&state=' + state + '&cache=' + Date.now());
 }
