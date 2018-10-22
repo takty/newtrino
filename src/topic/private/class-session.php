@@ -5,7 +5,7 @@ namespace nt;
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-22
  *
  */
 
@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../core/class-logger.php');
 
 class Session {
 
-	static function getNonce() {
+	public static function getNonce() {
 		return bin2hex(openssl_random_pseudo_bytes(16));
 	}
 
@@ -32,11 +32,15 @@ class Session {
 		$this->_dirPost    = $dirPost;
 		$this->_dirAccount = $dirAccount;
 		$this->_dirSession = $dirSession;
+
+		ini_set('session.use_strict_mode', 1);
+		if (isset($_SERVER['HTTPS'])) ini_set('session.cookie_secure', 1);
+		Logger::output("Info (Session)");
 	}
 
 	// ------------------------------------------------------------------------
 
-	function login($user, $digest, $nonce, $cnonce, &$error) {
+	public function login($user, $digest, $nonce, $cnonce, &$error) {
 		if ($user == '' || $digest == '' || $nonce == '' || $cnonce == '') {
 			$error = 'Parameters are wrong.';
 			return false;
@@ -48,13 +52,13 @@ class Session {
 
 		$accountPath = $this->_dirAccount . self::ACCOUNT_FILE_NAME;
 		if (file_exists($accountPath) === false) {
-			Logger::output('Error (Session::login file_exists) [' . $accountPath . ']');
+			Logger::output("Error (Session::login file_exists) [$accountPath]");
 			$error = 'Account file does not exist.';
 			return false;
 		}
 		$as = file($accountPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if ($as === false) {
-			Logger::output('Error (Session::login file) [' . $accountPath . ']');
+			Logger::output("Error (Session::login file) [$accountPath]");
 			$error = 'Account file cannot be opened.';
 			return false;
 		}
@@ -62,20 +66,34 @@ class Session {
 			$d = explode("\t", trim($a));
 			if ($d[0] !== $user) continue;
 			$a1 = strtolower($d[1]);
-			$dgst = hash(self::HASH_ALGORITHM, $a1 . ':' . $nonce . ':' . $cnonce . ':' . $a2);
+			$dgst = hash(self::HASH_ALGORITHM, "$a1:$nonce:$cnonce:$a2");
 			if ($dgst === $digest) return $this->startNew($error);
 		}
 		return false;
 	}
 
-	function check($query) {
-		$sid = empty($query['sid']) ? '' : $query['sid'];
+	public function logout() {
+		session_start();
+		$_SESSION = [];
+		if (isset($_COOKIE[session_name()])) {
+			setcookie(session_name(), '', time() - 42000, '/');
+		}
+		session_destroy();
+	}
+
+	public function check($query) {
+		session_start();
+		$sid = session_id();
 		if ($sid === '') return false;
+		if (! isset($_SESSION['fingerprint'])) return false;
+		$fp = $this->getFingerprint();
+		if ($fp !== $_SESSION['fingerprint']) return false;
+
 		$this->sessionId = $sid;
 		return $this->checkTime($sid, true);
 	}
 
-	function addTempPostId($pid) {
+	public function addTempPostId($pid) {
 		$lines = $this->loadSessionFile($this->sessionId);
 		if ($lines === false) return false;
 		$lines[] = $pid;
@@ -85,7 +103,21 @@ class Session {
 
 	// ------------------------------------------------------------------------
 
+	private function getFingerprint() {
+		$fp = 'newtrino';
+
+		if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+			$fp .= $_SERVER['HTTP_USER_AGENT'];
+		}
+		if (!empty($_SERVER['HTTP_ACCEPT_CHARSET'])) {
+			$fp .= $_SERVER['HTTP_ACCEPT_CHARSET'];
+		}
+		$fp .= session_id();
+		return md5($fp);
+	}
+
 	private function cleanUp() {
+		if (!file_exists($this->_dirSession)) return;
 		$fns = [];
 		if ($handle = $this->openDir($this->_dirSession)) {
 			while (($fn = readdir($handle)) !== false) {
@@ -99,14 +131,16 @@ class Session {
 	}
 
 	private function startNew(&$error) {
-		$sid = self::getSessionId();
-		$res = $this->saveSessionFile($sid, [time()]);
+		session_start();
+		$this->sessionId = session_id();
+		$_SESSION['fingerprint'] = $this->getFingerprint();
+
+		$res = $this->saveSessionFile($this->sessionId, [time()]);
 		if ($res === false) {
 			$error = 'Session file cannot be written.';
 			return false;
 		}
-		$this->sessionId = $sid;
-		return $sid;
+		return true;
 	}
 
 	private function checkTime($sid, $doUpdate) {
@@ -137,7 +171,7 @@ class Session {
 		if (file_exists($path) === false) return false;
 		$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		if ($lines === false) {
-			Logger::output('Error (Session::loadSessionFile file) [' . $path . ']');
+			Logger::output("Error (Session::loadSessionFile file) [$path]");
 			return false;
 		}
 		return $lines;
@@ -147,15 +181,18 @@ class Session {
 		$path = $this->_dirSession . $sid;
 		$res = unlink($path);
 		if ($res === false) {
-			Logger::output('Error (Session::removeSessionFile unlink) [' . $path . ']');
+			Logger::output("Error (Session::removeSessionFile unlink) [$path]");
 		}
 	}
 
 	private function saveSessionFile($sid, $lines) {
+		if (!file_exists($this->_dirSession)) {
+			mkdir($this->_dirSession, 0777);
+		}
 		$path = $this->_dirSession . $sid;
 		$cont = implode("\n", $lines);
 		if (file_put_contents($path, $cont, LOCK_EX) === false) {
-			Logger::output('Error (Session::saveSessionFile file_put_contents) [' . $path . ']');
+			Logger::output("Error (Session::saveSessionFile file_put_contents) [$path]");
 			return false;
 		}
 		return true;

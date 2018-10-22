@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-10-22
  *
  */
 
@@ -18,29 +18,30 @@ require_once(__DIR__ . '/class-session.php');
 
 set_locale_setting();
 
-$nt_config = load_config(NT_DIR_DATA);
-$nt_res    = load_resource(NT_DIR_DATA, $nt_config['language']);
-$nt_q      = prepare_query();
-$success   = true;
-$error     = '';
+$nt_config  = load_config(NT_DIR_DATA);
+$nt_res     = load_resource(NT_DIR_DATA, $nt_config['language']);
+$nt_q       = prepare_query();
+$nt_session = new Session(NT_URL_PRIVATE, false, NT_DIR_ACCOUNT, NT_DIR_SESSION);
+$success    = true;
+$error      = '';
 
 header('Content-Type: text/html;charset=utf-8');
 if (!empty($nt_q['digest'])) {
-	$nt_session = new Session(NT_URL_PRIVATE, false, NT_DIR_ACCOUNT, NT_DIR_SESSION);
-	$sid = $nt_session->login($nt_q['user'], $nt_q['digest'], $nt_q['nonce'], $nt_q['cnonce'], $error);
-	if ($sid !== false) {
+	$success = $nt_session->login($nt_q['user'], $nt_q['digest'], $nt_q['nonce'], $nt_q['cnonce'], $error);
+	if ($success) {
 ?>
 <!DOCTYPE html>
 <html>
 <head><title><?= _ht('Logining...') ?></title></head>
 <body onload="document.forms[0].submit();">
-<form method="post" action="index.php"><input type="hidden" name="sid" value="<?= _h($sid) ?>"></form>
+<form method="post" action="index.php"></form>
 </body>
 </html>
 <?php
 		exit(1);
 	}
-	$success = false;
+} else {
+	$nt_session->logout();
 }
 
 
