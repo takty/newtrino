@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-10-23
  *
  */
 
@@ -40,9 +40,9 @@ class Logger {
 			set_file_buffer($fp, 0);
 			$line = join(' ', [date('Y-m-d H:i:s'), getenv('REMOTE_USER'), $msg]);
 			if (self::DEBUG_VIEW) {
-				print($line . '\n');
+				print($line . "\n");
 			}
-			fputs($fp, $line . '\n');
+			fputs($fp, $line . "\n");
 			flock($fp, LOCK_UN);
 			fclose($fp);
 		}
