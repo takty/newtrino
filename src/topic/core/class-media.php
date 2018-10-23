@@ -1,10 +1,14 @@
 <?php
 namespace nt;
-/*
+/**
+ *
  * Media Manager
- * 2017-01-27
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2018-10-23
  *
  */
+
 
 class Media {
 
@@ -12,19 +16,48 @@ class Media {
 	const MODE_FILE = 0644;
 	const MEDIA_DIR_NAME = 'media';
 
-	function __construct($postPath, $postUrl, $id) {
+	public function __construct($postPath, $postUrl, $id) {
 		$this->_id = $id;
 		$this->_mediaPath = $postPath . $id . '/' . self::MEDIA_DIR_NAME . '/';
 		$this->_mediaUrl = $postUrl . $id . '/' . self::MEDIA_DIR_NAME . '/';
 	}
 
-	function upload($file) {
+	public function getItemList() {
+		$fileList = $this->getFileList();
+		$list = [];
+		foreach ($fileList as $fn) {
+			$ext = mb_strtolower(pathinfo($fn, PATHINFO_EXTENSION));
+			if ($ext === 'png' || $ext === 'jpeg' || $ext === 'jpg') {
+				$item['img'] = true;
+				list($width, $height) = getimagesize($this->_mediaPath . $fn);
+			} else {
+				$width = 0;
+				$height = 0;
+			}
+			$item = [];
+			$item['caption'] = $fn;
+			$item['file']    = $fn;
+			$item['url']     = $this->_mediaUrl . _u($fn);
+			$item['ext']     = $ext;
+			$item['width']   = $width;
+			$item['height']  = $height;
+			$list[] = $item;
+		}
+		return $list;
+	}
+
+	public function upload($file) {
 		$tmpFile = $file['tmp_name'];
 		$origFileName = $file['name'];
 
 		$fileName = $this->ensureValidFileName($origFileName);
 		if ($fileName === '') return false;
 		return $this->uploadActually($tmpFile, $fileName);
+	}
+
+	public function remove($fileName) {
+		$path = $this->_mediaPath . $fileName;
+		@unlink($path);
 	}
 
 	private function ensureValidFileName($fileName) {
@@ -36,7 +69,7 @@ class Media {
 		$name = $pi['filename'];
 
 		for ($num = 1; $num <= 256; $num += 1) {
-			$nfn = $name . '[' . $num . ']' . $ext;
+			$nfn = "$name[$num]$ext";
 			if (!$this->isFileExist($nfn)) {
 				return $nfn;
 			}
@@ -64,30 +97,6 @@ class Media {
 		return false;
 	}
 
-	function getItemList() {
-		$fileList = $this->getFileList();
-		$list = [];
-		foreach ($fileList as $fn) {
-			$item = [];
-			$item['caption'] = $fn;
-			$item['file'] = $fn;
-			$item['url'] = $this->_mediaUrl . _u($fn);
-			$ext = mb_strtolower(pathinfo($fn, PATHINFO_EXTENSION));
-			if ($ext === 'png' || $ext === 'jpeg' || $ext === 'jpg') {
-				$item['img'] = true;
-				list($width, $height) = getimagesize($this->_mediaPath . $fn);
-			} else {
-				$width = 0;
-				$height = 0;
-			}
-			$item['ext'] = $ext;
-			$item['width'] = $width;
-			$item['height'] = $height;
-			$list[] = $item;
-		}
-		return $list;
-	}
-
 	private function getFileList() {
 		if (!file_exists($this->_mediaPath)) {
 			return [];
@@ -103,11 +112,6 @@ class Media {
 		}
 		sort($files, SORT_STRING);
 		return $files;
-	}
-
-	public function remove($fileName) {
-		$path = $this->_mediaPath . $fileName;
-		@unlink($path);
 	}
 
 }
