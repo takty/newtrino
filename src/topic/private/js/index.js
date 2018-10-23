@@ -10,8 +10,8 @@
 
 function initIndex() {
 	document.getElementById('ppp').value = document.getElementById('posts_per_page').value;
-	var bgn = document.getElementById('date_bgn').value;
-	var end = document.getElementById('date_end').value;
+	const bgn = document.getElementById('date_bgn').value;
+	const end = document.getElementById('date_end').value;
 	document.getElementById('fp-date-bgn').value = bgn ? (bgn.substring(0, 4) + '-' + bgn.substring(4, 6) + '-' + bgn.substring(6, 8)) : null;
 	document.getElementById('fp-date-end').value = end ? (end.substring(0, 4) + '-' + end.substring(4, 6) + '-' + end.substring(6, 8)) : null;
 	flatpickr('.flatpickr', {wrap: true, dateFormat: 'YmdHiS', altInput: true, altFormat: 'Y-m-d'});
@@ -63,7 +63,7 @@ function deletePost(id, date, title) {
 }
 
 function setPostState(id, state) {
-	var req = new XMLHttpRequest();
+	const req = new XMLHttpRequest();
 	req.addEventListener('load', function (e) {});  // for debugging
 	req.open('post', 'responder.php', true);
 	req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

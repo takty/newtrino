@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-16
+ * @version 2018-10-23
  *
  */
 
@@ -14,20 +14,20 @@ function initLogin() {
 }
 
 function doLogin(event, showKey) {
-	var user = document.getElementById('user').value;
-	var pwElm = document.getElementById('pw');
-	var pw = pwElm.value;
+	const user = document.getElementById('user').value;
+	const pwElm = document.getElementById('pw');
+	const pw = pwElm.value;
 	pwElm.value = '';
 
-	var realm = document.getElementById('realm').value;
-	var cnonce = createNonce();
-	var method = 'post';
-	var url = document.getElementById('url').value;
-	var nonce = document.getElementById('nonce').value;
+	const realm = document.getElementById('realm').value;
+	const cnonce = createNonce();
+	const method = 'post';
+	const url = document.getElementById('url').value;
+	const nonce = document.getElementById('nonce').value;
 
-	var a1 = hash(user + ':' + realm + ':' + pw);
-	var a2 = hash(method + ':' + url);
-	var digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
+	const a1 = hash(user + ':' + realm + ':' + pw);
+	const a2 = hash(method + ':' + url);
+	const digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
 
 	if (showKey && event.altKey && event.ctrlKey && event.shiftKey) {
 		console.log(url + '\n' + user + '\t' + a1);
@@ -40,17 +40,17 @@ function doLogin(event, showKey) {
 }
 
 function createNonce() {
-	var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var len = str.length;
-	var ret = '';
-	for (var i = 0; i < 64; i += 1) {
+	const str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const len = str.length;
+	let ret = '';
+	for (let i = 0; i < 64; i += 1) {
 		ret += str.charAt(Math.random() * 23456789 % len);
 	}
 	return ret;
 }
 
 function hash(str) {
-	var sha256 = new jsSHA('SHA-256', 'TEXT');
+	const sha256 = new jsSHA('SHA-256', 'TEXT');
 	sha256.update(str);
 	return sha256.getHash('HEX');
 }
