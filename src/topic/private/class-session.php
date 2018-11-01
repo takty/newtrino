@@ -5,7 +5,7 @@ namespace nt;
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2018-11-02
  *
  */
 
@@ -42,7 +42,7 @@ class Session {
 	// ------------------------------------------------------------------------
 
 	public function login($user, $digest, $nonce, $cnonce, &$error) {
-		if ($user == '' || $digest == '' || $nonce == '' || $cnonce == '') {
+		if ($user === '' || $digest === '' || $nonce === '' || $cnonce === '') {
 			$error = 'Parameters are wrong.';
 			return false;
 		}

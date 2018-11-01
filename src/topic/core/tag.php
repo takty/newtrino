@@ -5,7 +5,7 @@ namespace nt;
  * Template Tags
  *
  * @author Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-11-02
  *
  */
 
@@ -111,7 +111,7 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $maxPg = 7)
 	}
 	$t_pgs = [];
 	for ($i = $pgBgn; $i <= $pgEnd; $i += 1) {
-		$url = ($i == $cur) ? '' : str_replace('<>', $i, $pgUrl);
+		$url = ($i === $cur) ? '' : str_replace('<>', $i, $pgUrl);
 		$t_pgs[] = ['page' => $i, 'href' => $url];
 	}
 	$t_prev = ($cur > 1) ?         str_replace('<>', $cur - 1, $pgUrl) : false;
