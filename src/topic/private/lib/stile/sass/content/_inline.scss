@@ -3,7 +3,7 @@
  * Inline Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-07-05
+ * @version 2018-11-01
  *
  */
 
@@ -17,6 +17,8 @@ $stile-inline-color-underline    : rgba(#fd0, 0.9) !default;
 $stile-inline-color-del          : rgba(#f40, 0.9) !default;
 $stile-inline-color-abbr         : rgba(#12f, 0.9) !default;
 $stile-inline-color-broken-image : $stile-inline-color-del !default;
+$stile-inline-width-underline    : 0.4em !default;
+$stile-inline-width-del          : 0.15em !default;
 $stile-inline-size-font-small    : 0.85em !default;
 $stile-inline-size-font-subscript: 0.75em !default;
 $stile-inline-size-font-monospace: 0.95em !default;
@@ -35,7 +37,7 @@ $stile-inline-size-font-monospace: 0.95em !default;
 			padding: base-vr(0.5) base-vr(1);
 			border: 1px dashed $stile-inline-color-broken-image;
 			min-height: base-vr(2);
-			
+
 			color: $stile-inline-color-broken-image;
 			font-size: 0.85em;
 			line-height: 1.35em;
@@ -52,11 +54,11 @@ $stile-inline-size-font-monospace: 0.95em !default;
 		@include font-bold;
 	}
 
-	em {
+	em, cite {
 		font-style: italic;
 	}
-	
-	p, li {
+
+	p, li, td, th, del, span:not([class]) {
 		> {
 			strong, b, em { color: $stile-inline-color-strong; }
 		}
@@ -64,17 +66,24 @@ $stile-inline-size-font-monospace: 0.95em !default;
 
 	u, span[data-stile ~= 'inline-underline'] {
 		text-decoration: none;
-		background: linear-gradient(
-			transparent 75%,
-			rgba($stile-inline-color-underline, 0.4) 75%,
-			$stile-inline-color-underline 100%
-		);
+		background-image: linear-gradient(to right, $stile-inline-color-underline 0%, transparentize($stile-inline-color-underline, 0.25) 100%);
+		background-size: 100% $stile-inline-width-underline;
+		background-repeat: no-repeat;
+		background-position: left bottom;
+	}
+
+	del {
+		text-decoration: none;
+		background-image: linear-gradient(to right, $stile-inline-color-del 0%, transparentize($stile-inline-color-del, 0.25) 100%);
+		background-size: 100% $stile-inline-width-del;
+		background-repeat: no-repeat;
+		background-position: left 55%;
 	}
 
 	small {
 		font-size: $stile-inline-size-font-small;
 	}
-	
+
 	sub, sup {
 		position: relative;
 		display: inline-block;  // for neat line height
@@ -97,16 +106,6 @@ $stile-inline-size-font-monospace: 0.95em !default;
 	abbr[title] {
 		text-decoration: none;
 		border-bottom: 2px dotted $stile-inline-color-abbr;
-	}
-
-	del {
-		text-decoration: none;
-		background: linear-gradient(
-			transparent 50%,
-			$stile-inline-color-del 50%,
-			$stile-inline-color-del 60%,
-			transparent 60%
-		);
 	}
 
 	code, var, samp, kbd {

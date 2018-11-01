@@ -3,7 +3,7 @@
  * Font Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-08
+ * @version 2018-10-29
  *
  */
 
@@ -13,8 +13,9 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,400i,700i');  // Laten
 @import url('https://fonts.googleapis.com/css?family=Spectral:300,600,300i,600i');  // Laten Serif
 
-$stile-font-sans-serif-laten: 'Open Sans';
-$stile-font-serif-laten     : 'Spectral';
+$stile-font-sans-serif-laten        : 'Open Sans';
+$stile-font-serif-laten             : 'Spectral';
+$stile-font-chrome-text-stroke-width: 0.28px;
 
 
 $stile-font-sans-serif:
@@ -34,13 +35,13 @@ $stile-font-sans-serif-android:
 
 
 $stile-font-serif:
-	$stile-font-serif-laten, 
+	$stile-font-serif-laten,
 	'Yu Mincho',
 	'Hiragino Mincho ProN', 'Hiragino Mincho Pro', 'HG Mincho',
 	Georgia, Meiryo, serif;
 
 $stile-font-serif-ie:
-	$stile-font-serif-laten, 
+	$stile-font-serif-laten,
 	'HG Mincho',
 	Georgia, Meiryo, serif;
 
@@ -169,10 +170,17 @@ $stile-font-monospace:
 // -----------------------------------------------------------------------------
 
 
-@mixin font-family {
-	font-family: $stile-font-sans-serif;
-	@include for-ie {
-		font-family: $stile-font-sans-serif-ie;
+@mixin font-family($pc-specific: false) {
+	@if $pc-specific {
+		font-family: $pc-specific, $stile-font-sans-serif;
+		@include for-ie {
+			font-family: $pc-specific, $stile-font-sans-serif-ie;
+		}
+	} @else {
+		font-family: $stile-font-sans-serif;
+		@include for-ie {
+			font-family: $stile-font-sans-serif-ie;
+		}
 	}
 	&.ios, .ios & {  // need to use user-agent.js
 		font-family: $stile-font-sans-serif-ios;
@@ -211,7 +219,7 @@ $stile-font-monospace:
 
 @mixin font-visible-chrome {
 	@include for-chrome {
-		-webkit-text-stroke-width: 0.15px;
+		-webkit-text-stroke-width: $stile-font-chrome-text-stroke-width;
 	}
 }
 

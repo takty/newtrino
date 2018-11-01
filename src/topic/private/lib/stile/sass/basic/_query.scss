@@ -3,7 +3,7 @@
  * Query Mixins for Responsive and Browsers
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-05-31
+ * @version 2018-10-31
  *
  * https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
  *
@@ -114,21 +114,26 @@
 
 
 @mixin for-chrome {
-	@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+	@supports (-webkit-appearance: none) and (-webkit-tap-highlight-color: currentcolor) and (not (-moz-appearance: none)) and (not ((-ms-ime-align: auto))) {
 		@content;
 	}
 }
 
 @mixin for-firefox {
-	@media (min--moz-device-pixel-ratio: 0) and (min-resolution: 3e1dpcm) {
+	@supports (-moz-appearance: none) {
 		@content;
 	}
 }
 
 @mixin for-safari {
+	// for Safari 10+
 	@media not all and (min-resolution: .001dpcm) { @supports (-webkit-appearance: none) {
 		@content;
 	} }
+	// for Safari 11+
+	// @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+	// 	@content;
+	// }
 }
 
 @mixin for-edge {
@@ -138,7 +143,7 @@
 }
 
 @mixin for-ie {
-	@media (-ms-high-contrast: none) {
+	@media (-ms-high-contrast: active), (-ms-high-contrast: none) {
 		@content;
 	}
 }

@@ -3,7 +3,7 @@
  * Tab Page Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-06-26
+ * @version 2018-10-29
  *
  */
 
@@ -15,6 +15,7 @@
 
 $stile-tab-page-color-bg                : #fff !default;
 $stile-tab-page-color-line              : rgba(#777, 0.35) !default;
+$stile-tab-page-color-line-vertical     : false !default;
 $stile-tab-page-color-tab-bg            : transparent !default;
 $stile-tab-page-color-tab-line          : transparent !default;
 $stile-tab-page-color-tab-bg-hover      : rgba(#fff, 0.35) !default;
@@ -43,8 +44,13 @@ $stile-tab-page-level-font              : 1 !default;
 
 		> div {
 			width: 100%;
-			border-left  : 1px solid $stile-tab-page-color-line;
-			border-right : 1px solid $stile-tab-page-color-line;
+			@if $stile-tab-page-color-line-vertical == false {
+				border-left  : 1px solid $stile-tab-page-color-line;
+				border-right : 1px solid $stile-tab-page-color-line;
+			} @else {
+				border-left  : 1px solid $stile-tab-page-color-line-vertical;
+				border-right : 1px solid $stile-tab-page-color-line-vertical;
+			}
 			border-bottom: 1px solid $stile-tab-page-color-line;
 			background-color: $stile-tab-page-color-bg;
 			padding: base-vr(2);
@@ -71,11 +77,11 @@ $stile-tab-page-level-font              : 1 !default;
 		@include layout-centering();
 		padding: base-vr(0.5) base-vr(1);
 		@include for-tablet-landscape-up { padding: base-vr(0.5) base-vr(2); }
-		
+
 		@include font-bold;
 		@include font-proportional;
 		@include font-size-level($stile-tab-page-level-font);
-		
+
 		background-color: $stile-tab-page-color-tab-bg;
 		color: $stile-tab-page-color-tab-text;
 		&:not([data-stile ~= 'current']):hover {
@@ -119,6 +125,7 @@ $stile-tab-page-level-font              : 1 !default;
 			border-bottom: 1px solid $stile-tab-page-color-line;
 			li {
 				border: 1px solid $stile-tab-page-color-tab-line;
+				border-bottom-color: transparent;
 
 				&[data-stile ~= 'current'] {
 					top: 1px;

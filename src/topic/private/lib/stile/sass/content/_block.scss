@@ -3,7 +3,7 @@
  * Block Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-07-27
+ * @version 2018-10-30
  *
  */
 
@@ -34,7 +34,7 @@ $stile-block-level-figcaption: 0 !default;
 		}
 		@include for-ie { text-align: left; }
 		line-height: base-vr(2);
-		hyphens: auto;  // Autoprefixer is needed. 
+		hyphens: auto;  // Autoprefixer is needed.
 	}
 
 	hr {
@@ -63,6 +63,11 @@ $stile-block-level-figcaption: 0 !default;
 		&[data-stile~='no-indent'] {
 			padding-left: base-vr(2);
 			&::before { left: 0; }
+		}
+
+		> * + cite {
+			display: block;
+			line-height: base-vr(2);
 		}
 	}
 
