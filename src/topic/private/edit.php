@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2018-11-02
  *
  */
 
@@ -58,8 +58,8 @@ header('Content-Type: text/html;charset=utf-8');
 <div class="container container-edit">
 	<div class="header-row">
 		<h1>Newtrino</h1>
-		<a class="btn" href="#" id="show-list" onClick="showList();"><?= _ht('Post List') ?></a>
-		<a class="btn" href="#" id="show-post" onClick="showPost();"><?= _ht('Show Post') ?></a>
+		<a class="btn" href="#" id="show-list"><?= _ht('Post List') ?></a>
+		<a class="btn" href="#" id="show-post"><?= _ht('Show Post') ?></a>
 	</div>
 	<h2><?= _ht('Post Edit') ?>  <span id="update-msg"><?= _h($t_msg) ?></span></h2>
 	<form name="form-post" id="form-post" action="edit.php" method="post">
@@ -76,7 +76,7 @@ header('Content-Type: text/html;charset=utf-8');
 					<input type="hidden" name="date_end" id="date_end" value="<?= _h($t_date_end) ?>">
 
 					<input placeholder="<?= _ht('Enter Title Here') ?>" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
-					<div class="btn-row"><a class="btn" href="#" id="upload" onClick="showMediaChooser();"><?= _ht('Insert Media') ?></a></div>
+					<div class="btn-row"><button class="btn" id="show-media-chooser" type="button"><?= _ht('Insert Media') ?></button></div>
 					<textarea name="post_content" id="post_content"><?= _h($t_p->getContent()) ?></textarea>
 				</div>
 			</div>
@@ -92,8 +92,8 @@ header('Content-Type: text/html;charset=utf-8');
 						</select>
 					</div>
 					<div>
-						<a class="btn" href="#" onClick="showPreview();"><?= _ht('Preview') ?></a>
-						<a class="btn btn-update" href="#" id="update" onClick="update();"><?= _ht('Update') ?></a>
+						<button class="btn" id="show-preview"><?= _ht('Preview') ?></button>
+						<button class="btn btn-update" id="update"><?= _ht('Update') ?></button>
 					</div>
 					<p class="message" id="message_enter_title"><?= _ht('The title is blank.') ?></p>
 				</div>

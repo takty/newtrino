@@ -4,12 +4,14 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2018-11-02
  *
  */
 
 
 function initEdit() {
+	setButtonEvents();
+
 	const fp = flatpickr('#post_published_date', {
 		enableSeconds: true, time_24hr: true, enableTime: true,
 		onChange: function(dateObj, dateStr, instance) {
@@ -95,6 +97,30 @@ function initEdit() {
 	}
 	window.addEventListener('resize', onResize);
 	setTimeout(onResize, 200);
+}
+
+function setButtonEvents() {
+	addBtnEvent('show-list', showList, 'index.php');
+	addBtnEvent('show-post', showPost, '../view.php?id=' + document.getElementById('id').value);
+	addBtnEvent('show-media-chooser', showMediaChooser);
+	addBtnEvent('show-preview', showPreview);
+	addBtnEvent('update', update);
+
+	function addBtnEvent(id, fn, url = false) {
+		const btn = document.getElementById(id);
+		btn.addEventListener('mouseup', function (e) {
+			if (e.button === 0) {
+				e.preventDefault();
+				fn();
+			} else if (e.button === 1) {
+				e.preventDefault();
+			}
+		});
+		btn.addEventListener('mousedown', function (e) {
+			if (e.button === 1) e.preventDefault();
+		});
+		if (url) btn.href = url;
+	}
 }
 
 let changed = false;
