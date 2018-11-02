@@ -3,7 +3,7 @@
  * Edit (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-11-02
  *
  */
 
@@ -88,8 +88,12 @@ body.edit {
 
 #frame-event-duration {
 	.flatpickr {
+		display: flex;
 		input {
 			max-width: 9rem;
+		}
+		.input-button {
+			max-width: 2.5rem;
 		}
 	}
 	.to {

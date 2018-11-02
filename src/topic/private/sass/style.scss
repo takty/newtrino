@@ -41,7 +41,7 @@ body {
 }
 
 .container {
-	max-width: 64rem;
+	max-width: 72rem;
 	margin-left: auto;
 	margin-right: auto;
 	width: 100%;
@@ -125,7 +125,11 @@ input[type=text], input[type=password] {
 
 select {
 	@include clickable-design;
-	padding: 0.5rem 0.75rem;
+	padding: 0.5rem 0.25rem;
+	@include for-tablet-landscape-up {
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+	}
 	font-size: 0.9rem;
 	box-shadow: 0 2px 6px #999;
 	max-height: 2.5rem;
@@ -133,6 +137,7 @@ select {
 }
 
 nav button,
+.nav button,
 .media button,
 .frame button {
 	@include btn;

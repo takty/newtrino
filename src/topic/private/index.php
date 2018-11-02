@@ -5,7 +5,7 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2018-11-02
  *
  */
 
@@ -62,35 +62,41 @@ header('Content-Type: text/html;charset=utf-8');
 		<a href="login.php" class="btn"><?= _ht('Log Out') ?></a>
 	</div>
 	<h2><?= _ht('Post List') ?></h2>
-	<div class="list-ops">
-		<nav>
-			<h3><?= _ht('Display Period') ?></h3>
-			<div class="period-filter">
-				<p class="flatpickr"><input type="text" id="fp-date-bgn" size="12" value="" data-input><a class="input-button" data-clear></a></p>
-				<span>-</span>
-				<p class="flatpickr"><input type="text" id="fp-date-end" size="12" value="" data-input><a class="input-button" data-clear></a></p>
-				<button type="button" onclick="changeDateRange();"><?= _ht('Filter') ?></button>
+	<div class="list-ops nav">
+		<div class="filter-column">
+			<div class="filter-item">
+				<h3><?= _ht('Display Period') ?></h3>
+				<div class="period-filter">
+					<p class="flatpickr"><input type="text" id="fp-date-bgn" size="12" value="" data-input><a class="input-button" data-clear></a></p>
+					<span>-</span>
+					<p class="flatpickr"><input type="text" id="fp-date-end" size="12" value="" data-input><a class="input-button" data-clear></a></p>
+					<button type="button" onclick="changeDateRange();"><?= _ht('Filter') ?></button>
+				</div>
 			</div>
-		</nav>
-		<nav>
-			<h3><?= _ht('Category') ?></h3>
-			<select onchange="changeCategory(this.value);">
-				<option value=""><?= _ht('All') ?></option>
+		</div>
+		<div class="filter-column">
+			<div class="filter-item">
+				<h3><?= _ht('Category') ?></h3>
+				<select onchange="changeCategory(this.value);">
+					<option value=""><?= _ht('All') ?></option>
 <?php foreach($t_cats as $c): ?>
-					<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _ht($c['name'], 'category') ?></option>
+						<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _ht($c['name'], 'category') ?></option>
 <?php endforeach; ?>
-			</select>
-		</nav>
-		<nav>
-			<h3><?= _ht('View Count') ?></h3>
-			<select id="ppp" onchange="changePpp(this.value);">
-				<option value="10">10</option>
-				<option value="20">20</option>
-				<option value="50">50</option>
-				<option value="100">100</option>
-			</select>
-		</nav>
-		<div><a class="btn btn-new" href="#" onclick="newPost();"><?= _ht("New Post") ?></a></div>
+				</select>
+			</div>
+			<div class="filter-item">
+				<h3><?= _ht('View Count') ?></h3>
+				<select id="ppp" onchange="changePpp(this.value);">
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select>
+			</div>
+			<div class="filter-item">
+				<a class="btn btn-new" href="#" onclick="newPost();"><?= _ht("New Post") ?></a>
+			</div>
+		</div>
 	</div>
 	<table class="list">
 		<tr><th><?= _ht('State') ?></th><th><?= _ht('Date') ?></th><th><?= _ht('Title') ?></th><th><?= _ht('Category') ?></th><th><?= _ht('Updated') ?></th><th></th></tr>
@@ -109,11 +115,11 @@ header('Content-Type: text/html;charset=utf-8');
 			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getPublishedDate()) ?></a></td>
 			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getTitle()) ?></a></td>
 <?php if ($p->getCategory() === 'event'): ?>
-			<td><?= _ht($p->getCategoryName(), 'category') ?><br /><?= _h($p->getEventDateBgn()) ?> - <?= _h($p->getEventDateEnd()) ?></td>
+			<td class="category"><div><?= _ht($p->getCategoryName(), 'category') ?></div> <span><?= _h($p->getEventDateBgn()) ?></span> <span>- <?= _h($p->getEventDateEnd()) ?></span></td>
 <?php else: ?>
-			<td><?= _ht($p->getCategoryName(), 'category') ?></td>
+			<td class="category"><div><?= _ht($p->getCategoryName(), 'category') ?></div></td>
 <?php endif ?>
-			<td><?= _h($p->getModifiedDateTime()) ?></td>
+			<td class="mod-date-time"><?= implode('', array_map(function ($e) {return '<span>'._h($e).'</span> ';}, explode(' ', $p->getModifiedDateTime()))) ?></td>
 			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>
 		</tr>
 <?php endforeach ?>

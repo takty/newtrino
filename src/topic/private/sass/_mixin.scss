@@ -3,7 +3,7 @@
  * Mixin (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2018-11-02
  *
  */
 
@@ -37,7 +37,10 @@
 }
 
 @mixin btn-elm {
-	min-width: 2.5rem;
+	min-width: 1.5rem;
+	@include for-tablet-landscape-up {
+		min-width: 2.5rem;
+	}
 	text-decoration: none;
 	text-align: center;
 	line-height: 1.25;
@@ -46,7 +49,19 @@
 @mixin btn {
 	@include clickable-design;
 	@include btn-elm;
-	padding: 0.66rem 0.75rem;
+	padding-top: 0.66rem;
+	padding-bottom: 0.66rem;
+
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+	@include for-tablet-portrait-up {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+	}
+	@include for-tablet-landscape-up {
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+	}
 	display: inline-block;
 }
 
