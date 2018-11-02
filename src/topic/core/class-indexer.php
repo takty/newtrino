@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-17
+ * @version 2018-11-02
  *
  */
 
@@ -77,7 +77,7 @@ class Indexer {
 		fclose($fp);
 		$ms = 0;
 		foreach ($matchCount as $mc) $ms += $mc;
-		if ($ms != count($matchCount)) return 0;
+		if ($ms !== count($matchCount)) return 0;
 		return $score;
 	}
 
