@@ -3,7 +3,7 @@
  * Block Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-30
+ * @version 2019-05-08
  *
  */
 
@@ -12,11 +12,14 @@
 @import '../basic/query';
 @import '../basic/font';
 
-$stile-block-color-line      : rgba(#777, 0.9) !default;
-$stile-block-color-shade     : rgba($stile-block-color-line, 0.1) !default;
-$stile-block-size-line-width : 1px !default;
-$stile-block-size-max-width  : 36rem !default;
-$stile-block-level-figcaption: 0 !default;
+
+$stile-block-color-rule           : rgba(#777, 0.9) !default;
+$stile-block-color-background     : rgba($stile-block-color-rule, 0.1) !default;
+$stile-block-size-rule-width      : 2px !default;
+$stile-block-size-max-width       : 36rem !default;
+$stile-block-size-min-width       : 4rem !default;
+$stile-block-level-figcaption     : 0 !default;
+$stile-block-level-blockquote-cite: 0 !default;
 
 
 @mixin stile-block {
@@ -36,13 +39,11 @@ $stile-block-level-figcaption: 0 !default;
 		line-height: base-vr(2);
 		hyphens: auto;  // Autoprefixer is needed.
 	}
-
 	hr {
-		height: calc(#{$stile-block-size-line-width} + 0.5px);
+		height: calc(#{$stile-block-size-rule-width} + 0.5px);
 		border: none;
-		border-top: $stile-block-size-line-width solid $stile-block-color-line;
+		border-top: $stile-block-size-rule-width solid $stile-block-color-rule;
 	}
-
 	blockquote {
 		padding-left: base-vr(4);
 		font-style: italic;
@@ -55,22 +56,21 @@ $stile-block-level-figcaption: 0 !default;
 			position: absolute;
 			left: base-vr(2);
 
-			width: calc(#{$stile-block-size-line-width} + 0.5px);
+			width: calc(#{$stile-block-size-rule-width} + 0.5px);
 			height: 100%;
-			border-left: $stile-block-size-line-width solid $stile-block-color-line;
+			border-left: $stile-block-size-rule-width solid $stile-block-color-rule;
 		}
-
 		&[data-stile~='no-indent'] {
 			padding-left: base-vr(2);
 			&::before { left: 0; }
 		}
-
 		> * + cite {
 			display: block;
-			line-height: base-vr(2);
+			@include font-size-level($stile-block-level-blockquote-cite);
+			text-align: left;
+			font-style: normal;
 		}
 	}
-
 	pre {
 		@include font-family-monospace;
 		display: block;
@@ -78,9 +78,8 @@ $stile-block-level-figcaption: 0 !default;
 		overflow-x: auto;
 		line-height: base-vr(2);
 
-		background-color: $stile-block-color-shade;
+		background-color: $stile-block-color-background;
 	}
-
 	pre > code {
 		padding: 0;
 		background-color: transparent;
@@ -100,15 +99,37 @@ $stile-block-level-figcaption: 0 !default;
 		// for broken images (does not work on IE11 and Edge)
 		&[alt]::after { width: 100%; }
 	}
-
 	figure {
 		text-align: center;  // for centering short caption
 	}
-
 	figcaption {
 		display: inline-block;
 		max-width: $stile-block-size-max-width;
 		@include font-size-level($stile-block-level-figcaption);
 		text-align: left;  // for left align of long caption
+	}
+
+	@include for-tablet-portrait-up {
+		figure:not([data-stile~='aligncenter']) {
+			&.alignleft, &.alignright {
+				display: table;
+
+				img {
+					display: table-row;
+					width: auto;
+				}
+				figcaption {
+					min-width: $stile-block-size-min-width;
+					display: table-caption;
+					caption-side: bottom;
+					text-align: center;
+
+					span {
+						display: inline-block;
+						text-align: left;
+					}
+				}
+			}
+		}
 	}
 }

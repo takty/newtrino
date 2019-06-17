@@ -3,7 +3,7 @@
  * Font Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-29
+ * @version 2019-02-11
  *
  */
 
@@ -12,6 +12,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,400i,700i');  // Laten
 @import url('https://fonts.googleapis.com/css?family=Spectral:300,600,300i,600i');  // Laten Serif
+
 
 $stile-font-sans-serif-laten        : 'Open Sans';
 $stile-font-serif-laten             : 'Spectral';
@@ -190,10 +191,17 @@ $stile-font-monospace:
 	}
 }
 
-@mixin font-family-serif {
-	font-family: $stile-font-serif;
-	@include for-ie {
-		font-family: $stile-font-serif-ie;
+@mixin font-family-serif($pc-specific: false) {
+	@if $pc-specific {
+		font-family: $pc-specific, $stile-font-serif;
+		@include for-ie {
+			font-family: $pc-specific, $stile-font-serif-ie;
+		}
+	} @else {
+		font-family: $stile-font-serif;
+		@include for-ie {
+			font-family: $stile-font-serif-ie;
+		}
 	}
 	&.ios, .ios & {  // need to use user-agent.js
 		font-family: $stile-font-serif-ios;
@@ -208,7 +216,9 @@ $stile-font-monospace:
 }
 
 @mixin font-proportional {
-	font-feature-settings: 'pkna' 1;
+	body:not(.ios) & {
+		font-feature-settings: 'pkna' 1;
+	}
 }
 
 @mixin font-smoothing {
@@ -243,19 +253,19 @@ $stile-font-monospace:
 // -----------------------------------------------------------------------------
 
 
-@mixin font-responsive-size($min-vw, $max-vw, $min-value, $max-value) {
-	font-size: $min-value;
+@mixin font-responsive-size($min-vw, $max-vw, $min-size, $max-size) {
+	font-size: $min-size;
 	@media screen and (min-width: $min-vw) {
-		font-size: calc(#{$min-value} + #{base-strip-unit($max-value - $min-value)} * (100vw - #{$min-vw}) / #{base-strip-unit($max-vw - $min-vw)});
+		@include base-responsive-size(font-size, $min-vw, $max-vw, $min-size, $max-size);
 	}
 	@media screen and (min-width: $max-vw) {
-		font-size: $max-value;
+		font-size: $max-size;
 	}
 }
 
-@mixin font-responsive-size-interval($min-vw, $max-vw, $min-value, $max-value) {
+@mixin font-responsive-size-interval($min-vw, $max-vw, $min-size, $max-size) {
 	@media screen and (min-width: $min-vw) and (max-width: $max-vw)  {
-		font-size: calc(#{$min-value} + #{base-strip-unit($max-value - $min-value)} * (100vw - #{$min-vw}) / #{base-strip-unit($max-vw - $min-vw)});
+		@include base-responsive-size(font-size, $min-vw, $max-vw, $min-size, $max-size);
 	}
 }
 

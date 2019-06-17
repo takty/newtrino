@@ -3,7 +3,7 @@
  * Tab Page Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-29
+ * @version 2019-01-15
  *
  */
 
@@ -13,27 +13,30 @@
 @import '../basic/font';
 @import '../basic/layout';
 
-$stile-tab-page-color-bg                : #fff !default;
-$stile-tab-page-color-line              : rgba(#777, 0.35) !default;
-$stile-tab-page-color-line-vertical     : false !default;
-$stile-tab-page-color-tab-bg            : transparent !default;
-$stile-tab-page-color-tab-line          : transparent !default;
-$stile-tab-page-color-tab-bg-hover      : rgba(#fff, 0.35) !default;
 
-$stile-tab-page-color-tab-current-bg    : rgba(#fff, 0.75) !default;
-$stile-tab-page-color-tab-current-line  : rgba(#777, 0.35) !default;
-$stile-tab-page-color-tab-current-top   : rgba(#777, 0.75) !default;
+$stile-tab-page-color-background              : #fff !default;
+$stile-tab-page-color-rule                    : rgba(#777, 0.35) !default;
+$stile-tab-page-color-rule-vertical           : false !default;
+$stile-tab-page-color-tab-background          : transparent !default;
+$stile-tab-page-color-tab-rule                : transparent !default;
+$stile-tab-page-color-tab-background-hover    : transparent !default;
 
-$stile-tab-page-color-tab-accordion-bg  : rgba(#fff, 0.75) !default;
-$stile-tab-page-color-tab-accordion-line: rgba(#777, 0.35) !default;
+$stile-tab-page-color-tab-current-background  : transparent !default;
+$stile-tab-page-color-tab-current-rule        : $stile-tab-page-color-rule !default;
+$stile-tab-page-color-tab-current-top         : $stile-tab-page-color-rule !default;
 
-$stile-tab-page-color-tab-text          : rgba(#000, 0.5) !default;
-$stile-tab-page-color-tab-text-current  : rgba(#000, 0.95) !default;
-$stile-tab-page-color-tab-text-hover    : rgba(#000, 0.75) !default;
+$stile-tab-page-color-tab-accordion-background: $stile-tab-page-color-tab-current-background !default;
+$stile-tab-page-color-tab-accordion-rule      : $stile-tab-page-color-rule !default;
 
-$stile-tab-page-size-tab-current-top    : 2px !default;
-$stile-tab-page-size-tab-margin         : 0.25rem !default;
-$stile-tab-page-level-font              : 1 !default;
+$stile-tab-page-color-tab-text-current        : rgba(#000, 0.95) !default;
+$stile-tab-page-color-tab-text                : rgba($stile-tab-page-color-tab-text-current, 0.50) !default;
+$stile-tab-page-color-tab-text-hover          : $stile-tab-page-color-tab-text-current !default;
+
+$stile-tab-page-size-tab-current-top          : 2px !default;
+$stile-tab-page-size-tab-margin               : 0.25rem !default;
+$stile-tab-page-level-font                    : 1 !default;
+
+$stile-tab-page-visible-tab-below             : false !default;
 
 
 @mixin stile-tab-page {
@@ -44,15 +47,18 @@ $stile-tab-page-level-font              : 1 !default;
 
 		> div {
 			width: 100%;
-			@if $stile-tab-page-color-line-vertical == false {
-				border-left  : 1px solid $stile-tab-page-color-line;
-				border-right : 1px solid $stile-tab-page-color-line;
+			@if $stile-tab-page-color-rule-vertical == false {
+				border-left  : 1px solid $stile-tab-page-color-rule;
+				border-right : 1px solid $stile-tab-page-color-rule;
 			} @else {
-				border-left  : 1px solid $stile-tab-page-color-line-vertical;
-				border-right : 1px solid $stile-tab-page-color-line-vertical;
+				border-left  : 1px solid $stile-tab-page-color-rule-vertical;
+				border-right : 1px solid $stile-tab-page-color-rule-vertical;
 			}
-			border-bottom: 1px solid $stile-tab-page-color-line;
-			background-color: $stile-tab-page-color-bg;
+			border-bottom: 1px solid $stile-tab-page-color-rule;
+			@if $stile-tab-page-visible-tab-below == true {
+				@include for-tablet-up { border-bottom: none; }
+			}
+			background-color: $stile-tab-page-color-background;
 			padding: base-vr(2);
 
 			// Margins inside
@@ -70,7 +76,6 @@ $stile-tab-page-level-font              : 1 !default;
 			flex-grow: 1;
 		}
 	}
-
 	.stile-tab-page-tab-list li,
 	.stile-tab-page-tab-list-below li {
 		position: relative;
@@ -82,10 +87,10 @@ $stile-tab-page-level-font              : 1 !default;
 		@include font-proportional;
 		@include font-size-level($stile-tab-page-level-font);
 
-		background-color: $stile-tab-page-color-tab-bg;
+		background-color: $stile-tab-page-color-tab-background;
 		color: $stile-tab-page-color-tab-text;
 		&:not([data-stile ~= 'current']):hover {
-			background-color: $stile-tab-page-color-tab-bg-hover;
+			background-color: $stile-tab-page-color-tab-background-hover;
 			color: $stile-tab-page-color-tab-text-hover;
 		}
 		cursor: pointer;
@@ -93,14 +98,14 @@ $stile-tab-page-level-font              : 1 !default;
 		border-radius: 1px;
 
 		@include for-phone-only {  // Accordion Mode
-			background-color: $stile-tab-page-color-tab-accordion-bg;
+			background-color: $stile-tab-page-color-tab-accordion-background;
 			&::after {
 				content: '';
 				display: block;
 				width: 0;
 				height: 0;
 				border: 0.35rem solid transparent;
-				border-top: 0.35rem solid $stile-tab-page-color-tab-accordion-line;
+				border-top: 0.35rem solid $stile-tab-page-color-tab-accordion-rule;
 				position: absolute;
 				top: calc(50% - 0.175rem);
 				right: 1rem;
@@ -108,23 +113,22 @@ $stile-tab-page-level-font              : 1 !default;
 			}
 		}
 	}
-
 	.stile-tab-page-tab-list {  // Must be a class for avoiding auto formating of list style
 		display: flex;
 		justify-content: flex-start;
 
 		li[data-stile ~= 'current'] {
-			border: 1px solid $stile-tab-page-color-tab-current-line;
+			border: 1px solid $stile-tab-page-color-tab-current-rule;
 			border-top: $stile-tab-page-size-tab-current-top solid $stile-tab-page-color-tab-current-top;
-			border-bottom-color: $stile-tab-page-color-bg;
-			background-color: $stile-tab-page-color-tab-current-bg;
+			border-bottom-color: $stile-tab-page-color-background;
+			background-color: $stile-tab-page-color-tab-current-background;
 			color: $stile-tab-page-color-tab-text-current;
 		}
 		@include for-tablet-up {
 			min-height: 3rem;
-			border-bottom: 1px solid $stile-tab-page-color-line;
+			border-bottom: 1px solid $stile-tab-page-color-rule;
 			li {
-				border: 1px solid $stile-tab-page-color-tab-line;
+				border: 1px solid $stile-tab-page-color-tab-rule;
 				border-bottom-color: transparent;
 
 				&[data-stile ~= 'current'] {
@@ -141,16 +145,16 @@ $stile-tab-page-level-font              : 1 !default;
 			flex-direction: column;
 
 			li {
-				border: 1px solid $stile-tab-page-color-tab-accordion-line;
+				border: 1px solid $stile-tab-page-color-tab-accordion-rule;
 				border-bottom: none;
 				margin-bottom: $stile-tab-page-size-tab-margin;
 
 				&:not([data-stile ~= 'current']):last-child {  // When the all tabs are closed
-					border-bottom: 1px solid $stile-tab-page-color-tab-accordion-line;
+					border-bottom: 1px solid $stile-tab-page-color-tab-accordion-rule;
 					margin-bottom: 0;
 				}
 				&[data-stile ~= 'current'] {
-					border-bottom: 1px dotted $stile-tab-page-color-tab-accordion-line;
+					border-bottom: 1px dotted $stile-tab-page-color-tab-accordion-rule;
 					margin-bottom: 0;
 					&::after {
 						transform: scaleY(-1) translateY(0.4rem);
@@ -160,17 +164,53 @@ $stile-tab-page-level-font              : 1 !default;
 			}
 		}
 	}
+	@if $stile-tab-page-visible-tab-below == true {
+		.stile-tab-page-tab-list-below {
+			display: flex;
+			justify-content: flex-start;
 
-	.stile-tab-page-tab-list-below {  // Accordion Mode
-		display: none;
-		@include for-phone-only { display: flex; }
+			li[data-stile ~= 'current'] {
+				border: 1px solid $stile-tab-page-color-tab-current-rule;
+				border-bottom: $stile-tab-page-size-tab-current-top solid $stile-tab-page-color-tab-current-top;
+				border-top-color: $stile-tab-page-color-background;
+				background-color: $stile-tab-page-color-tab-current-background;
+				color: $stile-tab-page-color-tab-text-current;
+			}
+			@include for-tablet-up {
+				min-height: 3rem;
+				border-top: 1px solid $stile-tab-page-color-rule;
+				li {
+					border: 1px solid $stile-tab-page-color-tab-rule;
+					border-top-color: transparent;
 
-		flex-direction: column;
-
-		li {
-			border: 1px solid $stile-tab-page-color-tab-accordion-line;
-			border-top: none;
-			margin-top: $stile-tab-page-size-tab-margin;
+					&[data-stile ~= 'current'] {
+						bottom: 1px;
+						cursor: initial;
+						user-select: initial;
+					}
+				}
+				li + li {
+					margin-left: $stile-tab-page-size-tab-margin;
+				}
+			}
+			@include for-phone-only { @include stile-tab-page-accordion-below; }
 		}
+	} @else {
+		.stile-tab-page-tab-list-below {
+			display: none;
+			@include for-phone-only { @include stile-tab-page-accordion-below; }
+		}
+	}
+}
+
+@mixin stile-tab-page-accordion-below {
+	display: flex;
+	flex-direction: column;
+
+	li {
+		display: none;
+		border: 1px solid $stile-tab-page-color-tab-accordion-rule;
+		border-top: none;
+		margin-top: $stile-tab-page-size-tab-margin;
 	}
 }

@@ -3,12 +3,36 @@
  * Content Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-06-25
+ * @version 2018-12-11
  *
  */
 
 
 @import 'basic/base';
+
+
+$stile-content-color-rule      : rgba(#777, 0.35) !default;
+$stile-content-color-accent    : rgba(#777, 0.90) !default;
+$stile-content-color-heading   : rgba(#000, 0.95) !default;
+$stile-content-color-background: rgba(#777, 0.10) !default;
+
+
+$stile-block-color-rule                      : $stile-content-color-accent !default;
+$stile-block-color-background                : $stile-content-color-background !default;
+$stile-heading-color-text                    : $stile-content-color-heading !default;
+$stile-list-color-mark                       : $stile-content-color-accent !default;
+$stile-table-color-rule                      : $stile-content-color-rule !default;
+$stile-table-color-header-text               : $stile-content-color-heading !default;
+$stile-table-color-header-background         : $stile-content-color-background !default;
+$stile-tab-page-color-rule                   : $stile-content-color-rule !default;
+$stile-tab-page-color-tab-current-top        : $stile-content-color-accent !default;
+$stile-tab-page-color-tab-text-current       : $stile-content-color-heading !default;
+$stile-pseudo-tab-page-color-rule            : $stile-content-color-rule !default;
+$stile-pseudo-tab-page-color-tab-current-top : $stile-content-color-accent !default;
+$stile-pseudo-tab-page-color-tab-text-current: $stile-content-color-heading !default;
+
+
+@import 'content/margin';
 @import 'content/block';
 @import 'content/heading';
 @import 'content/link';
@@ -29,64 +53,4 @@
 	@include stile-table;
 
 	@media print { @include stile-print; }
-}
-
-@mixin stile-margin {
-	@include stile-margin-basic;
-	@include stile-margin-advanced;
-}
-
-@mixin stile-margin-basic {
-	> * + * { margin-top: base-vr(2); }
-	> *:first-child.alignleft  + *:not([class]) { margin-top: 0; }
-	> *:first-child.alignright + *:not([class]) { margin-top: 0; }
-}
-
-@mixin stile-margin-advanced() {
-	text-align: center;  // for table on IE11
-	> * { text-align: left; }  // for table on IE11
-
-	*:not([class]) + table { margin-top: base-vr(4); }
-	table + *:not([class]) { margin-top: base-vr(4); }
-
-	*:not([class]) + figure:not(.alignright):not(.alignleft) { margin-top: base-vr(4); }
-	figure:not(.alignright):not(.alignleft) + *:not([class]) { margin-top: base-vr(4); }
-	*:not([class]) + figure[data-stile ~= 'aligncenter'] { margin-top: base-vr(4); }
-	figure[data-stile ~= 'aligncenter'] + *:not([class]) { margin-top: base-vr(4); }
-
-	* + hr { margin-top: base-vr(4); }
-	hr + * { margin-top: base-vr(4); }
-
-	// The order below has meaning!
-	@include stile-margin-heading(h6, 3, 1);
-	@include stile-margin-heading(h5, 4, 2);
-	@include stile-margin-heading(h4, 5, 3);
-	@include stile-margin-heading(h3, 6, 4);
-	@include stile-margin-heading(h2, 6, 5);
-	@include stile-margin-heading(h1, 6, 6);
-
-	p + p { margin-top: base-vr(1); }
-	ul:not([class]) > li + li { margin-top: base-vr(1); }
-	ol:not([class]) > li + li::before { padding-top: base-vr(1); }  // Must use 'padding-top' instead of 'margin-top' because ol's 'display' is 'table'.
-	ul.stile > li + li { margin-top: base-vr(1); }
-	ol.stile > li + li::before { padding-top: base-vr(1); }  // Must use 'padding-top' instead of 'margin-top' because ol's 'display' is 'table'.
-	li > ul, li > ol, li > dl, dd > ul, dd > ol, dd > dl { margin-top: base-vr(1); }  // for nesting Lists
-	* + dt { margin-top: base-vr(1); }
-	* + figcaption { margin-top: base-vr(1); }
-
-	blockquote {
-		> * + * { margin-top: base-vr(1); }
-		> *:first-child { margin-top: 0; }
-	}
-}
-
-@mixin stile-margin-heading($tag, $top, $bottom) {
-	*:not(.alignright):not(.alignleft) + #{$tag} { margin-top: base-vr($top); }
-	#{$tag} + *:not(.alignright):not(.alignleft) { margin-top: base-vr($bottom); }
-	#{$tag} {
-		& + figure.alignright,
-		& + figure.alignleft {
-			& + *:not(.alignright):not(.alignleft) { margin-top: base-vr($bottom); }
-		}
-	}
 }

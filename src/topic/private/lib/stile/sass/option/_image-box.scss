@@ -3,77 +3,82 @@
  * Image Box (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-06-05
+ * @version 2018-11-07
  *
  */
 
 
 @import '../basic/query';
 
-$stile-image-box-color-bg      : rgba(#000, 0.75) !default;
-$stile-image-box-color-img-bg  : #fff !default;
-$stile-image-box-time-fade     : 0.5s !default;
-$stile-image-box-btn-color-bg  : rgba(#000, 0.5) !default;
-$stile-image-box-btn-color-mark: rgba(#fff, 0.75) !default;
+
+$stile-image-box-color-background       : rgba(#000, 0.75) !default;
+$stile-image-box-color-img-background   : rgba(#fff, 0.95) !default;
+$stile-image-box-color-closer-background: rgba(#000, 0.50) !default;
+$stile-image-box-color-closer-mark      : rgba(#fff, 0.75) !default;
+$stile-image-box-time-fade              : 0.5s !default;
 
 
 @mixin stile-image-box {
 	@at-root div[data-stile ~= 'image-box'] {
-		display: none;
-		-webkit-overflow-scrolling: touch;
+		@include stile-image-box-inside;
+	}
+}
 
-		background-color: $stile-image-box-color-bg;
-		cursor: pointer;
-		opacity: 0;
-		transition: opacity 0.2s;
+@mixin stile-image-box-inside {
+	display: none;
+	-webkit-overflow-scrolling: touch;
 
-		&[data-stile ~= 'open'] {
+	background-color: $stile-image-box-color-background;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&[data-stile ~= 'open'] {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 100000;  // Fixed Header is 99999
+	}
+	&[data-stile ~= 'visible'] {
+		opacity: 1;
+		transition: opacity $stile-image-box-time-fade;
+	}
+	> img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		cursor: auto;
+		background-color: $stile-image-box-color-img-background;
+	}
+	> span {
+		position: fixed;
+		top: 0.5rem;
+		right: 0.5rem;
+		background-color: $stile-image-box-color-closer-background;
+		border-radius: 50%;
+		width: 3rem;
+		height: 3rem;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		&::before,
+		&::after {
+			content: '';
 			display: block;
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			z-index: 100000;  // Fixed Header is 99999
-		}
-		&[data-stile ~= 'visible'] {
-			opacity: 1;
-			transition: opacity $stile-image-box-time-fade;
-		}
-		> img {
 			position: absolute;
-			top: 0;
-			left: 0;
-			cursor: auto;
-			background-color: $stile-image-box-color-img-bg;
+			top: 50%;
+			left: 50%;
+			width: 2rem;
+			border: 2px solid $stile-image-box-color-closer-mark;
+			background-color: $stile-image-box-color-closer-mark;
+			transform-origin: 50% 50%;
 		}
-		> span {
-			position: fixed;
-			top: 0.5rem;
-			right: 0.5rem;
-			background-color: $stile-image-box-btn-color-bg;
-			border-radius: 50%;
-			width: 3rem;
-			height: 3rem;
-
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-			&::before,
-			&::after {
-				content: '';
-				display: block;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				width: 2rem;
-				border: 2px solid $stile-image-box-btn-color-mark;
-				background-color: $stile-image-box-btn-color-mark;
-				transform-origin: 50% 50%;
-			}
-			&::before { transform: translate(-50%, -50%) rotate( 45deg); }
-			&::after  { transform: translate(-50%, -50%) rotate(-45deg); }
-		}
+		&::before { transform: translate(-50%, -50%) rotate( 45deg); }
+		&::after  { transform: translate(-50%, -50%) rotate(-45deg); }
 	}
 }

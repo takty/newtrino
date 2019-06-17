@@ -3,7 +3,7 @@
  * Alignment Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-06-28
+ * @version 2019-03-07
  *
  */
 
@@ -11,13 +11,17 @@
 @import '../basic/base';
 @import '../basic/query';
 
+
 $stile-alignment-size-min-text-width: 16rem !default;
+$stile-alignment-size-text-width    : 48rem !default;
+$stile-alignment-size-width         : 72rem !default;
 
 
 @mixin stile-alignment {
 	@include stile-alignment-main;
 	@include stile-alignment-margin;
 	@include stile-alignment-size;
+	@include stile-alignment-option($stile-alignment-size-text-width, $stile-alignment-size-width);
 }
 
 
@@ -42,8 +46,10 @@ $stile-alignment-size-min-text-width: 16rem !default;
 	.size-thumbnail { @include stile-alignment-float(10rem); }
 
 	.size-small,
+	.size-medium-small,
 	.size-medium,
-	.size-medium_large,
+	.size-medium_large,  // For compatibility with WordPress-embed image size name
+	.size-medium-large,
 	.size-large,
 	.size-full {
 		&.alignleft,
@@ -54,10 +60,14 @@ $stile-alignment-size-min-text-width: 16rem !default;
 	.size-small {
 		@include for-tablet-portrait-up { @include stile-alignment-float(10rem); }
 	}
+	.size-medium-small {
+		@include for-tablet-portrait-up { @include stile-alignment-float(15rem); }
+	}
 	.size-medium {
 		@include for-tablet-portrait-up { @include stile-alignment-float(20rem); }
 	}
-	.size-medium_large {
+	.size-medium_large,  // For compatibility with WordPress-embed image size name
+	.size-medium-large {
 		@include for-tablet-landscape-up { @include stile-alignment-float(30rem); }
 	}
 	.size-large,
@@ -71,8 +81,8 @@ $stile-alignment-size-min-text-width: 16rem !default;
 	*[data-stile ~= 'alignright'] {
 		margin-top: 0;
 		margin-bottom: base-vr(1);
-		max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 		transform: translateY(#{(base-vr(2) - 1rem) / 2});
+		max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 	}
 	*[data-stile ~= 'alignleft'] {
 		float: left;
@@ -88,7 +98,7 @@ $stile-alignment-size-min-text-width: 16rem !default;
 		&.alignleft,
 		&.alignright {
 			@include stile-alignment-center;
-			&:not(.size-thumbnail):not(.size-small):not(.size-medium):not(.size-medium_large):not(.size-large):not(.size-full) {
+			&:not([class ^= 'size-']):not([class *= ' size-']) {
 				max-width: initial;
 			}
 		}
@@ -109,12 +119,12 @@ $stile-alignment-size-min-text-width: 16rem !default;
 	&.alignright {
 		margin-top: 0;
 		margin-bottom: base-vr(1);
+		transform: translateY(#{(base-vr(2) - 1rem) / 2});
+		clear: none;
 		@if $max-width == false {
 			$max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 		}
 		max-width: $max-width;
-		transform: translateY(#{(base-vr(2) - 1rem) / 2});
-		clear: none;
 	}
 	&.alignleft {
 		float: left;
@@ -131,20 +141,18 @@ $stile-alignment-size-min-text-width: 16rem !default;
 
 
 @mixin stile-alignment-margin {
-	* + .alignleft,
-	* + .alignright,
-	.alignleft + *,
-	.alignright + * {
+	*:not(.alignleft) + .alignleft,
+	*:not(.alignright) + .alignright,
+	.alignleft + *:not(.alignleft),
+	.alignright + *:not(.alignright) {
 		margin-top: base-vr(1);
 	}
-
 	* + figure.alignleft,
 	* + figure.alignright,
 	figure.alignleft + *,
 	figure.alignright + * {
 		margin-top: base-vr(4);  // for Centering View
 	}
-
 	@include for-tablet-up {
 		* + figure.alignleft,
 		* + figure.alignright,
@@ -152,18 +160,30 @@ $stile-alignment-size-min-text-width: 16rem !default;
 		figure.alignright + * {
 			margin-top: base-vr(1);  // for Actual Floating View
 		}
+		figure.alignleft,
+		figure.alignright {
+			&:not([data-stile ~= 'aligncenter']) > figcaption { 
+				padding-bottom: base-vr(1); 
+			}
+		}
 	}
-
-	@include stile-alignment-define-figure-margin(h1, 6);
-	@include stile-alignment-define-figure-margin(h2, 5);
-	@include stile-alignment-define-figure-margin(h3, 4);
-	@include stile-alignment-define-figure-margin(h4, 3);
-	@include stile-alignment-define-figure-margin(h5, 2);
-	@include stile-alignment-define-figure-margin(h6, 1);
+	@include stile-alignment-define-figure-margin(h6, nth($stile-margin-heading, 6));
+	@include stile-alignment-define-figure-margin(h5, nth($stile-margin-heading, 5));
+	@include stile-alignment-define-figure-margin(h4, nth($stile-margin-heading, 4));
+	@include stile-alignment-define-figure-margin(h3, nth($stile-margin-heading, 3));
+	@include stile-alignment-define-figure-margin(h2, nth($stile-margin-heading, 2));
+	@include stile-alignment-define-figure-margin(h1, nth($stile-margin-heading, 1));
 }
 
-@mixin stile-alignment-define-figure-margin($tag, $top) {
-	#{$tag} { & + figure.alignright, & + figure.alignleft { margin-top: base-vr($top); } }
+@mixin stile-alignment-define-figure-margin($tag, $top-bottom) {
+	$bottom: nth($top-bottom, 2);
+	#{$tag} {
+		// The following selectors are redundant for override existing styles by specificity
+		& + figure.alignright:not(.alignleft),
+		& + figure.alignleft:not(.alignright) {
+			margin-top: base-vr($bottom);
+		}
+	}
 }
 
 
@@ -179,11 +199,16 @@ $stile-alignment-size-min-text-width: 16rem !default;
 		max-width: 10rem;
 		width: 100%;
 	}
+	.size-medium-small {
+		max-width: 15rem;
+		width: 100%;
+	}
 	.size-medium {
 		max-width: 20rem;
 		width: 100%;
 	}
-	.size-medium_large {  // This naming is compatible with WordPress-embed image size name.
+	.size-medium_large,  // For compatibility with WordPress-embed image size name
+	.size-medium-large {
 		max-width: 30rem;
 		width: 100%;
 	}
@@ -194,8 +219,30 @@ $stile-alignment-size-min-text-width: 16rem !default;
 	td, th {
 		.size-thumbnail    { min-width: 5rem; }
 		.size-small        { min-width: 5rem; }
+		.size-medium-small { min-width: 7.5rem; }
 		.size-medium       { min-width: 10rem; }
-		.size-medium_large { min-width: 15rem; }
+		.size-medium_large,  // For compatibility with WordPress-embed image size name
+		.size-medium-large { min-width: 15rem; }
 		.size-large        { min-width: 20rem; }
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-alignment-option($text-width, $wide-width) {
+	.alignfull,
+	.alignwide {
+		@include layout-full-width;
+		width: 100vw;
+		max-width: initial;
+	}
+	.alignwide {
+		@media screen and (min-width: $wide-width) {
+			margin-left: #{($wide-width - $text-width) / -2};
+			margin-right: #{($wide-width - $text-width) / -2};
+			max-width: $wide-width;
+		}
 	}
 }

@@ -3,7 +3,7 @@
  * Base Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-05-29
+ * @version 2019-02-11
  *
  */
 
@@ -22,4 +22,12 @@ $stile-print-margin: 80 !default;  // The sum of the side margins of papers (mm)
 
 @function base-to-px($v) {
 	@return round(($v - $stile-print-margin) / 25.4 * 72px);
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin base-responsive-size($property, $min-vw, $max-vw, $min-size, $max-size) {
+	#{$property}: calc(#{$min-size} + #{base-strip-unit($max-size - $min-size)} * (100vw - #{$min-vw}) / #{base-strip-unit($max-vw - $min-vw)});
 }

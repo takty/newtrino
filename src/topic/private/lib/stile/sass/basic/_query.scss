@@ -3,7 +3,7 @@
  * Query Mixins for Responsive and Browsers
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-31
+ * @version 2019-06-03
  *
  * https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
  *
@@ -13,20 +13,20 @@
 @import 'base';
 
 
-@mixin for-size-down($high_px, $high_mm) {
-	@media screen and (max-width: #{$high_px - 1}), print and (max-width: #{base-to-px($high_mm) - 1}) {
+@mixin for-size-down($high-px, $high-mm) {
+	@media screen and (max-width: #{$high-px - 1}), print and (max-width: #{base-to-px($high-mm) - 1}) {
 		@content;
 	}
 }
 
-@mixin for-size-only($low_px, $high_px, $low_mm, $high_mm) {
-	@media screen and (min-width: $low_px) and (max-width: #{$high_px - 1}), print and (min-width: base-to-px($low_mm)) and (max-width: #{base-to-px($high_mm) - 1}) {
+@mixin for-size-only($low-px, $high-px, $low-mm, $high-mm) {
+	@media screen and (min-width: $low-px) and (max-width: #{$high-px - 1}), print and (min-width: base-to-px($low-mm)) and (max-width: #{base-to-px($high-mm) - 1}) {
 		@content;
 	}
 }
 
-@mixin for-size-up($low_px, $low_mm) {
-	@media screen and (min-width: $low_px), print and (min-width: base-to-px($low_mm)) {
+@mixin for-size-up($low-px, $low-mm) {
+	@media screen and (min-width: $low-px), print and (min-width: base-to-px($low-mm)) {
 		@content;
 	}
 }
@@ -75,26 +75,34 @@
 // -----------------------------------------------------------------------------
 
 
-@mixin for-size-height-down($high_px, $high_mm) {
-	@media screen and (max-height: #{$high_px - 1}), print and (max-height: #{base-to-px($high_mm) - 1}) {
+@mixin for-size-height-down($high-px, $high-mm) {
+	@media screen and (max-height: #{$high-px - 1}), print and (max-height: #{base-to-px($high-mm) - 1}) {
 		@content;
 	}
 }
 
-@mixin for-size-height-only($low_px, $high_px, $low_mm, $high_mm) {
-	@media screen and (min-height: $low_px) and (max-height: #{$high_px - 1}), print and (min-height: base-to-px($low_mm)) and (max-height: #{base-to-px($high_mm) - 1}) {
+@mixin for-size-height-only($low-px, $high-px, $low-mm, $high-mm) {
+	@media screen and (min-height: $low-px) and (max-height: #{$high-px - 1}), print and (min-height: base-to-px($low-mm)) and (max-height: #{base-to-px($high-mm) - 1}) {
 		@content;
 	}
 }
 
-@mixin for-size-height-up($low_px, $low_mm) {
-	@media screen and (min-height: $low_px), print and (min-height: base-to-px($low_mm)) {
+@mixin for-size-height-up($low-px, $low-mm) {
+	@media screen and (min-height: $low-px), print and (min-height: base-to-px($low-mm)) {
 		@content;
 	}
+}
+
+@mixin for-tiny-height-only {
+	@include for-size-height-down(600px, 148) { @content; }
+}
+
+@mixin for-small-height-up {
+	@include for-size-height-up(600px, 148) { @content; }
 }
 
 @mixin for-small-height-only {
-	@include for-size-height-down(950px, 257) { @content; }
+	@include for-size-height-only(600px, 950px, 148, 257) { @content; }
 }
 
 @mixin for-medium-height-up {
@@ -114,7 +122,7 @@
 
 
 @mixin for-chrome {
-	@supports (-webkit-appearance: none) and (-webkit-tap-highlight-color: currentcolor) and (not (-moz-appearance: none)) and (not ((-ms-ime-align: auto))) {
+	@supports (-webkit-appearance: none) and (-webkit-tap-highlight-color: currentcolor) and (not (-moz-appearance: none)) and (not ((-ms-ime-align: auto))) and (not (stroke-color: transparent)) {
 		@content;
 	}
 }

@@ -3,7 +3,7 @@
  * Reset Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-06-04
+ * @version 2019-06-04
  *
  * Based on:
  *  modern-normalize v0.4
@@ -19,6 +19,7 @@
 
 html {
 	box-sizing: border-box;
+	-webkit-text-size-adjust: 100%;  // for iOS
 }
 
 *, *:before, *:after {
@@ -50,15 +51,22 @@ code, kbd, samp, pre {
 // -----------------------------------------------------------------------------
 
 
-button, input, optgroup, select, textarea {
+button, input, optgroup, textarea, select {
 	margin: 0;
 	font-family: inherit;
 	font-size: 100%;
+}
+
+button, input, optgroup, textarea {
 	line-height: 1;
 }
 
 button, select {
 	text-transform: none;
+}
+
+button, input, select {
+	border-radius: inherit;  // for iOS
 }
 
 button, [type='button'], [type='reset'], [type='submit'] {
@@ -82,6 +90,7 @@ button, [type='button'], [type='reset'], [type='submit'] {
 	-webkit-appearance: textfield;
 	appearance: textfield;
 	outline-offset: -2px;
+	border-radius: inherit;  // for iOS
 }
 
 [type='search']::-webkit-search-decoration {
@@ -141,4 +150,13 @@ td, th {
 a {
 	color: inherit;
 	text-decoration: none;
+}
+
+mark {
+	color: inherit;
+	background-color: inherit;
+}
+
+address {
+	font-style: inherit;
 }

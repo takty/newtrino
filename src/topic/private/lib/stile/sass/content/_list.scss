@@ -3,7 +3,7 @@
  * List Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-06-04
+ * @version 2019-05-20
  *
  */
 
@@ -11,9 +11,33 @@
 @import '../basic/base';
 @import '../basic/font';
 
-$stile-list-color-mark      : rgba(#777, 0.9) !default;
-$stile-list-rate-mark       : 0.45 !default;
-$stile-list-rate-square-mark: 0.44 !default;
+
+$stile-list-color-mark      : rgba(#777, 0.9)      !default;
+$stile-list-color-mark-ul   : $stile-list-color-mark !default;
+$stile-list-color-mark-ol   : $stile-list-color-mark !default;
+$stile-list-color-mark-dl   : $stile-list-color-mark !default;
+$stile-list-rate-mark       : 0.45                   !default;
+$stile-list-rate-mark-disc  : $stile-list-rate-mark  !default;
+$stile-list-rate-mark-square: 0.44                   !default;
+$stile-list-rate-mark-circle: 0.45                   !default;
+$stile-list-rate-marks      : ()                     !default;
+$stile-list-img-mark        : false                  !default;
+$stile-list-img-mark-disc   : $stile-list-img-mark   !default;
+$stile-list-img-mark-square : false                  !default;
+$stile-list-img-mark-circle : false                  !default;
+$stile-list-img-marks       : ()                     !default;
+
+
+$_stile-list-rate-marks: map-merge((
+	disc  : $stile-list-rate-mark-disc, 
+	square: $stile-list-rate-mark-square, 
+	circle: $stile-list-rate-mark-circle
+), $stile-list-rate-marks);
+$_stile-list-img-marks: map-merge((
+	disc  : $stile-list-img-mark-disc, 
+	square: $stile-list-img-mark-square, 
+	circle: $stile-list-img-mark-circle
+), $stile-list-img-marks);
 
 
 @mixin stile-list {
@@ -22,112 +46,50 @@ $stile-list-rate-square-mark: 0.44 !default;
 	@include stile-list-dl;
 }
 
-
-// -----------------------------------------------------------------------------
-
-
 @mixin stile-list-ul {
 	ul:not([class]),
 	ul.stile {
-		list-style: none;
-
-		padding-left: base-vr(4);
-		&[data-stile ~= 'no-indent'] { padding-left: base-vr(2); }
-		@include for-phone-only      { padding-left: base-vr(2); }
-
-		> li {
-			position: relative;
-			line-height: base-vr(2);
-		}
-
-		> li::before {
-			content: '';
-			position: absolute;
-			display: block;
-			box-sizing: border-box;
-
-			top: calc(#{base-vr(1)} - 0.01rem);
-			left: - base-vr(2);
-
-			width: 1em;
-			height: 1em;
-		}
-
-		&:not([style]):not([data-stile *= 'list-']) > li::before,
-		&[data-stile ~= 'list-disc'] > li::before {
-			transform: translateY(-0.5em) scale(#{$stile-list-rate-mark});
-			border-radius: 50%;
-
-			background-color: $stile-list-color-mark;
-		}
-
-		&[data-stile ~= 'list-circle'] > li::before {
-			transform: translateY(-0.5em) scale(#{$stile-list-rate-mark});
-			border: 0.2rem solid;
-			border-radius: 50%;
-
-			border-color: $stile-list-color-mark;
-		}
-
-		&[data-stile ~= 'list-square'] > li::before {
-			transform: translateY(-0.5em) scale(#{$stile-list-rate-square-mark});
-			border-radius: 20%;
-
-			background-color: $stile-list-color-mark;
-		}
+		@include stile-list-ul-inside
 	}
 }
-
-
-// -----------------------------------------------------------------------------
-
 
 @mixin stile-list-ol {
 	ol:not([class]),
 	ol.stile {
-		padding-left: base-vr(1);
-		&[data-stile ~= 'no-indent'] { padding-left: 0; }
-		@include for-phone-only      { padding-left: 0; }
+		@include stile-list-ol-inside;
+	}
+}
 
-		> li {
-			counter-increment: li;
-			display: table-row;
-			line-height: base-vr(2);
-		}
+@mixin stile-list-dl {
+	dl:not([class]),
+	dl.stile {
+		@include stile-list-dl-inside;
+	}
+}
 
-		> li::before {
-			content: counter(li) '.';
-			display: table-cell;
+@mixin stile-list-margin {
+	ul:not([class]),
+	ul.stile {
+		> li + li { margin-top: base-vr(1); }
+	}
+	ul[data-stile~='compact'] > li + li { margin-top: 0; }
 
-			min-width: base-vr(3);
-			padding-right: base-vr(1);
-			text-align: right;
+	ol:not([class]),
+	ol.stile {
+		// Must use 'padding-top' instead of 'margin-top' because ol's 'display' is 'table'.
+		> li + li::before { padding-top: base-vr(1); }
+	}
+	ol[data-stile~='compact'] > li + li::before { padding-top: 0; }
 
-			@include font-bold;
-			
-			color: $stile-list-color-mark;
-		}
-		&[data-stile ~= 'no-indent'] > li::before { min-width: base-vr(2); }
-		@include for-phone-only { > li::before { min-width: base-vr(2); } }
+	dl:not([class]),
+	dl.stile {
+		> * + dt { margin-top: base-vr(1); }
+	}
+	dl[data-stile~='compact'] > * + dt { margin-top: 0; }
 
-		&[data-stile ~= 'list-lower-alpha'] > li::before {
-			content: counter(li, lower-alpha) '.';
-		}
-
-		&[data-stile ~= 'list-lower-greek'] > li::before {
-			content: counter(li, lower-greek) '.';
-		}
-
-		&[data-stile ~= 'list-lower-roman'] > li::before {
-			content: counter(li, lower-roman) '.';
-		}
-
-		&[data-stile ~= 'list-upper-alpha'] > li::before {
-			content: counter(li, upper-alpha) '.';
-		}
-
-		&[data-stile ~= 'list-upper-roman'] > li::before {
-			content: counter(li, upper-roman) '.';
+	li, dd {  // For nesting Lists
+		> ul, > ol, > dl {
+			margin-top: base-vr(1);
 		}
 	}
 }
@@ -136,21 +98,136 @@ $stile-list-rate-square-mark: 0.44 !default;
 // -----------------------------------------------------------------------------
 
 
-@mixin stile-list-dl {
-	dl:not([class]),
-	dl.stile {
-		padding-left: base-vr(2);
-		&[data-stile ~= 'no-indent'] { padding-left: 0; }
-		@include for-phone-only      { padding-left: 0; }
+@mixin stile-list-indent($normal-vr, $no-indent-vr) {
+	padding-left: base-vr($normal-vr);
+	&[data-stile ~= 'no-indent'] { padding-left: base-vr($no-indent-vr); }
+	@include for-phone-only      { padding-left: base-vr($no-indent-vr); }
+}
 
+@mixin stile-list-inside-style($style, $default: false) {
+	@if $default == true {
+		&:not([style]):not([data-stile *= 'list-']),
+		&[style = 'list-style:#{$style};'],   // Before the script loaded
+		&[style = 'list-style: #{$style};'],  // Before the script loaded
+		&[data-stile ~= 'list-#{$style}'] {
+			> li::before { @content; }
+		}
+	} @else {
+		&[style = 'list-style:#{$style};'],   // Before the script loaded
+		&[style = 'list-style: #{$style};'],  // Before the script loaded
+		&[data-stile ~= 'list-#{$style}'] {
+			> li::before { @content; }
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-list-ul-inside-style($style, $default: false) {
+	@include stile-list-inside-style($style, $default) {
+		transform: translateY(-0.5em) scale(#{map-get($_stile-list-rate-marks, $style)});
+		@if map-get($_stile-list-img-marks, $style) != false {
+			background-image: map-get($_stile-list-img-marks, $style);
+			background-size: contain;
+		} @else {
+			@content;
+		}
+	}
+	// Before the script loaded
+	&[style = 'list-style:#{$style};'],
+	&[style = 'list-style: #{$style};'] {
+		list-style: none !important;
+	}
+}
+
+@mixin stile-list-ul-inside {
+	@include stile-list-indent(4, 2);
+	list-style: none;
+
+	> li {
+		position: relative;
 		line-height: base-vr(2);
 
-		> dt {
-			@include font-bold;
-		
-			color: $stile-list-color-mark; 
+		&::before {
+			content: '';
+			position: absolute;
+			display: block;
+			top: base-vr(1);
+			left: - base-vr(2);
+			width: 1em;
+			height: 1em;
 		}
-
-		> dd { padding-left: base-vr(2); }
 	}
+	@include stile-list-ul-inside-style(disc, true) {
+		border-radius: 50%;
+		background-color: $stile-list-color-mark-ul;
+	}
+	@include stile-list-ul-inside-style(square) {
+		border-radius: 10%;
+		background-color: $stile-list-color-mark-ul;
+	}	
+	@include stile-list-ul-inside-style(circle) {
+		border: 0.2rem solid $stile-list-color-mark-ul;
+		border-radius: 50%;
+	}	
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-list-ol-inside-style($style) {
+	@include stile-list-inside-style($style) {
+		content: counter(li, #{$style}) '.';
+	}
+}
+
+@mixin stile-list-ol-inside {
+	@include stile-list-indent(1, 0);
+	counter-reset: li;
+
+	> li {
+		counter-increment: li;
+		display: table-row;
+		line-height: base-vr(2);
+
+		&::before {
+			content: counter(li) '.';
+			display: table-cell;
+			min-width: base-vr(3);
+			padding-right: base-vr(1);
+			text-align: right;
+			@include font-bold;
+			color: $stile-list-color-mark-ol;
+		}
+	}
+	&[reversed],
+	&[data-stile ~= 'reversed'] {
+		> li { counter-increment: li -1; }
+	}
+	&[data-stile ~= 'no-indent'] > li::before { min-width: base-vr(2); }
+	@include for-phone-only { > li::before { min-width: base-vr(2); } }
+
+	@include stile-list-ol-inside-style(lower-alpha);
+	@include stile-list-ol-inside-style(lower-greek);
+	@include stile-list-ol-inside-style(lower-roman);
+	@include stile-list-ol-inside-style(upper-alpha);
+	@include stile-list-ol-inside-style(upper-roman);
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-list-dl-inside {
+	@include stile-list-indent(2, 0);
+	line-height: base-vr(2);
+
+	> dt {
+		@include font-bold;
+		color: $stile-list-color-mark-dl;
+	}
+	> dd { padding-left: base-vr(2); }
 }

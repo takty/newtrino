@@ -3,15 +3,26 @@
  * Print Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-05-30
+ * @version 2019-05-21
  *
  */
+
+
+$stile-print-enabled-link-url: true !default;
 
 
 @mixin stile-print {
 	font-size: 10.5pt !important;
 
-	a[href][data-stile ~= 'link-simple']:not([data-stile ~= 'link-link']):not([data-stile ~= 'link-link'])::after {
+	@if $stile-print-enabled-link-url == true {
+		@include stile-print-link;
+	}
+	@include stile-print-table;
+	@include stile-print-image;
+}
+
+@mixin stile-print-link {
+	a[href][data-stile ~= 'link-simple']:not([data-stile ~= 'link-url']):not([data-stile ~= 'link-anchor']):not([data-stile ~= 'link-file'])::after {
 		content: attr(href) !important;
 
 		font-family: inherit !important;
@@ -22,7 +33,9 @@
 		overflow-wrap: break-word !important;
 		font-size: 6pt !important;
 	}
+}
 
+@mixin stile-print-table {
 	table {
 		display: table !important;
 
@@ -36,7 +49,9 @@
 			font-size: 9pt !important;
 		}
 	}
+}
 
+@mixin stile-print-image {
 	img {
 		opacity: 1 !important;
 	}

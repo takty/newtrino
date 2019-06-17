@@ -4,7 +4,7 @@ const fs   = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const gulp = require('gulp');
-const $    = require('gulp-load-plugins')({pattern:['gulp-*']});
+const $    = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
 
 function copySync(from, to) {
 	const isToDir = to.endsWith('/');
@@ -108,18 +108,18 @@ gulp.task('delete-var', (done) => {
 gulp.task('js', () => {
 	return gulp.src([SRC_PRIVATE + 'js/**/*.js'])
 		.pipe($.plumber())
-		.pipe($.babel({presets: [['env', {targets: {ie: 11}}]]}))
+		.pipe($.babel())
 		.pipe($.uglify())
-		.pipe($.rename({extname: '.min.js'}))
+		.pipe($.rename({ extname: '.min.js' }))
 		.pipe(gulp.dest(DIST_PRIVATE + 'js'));
 });
 
 gulp.task('sass', () => {
 	return gulp.src([SRC_PRIVATE + 'sass/style.scss'])
 		.pipe($.plumber())
-		.pipe($.sass({outputStyle: 'compressed'}))
-		.pipe($.autoprefixer({browsers: ['ie >= 11'], remove: false}))
-		.pipe($.rename({extname: '.min.css'}))
+		.pipe($.sass({ outputStyle: 'compressed' }))
+		.pipe($.autoprefixer({ remove: false }))
+		.pipe($.rename({ extname: '.min.css' }))
 		.pipe(gulp.dest(DIST_PRIVATE + 'css/'));
 });
 
