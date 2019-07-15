@@ -3,14 +3,14 @@
  * Login (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2019-07-16
  *
  */
 
 
 function initLogin() {
 	document.getElementById('loginBtn').addEventListener('click', doLogin);
-	document.getElementById('loginBtn').addEventListener('contextmenu', function (e) {doLogin(e, true);});
+	document.getElementById('loginBtn').addEventListener('contextmenu', (e) => { doLogin(e, true); });
 }
 
 function doLogin(event, showKey) {
@@ -29,7 +29,7 @@ function doLogin(event, showKey) {
 	const a2 = hash(method + ':' + url);
 	const digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
 
-	if (showKey && event.altKey && event.ctrlKey && event.shiftKey) {
+	if (showKey && event.altKey && event.ctrlKey) {
 		console.log(url + '\n' + user + '\t' + a1);
 		event.preventDefault();
 		return;
