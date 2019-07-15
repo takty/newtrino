@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-15
+ * @version 2019-07-16
  *
  */
 
@@ -123,7 +123,7 @@ input[type=text], input[type=password] {
 	height: 2.5rem;
 }
 
-select {
+select:not(.flatpickr-monthDropdown-months) {
 	@include clickable-design;
 	padding: 0.5rem 0.25rem;
 	@include for-tablet-landscape-up {

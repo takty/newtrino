@@ -3,7 +3,7 @@
  * Preview (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2019-07-16
  *
  */
 
@@ -34,6 +34,8 @@
 	padding-top: 1rem;
 	padding-bottom: 1rem;
 	border-top: 1px solid #ccc;
+
+	@include font-size-level(1);
 
 	&:after {
 		content: ' ';
