@@ -3,14 +3,13 @@
  * Inline Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-11-12
+ * @version 2019-07-10
+ *
+ * @import '../basic/base';
+ * @import '../basic/font';
+ * @import '../basic/layout';
  *
  */
-
-
-@import '../basic/base';
-@import '../basic/font';
-@import '../basic/layout';
 
 
 $stile-inline-color-strong       : rgba(#000, 0.95) !default;
@@ -29,27 +28,11 @@ $stile-inline-size-font-monospace: 0.95em !default;
 
 @mixin stile-inline {
 	img {
-		max-width: 100%;
-		height: auto;
-
-		// for broken images (does not work on IE11 and Edge)
-		&[alt]::after {
-			content: attr(src);
-			@include layout-centering(true);
-
-			padding: base-vr(0.5) base-vr(1);
-			border: 1px dashed $stile-inline-color-broken-image;
-			min-height: base-vr(2);
-
-			color: $stile-inline-color-broken-image;
-			font-size: 0.85em;
-			line-height: 1.35em;
-			word-break: break-all;
-			text-decoration: line-through;
-
-			vertical-align: text-bottom;
-		}
+		max-width : 100%;
+		height    : auto;
 		transition: opacity 0.2s;  // for lazy loading
+
+		@include stile-inline-broke-image;
 	}
 	strong, b {
 		@include font-bold;
@@ -63,10 +46,9 @@ $stile-inline-size-font-monospace: 0.95em !default;
 		}
 	}
 	u, span[data-stile ~= 'inline-underline'] {
-		text-decoration: none;
-		background-image: linear-gradient(to right, $stile-inline-color-underline 0%, transparentize($stile-inline-color-underline, 0.25) 100%);
-		background-size: 100% $stile-inline-width-underline;
-		background-repeat: no-repeat;
+		text-decoration    : none;
+		background-image   : linear-gradient(to right, $stile-inline-color-underline 0%, transparentize($stile-inline-color-underline, 0.25) 100%);
+		background-size    : 100% $stile-inline-width-underline;
 		background-position: left bottom;
 	}
 	span:not([data-stile]) {  // Before the script loaded
@@ -76,56 +58,95 @@ $stile-inline-size-font-monospace: 0.95em !default;
 		}
 	}
 	mark {
-		text-decoration: none;
-		background-image: linear-gradient(to right, $stile-inline-color-mark 0%, transparentize($stile-inline-color-mark, 0.45) 100%);
-		background-size: 100% $stile-inline-width-mark;
-		background-repeat: no-repeat;
+		text-decoration    : none;
+		background-image   : linear-gradient(to right, $stile-inline-color-mark 0%, transparentize($stile-inline-color-mark, 0.45) 100%);
+		background-size    : 100% $stile-inline-width-mark;
 		background-position: left center;
 	}
 	del {
-		text-decoration: none;
-		background-image: linear-gradient(to right, $stile-inline-color-del 0%, transparentize($stile-inline-color-del, 0.25) 100%);
-		background-size: 100% $stile-inline-width-del;
-		background-repeat: no-repeat;
+		text-decoration    : none;
+		background-image   : linear-gradient(to right, $stile-inline-color-del 0%, transparentize($stile-inline-color-del, 0.25) 100%);
+		background-size    : 100% $stile-inline-width-del;
 		background-position: left 55%;
 	}
 	small {
 		font-size: $stile-inline-size-font-small;
 	}
 	sub, sup {
-		position: relative;
-		display: inline-block;  // for neat line height
-		vertical-align: inherit;
-		line-height: 1;
-		margin-right: 0.1em;
-		font-size: $stile-inline-size-font-subscript;
+		position      : relative;
+		display       : inline-block;  // for neat line height
+		vertical-align: baseline;
+		line-height   : 1;
+		margin-right  : 0.1em;
+		font-size     : $stile-inline-size-font-subscript;
 	}
 	sub {
-		bottom: -0.25em;
+		bottom       : -0.25em;
 		margin-bottom: -0.25em;
 	}
 	sup {
-		top: -0.75em;
+		top       : -0.75em;
 		margin-top: -0.75em;
 	}
 	abbr[title] {
 		text-decoration: none;
-		border-bottom: 2px dotted $stile-inline-color-abbr;
+		border-bottom  : 2px dotted $stile-inline-color-abbr;
 	}
 	code, var, samp, kbd {
 		@include font-family-monospace;
-		margin-left: 0.075rem;
-		margin-right: 0.075rem;
+		margin     : { left: 0.075rem; right: 0.075rem; }
 		white-space: pre-wrap;
-		font-size: $stile-inline-size-font-monospace;
+		font-size  : $stile-inline-size-font-monospace;
 	}
 	*[data-stile ~= 'iframe-wrapper'] {
-		display: inline-block;
-		width: 100%;
+		display : inline-block;
+		width   : 100%;
 		position: relative;
+
 		> iframe {
 			@include layout-fill-self;
-			height: 100%;
+			position: absolute !important;
+			width   : 100%     !important;
+			height  : 100%     !important;
 		}
+	}
+}
+
+// Broken images (does not work on Safari, IE11 and Edge)
+@mixin stile-inline-broke-image {
+	animation: show-alt 0s both 5s;  // for avoiding unexpected shown on Firefox
+	@keyframes show-alt {
+		  0% { font-size: inherit; }
+		100% { font-size: 0; }
+	}
+	&::after {
+		content: attr(src);
+		@include layout-centering(true);
+
+		color          : $stile-inline-color-broken-image;
+		line-height    : 1.35rem;
+		word-break     : break-all;
+		text-decoration: line-through;
+		vertical-align : text-bottom;
+
+		animation: show-src 0s both 5s;  // for avoiding unexpected shown on Firefox
+		@keyframes show-src {
+			0% {
+				max-width: 0;
+				font-size: 0;
+			}
+			100% {
+				padding         : base-vr(0.5) base-vr(1);
+				border          : 1px dashed $stile-inline-color-broken-image;
+				min-height      : base-vr(2);
+				background-color: #fff;
+
+				max-width: initial;
+				font-size: 0.85rem;
+			}
+		}
+	}
+	&:not([alt = ''])::after {
+		@include for-chrome { margin-left: -16px; }
 	}
 }

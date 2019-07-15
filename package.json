@@ -16,7 +16,7 @@
     "ie >= 11"
   ],
   "dependencies": {
-    "flatpickr": "^4.0.4",
+    "flatpickr": "^4.6.1",
     "jssha": "^2.3.1",
     "tinymce": "^4.7.1",
     "tinymce-i18n": "^18.10.7"
@@ -36,6 +36,6 @@
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.2",
-    "stile": "git+https://github.com/takty/stile.git"
+    "stile": "git+https://github.com/takty/stile.git#dev"
   }
 }

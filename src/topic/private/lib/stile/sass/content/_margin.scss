@@ -3,12 +3,12 @@
  * Margin Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-05-20
+ * @version 2019-07-10
+ *
+ * @import '../basic/base';
+ * @import '../basic/query';
  *
  */
-
-
-@import '../basic/base';
 
 
 $stile-margin-align-table: center !default;
@@ -22,70 +22,208 @@ $stile-margin-heading:
 
 
 @mixin stile-margin {
-	@include stile-margin-basic;
-	@include stile-margin-advanced;
+	@extend %stile-margin;
 }
 
-@mixin stile-margin-basic {
-	> * + * { margin-top: base-vr(2); }
-	> *:first-child.alignleft  + *:not([class]) { margin-top: 0; }
-	> *:first-child.alignright + *:not([class]) { margin-top: 0; }
+@mixin stile-margin-inside {
+	@extend %stile-margin-inside;
 }
 
-@mixin stile-margin-advanced() {
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-margin-block-inside {
+	* + figcaption { margin-top: base-vr(1); }
+	table > caption { padding-bottom: base-vr(1); }  // Must use 'padding-bottom' instead of 'margin-top' of the adjacent element
+	blockquote {
+		@include stile-margin-inside;
+	}
+
+	ul:not([class]),
+	ul.stile {
+		> li + li { margin-top: base-vr(1); }
+	}
+	ul[data-stile~='compact'] > li + li { margin-top: 0; }
+
+	ol:not([class]),
+	ol.stile {
+		// Must use 'padding-top' instead of 'margin-top' because ol's 'display' is 'table'.
+		> li + li::before { padding-top: base-vr(1); }
+	}
+	ol[data-stile~='compact'] > li + li::before { padding-top: 0; }
+
+	dl:not([class]),
+	dl.stile {
+		> * + dt { margin-top: base-vr(1); }
+	}
+	dl[data-stile~='compact'] > * + dt { margin-top: 0; }
+
+	li, dd {  // For nesting Lists
+		> ul, > ol, > dl {
+			margin-top: base-vr(1);
+		}
+	}
+}
+
+@mixin stile-margin-block {
+	* + blockquote,
+		blockquote + *,
+	* + nav,
+		nav + *,
+	* + pre,
+		pre + *,
+	* + ul,
+		ul + *,
+	* + ol,
+		ol + *,
+	* + dl,
+		dl + *,
+	* + p,
+		p + *     { margin-top: base-vr(2); }
+	* + table,
+	    table + *,
+	* + hr,
+	    hr + *    { margin-top: base-vr(4); }
+	p + p         { margin-top: base-vr(1); }
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-margin-alignment {
+	* + figure,
+	    figure + *,
+	* + figure[data-stile ~= 'aligncenter'],
+		figure[data-stile ~= 'aligncenter'] + *
+	{
+		margin-top: base-vr(4);
+	}
+	* + .alignleft,
+	* + .alignright,
+	    .alignleft  + *,
+		.alignright + *
+	{
+		margin-top: base-vr(1);
+	}
+	@include for-phone-only {
+		* + figure.alignleft,
+		* + figure.alignright,
+		    figure.alignleft  + *,
+			figure.alignright + *
+		{
+			margin-top: base-vr(4);  // for Centering View
+		}
+	}
+	@include for-tablet-up {
+		* + figure.alignleft,
+		* + figure.alignright,
+		    figure.alignleft  + *,
+			figure.alignright + *
+		{
+			margin-top: base-vr(1);  // for Actual Floating View
+		}
+		figure.alignleft,
+		figure.alignright {
+			&:not([data-stile ~= 'aligncenter']) > figcaption {
+				padding-bottom: base-vr(1);
+			}
+		}
+	}
+}
+
+@mixin stile-margin-container {
+	* + .column-2,
+		.column-2 + *,
+	* + .column-3,
+		.column-3 + *,
+	* + .column-4,
+		.column-4 + *,
+	* + .card-2,
+		.card-2 + *,
+	* + .card-3,
+		.card-3 + *,
+	* + .card-4,
+		.card-4 + *
+	{ margin-top: base-vr(4); }
+
+	.column-2,
+	.column-3,
+	.column-4,
+	.card-2,
+	.card-3,
+	.card-4 {
+		> * {
+			@include stile-margin-inside;
+		}
+	}
+}
+
+@mixin stile-margin-option {
+	* + .tab-page,
+		.tab-page + *,
+	* + .pseudo-tab-page,
+		.pseudo-tab-page + *
+	{ margin-top: base-vr(4); }
+
+	.tab-page > div,
+	.pseudo-tab-page
+	{ @include stile-margin-inside; }
+
+	.stile-tab-page-tab-list + *,
+	* + .stile-tab-page-tab-list-below
+	{ margin-top: 0; }
+
+	.pseudo-tab-page .stile-pseudo-tab-page-tab-list + *
+	{ margin-top: base-vr(2); }
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin stile-margin-heading($tag, $top-bottom) {
+	$top: nth($top-bottom, 1);
+	$btm: nth($top-bottom, 2);
+
+	* + #{$tag}     { margin-top: base-vr($top); }
+		#{$tag} + * { margin-top: base-vr($btm); }
+	*[class] + #{$tag}            { margin-top: base-vr($top); }
+	           #{$tag} + *[class] { margin-top: base-vr($btm); }
+
+	#{$tag} {
+		& + figure.alignright,
+		& + figure.alignleft {
+			margin-top: base-vr($btm);
+			& + * { margin-top: base-vr($btm); }
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+%stile-margin-inside {
+	> div + div { margin-top: base-vr(2); }
+}
+
+%stile-margin {
 	@if $stile-margin-align-table == center {
 		text-align: center;        // for table on IE11
 		> * { text-align: left; }  // for table on IE11
 	}
+	> div + div { margin-top: base-vr(2); }
 
-	*:not([class]) + table { margin-top: base-vr(4); }
-	table + *:not([class]) { margin-top: base-vr(4); }
+	@include stile-margin-block-inside;
+	@include stile-margin-block;
 
-	*:not([class]) + figure:not(.alignright):not(.alignleft) { margin-top: base-vr(4); }
-	figure:not(.alignright):not(.alignleft) + *:not([class]) { margin-top: base-vr(4); }
-	*:not([class]) + figure[data-stile ~= 'aligncenter'] { margin-top: base-vr(4); }
-	figure[data-stile ~= 'aligncenter'] + *:not([class]) { margin-top: base-vr(4); }
-	@include for-ie {
-		@include for-phone-only {
-			*:not([class]) + figure.alignright { margin-top: base-vr(4); }
-			*:not([class]) + figure.alignleft { margin-top: base-vr(4); }
-			figure.alignright + *:not([class]) { margin-top: base-vr(4); }
-			figure.alignleft + *:not([class]) { margin-top: base-vr(4); }
-		}
-	}
+	@include stile-margin-alignment;
+	@include stile-margin-container;
+	@include stile-margin-option;
 
-	* + hr { margin-top: base-vr(4); }
-	hr + * { margin-top: base-vr(4); }
-
-	// The order below has meaning!
-	@include stile-margin-heading(h6, nth($stile-margin-heading, 6));
-	@include stile-margin-heading(h5, nth($stile-margin-heading, 5));
-	@include stile-margin-heading(h4, nth($stile-margin-heading, 4));
-	@include stile-margin-heading(h3, nth($stile-margin-heading, 3));
-	@include stile-margin-heading(h2, nth($stile-margin-heading, 2));
-	@include stile-margin-heading(h1, nth($stile-margin-heading, 1));
-
-	p + p { margin-top: base-vr(1); }
-	@include stile-list-margin;
-	* + figcaption { margin-top: base-vr(1); }
-	table > caption { padding-bottom: base-vr(1); }  // Must use 'padding-bottom' instead of 'margin-top' of the adjacent element
-
-	blockquote {
-		> * + * { margin-top: base-vr(1); }
-		> *:first-child { margin-top: 0; }
-	}
-}
-
-@mixin stile-margin-heading($tag, $top-bottom) {
-	$top   : nth($top-bottom, 1);
-	$bottom: nth($top-bottom, 2);
-
-	*:not(.alignright):not(.alignleft) + #{$tag} { margin-top: base-vr($top); }
-	#{$tag} + *:not(.alignright):not(.alignleft) { margin-top: base-vr($bottom); }
-	#{$tag} {
-		& + figure.alignright,
-		& + figure.alignleft {
-			& + *:not(.alignright):not(.alignleft) { margin-top: base-vr($bottom); }
-		}
+	@for $i from 6 through 1 {  // The order below has meaning!
+		@include stile-margin-heading(h#{$i}, nth($stile-margin-heading, $i));
 	}
 }

@@ -3,13 +3,12 @@
  * List Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-05-20
+ * @version 2019-07-08
+ *
+ * @import '../basic/base';
+ * @import '../basic/font';
  *
  */
-
-
-@import '../basic/base';
-@import '../basic/font';
 
 
 $stile-list-color-mark      : rgba(#777, 0.9)      !default;
@@ -29,13 +28,13 @@ $stile-list-img-marks       : ()                     !default;
 
 
 $_stile-list-rate-marks: map-merge((
-	disc  : $stile-list-rate-mark-disc, 
-	square: $stile-list-rate-mark-square, 
+	disc  : $stile-list-rate-mark-disc,
+	square: $stile-list-rate-mark-square,
 	circle: $stile-list-rate-mark-circle
 ), $stile-list-rate-marks);
 $_stile-list-img-marks: map-merge((
-	disc  : $stile-list-img-mark-disc, 
-	square: $stile-list-img-mark-square, 
+	disc  : $stile-list-img-mark-disc,
+	square: $stile-list-img-mark-square,
 	circle: $stile-list-img-mark-circle
 ), $stile-list-img-marks);
 
@@ -57,6 +56,7 @@ $_stile-list-img-marks: map-merge((
 	ol:not([class]),
 	ol.stile {
 		@include stile-list-ol-inside;
+		@include stile-list-ol-inside-fallback;
 	}
 }
 
@@ -64,33 +64,6 @@ $_stile-list-img-marks: map-merge((
 	dl:not([class]),
 	dl.stile {
 		@include stile-list-dl-inside;
-	}
-}
-
-@mixin stile-list-margin {
-	ul:not([class]),
-	ul.stile {
-		> li + li { margin-top: base-vr(1); }
-	}
-	ul[data-stile~='compact'] > li + li { margin-top: 0; }
-
-	ol:not([class]),
-	ol.stile {
-		// Must use 'padding-top' instead of 'margin-top' because ol's 'display' is 'table'.
-		> li + li::before { padding-top: base-vr(1); }
-	}
-	ol[data-stile~='compact'] > li + li::before { padding-top: 0; }
-
-	dl:not([class]),
-	dl.stile {
-		> * + dt { margin-top: base-vr(1); }
-	}
-	dl[data-stile~='compact'] > * + dt { margin-top: 0; }
-
-	li, dd {  // For nesting Lists
-		> ul, > ol, > dl {
-			margin-top: base-vr(1);
-		}
 	}
 }
 
@@ -130,7 +103,7 @@ $_stile-list-img-marks: map-merge((
 		transform: translateY(-0.5em) scale(#{map-get($_stile-list-rate-marks, $style)});
 		@if map-get($_stile-list-img-marks, $style) != false {
 			background-image: map-get($_stile-list-img-marks, $style);
-			background-size: contain;
+			background-size : contain;
 		} @else {
 			@content;
 		}
@@ -147,31 +120,31 @@ $_stile-list-img-marks: map-merge((
 	list-style: none;
 
 	> li {
-		position: relative;
+		position   : relative;
 		line-height: base-vr(2);
 
 		&::before {
-			content: '';
+			content : '';
 			position: absolute;
-			display: block;
-			top: base-vr(1);
-			left: - base-vr(2);
-			width: 1em;
-			height: 1em;
+			display : block;
+			top     : base-vr(1);
+			left    : - base-vr(2);
+			width   : 1em;
+			height  : 1em;
 		}
 	}
 	@include stile-list-ul-inside-style(disc, true) {
-		border-radius: 50%;
+		border-radius   : 50%;
 		background-color: $stile-list-color-mark-ul;
 	}
 	@include stile-list-ul-inside-style(square) {
-		border-radius: 10%;
+		border-radius   : 10%;
 		background-color: $stile-list-color-mark-ul;
-	}	
+	}
 	@include stile-list-ul-inside-style(circle) {
-		border: 0.2rem solid $stile-list-color-mark-ul;
+		border       : 0.2rem solid $stile-list-color-mark-ul;
 		border-radius: 50%;
-	}	
+	}
 }
 
 
@@ -190,17 +163,17 @@ $_stile-list-img-marks: map-merge((
 
 	> li {
 		counter-increment: li;
-		display: table-row;
-		line-height: base-vr(2);
+		display          : table-row;
+		line-height      : base-vr(2);
 
 		&::before {
-			content: counter(li) '.';
-			display: table-cell;
-			min-width: base-vr(3);
+			content      : counter(li) '.';
+			display      : table-cell;
+			min-width    : base-vr(3);
 			padding-right: base-vr(1);
-			text-align: right;
+			text-align   : right;
+			color        : $stile-list-color-mark-ol;
 			@include font-bold;
-			color: $stile-list-color-mark-ol;
 		}
 	}
 	&[reversed],
@@ -215,6 +188,19 @@ $_stile-list-img-marks: map-merge((
 	@include stile-list-ol-inside-style(lower-roman);
 	@include stile-list-ol-inside-style(upper-alpha);
 	@include stile-list-ol-inside-style(upper-roman);
+}
+
+@mixin stile-list-ol-inside-fallback {
+	&[reversed]:not([style *= 'counter-reset']),
+	&[start]:not([style *= 'counter-reset']) {
+		@include stile-list-indent(4, 3);
+		> li {
+			display    : list-item;
+			line-height: base-vr(2);
+			&::before { content: none; }
+		}
+		> li + li { margin-top: base-vr(1); }
+	}
 }
 
 

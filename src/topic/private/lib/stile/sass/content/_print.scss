@@ -3,7 +3,9 @@
  * Print Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-05-21
+ * @version 2019-07-07
+ *
+ * @import '../basic/font';
  *
  */
 
@@ -12,13 +14,20 @@ $stile-print-enabled-link-url: true !default;
 
 
 @mixin stile-print {
+	-webkit-print-color-adjust: exact;
+
 	font-size: 10.5pt !important;
+	@include font-visible-chrome-cancel;
 
 	@if $stile-print-enabled-link-url == true {
 		@include stile-print-link;
 	}
-	@include stile-print-table;
-	@include stile-print-image;
+	@include stile-print-table();
+	@include stile-print-image();
+
+	.stile-pseudo-tab-page-tab-list {
+		display: none !important;
+	}
 }
 
 @mixin stile-print-link {
@@ -26,24 +35,30 @@ $stile-print-enabled-link-url: true !default;
 		content: attr(href) !important;
 
 		font-family: inherit !important;
-		transform: inherit !important;
-		display: inline !important;
+		transform  : inherit !important;
+		display    : inline  !important;
 		margin-left: 0.25rem !important;
 
 		overflow-wrap: break-word !important;
-		font-size: 6pt !important;
+		word-break   : break-all  !important;
+		font-size    : 6pt        !important;
 	}
 }
 
 @mixin stile-print-table {
 	table {
-		display: table !important;
+		display     : table !important;
+		max-width   : 100%  !important;
+		margin-left : if($stile-margin-align-table == center, auto, 0);
+		margin-right: auto;
 
-		td, tr {
-			min-width: initial !important;
-			white-space: normal !important;
+		caption {
+			display: table-caption;
 		}
-
+		td, tr {
+			min-width  : initial !important;
+			white-space: normal  !important;
+		}
 		thead td,
 		th {
 			font-size: 9pt !important;

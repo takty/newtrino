@@ -3,169 +3,71 @@
  * Font Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-02-11
+ * @version 2019-07-07
+ *
+ * @import 'base';
+ * @import 'query';
  *
  */
 
 
-@import 'base';
+$stile-font-chrome-text-stroke-width: 0.28px !default;
+
+
+// -----------------------------------------------------------------------------
+
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,400i,700i');  // Laten
-@import url('https://fonts.googleapis.com/css?family=Spectral:300,600,300i,600i');  // Laten Serif
+@import url('https://fonts.googleapis.com/css?family=Spectral:300,600,300i,600i');   // Laten Serif
 
+$stile-font-sans-serif-laten         : 'Open Sans' !default;
+$stile-font-sans-serif-laten-fallback: Verdana     !default;
 
-$stile-font-sans-serif-laten        : 'Open Sans';
-$stile-font-serif-laten             : 'Spectral';
-$stile-font-chrome-text-stroke-width: 0.28px;
+$stile-font-serif-laten              : 'Spectral'  !default;
+$stile-font-serif-laten-fallback     : Georgia     !default;
+
+$stile-font-monospace-laten          : Consolas, Monaco, 'Courier New', Courier !default;
 
 
 $stile-font-sans-serif:
 	$stile-font-sans-serif-laten,
-	'Yu Gothic C', 'Yu Gothic Medium', 'Yu Gothic', 'YuGothic',  // 'Yu Gothic Medium' is for Chrome
-	Verdana, Meiryo, sans-serif;
-
-$stile-font-sans-serif-ie:
-	$stile-font-sans-serif-laten,
-	Verdana, Meiryo, sans-serif;
-
-$stile-font-sans-serif-ios:
-	-apple-system, sans-serif;
-
-$stile-font-sans-serif-android:
-	Verdana, sans-serif;
-
+	$stile-font-sans-serif-laten-fallback,
+	if(variable-exists('stile-font-sans-serif-ja'), $stile-font-sans-serif-ja, null),
+	if(variable-exists('stile-font-sans-serif-ja-fallback'), $stile-font-sans-serif-ja-fallback, null),
+	sans-serif !default;
 
 $stile-font-serif:
 	$stile-font-serif-laten,
-	'Yu Mincho',
-	'Hiragino Mincho ProN', 'Hiragino Mincho Pro', 'HG Mincho',
-	Georgia, Meiryo, serif;
+	$stile-font-serif-laten-fallback,
+	if(variable-exists('stile-font-serif-ja'), $stile-font-serif-ja, null),
+	if(variable-exists('stile-font-serif-ja-fallback'), $stile-font-serif-ja-fallback, null),
+	serif !default;
+
+$stile-font-monospace:
+	$stile-font-monospace-laten,
+	if(variable-exists('stile-font-monospace-ja'), $stile-font-monospace-ja, null),
+	if(variable-exists('stile-font-monospace-ja-fallback'), $stile-font-monospace-ja-fallback, null),
+	monospace !default;
+
+$stile-font-sans-serif-ie:
+	$stile-font-sans-serif-laten,
+	$stile-font-sans-serif-laten-fallback,
+	if(variable-exists('stile-font-sans-serif-ja-ie'), $stile-font-sans-serif-ja-ie, null),
+	if(variable-exists('stile-font-sans-serif-ja-fallback'), $stile-font-sans-serif-ja-fallback, null),
+	sans-serif !default;
 
 $stile-font-serif-ie:
 	$stile-font-serif-laten,
-	'HG Mincho',
-	Georgia, Meiryo, serif;
+	$stile-font-serif-laten-fallback,
+	if(variable-exists('stile-font-serif-ja-ie'), $stile-font-serif-ja-ie, null),
+	if(variable-exists('stile-font-serif-ja-fallback'), $stile-font-serif-ja-fallback, null),
+	serif !default;
 
-$stile-font-serif-ios:
-	serif;
+$stile-font-sans-serif-ios: 'Helvetica Neue', sans-serif !default;  // Do not use -apple-system for avoiding garbled Japanese symbols
+$stile-font-serif-ios     :                        serif !default;
 
-$stile-font-serif-android:
-	Verdana, sans-serif;
-
-
-$stile-font-monospace:
-	'Noto Sans Mono CJK JP', 'Source Han Code JP N', 'IPA Gothic',
-	Monaco, Consolas, Courier, 'Courier New',
-	'Osaka-Mono',
-	monospace;
-
-
-// -----------------------------------------------------------------------------
-
-
-@font-face {
-	font-family: 'Yu Gothic C';
-	font-weight: 100;
-	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Gothic C';
-	font-weight: 200;
-	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Gothic C';
-	font-weight: 300;
-	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Gothic C';
-	font-weight: 400;
-	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Gothic C';
-	font-weight: normal;
-	src: local('Yu Gothic Medium'), local('YuGothic-Medium'), local('YuGothic-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Gothic C';
-	font-weight: bold;
-	src: local('Yu Gothic Bold'), local('YuGothic-Bold');
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-@font-face {
-	font-family: 'Yu Mincho';
-	font-weight: 100;
-	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Mincho';
-	font-weight: 200;
-	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Mincho';
-	font-weight: 300;
-	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Mincho';
-	font-weight: 400;
-	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Mincho';
-	font-weight: normal;
-	src: local('Yu Mincho Regular'), local('YuMincho-Regular');
-}
-
-@font-face {
-	font-family: 'Yu Mincho';
-	font-weight: bold;
-	src: local('Yu Mincho Demibold'), local('YuMincho-Demibold');
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-@font-face {  // for Italic Japanese on IE11
-	font-family: Meiryo;
-	font-weight: normal;
-	src: local('Meiryo');
-}
-
-@font-face {  // for Bold Japanese on IE11
-	font-family: Meiryo;
-	font-weight: bold;
-	src: local('Meiryo Bold');
-}
-
-@font-face {  // for Serif Japanese on IE11 but bad quality when small size
-	font-family: 'HG Mincho';
-	font-weight: normal;
-	src: local('HGMinchoB');
-}
-
-@font-face {  // for Serif Japanese on IE11 but bad quality when small size
-	font-family: 'HG Mincho';
-	font-weight: bold;
-	src: local('HGMinchoE');
-}
+$stile-font-sans-serif-android: $stile-font-sans-serif-laten-fallback, sans-serif !default;
+$stile-font-serif-android     : $stile-font-serif-laten-fallback,           serif !default;
 
 
 // -----------------------------------------------------------------------------
@@ -174,41 +76,27 @@ $stile-font-monospace:
 @mixin font-family($pc-specific: false) {
 	@if $pc-specific {
 		font-family: $pc-specific, $stile-font-sans-serif;
-		@include for-ie {
-			font-family: $pc-specific, $stile-font-sans-serif-ie;
-		}
+		@include for-ie { font-family: $pc-specific, $stile-font-sans-serif-ie; }
 	} @else {
 		font-family: $stile-font-sans-serif;
-		@include for-ie {
-			font-family: $stile-font-sans-serif-ie;
-		}
+		@include for-ie { font-family: $stile-font-sans-serif-ie; }
 	}
-	&.ios, .ios & {  // need to use user-agent.js
-		font-family: $stile-font-sans-serif-ios;
-	}
-	&.android, .android & {  // need to use user-agent.js
-		font-family: $stile-font-sans-serif-android;
-	}
+	// Need to use query.js
+	&.ios, .ios &         { font-family: $stile-font-sans-serif-ios; }
+	&.android, .android & { font-family: $stile-font-sans-serif-android; }
 }
 
 @mixin font-family-serif($pc-specific: false) {
 	@if $pc-specific {
 		font-family: $pc-specific, $stile-font-serif;
-		@include for-ie {
-			font-family: $pc-specific, $stile-font-serif-ie;
-		}
+		@include for-ie { font-family: $pc-specific, $stile-font-serif-ie; }
 	} @else {
 		font-family: $stile-font-serif;
-		@include for-ie {
-			font-family: $stile-font-serif-ie;
-		}
+		@include for-ie { font-family: $stile-font-serif-ie; }
 	}
-	&.ios, .ios & {  // need to use user-agent.js
-		font-family: $stile-font-serif-ios;
-	}
-	&.android, .android & {  // need to use user-agent.js
-		font-family: $stile-font-serif-android;
-	}
+	// need to use query.js
+	&.ios, .ios &         { font-family: $stile-font-serif-ios; }
+	&.android, .android & { font-family: $stile-font-serif-android; }
 }
 
 @mixin font-family-monospace {
@@ -223,8 +111,8 @@ $stile-font-monospace:
 
 @mixin font-smoothing {
 	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
-	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing : antialiased;
+	text-rendering         : optimizeLegibility;
 }
 
 @mixin font-visible-chrome {
@@ -271,13 +159,14 @@ $stile-font-monospace:
 
 @mixin font-size-level($level, $set-line-height: true) {
 	$sizes: (
-		0: 0.850rem, // 1.5
-		1: 1.000rem, // 2.0
-		2: 1.125rem, // 2.0
-		3: 1.250rem, // 2.0
-		4: 1.500rem, // 3.0
-		5: 2.000rem, // 3.0
-		6: 2.500rem, // 4.0
+		-1: 0.750rem, // 1.0
+		 0: 0.850rem, // 1.5
+		 1: 1.000rem, // 2.0
+		 2: 1.125rem, // 2.0
+		 3: 1.250rem, // 2.0
+		 4: 1.500rem, // 3.0
+		 5: 2.000rem, // 3.0
+		 6: 2.500rem, // 4.0
 	);
 	$level_f: floor($level);
 	$fs: 0;
@@ -286,14 +175,16 @@ $stile-font-monospace:
 		$fs: map-get($sizes, $level);
 	} @else {
 		$level_c: ceil($level);
-		$fs_f: map-get($sizes, $level_f);
-		$fs_c: map-get($sizes, $level_c);
-		$fs: $fs_f * ($level_c - $level) + $fs_c * ($level - $level_f);
+		$fs_f   : map-get($sizes, $level_f);
+		$fs_c   : map-get($sizes, $level_c);
+		$fs     : $fs_f * ($level_c - $level) + $fs_c * ($level - $level_f);
 	}
 	font-size: $fs;
 
 	@if $set-line-height {
-		@if $level < 1 {
+		@if $level < 0 {
+			line-height: base-vr(1);
+		} @else if $level == 0 {
 			line-height: base-vr(1.5);
 		} @else {
 			line-height: font-line-height($fs, $stile-size-unit);
@@ -304,4 +195,17 @@ $stile-font-monospace:
 @function font-line-height($font-size, $line-height-unit) {
 	$vr: ceil($font-size / $line-height-unit + 0.5);
 	@return $vr * $line-height-unit;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin font-icon($font-family, $code) {
+	content    : $code;
+	display    : inline-block;
+	font-family: $font-family;
+	font-style : normal;
+	line-height: 1;
+	@include font-bold-cancel;
 }

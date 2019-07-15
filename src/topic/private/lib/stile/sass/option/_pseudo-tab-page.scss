@@ -3,95 +3,68 @@
  * Pseudo Tab Page Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-06-03
+ * @version 2019-07-09
+ *
+ * @import '../basic/base';
+ * @import '../basic/query';
+ * @import '../basic/font';
+ * @import '../basic/layout';
  *
  */
 
 
-@import '../basic/base';
-@import '../basic/query';
-@import '../basic/font';
-@import '../basic/layout';
+$stile-pseudo-tab-page-alt                            : false !default;
 
+$stile-pseudo-tab-page-color-rule                     : if($stile-pseudo-tab-page-alt, rgba(#777, 0.35), transparent) !default;
+$stile-pseudo-tab-page-color-text                     : rgba(#000, 0.95) !default;
 
-$stile-pseudo-tab-page-color-rule                  : rgba(#777, 0.35) !default;
-$stile-pseudo-tab-page-color-rule-vertical         : false !default;
-$stile-pseudo-tab-page-color-tab-background        : transparent !default;
-$stile-pseudo-tab-page-color-tab-rule              : rgba(#777, 0.35) !default;
-$stile-pseudo-tab-page-color-tab-background-hover  : transparent !default;
+$stile-pseudo-tab-page-color-tab-rule                 : if($stile-pseudo-tab-page-alt, $stile-pseudo-tab-page-color-rule, transparent)                       !default;
+$stile-pseudo-tab-page-color-tab-rule-vertical        : if($stile-pseudo-tab-page-alt, false,                             $stile-pseudo-tab-page-color-rule) !default;
+$stile-pseudo-tab-page-color-tab-background           : transparent !default;
+$stile-pseudo-tab-page-color-tab-background-hover     : transparent !default;
 
-$stile-pseudo-tab-page-color-tab-current-background: transparent !default;
-$stile-pseudo-tab-page-color-tab-current-rule      : $stile-pseudo-tab-page-color-rule !default;
-$stile-pseudo-tab-page-color-tab-current-top       : $stile-pseudo-tab-page-color-rule !default;
+$stile-pseudo-tab-page-color-tab-current-rule         : if($stile-pseudo-tab-page-alt, $stile-pseudo-tab-page-color-tab-rule, transparent) !default;
+$stile-pseudo-tab-page-color-tab-current-rule-vertical: $stile-pseudo-tab-page-color-rule !default;
+$stile-pseudo-tab-page-color-tab-current-background   : transparent !default;
+$stile-pseudo-tab-page-color-tab-current-top          : if($stile-pseudo-tab-page-alt, $stile-pseudo-tab-page-color-tab-rule, transparent) !default;
 
-$stile-pseudo-tab-page-color-tab-text-current      : rgba(#000, 0.95) !default;
-$stile-pseudo-tab-page-color-tab-text              : rgba($stile-pseudo-tab-page-color-tab-text-current, 0.50) !default;
-$stile-pseudo-tab-page-color-tab-text-hover        : $stile-pseudo-tab-page-color-tab-text-current !default;
+$stile-pseudo-tab-page-color-tab-text-current         : $stile-pseudo-tab-page-color-text !default;
+$stile-pseudo-tab-page-color-tab-text-hover           : $stile-pseudo-tab-page-color-text !default;
+$stile-pseudo-tab-page-color-tab-text                 : rgba($stile-pseudo-tab-page-color-text, 0.50) !default;
 
-$stile-pseudo-tab-page-color-tab-focus-outline     : false !default;
-$stile-pseudo-tab-page-color-tab-focus-background  : false !default;
+$stile-pseudo-tab-page-color-tab-focus-outline        : false !default;
+$stile-pseudo-tab-page-color-tab-focus-background     : false !default;
 
-$stile-pseudo-tab-page-size-tab-height             : 3rem !default;
-$stile-pseudo-tab-page-size-tab-padding            : base-vr(0.5) base-vr(2) !default;
-$stile-pseudo-tab-page-size-tab-padding-phone      : base-vr(0.5) base-vr(1) !default;
-$stile-pseudo-tab-page-size-tab-current-top        : 2px !default;
-$stile-pseudo-tab-page-size-tab-margin             : 0.5rem !default;
-$stile-pseudo-tab-page-level-font                  : 1 !default;
+$stile-pseudo-tab-page-size-tab-height                : if($stile-pseudo-tab-page-alt, 3rem,                    2.5rem) !default;
+$stile-pseudo-tab-page-size-tab-padding               : if($stile-pseudo-tab-page-alt, base-vr(0.5) base-vr(2), 0)      !default;
+$stile-pseudo-tab-page-size-tab-padding-phone         : if($stile-pseudo-tab-page-alt, base-vr(0.5) base-vr(1), 0)      !default;
+$stile-pseudo-tab-page-size-tab-current-top           : if($stile-pseudo-tab-page-alt, 2px,                     0)      !default;
+$stile-pseudo-tab-page-size-tab-margin                : if($stile-pseudo-tab-page-alt, 0.5rem,                  0)      !default;
+$stile-pseudo-tab-page-level-font                     : 1 !default;
 
-$stile-pseudo-tab-page-visible-tab-separator       : false !default;
-$stile-pseudo-tab-page-hidden-redundant-tab        : true !default;
-
-
-@mixin stile-pseudo-tab-page-variable-simple {
-	$stile-pseudo-tab-page-color-rule            : transparent !global;
-	$stile-pseudo-tab-page-color-rule-vertical   : rgba(#777, 0.35) !global;
-	$stile-pseudo-tab-page-color-tab-rule        : transparent !global;
-
-	$stile-pseudo-tab-page-color-tab-current-rule: transparent !global;
-	$stile-pseudo-tab-page-color-tab-current-top : transparent !global;
-
-	$stile-pseudo-tab-page-size-tab-height       : 2.5rem !global;
-	$stile-pseudo-tab-page-size-tab-padding      : 0 !global;
-	$stile-pseudo-tab-page-size-tab-padding-phone: 0 !global;
-	$stile-pseudo-tab-page-size-tab-current-top  : 0 !global;
-	$stile-pseudo-tab-page-size-tab-margin       : 0 !global;
-
-	$stile-pseudo-tab-page-visible-tab-separator : true !global;
-}
+$stile-pseudo-tab-page-visible-tab-separator          : if($stile-pseudo-tab-page-alt, false, true) !default;
+$stile-pseudo-tab-page-hidden-redundant-tab           : true !default;
+$stile-pseudo-tab-page-border-style                   : solid 1px $stile-pseudo-tab-page-color-rule !default;
+$stile-pseudo-tab-page-border-style-second            : dashed 1px $stile-pseudo-tab-page-color-rule !default;
 
 
 @mixin stile-pseudo-tab-page {
-	.pseudo-tab-page {
-		// Margins inside
-		@include stile-margin-basic;
-		@if $stile-margin-align-table == center {
-			text-align: center;        // for table on IE11
-			> * { text-align: left; }  // for table on IE11
-		}
-	}
-	* + .pseudo-tab-page { margin-top: base-vr(6); }
-
 	.stile-pseudo-tab-page-tab-list {  // Must be a class for avoiding auto formating of list style
-		display: flex;
-		justify-content: flex-start;
-		flex-wrap: wrap;
-		@include layout-gap($stile-pseudo-tab-page-size-tab-margin, $stile-pseudo-tab-page-size-tab-margin);
+		&:not(:first-child) { margin-top: base-vr(6); }
+		@include layout-wrap(($stile-pseudo-tab-page-size-tab-margin, $stile-pseudo-tab-page-size-tab-margin));
 
 		clear: both;
-
-		&:not(:first-child) { margin-top: base-vr(6); }
-		& + *:not(.alignright):not(.alignleft) { margin-top: base-vr(2); }
 
 		@if $stile-pseudo-tab-page-hidden-redundant-tab == true {
 			overflow: hidden;
 
 			max-height: 50vh;
-			opacity: 1;
+			opacity   : 1;
 			&:not([data-stile ~= 'immediately']) { transition: max-height 2s, opacity 2s; }
 
 			&[data-stile ~= 'hidden'] {
 				max-height: 0;
-				opacity: 0;
+				opacity   : 0;
 				&:not([data-stile ~= 'immediately']) { transition: max-height 1s, opacity 1s; }
 			}
 			&:focus {
@@ -108,40 +81,48 @@ $stile-pseudo-tab-page-hidden-redundant-tab        : true !default;
 			}
 		}
 	}
+
+	.stile-pseudo-tab-page-tab-list {
+		border-bottom: $stile-pseudo-tab-page-border-style;
+	}
+	.pseudo-tab-page .pseudo-tab-page > .stile-pseudo-tab-page-tab-list {
+		border-bottom: $stile-pseudo-tab-page-border-style-second;
+	}
+
 	.stile-pseudo-tab-page-tab-list li {
 		@include layout-centering();
 
-		min-height: $stile-pseudo-tab-page-size-tab-height;
-		user-select: none;
+		min-height   : $stile-pseudo-tab-page-size-tab-height;
+		user-select  : none;
 		border-radius: 1px;
 
 		background-color: $stile-pseudo-tab-page-color-tab-background;
-		color: $stile-pseudo-tab-page-color-tab-text;
-		border: 1px solid $stile-pseudo-tab-page-color-tab-rule;
-		border-right-color: transparent;
+		color           : $stile-pseudo-tab-page-color-tab-text;
+		border-top      : 1px solid $stile-pseudo-tab-page-color-tab-rule;
+		border-left     : 1px solid $stile-pseudo-tab-page-color-tab-rule;
 
 		&:not([data-stile ~= 'current']) > a:hover {
 			background-color: $stile-pseudo-tab-page-color-tab-background-hover;
-			color: $stile-pseudo-tab-page-color-tab-text-hover;
+			color           : $stile-pseudo-tab-page-color-tab-text-hover;
 		}
 		&[data-stile ~= 'current'] {
 			background-color: $stile-pseudo-tab-page-color-tab-current-background;
-			color: $stile-pseudo-tab-page-color-tab-text-current;
-			border: 1px solid $stile-pseudo-tab-page-color-tab-current-rule;
-			border-right-color: transparent;
-			border-left: $stile-pseudo-tab-page-size-tab-current-top solid $stile-pseudo-tab-page-color-tab-current-top;
+			color           : $stile-pseudo-tab-page-color-tab-text-current;
+			border-top      : 1px solid $stile-pseudo-tab-page-color-tab-current-rule;
+			border-left     : $stile-pseudo-tab-page-size-tab-current-top solid $stile-pseudo-tab-page-color-tab-current-top;
 		}
 		@if $stile-pseudo-tab-page-visible-tab-separator == true {
 			&:not(:last-of-type)::after {
-				content: '';
-				width: 2px;
-				height: 1rem;
-				border-left: 1px solid $stile-pseudo-tab-page-color-rule-vertical;
-				margin: 0 1rem;
+				content    : '';
+				width      : 2px;
+				height     : 1rem;
+				border-left: 1px solid $stile-pseudo-tab-page-color-tab-rule-vertical;
+				margin     : 0 1rem;
 			}
 		}
 		a {
 			@include layout-centering();
+			min-width: 2rem;
 			padding: $stile-pseudo-tab-page-size-tab-padding-phone;
 			@include for-tablet-landscape-up { padding: $stile-pseudo-tab-page-size-tab-padding; }
 

@@ -3,7 +3,9 @@
  * Design Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-11-06
+ * @version 2019-07-07
+ *
+ * @import '../basic/font';
  *
  */
 
@@ -28,24 +30,23 @@ $stile-design-color-table-stripe-background: $stile-table-color-header-backgroun
 	hr {
 		&:not(.is-style-wide):not(.is-style-dots) {
 			max-width: $stile-design-size-hr-width;
-			margin-left: auto;
-			margin-right: auto;
+			margin   : { left: auto; right: auto; }
 		}
 		&.is-style-dots {
-			border: none;
-			height: auto;
+			border    : none;
+			height    : auto;
 			text-align: center;
 			max-height: 0.5rem;
 
 			&::before {
-				color: $stile-block-color-rule;
-				content: '\00b7 \00b7 \00b7';
-				font-family: serif;
-				font-size: 2.25rem;
+				content       : '\00b7 \00b7 \00b7';
+				color         : $stile-block-color-rule;
+				font-family   : serif;
+				font-size     : 2.25rem;
 				letter-spacing: 2rem;
-				padding-left: 2rem;
+				padding-left  : 2rem;
 
-				display: inline-block;
+				display   : inline-block;
 				max-height: 0.5rem;
 				margin-top: -1rem;
 			}
@@ -66,15 +67,15 @@ $stile-design-color-table-stripe-background: $stile-table-color-header-backgroun
 @mixin stile-design-image {
 	img {
 		&.emoji {
-			display: inline;
-			border: none;
-			max-width: 1em;
-			max-height: 1em;
-			margin: 0 0.1em;
-			padding: 0;
+			display       : inline;
+			border        : none;
+			max-width     : 1em;
+			max-height    : 1em;
+			margin        : 0 0.1em;
+			padding       : 0;
 			vertical-align: -0.1em;
-			background: 0 0;
-			box-shadow: none;
+			background    : 0 0;
+			box-shadow    : none;
 		}
 	}
 }

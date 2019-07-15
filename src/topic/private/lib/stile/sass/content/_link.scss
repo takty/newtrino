@@ -3,14 +3,12 @@
  * Link Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-03-01
+ * @version 2019-07-07
+ *
+ * @import '../basic/query';
+ * @import '../basic/font';
  *
  */
-
-
-@import '../basic/base';
-@import '../basic/query';
-@import '../basic/font';
 
 
 $stile-link-color-text        : rgba(#12f, 0.9) !default;
@@ -26,50 +24,42 @@ $stile-link-size-gap          : 0.2em !default;
 
 
 @mixin stile-link-img($url) {
-	content: '';
-	display: inline-block;
+	content    : '';
+	display    : inline-block;
 	margin-left: $stile-link-size-gap;
 
-	width: 1em;
-	height: 1em;
+	width           : 1em;
+	height          : 1em;
 	background-image: #{$url};
-	background-size: contain;
-	background-repeat: no-repeat;
+	background-size : contain;
 
 	transform: translateY(0.1em);
 }
 
-@mixin stile-link-mark {
-	display: inline-block;
+@mixin stile-link-mark($code) {
+	@include font-icon('Material Icons', $code);
+
 	margin-left: $stile-link-size-gap;
+	overflow   : hidden;  // for removing underline on IE11
 
-	font-family: 'Material Icons';
-	font-style: normal;
-	line-height: 1;
-	@include font-bold-cancel;
-
-	overflow: hidden;  // for removing underline on IE11
 	transform: translateY(0.125em);
 	@include for-firefox { transform: translateY(0.2em); }
 }
 
 @mixin stile-link-mark-anchor {
-	content: $stile-link-icon-anchor;
-	@include stile-link-mark;
+	@include stile-link-mark($stile-link-icon-anchor);
 }
 
 @mixin stile-link-mark-external {
-	content: $stile-link-icon-external;
-	@include stile-link-mark;
+	@include stile-link-mark($stile-link-icon-external);
 }
 
 @mixin stile-link-mark-file {
-	content: $stile-link-icon-file;
-	@include stile-link-mark;
+	@include stile-link-mark($stile-link-icon-file);
 }
 
 @mixin stile-link {
-	> :not([class]) > a:not([class]):not([data-stile]) {  // Before the script loaded
+	:not([class]) > a:not([class]):not([data-stile]) {  // Before the script loaded
 		color: $stile-link-color-text;
 		&:visited { color: $stile-link-color-text-visited; }
 		text-decoration: underline;
@@ -100,9 +90,9 @@ $stile-link-size-gap          : 0.2em !default;
 
 		// Show URL instead of empty text
 		&[href ^= 'http']:empty::before {
-			content: attr(href);
+			content   : attr(href);
 			word-break: break-all;
-			display: inline;
+			display   : inline;
 		}
 	}
 	a[data-stile ~= 'link-image'] {
@@ -112,18 +102,16 @@ $stile-link-size-gap          : 0.2em !default;
 
 @mixin stile-link-inside {
 	text-decoration: none;
-	color: $stile-link-color-text;
-	word-wrap: break-word;  // for URL in text
+	color          : $stile-link-color-text;
+	word-wrap      : break-word;  // for URL in text
 
-	margin-left: 0.075rem;
-	margin-right: 0.075rem;
-
-	padding: 0.1rem 0.35rem;
+	margin          : { left: 0.075rem; right: 0.075rem; }
+	padding         : 0.1rem 0.35rem;
 	background-color: $stile-link-color-background;
-	border-radius: 0.25rem;
+	border-radius   : 0.25rem;
 
 	&:hover {
-		color: $stile-link-color-text;
+		color          : $stile-link-color-text;
 		text-decoration: underline;
 		&::after { text-decoration: none; }
 	}

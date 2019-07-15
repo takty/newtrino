@@ -3,14 +3,14 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-11-02
+ * @version 2019-07-15
  *
  */
 
 
 @charset 'utf-8';
 
-@import '../lib/stile/sass/basic';
+@import '../lib/stile/sass/all';
 @import 'mixin';
 
 @import 'edit';
@@ -134,6 +134,7 @@ select {
 	box-shadow: 0 2px 6px #999;
 	max-height: 2.5rem;
 	height: 2.5rem;
+	-webkit-appearance: menulist;
 }
 
 nav button,

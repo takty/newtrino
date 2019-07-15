@@ -3,7 +3,9 @@
  * Layout Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-05-24
+ * @version 2019-07-07
+ *
+ * @import 'query';
  *
  */
 
@@ -13,21 +15,21 @@
 	@if $side-margin != false {
 		$w: calc(100% - #{$side-margin * 2});
 	}
-	margin: { left: auto; right: auto; }
+	margin   : { left: auto; right: auto; }
 	max-width: $max-width;  // must be max-width for Android Chrome
-	width: $w;  // must be width for Android Chrome
+	width    : $w;          // must be width for Android Chrome
 }
 
-@mixin layout-width-breakpoint($min-width, $breakpoint, $max-width) {
+@mixin layout-width-responsive($cont-width, $min-width, $max-width) {
 	min-width: $min-width;
-	width: calc((#{$breakpoint} - 100%) * 1000);
+	width    : calc((#{$cont-width} - 100%) * 1000);
 	max-width: $max-width;
 }
 
 @mixin layout-full-width($side-margin: false) {
 	$m: calc(50% - 50vw);
 	@if $side-margin != false {
-		$m: calc(#{$side-margin} + 50% - 50vw);
+		$m: calc(#{$m} + #{$side-margin});
 	}
 	margin: { left: $m; right: $m; }
 }
@@ -37,255 +39,298 @@
 
 
 @mixin layout-centering($inline: false) {
-	@if $inline == false {
-		display: flex;
-	} @else {
-		display: inline-flex;
-	}
-	align-items: center;
+	display        : if($inline == false, flex, inline-flex);
+	align-items    : center;
 	justify-content: center;
 }
 
 @mixin layout-centering-self($horizontal: true, $vertical: true, $position: absolute) {
 	position: $position;
+	@if $horizontal == true { left: 50%; }
+	@if $vertical   == true { top : 50%; }
+
 	@if $horizontal == true and $vertical == true {
-		top: 50%;
-		left: 50%;
 		transform: translate(-50%, -50%);
 	} @else if $horizontal == true {
-		left: 50%;
 		transform: translateX(-50%);
 	} @else if $vertical == true {
-		top: 50%;
 		transform: translateY(-50%);
 	}
 }
 
-@mixin layout-fill-self($position: absolute, $by-height: false) {
-	position: $position;
-	top: 0;
-	left: 0;
-	right: 0;
-
-	@if $by-height == false {
-		bottom: 0;
-	} @else {
-		min-height: 100%;
-	}
+@mixin layout-fill-self() {
+	position: absolute;
+	top     : 0;
+	left    : 0;
+	right   : 0;
+	bottom  : 0;
 }
 
 
 // -----------------------------------------------------------------------------
 
 
-@mixin layout-aspect($width, $height, $by-height: false) {
-	position: relative;
+@mixin layout-aspect($width, $height, $expandable: false) {
+	@if ($expandable) {
+		@include _layout-aspect-expandable($width, $height);
+	} @else {
+		@include _layout-aspect-fixed($width, $height);
+	}
+}
 
+@mixin _layout-aspect-fixed($width, $height) {
 	&:before {
-		content: '';
-		display: block;
-		padding-top: ($height / $width * 100%);
+		content    : '';
+		display    : block;
+		padding-top: percentage($height / $width);
 	}
-
-	> *:first-child {
-		@include layout-fill-self(absolute, $by-height);
-	}
-}
-
-@mixin layout-aspect-gold {
-	@include layout-aspect(1.618, 1);
-}
-
-@mixin layout-minimum-aspect($width, $height) {
 	position: relative;
+	> *:first-child { @include layout-fill-self; }
+}
 
+@mixin _layout-aspect-expandable($width, $height) {
 	&::before, &::after {
 		content: '';
 		display: block;
 	}
 	&::before {
-		padding-top: ($height / $width * 100%);
-		float: right;
+		padding-top: percentage($height / $width);
+		float      : right;
 	}
-	> * { clear: none; }
 	&::after { clear: both; }
+	> * {
+		clear: none;
+		width: 100%;
+	}
+	display: flex;
+	align-items: stretch;
 }
 
-@mixin layout-minimum-aspect-gold {
-	@include layout-minimum-aspect(1.618, 1);
+@mixin layout-frame-contain($width, $height) {
+	@include layout-aspect($width, $height);
+
+	> * {  // This must be 'replaced element'
+		margin: auto;
+
+		width     : auto !important;
+		height    : auto !important;
+		max-width : 100% !important;
+		max-height: 100% !important;
+	}
 }
 
 
 // -----------------------------------------------------------------------------
 
 
-@mixin layout-gap($x, $y) {
-	margin-right: -$x;
-	margin-bottom: -$y;
+@mixin layout-gap($gaps_or_gap_x, $gap_y: null) {
+	$gap_x: $gaps_or_gap_x;
+	$gap_y: if($gap_y != null, $gap_y, $gaps_or_gap_x);
+
+	@if length($gaps_or_gap_x) == 2 {
+		$gap_x: nth($gaps_or_gap_x, 1);
+		$gap_y: nth($gaps_or_gap_x, 2);
+	}
+	@if $gap_x != false { margin-right : -$gap_x; }
+	@if $gap_y != false { margin-bottom: -$gap_y; }
 
 	> *:not(:empty) {
-		margin-right: $x;
-		margin-bottom: $y;
+		@if $gap_x != false { margin-right : $gap_x; }
+		@if $gap_y != false { margin-bottom: $gap_y; }
 	}
 }
 
-@mixin layout-wrap($gap: false, $align: center) {
-	$gap_x: $gap;
-	$gap_y: $gap;
-	@if $gap != false and length($gap) == 2 {
-		$gap_x: nth($gap, 1);
-		$gap_y: nth($gap, 2);
-	}
+@mixin layout-wrap($gap: false, $align-left: true) {
+	display        : flex;
+	flex-wrap      : wrap;
+	justify-content: if($align-left, left, center);
+
 	@if $gap != false {
-		@include layout-gap($gap_x, $gap_y);
+		@include layout-gap($gap);
 	}
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: $align;
 }
 
 
 // -----------------------------------------------------------------------------
 
 
-@mixin layout-spacer() {
-	> *:empty {  // for Spacer
-		visibility: hidden;
-		height: 0;
-		padding: 0;
-		margin-bottom: 0;
-		border: none;
-		&::before { content: none; }
+@mixin layout-wrap-responsive($cont-width, $n, $gap: false) {
+	$gap_x: if(length($gap) == 2, nth($gap, 1), $gap);
+	$gap_y: if(length($gap) == 2, nth($gap, 2), $gap);
+
+	display        : flex;
+	flex-flow      : row wrap;
+	justify-content: space-between;
+
+	@if $gap_y != false {
+		margin-bottom: -$gap_y;
+		> * { margin-bottom: $gap_y; }
+	}
+
+	@if 1 < length($n) {
+		@include _layout-wrap-responsive-ratio($cont-width, $n, $gap_x);
+	} @else {
+		@include _layout-wrap-responsive-equal($cont-width, $n, $gap_x);
 	}
 }
+
+@mixin _layout-wrap-responsive-equal($cont-width, $n, $gap_x: false) {
+	$mw: 100% / $n;
+	@if $gap_x != false {
+		$cg: $gap_x * ($n - 1) / $n;
+		$mw: calc(#{$mw} - #{$cg});
+	}
+	> * {
+		max-width : 100%;
+		flex-basis: calc((#{$cont-width} - 100%) * 1000);
+		min-width: $mw;
+	}
+}
+
+@mixin _layout-wrap-responsive-ratio($cont-width, $rn, $gap_x: false) {
+	$n  : length($rs);
+	$cg : if($gap_x == false, 0, $gap_x * ($n - 1) / $n);
+	$sum: 0;
+	@each $r in $rs { $sum: $sum + $r; }
+
+	@for $i from 1 through $n {
+		> *:nth-child(#{$i}) {
+			$mw: percentage(nth($rs, $i) / $sum);
+			@if $gap_x != false {
+				$mw: calc(#{$mw} - #{$cg});
+			}
+			min-width: $mw;
+		}
+	}
+	> * {
+		max-width : 100%;
+		flex-basis: calc((#{$cont-width} - 100%) * 1000);
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
 
 @mixin layout-column($n, $gap: false) {
-	$cw: 100% / $n;
-
 	display: flex;
-	flex-direction: row;
 
-	@if $gap != false {
-		margin-right: -$gap;
-		> * {
-			margin-right: $gap;
-		}
-	}
-	> * {
-		flex-grow: 1;
-		flex-shrink: 1;
-
-		@if $gap != false {
-			flex-basis: calc(#{$cw} - #{$gap});
-		} @else {
-			flex-basis: #{$cw};
-		}
+	@if 1 < length($n) {
+		@include _layout-column-ratio($n, $gap);
+	} @else if 1 < $n {
+		@include _layout-column-equal($n, $gap);
+	} @else {
+		@include _layout-column-cancel($gap);
 	}
 }
 
-@mixin layout-column-cancel($gap: false) {
-	display: flex;
+@mixin _layout-column-equal($n, $gap: false) {
+	flex-direction : row;
+	justify-content: space-between;
+
+	$mw: 100% / $n;
+	@if $gap != false {
+		$cg: $gap * ($n - 1) / $n;
+		$mw: calc(#{$mw} - #{$cg});
+	}
+	> * {
+		width     : 100%;
+		max-width : $mw;
+		margin-top: 0;  // For canceling _layout-column-cancel
+	}
+}
+
+@mixin _layout-column-ratio($rs, $gap: false) {
+	flex-direction : row;
+	justify-content: space-between;
+
+	> * {
+		width     : 100%;
+		margin-top: 0;  // For canceling _layout-column-cancel
+	}
+	$n  : length($rs);
+	$cg : if($gap == false, 0, $gap * ($n - 1) / $n);
+	$sum: 0;
+	@each $r in $rs { $sum: $sum + $r; }
+
+	@for $i from 1 through $n {
+		> *:nth-child(#{$i}) {
+			$mw: percentage(nth($rs, $i) / $sum);
+			@if $gap != false {
+				$mw: calc(#{$mw} - #{$cg});
+			}
+			max-width: $mw;
+		}
+	}
+	// for overriding other layout-card and _layout-column-cancel
+	> *:not(:first-child) { margin-top: 0; }
+}
+
+@mixin _layout-column-cancel($gap: false) {
 	flex-direction: column;
 
+	> * { max-width: 100%; }
 	@if $gap != false {
-		margin-bottom: -$gap;
-		> * {
-			margin-bottom: $gap;
-		}
+		// for overriding other layout-card
+		> *:not(:first-child) { margin-top: $gap; }
 	}
-	> * {
-		flex-basis: auto;
-	}
-	@include layout-spacer;
-}
-
-@mixin layout-responsive-column($cont-width, $n, $gap: false) {
-	$gap_x: $gap;
-	$gap_y: $gap;
-	@if $gap != false and length($gap) == 2 {
-		$gap_x: nth($gap, 1);
-		$gap_y: nth($gap, 2);
-	}
-	$cw: 100% / $n;
-
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: row;
-
-	@if $gap != false {
-		margin-right: -$gap_x;
-		margin-bottom: -$gap_y;
-		> * {
-			margin-right: $gap_x;
-			margin-bottom: $gap_y;
-		}
-	}
-	> * {
-		max-width: 100%;
-		flex-grow: 1;
-		flex-basis: calc((#{$cont-width} - 100%) * 1000);
-
-		@if $gap != false {
-			min-width: calc(#{$cw} - #{$gap_x});
-		} @else {
-			min-width: $cw;
-		}
-	}
+	// for overriding other layout-card
+	> *:not(:first-child) { margin-left: 0; }
 }
 
 
 // -----------------------------------------------------------------------------
 
 
-@mixin layout-card($n, $gap: false, $align-left: true, $width-offset-ie: 1px) {
-	$gap_x: $gap;
-	$gap_y: $gap;
-	@if $gap != false and length($gap) == 2 {
-		$gap_x: nth($gap, 1);
-		$gap_y: nth($gap, 2);
-	}
-	$cw: 100% / $n;
+@mixin layout-card($n, $gap: false, $align-left: true) {
+	$gap_x: if(length($gap) == 2, nth($gap, 1), $gap);
+	$gap_y: if(length($gap) == 2, nth($gap, 2), $gap);
 
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
+	display        : flex;
+	flex-flow      : row wrap;
+	justify-content: space-between;
 
-	@if $gap != false {
-		margin-right : -$gap_x;
-		margin-bottom: -$gap_y;
-		> * {
-			margin-right: $gap_x;
-			&:not(:empty) {
-				margin-bottom: $gap_y;
-			}
-		}
+	$mw: 100% / $n;
+	@if $gap != false and 1 < $n {
+		$cg: $gap_x * ($n - 1) / $n;
+		$mw: calc(#{$mw} - #{$cg});
 	}
+
 	> * {
-		flex-grow: 1;
-		flex-shrink: 1;
+		width    : 100%;
+		max-width: $mw;
 
 		@if $gap != false {
-			flex-basis: calc(#{$cw} - #{$gap_x});
-			@include for-ie { flex-basis: calc(#{floor($cw)} - #{$gap_x} - #{$width-offset-ie}); }  // Hack for calculation error
-			width: calc(#{$cw} - #{$gap_x});  // for Safari
-		} @else {
-			flex-basis: $cw;
-			@include for-ie { flex-basis: calc(#{floor($cw)} - #{$width-offset-ie}); }  // Hack for calculation error
-			width: $cw;  // for Safari
+			&:not(:nth-child(#{$n}n + 1)) {
+				margin-left: calc(#{$gap_x} - 1px);  // For reducing calculation error on IE11 and Edge
+			}
+			&:nth-child(n + #{$n + 1}) {
+				margin-top: $gap_y;
+			}
+			// for overriding other layout-card
+			&:nth-child(#{$n}n + 1)          { margin-left: 0; }
+			&:not(:nth-child(n + #{$n + 1})) { margin-top : 0; }
 		}
 	}
-	@include layout-spacer;
+	@if $align-left and 1 < $n {
+		@include _layout-card-tail-margin($n, $gap_x);
+	}
+}
 
-	@if $align-left {
-		@for $i from 1 through $n {
-			> *:nth-child(#{$n}n+#{$i}):last-child {
-				@if $gap_x == false {
-					margin-right: #{$cw * ($n - $i)};
-				} @else {
-					margin-right: calc(#{$cw * ($n - $i)} + #{$gap_x});
-				}
+@mixin _layout-card-tail-margin($n, $gap: false) {
+	$cw: 100% / $n;
+	$cg: if($gap == false, 0, $gap * ($n - 1) / $n);
+
+	@for $i from 1 through ($n - 1) {
+		> *:nth-child(#{$n}n+#{$i}):last-child {
+			@if $gap == false {
+				margin-right: #{$cw * ($n - $i)};
+			} @else {
+				margin-right: calc((#{$cw} - #{$cg} + #{$gap}) * #{$n - $i});
 			}
 		}
+		// for overriding other layout-card
+		> *:nth-child(#{$n}n):last-child { margin-right: 0; }
 	}
 }
 
@@ -294,20 +339,65 @@
 
 
 @mixin layout-masonry($n, $gap: false) {
+	$gap_x: $gap;
+	$gap_y: $gap;
+	@if $gap != false and length($gap) == 2 {
+		$gap_x: nth($gap, 1);
+		$gap_y: nth($gap, 2);
+	}
 	column-count: $n;
-	column-gap: $gap;
-	line-height: 0;
+	column-gap  : $gap_x;
 
-	@if $gap != false {
-		margin-bottom: -$gap;
-	}
 	> * {
-		display: inline-block;
-		line-height: 1;
-		width: 100%;
+		break-inside: avoid;
+		overflow    : hidden;  // for removing spaces on the bottom on Chrome
 
-		@if $gap != false {
-			margin-bottom: $gap;
-		}
+		// for removing spaces on the bottom on Edge and IE11
+		// border: { top: none; bottom: none !important; }
 	}
+	@if $gap_y != false {
+		> * + * { margin-top: $gap_y; }
+	}
+	@include for-safari {
+		@include _layout-masonry-alt($gap_y);
+	}
+}
+
+@mixin _layout-masonry-alt($gap_y) {
+	line-height: 0;
+	> * {
+		display    : inline-block;
+		width      : 100%;
+		line-height: 1;
+	}
+	@if $gap_y != false {
+		&::after {
+			content      : '';
+			display      : block;
+			width        : 100%;
+			margin-bottom: - $gap_y;
+			column-span  : all;
+		}
+		> * + * { margin-top: 0; }
+		> * { margin-bottom: $gap_y; }
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin layout-minimum-aspect($width, $height) {
+	@warn '\'layout-minimum-aspect\' is deprecated. Use instead \'layout-aspect($width, $height, true)\'.';
+	@include layout-aspect($width, $height, true);
+}
+
+@mixin layout-responsive-column($cont-width, $n, $gap: false) {
+	@warn '\'layout-responsive-column\' is deprecated. Use instead \'layout-wrap-responsive($cont-width, $n, $gap)\'.';
+	@include layout-wrap-responsive($cont-width, $n, $gap);
+}
+
+@mixin layout-column-cancel($gap: false) {
+	@warn '\'layout-column-cancel\' is deprecated. Use instead \'layout-column(1, $gap)\'.';
+	@include layout-column(1, $gap);
 }

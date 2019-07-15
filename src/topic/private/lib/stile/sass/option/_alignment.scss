@@ -3,13 +3,12 @@
  * Alignment Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-03-07
+ * @version 2019-07-08
+ *
+ * @import '../basic/base';
+ * @import '../basic/query';
  *
  */
-
-
-@import '../basic/base';
-@import '../basic/query';
 
 
 $stile-alignment-size-min-text-width: 16rem !default;
@@ -19,7 +18,6 @@ $stile-alignment-size-width         : 72rem !default;
 
 @mixin stile-alignment {
 	@include stile-alignment-main;
-	@include stile-alignment-margin;
 	@include stile-alignment-size;
 	@include stile-alignment-option($stile-alignment-size-text-width, $stile-alignment-size-width);
 }
@@ -79,20 +77,17 @@ $stile-alignment-size-width         : 72rem !default;
 
 	*[data-stile ~= 'alignleft'],
 	*[data-stile ~= 'alignright'] {
-		margin-top: 0;
-		margin-bottom: base-vr(1);
+		margin   : { top: 0; bottom: base-vr(1); }
 		transform: translateY(#{(base-vr(2) - 1rem) / 2});
 		max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 	}
 	*[data-stile ~= 'alignleft'] {
-		float: left;
-		margin-left: auto;
-		margin-right: base-vr(2);
+		float : left;
+		margin: { left: auto; right: base-vr(2); }
 	}
 	*[data-stile ~= 'alignright'] {
-		float: right;
-		margin-left: base-vr(2);
-		margin-right: auto;
+		float : right;
+		margin: { left: base-vr(2); right: auto; }
 	}
 	*[data-stile ~= 'aligncenter'] {
 		&.alignleft,
@@ -106,83 +101,32 @@ $stile-alignment-size-width         : 72rem !default;
 }
 
 @mixin stile-alignment-center {
-	display: block;
-	float: none;
-	margin: base-vr(2) auto;
-	transform: initial;
+	display   : block;
+	float     : none;
+	margin    : base-vr(2) auto;
+	transform : initial;
 	text-align: center;
-	clear: both;
+	clear     : both;
 }
 
 @mixin stile-alignment-float($max-width: false) {
 	&.alignleft,
 	&.alignright {
-		margin-top: 0;
-		margin-bottom: base-vr(1);
+		margin   : { top: 0; bottom: base-vr(1); }
 		transform: translateY(#{(base-vr(2) - 1rem) / 2});
-		clear: none;
+		clear    : none;
 		@if $max-width == false {
 			$max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 		}
 		max-width: $max-width;
 	}
 	&.alignleft {
-		float: left;
+		float       : left;
 		margin-right: base-vr(2);
 	}
 	&.alignright {
-		float: right;
+		float      : right;
 		margin-left: base-vr(2);
-	}
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-@mixin stile-alignment-margin {
-	*:not(.alignleft) + .alignleft,
-	*:not(.alignright) + .alignright,
-	.alignleft + *:not(.alignleft),
-	.alignright + *:not(.alignright) {
-		margin-top: base-vr(1);
-	}
-	* + figure.alignleft,
-	* + figure.alignright,
-	figure.alignleft + *,
-	figure.alignright + * {
-		margin-top: base-vr(4);  // for Centering View
-	}
-	@include for-tablet-up {
-		* + figure.alignleft,
-		* + figure.alignright,
-		figure.alignleft + *,
-		figure.alignright + * {
-			margin-top: base-vr(1);  // for Actual Floating View
-		}
-		figure.alignleft,
-		figure.alignright {
-			&:not([data-stile ~= 'aligncenter']) > figcaption { 
-				padding-bottom: base-vr(1); 
-			}
-		}
-	}
-	@include stile-alignment-define-figure-margin(h6, nth($stile-margin-heading, 6));
-	@include stile-alignment-define-figure-margin(h5, nth($stile-margin-heading, 5));
-	@include stile-alignment-define-figure-margin(h4, nth($stile-margin-heading, 4));
-	@include stile-alignment-define-figure-margin(h3, nth($stile-margin-heading, 3));
-	@include stile-alignment-define-figure-margin(h2, nth($stile-margin-heading, 2));
-	@include stile-alignment-define-figure-margin(h1, nth($stile-margin-heading, 1));
-}
-
-@mixin stile-alignment-define-figure-margin($tag, $top-bottom) {
-	$bottom: nth($top-bottom, 2);
-	#{$tag} {
-		// The following selectors are redundant for override existing styles by specificity
-		& + figure.alignright:not(.alignleft),
-		& + figure.alignleft:not(.alignright) {
-			margin-top: base-vr($bottom);
-		}
 	}
 }
 
@@ -193,28 +137,28 @@ $stile-alignment-size-width         : 72rem !default;
 @mixin stile-alignment-size {
 	.size-thumbnail {
 		max-width: 10rem;
-		width: 50%;  // Can be the half size
+		width    : 50%;  // Can be the half size
 	}
 	.size-small {
 		max-width: 10rem;
-		width: 100%;
+		width    : 100%;
 	}
 	.size-medium-small {
 		max-width: 15rem;
-		width: 100%;
+		width    : 100%;
 	}
 	.size-medium {
 		max-width: 20rem;
-		width: 100%;
+		width    : 100%;
 	}
 	.size-medium_large,  // For compatibility with WordPress-embed image size name
 	.size-medium-large {
 		max-width: 30rem;
-		width: 100%;
+		width    : 100%;
 	}
 	.size-large {
 		max-width: 40rem;
-		width: 100%;
+		width    : 100%;
 	}
 	td, th {
 		.size-thumbnail    { min-width: 5rem; }
@@ -235,13 +179,13 @@ $stile-alignment-size-width         : 72rem !default;
 	.alignfull,
 	.alignwide {
 		@include layout-full-width;
-		width: 100vw;
+		width    : 100vw;
 		max-width: initial;
 	}
 	.alignwide {
 		@media screen and (min-width: $wide-width) {
-			margin-left: #{($wide-width - $text-width) / -2};
-			margin-right: #{($wide-width - $text-width) / -2};
+			$m: #{($wide-width - $text-width) / -2};
+			margin   : { left: $m; right: $m; }
 			max-width: $wide-width;
 		}
 	}

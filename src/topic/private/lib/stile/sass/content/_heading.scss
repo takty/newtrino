@@ -3,12 +3,11 @@
  * Heading Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-02-04
+ * @version 2019-07-07
+ *
+ * @import '../basic/font';
  *
  */
-
-
-@import '../basic/font';
 
 
 $stile-heading-color-text: rgba(#000, 0.95) !default;
@@ -20,20 +19,20 @@ $stile-heading-color-text: rgba(#000, 0.95) !default;
 		hyphens: auto;  // Autoprefixer is needed.
 
 		-ms-word-break: break-all;
-		word-break: break-word;
-		word-wrap: break-word;
+		    word-break: break-word;
+		word-wrap     : break-word;
 		&:target:focus { outline: none; }
 
 		@if $set-design { color: $stile-heading-color-text; }
 
 		> small { display: block; }
 		&:not([class]) span {
-			display: inline-block;
+			display        : inline-block;
 			text-decoration: inherit;
 		}
 		div:not([class]) {
 			line-height: inherit;
-			text-align: inherit;
+			text-align : inherit;
 		}
 	}
 

@@ -3,14 +3,13 @@
  * Table Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-06-04
+ * @version 2019-07-09
+ *
+ * @import '../basic/base';
+ * @import '../basic/query';
+ * @import '../basic/font';
  *
  */
-
-
-@import '../basic/base';
-@import '../basic/query';
-@import '../basic/font';
 
 
 $stile-table-color-rule                  : rgba(#777, 0.35) !default;
@@ -33,27 +32,37 @@ $stile-table-align-caption               : center !default;
 @mixin stile-table {
 	table {
 		position: relative;
-		display: inline-block;
-		margin-left: auto;
-		margin-right: auto;
+		display : inline-block;
+		margin  : { left : auto; right: auto; }
 
-		max-width: 100%;
+		max-width     : 100%;
 		vertical-align: top;
-		text-align: $stile-table-align-caption;  // for Caption
+		text-align    : $stile-table-align-caption;  // for Caption
 
-		overflow-x: hidden;
-		overflow-y: auto;
-
+		overflow-x                : auto;
+		overflow-y                : auto;
 		-webkit-overflow-scrolling: touch;
 
 		caption {
-			position: relative;  // for Scrolling
-			display: inline-block;
-			padding-left: base-vr(1);
+			position   : relative;  // for Scrolling
+			will-change: transform;
+			transition : transform 0.1s ease;
+
+			display      : inline-block;
+			padding-left : base-vr(1);
 			padding-right: base-vr(1);  // for Avoiding overwrapping with enlarger
-			max-width: #{$stile-table-size-caption-max-width + 2 * base-vr(1.5)};
+			max-width    : #{$stile-table-size-caption-max-width + 2 * base-vr(1.5)};
+			text-align   : left;  // for left align of long caption
 			@include font-size-level($stile-table-level-caption);
-			text-align: left;  // for left align of long caption
+		}
+		> div[data-stile ~= 'table-shade'] {
+			@include layout-fill-self;
+			pointer-events: none;
+			opacity       : 0;
+			&[data-stile ~= 'visible'] {
+				opacity   : 1;
+				transition: opacity 0.2s ease;
+			}
 		}
 	}
 	@include stile-table-design;
@@ -92,10 +101,10 @@ $stile-table-align-caption               : center !default;
 		@include font-bold;
 		text-align: center;
 
-		color: $stile-table-color-header-text;
+		color           : $stile-table-color-header-text;
 		background-color: $stile-table-color-header-background;
 	}
-	table:not([class]):not([data-stile ~= "no-neat-wrap"]) {
+	table:not([class]):not([data-stile ~= 'no-neat-wrap']) {
 		td, th {
 			white-space: nowrap;
 		}
@@ -103,102 +112,112 @@ $stile-table-align-caption               : center !default;
 	td p:not([class]) {
 		text-align: initial;
 	}
+	td { vertical-align: top; }
 }
 
 @mixin stile-table-fixed-header {
-	div[data-stile ~= "fixed-table-header-container"] {
-		position: fixed;
-		top: 0;
-		z-index: 99;
-		margin: 0;
-		overflow-x: hidden;
+	div[data-stile ~= 'fixed-table-header-container'] {
+		position        : fixed;
+		top             : 0;
+		z-index         : 99;
+		margin          : 0 !important;  // for cancel 'stile-margin-inside'
+		overflow-x      : hidden;
 		background-color: $stile-table-color-header-background-base;
+		box-shadow      : 0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.5);
 
+		display: none;
 		@media print { display: none !important; }
 	}
-	div[data-stile ~= "fixed-table-header-table"] {
+	div[data-stile ~= 'fixed-table-header-table'] {
 		display: table;
-		margin: 0;
+		margin : 0;
 
-		overflow-x: hidden;
-		pointer-events: none;
+		overflow-x     : hidden;
+		pointer-events : none;
 		backdrop-filter: blur(0.1rem);  // for iOS
 
 		border-collapse: collapse;
-		border-spacing: 0;
+		border-spacing : 0;
 
 		thead td,
 		th {
 			@include for-ie   { border-bottom-width: $stile-table-size-rule-edge; }
 			@include for-edge { border-bottom-width: $stile-table-size-rule-edge; }
 
-			color: $stile-table-color-header-text;
+			color           : $stile-table-color-header-text;
 			background-color: $stile-table-color-header-background;
 		}
 	}
 }
 
 @mixin stile-table-pseudo-scroll-bar {
-	div[data-stile ~= "fixed-table-scroll-bar"] {
-		position: fixed;
-		bottom: 0;
-		z-index: 99;
-		margin: 0;
+	div[data-stile ~= 'fixed-table-scroll-bar'] {
+		position  : fixed;
+		bottom    : 0;
+		z-index   : 99;
+		margin    : 0;
 		overflow-x: auto;
 		overflow-y: hidden;  // for IE11 & Edge
 
 		height: calc(#{base-vr(1)} + 2px);  // for Safari
 		border: 1px solid rgba($stile-table-color-scrollbar-background, 0.1);  // for Safari
 
+		display: none;
 		@media print { display: none !important; }
+
+		> div {  // Spacer
+			height: 1px;
+		}
 	}
 }
 
 @mixin stile-table-scroll-bar-design {
 	table::-webkit-scrollbar,
-	div[data-stile ~= "fixed-table-scroll-bar"]::-webkit-scrollbar {
-		height: base-vr(1);
+	div[data-stile ~= 'fixed-table-scroll-bar']::-webkit-scrollbar {
+		height          : base-vr(1);
 		background-color: $stile-table-color-scrollbar-background;
 	}
-	div[data-stile ~= "fixed-table-scroll-bar"]::-webkit-scrollbar {
+	div[data-stile ~= 'fixed-table-scroll-bar']::-webkit-scrollbar {
 		border-radius: base-vr(1) / 2;
 	}
 	table::-webkit-scrollbar-thumb,
-	div[data-stile ~= "fixed-table-scroll-bar"]::-webkit-scrollbar-thumb {
-		border-radius: base-vr(1) / 2;
+	div[data-stile ~= 'fixed-table-scroll-bar']::-webkit-scrollbar-thumb {
+		border-radius   : base-vr(1) / 2;
 		background-color: $stile-table-color-scrollbar-thumb;
 	}
-	table, div[data-stile ~= "fixed-table-scroll-bar"] {  // for IE11
-		scrollbar-face-color: $stile-table-color-scrollbar-thumb;
+	table, div[data-stile ~= 'fixed-table-scroll-bar'] {  // for IE11
+		scrollbar-face-color  : $stile-table-color-scrollbar-thumb;
 		scrollbar-shadow-color: $stile-table-color-scrollbar-thumb;
 	}
 }
 
 @mixin stile-table-enlarger {
-	table[data-stile ~= "table-enlarged"] > * {
-		background-color: $stile-table-color-background-enlarged;
+	table[data-stile ~= 'table-enlarged'] {
+		z-index  : 98;
+		max-width: 100vw;
+		> * { background-color: $stile-table-color-background-enlarged; }
 	}
 	table,
-	div[data-stile ~= "fixed-table-header-container"] {
-		div[data-stile ~= "enlarger-button"] {
-			position: absolute;
-			z-index: 999;
-			width: base-vr(1.5);
-			height: base-vr(1.5);
-			top: 0;
-			right: 0;
-			margin: 0;
-			cursor: ew-resize;
+	div[data-stile ~= 'fixed-table-header-container'] {
+		div[data-stile ~= 'enlarger-button'] {
+			position  : absolute;
+			z-index   : 999;
+			width     : base-vr(1.5);
+			height    : base-vr(1.5);
+			top       : 0;
+			right     : 0;
+			margin    : 0;
+			cursor    : ew-resize;
 			background: linear-gradient(to top right, transparent 50%, $stile-table-color-enlarger 50.1%) no-repeat top left/100% 100%;
 
 			opacity: 0;
-			&[data-stile ~= "visible"] {
-				opacity: 1;
-				transition: opacity 0.2s;
+			&[data-stile ~= 'visible'] {
+				opacity   : 1;
+				transition: opacity 0.2s ease;
 			}
 		}
-		&[data-stile ~= "table-enlarged"] {
-			div[data-stile ~= "enlarger-button"] {
+		&[data-stile ~= 'table-enlarged'] {
+			div[data-stile ~= 'enlarger-button'] {
 				background: linear-gradient(to bottom left, transparent 50%, $stile-table-color-enlarger-opened 50.1%) no-repeat top left/100% 100%;
 			}
 		}
