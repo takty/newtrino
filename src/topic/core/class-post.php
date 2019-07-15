@@ -5,12 +5,12 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2019-07-15
  *
  */
 
 
-require_once(__DIR__ . '/lib/simple-html-dom.php');
+require_once(__DIR__ . '/lib/simple_html_dom.php');
 require_once(__DIR__ . '/class-indexer.php');
 require_once(__DIR__ . '/class-logger.php');
 require_once(__DIR__ . '/class-media.php');
@@ -327,7 +327,7 @@ class Post {
 		}
 		if (empty($this->_content)) return '';
 
-		$dom = \simplehtmldom_1_5\str_get_html($this->_content);
+		$dom = str_get_html($this->_content);
 		foreach($dom->find('img') as &$elm) {
 			$elm->src = $this->convertToActualUrl($elm->src);
 		}
@@ -345,7 +345,7 @@ class Post {
 			$this->_content = '';
 			return;
 		}
-		$dom = \simplehtmldom_1_5\str_get_html($val);
+		$dom = str_get_html($val);
 		foreach($dom->find('img') as &$elm) {
 			$elm->src = $this->convertToPortableUrl($elm->src);
 		}
