@@ -78,8 +78,8 @@ function initEdit() {
 			return msg;
 		}
 	});
-	flatpickr('#event_date_bgn', {});
-	flatpickr('#event_date_end', {});
+	flatpickr('#event_date_bgn_wrap', { wrap: true });
+	flatpickr('#event_date_end_wrap', { wrap: true });
 
 	const isEvent = document.getElementById('post_cat').value === 'event';
 	document.getElementById('frame-event-duration').style.display = (isEvent ? 'block' : 'none');

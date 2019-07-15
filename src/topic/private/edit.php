@@ -107,12 +107,12 @@ header('Content-Type: text/html;charset=utf-8');
 				</div>
 				<div class="frame" id="frame-event-duration">
 					<h3><?= _ht('Event Duration') ?></h3>
-					<p class="flatpickr">
+					<p class="flatpickr" id="event_date_bgn_wrap">
 						<input form="form-post" type="text" name="event_date_bgn" id="event_date_bgn" value="<?= _h($t_p->getEventDateBgn()) ?>" data-input>
 						<a class="input-button" data-clear></a>
 					</p>
 					<div class="to"> - </div>
-					<p class="flatpickr">
+					<p class="flatpickr" id="event_date_end_wrap">
 						<input form="form-post" type="text" name="event_date_end" id="event_date_end" value="<?= _h($t_p->getEventDateEnd()) ?>" data-input>
 						<a class="input-button" data-clear></a>
 					</p>
