@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2019-07-22
  *
  */
 
@@ -48,14 +48,18 @@ class Logger {
 		}
 	}
 
-	static function rotateFile($dir, $fn, $ext) {
-		if (file_exists($dir . $fn . '[5]' . $ext)) {
-			unlink($dir . $fn . '[5]' . $ext);
+	static function rotateFile( $dir, $fn, $ext ) {
+		if ( file_exists( "$dir{$fn}[5]$ext" ) ) {
+			unlink( "$dir{$fn}[5]$ext" );
 		}
-		for ($i = 4; $i > 0; $i -= 1) {
-			rename($dir . $fn . '[' . $i. ']' . $ext, $dir . $fn . '[' . ($i + 1) . ']' . $ext);
+		for ( $i = 4; $i > 0; $i -= 1 ) {
+			if ( ! file_exists( "$dir{$fn}[$i]$ext" ) ) continue;
+			$j = $i + 1;
+			rename( "$dir{$fn}[$i]$ext", "$dir{$fn}[$j]$ext" );
 		}
-		rename($dir . $fn . $ext, $dir . $fn . '[1]' . $ext);
+		if ( file_exists( "$dir$fn$ext" ) ) {
+			rename( "$dir$fn$ext", "$dir{$fn}[1]$ext" );
+		}
 	}
 
 }
