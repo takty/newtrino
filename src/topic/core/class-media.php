@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2019-07-22
  *
  */
 
@@ -26,6 +26,7 @@ class Media {
 		$fileList = $this->getFileList();
 		$list = [];
 		foreach ($fileList as $fn) {
+			$item = [];
 			$ext = mb_strtolower(pathinfo($fn, PATHINFO_EXTENSION));
 			if ($ext === 'png' || $ext === 'jpeg' || $ext === 'jpg') {
 				$item['img'] = true;
@@ -34,7 +35,6 @@ class Media {
 				$width = 0;
 				$height = 0;
 			}
-			$item = [];
 			$item['caption'] = $fn;
 			$item['file']    = $fn;
 			$item['url']     = $this->_mediaUrl . _u($fn);
