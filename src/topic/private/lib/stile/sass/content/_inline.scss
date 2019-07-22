@@ -3,7 +3,7 @@
  * Inline Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-10
+ * @version 2019-07-18
  *
  * @import '../basic/base';
  * @import '../basic/font';
@@ -27,6 +27,8 @@ $stile-inline-size-font-monospace: 0.95em !default;
 
 
 @mixin stile-inline {
+	@include stile-inline-ruby;
+
 	img {
 		max-width : 100%;
 		height    : auto;
@@ -109,6 +111,21 @@ $stile-inline-size-font-monospace: 0.95em !default;
 			width   : 100%     !important;
 			height  : 100%     !important;
 		}
+	}
+}
+
+@mixin stile-inline-ruby {
+	rt {
+		font-size: 0.75em;
+		line-height: 1;
+
+		transform: translateY(0.35em);
+		@include for-ie {
+			transform: translateY(-0.35em);
+		}
+
+		bottom: -0.35em;
+		position: relative;
 	}
 }
 

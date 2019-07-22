@@ -3,7 +3,7 @@
  * Margin Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-10
+ * @version 2019-07-19
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -169,7 +169,14 @@ $stile-margin-heading:
 
 	.tab-page > div,
 	.pseudo-tab-page
-	{ @include stile-margin-inside; }
+	{
+		@include stile-margin-inside;
+		* + .tab-page,
+			.tab-page + *,
+		* + .pseudo-tab-page,
+			.pseudo-tab-page + *
+		{ margin-top: base-vr(4); }
+	}
 
 	.stile-tab-page-tab-list + *,
 	* + .stile-tab-page-tab-list-below
@@ -207,6 +214,10 @@ $stile-margin-heading:
 
 %stile-margin-inside {
 	> div + div { margin-top: base-vr(2); }
+	> *:first-child.alignleft,
+	> *:first-child.alignright {
+		& + *:not([class]) { margin-top: 0; }
+	}
 }
 
 %stile-margin {
@@ -214,7 +225,7 @@ $stile-margin-heading:
 		text-align: center;        // for table on IE11
 		> * { text-align: left; }  // for table on IE11
 	}
-	> div + div { margin-top: base-vr(2); }
+	@extend %stile-margin-inside;
 
 	@include stile-margin-block-inside;
 	@include stile-margin-block;

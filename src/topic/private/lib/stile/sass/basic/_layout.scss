@@ -3,7 +3,7 @@
  * Layout Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-07
+ * @version 2019-07-19
  *
  * @import 'query';
  *
@@ -58,8 +58,8 @@
 	}
 }
 
-@mixin layout-fill-self() {
-	position: absolute;
+@mixin layout-fill-self($position: absolute) {
+	position: $position;
 	top     : 0;
 	left    : 0;
 	right   : 0;
@@ -234,9 +234,12 @@
 		$mw: calc(#{$mw} - #{$cg});
 	}
 	> * {
-		width     : 100%;
-		max-width : $mw;
-		margin-top: 0;  // For canceling _layout-column-cancel
+		width    : 100%;
+		max-width: $mw;
+	}
+	> *:not(:first-child) {
+		margin-top : 0;  // for overriding other layout-card and _layout-column-cancel
+		margin-left: if($gap != false, $gap, 0);
 	}
 }
 
@@ -244,10 +247,8 @@
 	flex-direction : row;
 	justify-content: space-between;
 
-	> * {
-		width     : 100%;
-		margin-top: 0;  // For canceling _layout-column-cancel
-	}
+	> * { width: 100%; }
+
 	$n  : length($rs);
 	$cg : if($gap == false, 0, $gap * ($n - 1) / $n);
 	$sum: 0;
@@ -262,20 +263,21 @@
 			max-width: $mw;
 		}
 	}
-	// for overriding other layout-card and _layout-column-cancel
-	> *:not(:first-child) { margin-top: 0; }
+	> *:not(:first-child) {
+		margin-top : 0;  // for overriding other layout-card and _layout-column-cancel
+		margin-left: if($gap != false, $gap, 0);
+	}
 }
 
 @mixin _layout-column-cancel($gap: false) {
 	flex-direction: column;
 
 	> * { max-width: 100%; }
-	@if $gap != false {
-		// for overriding other layout-card
-		> *:not(:first-child) { margin-top: $gap; }
-	}
 	// for overriding other layout-card
-	> *:not(:first-child) { margin-left: 0; }
+	> *:not(:first-child) {
+		margin-top : if($gap != false, $gap, 0);
+		margin-left: 0;
+	}
 }
 
 

@@ -22,8 +22,8 @@
     "tinymce-i18n": "^19.5.15"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/preset-env": "^7.5.4",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",
     "gulp": "^4.0.2",
@@ -36,6 +36,6 @@
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.2",
-    "stile": "git+https://github.com/takty/stile.git#dev"
+    "stile": "git+https://github.com/takty/stile.git"
   }
 }
