@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-15
+ * @version 2019-07-24
  *
  */
 
@@ -92,8 +92,8 @@ header('Content-Type: text/html;charset=utf-8');
 						</select>
 					</div>
 					<div>
-						<button class="btn" id="show-preview"><?= _ht('Preview') ?></button>
-						<button class="btn btn-update" id="update"><?= _ht('Update') ?></button>
+						<button class="btn" id="show-preview" type="button"><?= _ht('Preview') ?></button>
+						<button class="btn btn-update" id="update" type="button"><?= _ht('Update') ?></button>
 					</div>
 					<p class="message" id="message_enter_title"><?= _ht('The title is blank.') ?></p>
 				</div>
