@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-15
+ * @version 2019-08-05
  *
  */
 
@@ -30,8 +30,8 @@ class Post {
 	const STATE_DRAFT     = 'draft';
 
 	static function compareDate($a, $b) {
-		$da = $a->getPublishedDate();
-		$db = $b->getPublishedDate();
+		$da = $a->getDateTimeNumber();
+		$db = $b->getDateTimeNumber();
 		if ($da === $db) return 0;
 		return ($da > $db) ? -1 : 1;
 	}
