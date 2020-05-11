@@ -18,7 +18,7 @@
   "dependencies": {
     "flatpickr": "^4.6.2",
     "jssha": "^2.3.1",
-    "tinymce": "^4.9.7",
+    "tinymce": "^4.9.10",
     "tinymce-i18n": "^19.5.15"
   },
   "devDependencies": {
