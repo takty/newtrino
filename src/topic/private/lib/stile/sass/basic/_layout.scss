@@ -3,7 +3,7 @@
  * Layout Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-19
+ * @version 2019-08-23
  *
  * @import 'query';
  *
@@ -233,7 +233,7 @@
 		$cg: $gap * ($n - 1) / $n;
 		$mw: calc(#{$mw} - #{$cg});
 	}
-	> * {
+	> *:nth-child(n) {
 		width    : 100%;
 		max-width: $mw;
 	}
@@ -271,8 +271,11 @@
 
 @mixin _layout-column-cancel($gap: false) {
 	flex-direction: column;
+	justify-content: normal;
 
-	> * { max-width: 100%; }
+	> *:nth-child(n) {
+		max-width: 100%;
+	}
 	// for overriding other layout-card
 	> *:not(:first-child) {
 		margin-top : if($gap != false, $gap, 0);
@@ -289,8 +292,13 @@
 	$gap_y: if(length($gap) == 2, nth($gap, 2), $gap);
 
 	display        : flex;
-	flex-flow      : row wrap;
 	justify-content: space-between;
+
+	@if $n == 1 {
+		flex-flow: column nowrap;
+	} @else {
+		flex-flow: row wrap;
+	}
 
 	$mw: 100% / $n;
 	@if $gap != false and 1 < $n {
@@ -316,6 +324,8 @@
 	}
 	@if $align-left and 1 < $n {
 		@include _layout-card-tail-margin($n, $gap_x);
+	} @else {
+		> *:nth-child(n):last-child { margin-right: 0; }
 	}
 }
 

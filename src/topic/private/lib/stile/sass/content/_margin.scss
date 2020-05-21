@@ -3,7 +3,7 @@
  * Margin Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-19
+ * @version 2020-03-04
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -86,6 +86,22 @@ $stile-margin-heading:
 	* + hr,
 	    hr + *    { margin-top: base-vr(4); }
 	p + p         { margin-top: base-vr(1); }
+
+	@include for-tablet-up {
+		@include stile-margin-block-next-to('table', '*') { margin-top: base-vr(4); }
+		@include stile-margin-block-next-to(   'hr', '*') { margin-top: base-vr(4); }
+		@include stile-margin-block-next-to(    'p', 'p') { margin-top: base-vr(1); }
+	}
+}
+
+@mixin stile-margin-block-next-to($tag, $a) {
+	#{$a} + .alignleft:not( [data-stile ~= 'aligncenter'])[data-stile ~= 'next-to-#{$tag}'],
+			.alignleft:not( [data-stile ~= 'aligncenter'])[data-stile ~= 'next-to-#{$tag}'] + #{$a},
+	#{$a} + .alignright:not([data-stile ~= 'aligncenter'])[data-stile ~= 'next-to-#{$tag}'],
+			.alignright:not([data-stile ~= 'aligncenter'])[data-stile ~= 'next-to-#{$tag}'] + #{$a}
+	{
+		@content;
+	}
 }
 
 
@@ -93,45 +109,94 @@ $stile-margin-heading:
 
 
 @mixin stile-margin-alignment {
-	* + figure,
-	    figure + *,
-	* + figure[data-stile ~= 'aligncenter'],
-		figure[data-stile ~= 'aligncenter'] + *
-	{
-		margin-top: base-vr(4);
-	}
-	* + .alignleft,
-	* + .alignright,
-	    .alignleft  + *,
-		.alignright + *
-	{
-		margin-top: base-vr(1);
-	}
-	@include for-phone-only {
-		* + figure.alignleft,
-		* + figure.alignright,
-		    figure.alignleft  + *,
-			figure.alignright + *
-		{
-			margin-top: base-vr(4);  // for Centering View
-		}
+	.alignleft,
+	.alignright,
+	.aligncenter {
+		margin: { top: base-vr(2); bottom: base-vr(2); }  // for Centering View
 	}
 	@include for-tablet-up {
-		* + figure.alignleft,
-		* + figure.alignright,
-		    figure.alignleft  + *,
-			figure.alignright + *
-		{
-			margin-top: base-vr(1);  // for Actual Floating View
+		.alignleft,
+		.alignright {
+			margin: { top: 0; bottom: base-vr(1); }  // for Actual Floating View
 		}
-		figure.alignleft,
-		figure.alignright {
-			&:not([data-stile ~= 'aligncenter']) > figcaption {
-				padding-bottom: base-vr(1);
+	}
+
+	figure {
+		&,
+		&.alignleft,
+		&.alignright,
+		&.aligncenter {
+			margin: { top: base-vr(4); bottom: base-vr(4); }  // for Centering View
+		}
+		@include for-tablet-up {
+			&.alignleft,
+			&.alignright {
+				margin: { top: base-vr(2); bottom: base-vr(2); }  // for Actual Floating View
 			}
 		}
 	}
+
+	.size-thumbnail {
+		&.alignleft,
+		&.alignright {
+			margin: { top: 0; bottom: base-vr(1); }
+		}
+	}
+	.size-small,
+	.size-medium-small,
+	.size-medium,
+	.size-medium_large,  // For compatibility with WordPress-embed image size name
+	.size-medium-large,
+	.size-large,
+	.size-full {
+		&.alignleft,
+		&.alignright {
+			margin: { top: base-vr(2); bottom: base-vr(2); }
+		}
+	}
+	@include for-tablet-portrait-up {
+		.size-small,
+		.size-medium-small,
+		.size-medium {
+			&.alignleft,
+			&.alignright {
+				margin: { top: 0; bottom: base-vr(1); }
+			}
+		}
+	}
+	@include for-tablet-landscape-up {
+		.size-medium_large,  // For compatibility with WordPress-embed image size name
+		.size-medium-large,
+		.size-large,
+		.size-full {
+			&.alignleft,
+			&.alignright {
+				margin: { top: 0; bottom: base-vr(1); }
+			}
+		}
+	}
+
+	*[data-stile ~= 'alignleft'],
+	*[data-stile ~= 'alignright'] {
+		margin: { top: 0; bottom: base-vr(1); }
+	}
+	*:not(figure)[data-stile ~= 'aligncenter'] {
+		&.alignleft,
+		&.alignright {
+			margin: { top: base-vr(2); bottom: base-vr(2); }
+		}
+	}
+	figure[data-stile ~= 'aligncenter'] {
+		&.alignleft,
+		&.alignright {
+			margin: { top: base-vr(4); bottom: base-vr(4); }
+		}
+	}
 }
+
+
+// -----------------------------------------------------------------------------
+
 
 @mixin stile-margin-container {
 	* + .column-2,

@@ -3,7 +3,7 @@
  * Print Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-07
+ * @version 2020-04-03
  *
  * @import '../basic/font';
  *
@@ -11,12 +11,11 @@
 
 
 $stile-print-enabled-link-url: true !default;
+$stile-print-font-size       : 9pt  !default;
 
 
 @mixin stile-print {
-	-webkit-print-color-adjust: exact;
-
-	font-size: 10.5pt !important;
+	font-size: $stile-print-font-size !important;
 	@include font-visible-chrome-cancel;
 
 	@if $stile-print-enabled-link-url == true {
@@ -24,9 +23,15 @@ $stile-print-enabled-link-url: true !default;
 	}
 	@include stile-print-table();
 	@include stile-print-image();
+	@include stile-print-page-break();
 
 	.stile-pseudo-tab-page-tab-list {
-		display: none !important;
+		max-height: unset !important;
+		opacity   : 1 !important;
+
+		transform-origin: center left !important;
+		transform       : scale(0.75) !important;
+		width           : 133% !important;
 	}
 }
 
@@ -69,5 +74,22 @@ $stile-print-enabled-link-url: true !default;
 @mixin stile-print-image {
 	img {
 		opacity: 1 !important;
+	}
+	* {
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+	}
+}
+
+@mixin stile-print-page-break {
+	h1, h2, h3, h4, h5, h6 {
+		break-after: avoid !important;
+	}
+	img {
+		break-inside: avoid !important;
+	}
+	.stile-pseudo-tab-page-tab-list {
+		break-inside: avoid !important;
+		break-after : avoid !important;
 	}
 }

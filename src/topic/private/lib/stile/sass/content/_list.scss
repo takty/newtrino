@@ -3,7 +3,7 @@
  * List Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-08
+ * @version 2019-10-01
  *
  * @import '../basic/base';
  * @import '../basic/font';
@@ -28,14 +28,16 @@ $stile-list-img-marks       : ()                     !default;
 
 
 $_stile-list-rate-marks: map-merge((
-	disc  : $stile-list-rate-mark-disc,
-	square: $stile-list-rate-mark-square,
-	circle: $stile-list-rate-mark-circle
+	default: 1,
+	disc   : $stile-list-rate-mark-disc,
+	square : $stile-list-rate-mark-square,
+	circle : $stile-list-rate-mark-circle
 ), $stile-list-rate-marks);
 $_stile-list-img-marks: map-merge((
-	disc  : $stile-list-img-mark-disc,
-	square: $stile-list-img-mark-square,
-	circle: $stile-list-img-mark-circle
+	default: false,
+	disc   : $stile-list-img-mark-disc,
+	square : $stile-list-img-mark-square,
+	circle : $stile-list-img-mark-circle
 ), $stile-list-img-marks);
 
 
@@ -83,6 +85,10 @@ $_stile-list-img-marks: map-merge((
 		&[style = 'list-style:#{$style};'],   // Before the script loaded
 		&[style = 'list-style: #{$style};'],  // Before the script loaded
 		&[data-stile ~= 'list-#{$style}'] {
+			> li::before { @content; }
+		}
+	} @else if ( $default == only ) {
+		&:not([style]):not([data-stile *= 'list-']) {
 			> li::before { @content; }
 		}
 	} @else {
@@ -133,9 +139,17 @@ $_stile-list-img-marks: map-merge((
 			height  : 1em;
 		}
 	}
-	@include stile-list-ul-inside-style(disc, true) {
-		border-radius   : 50%;
-		background-color: $stile-list-color-mark-ul;
+	@if map-get($_stile-list-img-marks, 'default') != false {
+		@include stile-list-ul-inside-style(default, only);
+		@include stile-list-ul-inside-style(disc) {
+			border-radius   : 50%;
+			background-color: $stile-list-color-mark-ul;
+		}
+	} @else {
+		@include stile-list-ul-inside-style(disc, true) {
+			border-radius   : 50%;
+			background-color: $stile-list-color-mark-ul;
+		}
 	}
 	@include stile-list-ul-inside-style(square) {
 		border-radius   : 10%;

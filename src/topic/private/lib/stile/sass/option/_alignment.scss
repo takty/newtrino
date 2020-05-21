@@ -3,7 +3,7 @@
  * Alignment Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-19
+ * @version 2020-03-04
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -36,8 +36,10 @@ $stile-alignment-size-width         : 72rem !default;
 		.aligncenter,
 		.alignleft [data-stile ~= 'aligncenter'],
 		.alignright[data-stile ~= 'aligncenter'] {
-			&[data-stile ~= 'only-child-element'] {
-				margin-top: 0;
+			&[data-stile ~= 'has-only-child-element'],
+			&[data-stile ~= 'only-child-element'],
+			> *[data-stile ~= 'only-child-element'] {
+				margin: { top: 0; bottom: 0; }
 			}
 		}
 	}
@@ -45,12 +47,18 @@ $stile-alignment-size-width         : 72rem !default;
 	// Without Size Classes ----------------------------------------------------
 
 	@include for-tablet-up {
-		* { @include stile-alignment-float }
+		* {
+			@include stile-alignment-float;
+			@include stile-alignment-float-size();
+		}
 	}
 
 	// With Size Classes -------------------------------------------------------
 
-	.size-thumbnail { @include stile-alignment-float(10rem); }
+	.size-thumbnail {
+		@include stile-alignment-float;
+		@include stile-alignment-float-size(10rem);
+	}
 
 	.size-small,
 	.size-medium-small,
@@ -64,29 +72,38 @@ $stile-alignment-size-width         : 72rem !default;
 			@include stile-alignment-center;
 		}
 	}
-	.size-small {
-		@include for-tablet-portrait-up { @include stile-alignment-float(10rem); }
+	@include for-tablet-portrait-up {
+		.size-small,
+		.size-medium-small,
+		.size-medium {
+			@include stile-alignment-float;
+		}
+		.size-small        { @include stile-alignment-float-size(10rem); }
+		.size-medium-small { @include stile-alignment-float-size(15rem); }
+		.size-medium       { @include stile-alignment-float-size(20rem); }
 	}
-	.size-medium-small {
-		@include for-tablet-portrait-up { @include stile-alignment-float(15rem); }
-	}
-	.size-medium {
-		@include for-tablet-portrait-up { @include stile-alignment-float(20rem); }
-	}
-	.size-medium_large,  // For compatibility with WordPress-embed image size name
-	.size-medium-large {
-		@include for-tablet-landscape-up { @include stile-alignment-float(30rem); }
-	}
-	.size-large,
-	.size-full {
-		@include for-tablet-landscape-up { @include stile-alignment-float; }
+
+	@include for-tablet-landscape-up {
+		.size-medium_large,  // For compatibility with WordPress-embed image size name
+		.size-medium-large,
+		.size-large,
+		.size-full {
+			@include stile-alignment-float;
+		}
+		.size-medium_large,  // For compatibility with WordPress-embed image size name
+		.size-medium-large {
+			@include stile-alignment-float-size(30rem);
+		}
+		.size-large,
+		.size-full {
+			@include stile-alignment-float-size();
+		}
 	}
 
 	// By Content Query --------------------------------------------------------
 
 	*[data-stile ~= 'alignleft'],
 	*[data-stile ~= 'alignright'] {
-		margin   : { top: 0; bottom: base-vr(1); }
 		transform: translateY(#{(base-vr(2) - 1rem) / 2});
 		max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 	}
@@ -112,22 +129,17 @@ $stile-alignment-size-width         : 72rem !default;
 @mixin stile-alignment-center {
 	display   : block;
 	float     : none;
-	margin    : base-vr(2) auto;
+	margin    : { left: auto; right: auto; }
 	transform : initial;
 	text-align: center;
 	clear     : both;
 }
 
-@mixin stile-alignment-float($max-width: false) {
+@mixin stile-alignment-float {
 	&.alignleft,
 	&.alignright {
-		margin   : { top: 0; bottom: base-vr(1); }
 		transform: translateY(#{(base-vr(2) - 1rem) / 2});
 		clear    : none;
-		@if $max-width == false {
-			$max-width: calc(100% - #{$stile-alignment-size-min-text-width});
-		}
-		max-width: $max-width;
 	}
 	&.alignleft {
 		float       : left;
@@ -136,6 +148,17 @@ $stile-alignment-size-width         : 72rem !default;
 	&.alignright {
 		float      : right;
 		margin-left: base-vr(2);
+	}
+}
+
+@mixin stile-alignment-float-size($max-width: false) {
+	&.alignleft,
+	&.alignright {
+		@if $max-width == false {
+			$max-width: calc(100% - #{$stile-alignment-size-min-text-width});
+		} @else {
+			max-width: $max-width;
+		}
 	}
 }
 

@@ -3,7 +3,7 @@
  * Tab Page Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-09
+ * @version 2020-02-13
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -66,18 +66,27 @@ $stile-tab-page-visible-tab-below             : false !default;
 			position: absolute;
 			bottom  : 1000vh;
 			opacity : 0;
+			> * { opacity: 0; }
 		}
 		> div[data-stile ~= 'current'] {
 			position  : static;
 			opacity   : 1;
-			transition: opacity 0.6s;
 			flex-grow : 1;
+			> * {
+				opacity: 1;
+				transition: opacity 0.6s;
+			}
 		}
 	}
 	.stile-tab-page-tab-list li,
 	.stile-tab-page-tab-list-below li {
 		position: relative;
-		@include layout-centering();
+
+		display        : flex;
+		align-items    : center;
+		justify-content: flex-start;
+		flex-wrap      : wrap;
+
 		padding: base-vr(0.5) base-vr(1);
 		@include for-tablet-landscape-up { padding: base-vr(0.5) base-vr(2); }
 
@@ -130,9 +139,16 @@ $stile-tab-page-visible-tab-below             : false !default;
 				border-bottom-color: transparent;
 
 				&[data-stile ~= 'current'] {
-					top        : 1px;
-					cursor     : initial;
-					user-select: initial;
+					top: 1px;
+					&::after {
+						content: '';
+						background-color: $stile-tab-page-color-background;
+						position: absolute;
+						left    : 0;
+						right   : 0;
+						bottom  : -1.5px;
+						height  : 2px;
+					}
 				}
 			}
 			li + li {
@@ -182,9 +198,16 @@ $stile-tab-page-visible-tab-below             : false !default;
 					border-top-color: transparent;
 
 					&[data-stile ~= 'current'] {
-						bottom     : 1px;
-						cursor     : initial;
-						user-select: initial;
+						bottom: 1px;
+						&::after {
+							content: '';
+							background-color: $stile-tab-page-color-background;
+							position: absolute;
+							top     : -1.5px;
+							left    : 0;
+							right   : 0;
+							height  : 2px;
+						}
 					}
 				}
 				li + li {

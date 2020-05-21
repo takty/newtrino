@@ -3,7 +3,7 @@
  * Container Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-09
+ * @version 2020-03-04
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -26,6 +26,13 @@ $stile-container-4-child-min-width: 10rem !default;
 	@include stile-container-card;
 }
 
+%stile-container-child-inside {
+	flex-grow: 1;
+	> *:first-child { margin-top:    0; }
+	> *:last-child  { margin-bottom: 0; }
+	*[data-stile ~= 'only-child-element'] { margin: { top: 0; bottom: 0; } }
+}
+
 @mixin stile-container-column {
 	.column-2,
 	.column-3,
@@ -35,7 +42,9 @@ $stile-container-4-child-min-width: 10rem !default;
 		flex-wrap: wrap;
 
 		// One of Columns
-		> * { flex-grow: 1; }
+		> * {
+			@extend %stile-container-child-inside;
+		}
 	}
 	.column-2 {
 		> * {
@@ -75,8 +84,10 @@ $stile-container-4-child-min-width: 10rem !default;
 		justify-content: space-between;
 
 		// One of Cards
-		> * { flex-grow: 1; }
-		> *:empty { margin-right: $stile-container-card-gap; }
+		> * {
+			@extend %stile-container-child-inside;
+			&:empty { margin-right: $stile-container-card-gap; }
+		}
 	}
 	.card-2 {
 		> * {

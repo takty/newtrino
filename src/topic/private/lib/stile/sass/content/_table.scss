@@ -3,7 +3,7 @@
  * Table Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-09
+ * @version 2019-10-20
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -50,7 +50,7 @@ $stile-table-align-caption               : center !default;
 
 			display      : inline-block;
 			padding-left : base-vr(1);
-			padding-right: base-vr(1);  // for Avoiding overwrapping with enlarger
+			padding-right: base-vr(1);  // for Avoiding overlapping with enlarger
 			max-width    : #{$stile-table-size-caption-max-width + 2 * base-vr(1.5)};
 			text-align   : left;  // for left align of long caption
 			@include font-size-level($stile-table-level-caption);

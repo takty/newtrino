@@ -3,7 +3,7 @@
  * Link Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-07
+ * @version 2020-03-01
  *
  * @import '../basic/query';
  * @import '../basic/font';
@@ -30,9 +30,11 @@ $stile-link-size-gap          : 0.2em !default;
 
 	width           : 1em;
 	height          : 1em;
-	background-image: #{$url};
-	background-size : contain;
-
+	background: {
+		image   : #{$url};
+		size    : contain;
+		position: center;
+	}
 	transform: translateY(0.1em);
 }
 

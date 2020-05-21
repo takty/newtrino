@@ -3,7 +3,7 @@
  * Pseudo Tab Page Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-09
+ * @version 2020-02-11
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -121,7 +121,11 @@ $stile-pseudo-tab-page-border-style-second            : dashed 1px $stile-pseudo
 			}
 		}
 		a {
-			@include layout-centering();
+			display        : flex;
+			align-items    : center;
+			justify-content: flex-start;
+			flex-wrap      : wrap;
+
 			min-width: 2rem;
 			padding: $stile-pseudo-tab-page-size-tab-padding-phone;
 			@include for-tablet-landscape-up { padding: $stile-pseudo-tab-page-size-tab-padding; }

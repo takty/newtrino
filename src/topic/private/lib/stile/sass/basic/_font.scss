@@ -3,7 +3,7 @@
  * Font Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-07
+ * @version 2019-11-09
  *
  * @import 'base';
  * @import 'query';
@@ -17,8 +17,8 @@ $stile-font-chrome-text-stroke-width: 0.28px !default;
 // -----------------------------------------------------------------------------
 
 
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,400i,700i');  // Laten
-@import url('https://fonts.googleapis.com/css?family=Spectral:300,600,300i,600i');   // Laten Serif
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&display=swap');  // Laten
+@import url('https://fonts.googleapis.com/css?family=Spectral:300,300i,600,600i&display=swap');   // Laten Serif
 
 $stile-font-sans-serif-laten         : 'Open Sans' !default;
 $stile-font-sans-serif-laten-fallback: Verdana     !default;
