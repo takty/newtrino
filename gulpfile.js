@@ -105,14 +105,22 @@ gulp.task('delete-var', (done) => {
 	done();
 });
 
-gulp.task('js', () => {
-	return gulp.src([SRC_PRIVATE + 'js/**/*.js'])
-		.pipe($.plumber())
-		.pipe($.babel())
-		.pipe($.uglify())
-		.pipe($.rename({ extname: '.min.js' }))
-		.pipe(gulp.dest(DIST_PRIVATE + 'js'));
-});
+// gulp.task('js', () => {
+// 	return gulp.src([SRC_PRIVATE + 'js/**/*.js'])
+// 		.pipe($.plumber())
+// 		.pipe($.babel())
+// 		.pipe($.uglify())
+// 		.pipe($.rename({ extname: '.min.js' }))
+// 		.pipe(gulp.dest(DIST_PRIVATE + 'js'));
+// });
+
+gulp.task('js', () => gulp.src(['src/**/*.js', '!src/**/*.min.js'])
+	.pipe($.plumber())
+	.pipe($.babel())
+	.pipe($.terser())
+	.pipe($.rename({ extname: '.min.js' }))
+	.pipe(gulp.dest('./dist'))
+);
 
 gulp.task('sass', () => {
 	return gulp.src([SRC_PRIVATE + 'sass/style.scss'])
@@ -123,4 +131,10 @@ gulp.task('sass', () => {
 		.pipe(gulp.dest(DIST_PRIVATE + 'css/'));
 });
 
-gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass'));
+gulp.task('watch', () => {
+	gulp.watch('src/**/*.js', gulp.series('js'));
+	gulp.watch('src/**/*.scss', gulp.series('sass'));
+	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy'));
+});
+
+gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass', 'watch'));
