@@ -199,28 +199,28 @@ function get_taxonomy_archive( $taxonomy_s ) {
 // -----------------------------------------------------------------------------
 
 
-function get_param_int( string $key, $default, $assoc ) {
+function get_param_int( $key, $default, $assoc ) {
 	if ( isset( $assoc[ $key ] ) && ! preg_match( '/[^0-9]/', $assoc[ $key ] ) ) {
 		return intval( $assoc[ $key ] );
 	}
 	return $default;
 }
 
-function get_param_bool( string $key, $default, $assoc ) {
+function get_param_bool( $key, $default, $assoc ) {
 	if ( isset( $assoc[ $key ] ) && ! preg_match( '/[^0-1]/', $assoc[ $key ] ) ) {
 		return intval( $assoc[ $key ] ) === 1;
 	}
 	return $default;
 }
 
-function get_param_slug( string $key, $default, $assoc ) {
+function get_param_slug( $key, $default, $assoc ) {
 	if ( isset( $assoc[ $key ] ) && ! preg_match( '/[^a-zA-Z0-9-_]/', $assoc[ $key ] ) ) {
 		return $assoc[ $key ];
 	}
 	return $default;
 }
 
-function get_param_string( string $key, $default, $assoc ) {
+function get_param_string( $key, $default, $assoc ) {
 	if ( isset( $assoc[ $key ] ) ) {
 		return $assoc[ $key ];
 	}
