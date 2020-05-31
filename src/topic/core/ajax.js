@@ -268,7 +268,6 @@ window.NT = window['NT'] || {};
 		for (let i = 0; i < ts.length; i += 1) {
 			const tmpl = ts[i];
 			const tarSel = tmpl.dataset['target'];
-			if (!tarSel) continue;
 			const sec = tmpl.dataset['section'];
 			if (sec && 0 < sec.length) {
 				const k = sec.substring(1);
@@ -279,7 +278,7 @@ window.NT = window['NT'] || {};
 					if (view[k] !== undefined && !isEmptyArray(view[k]) &&  view[k]) continue;
 				}
 			}
-			const tar = document.querySelector(tarSel);
+			const tar = (tarSel) ? document.querySelector(tarSel) : tmpl.parentElement;
 			tar.innerHTML = Mustache.render(tmpl.innerHTML, view);
 		}
 	}
