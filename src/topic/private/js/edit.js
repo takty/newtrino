@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2019-07-15
+ * @version 2020-06-06
  *
  */
 
@@ -52,7 +52,7 @@ function initEdit() {
 			'link lists media paste preview print searchreplace table visualblocks',
 		],
 		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-		content_css: '../editor-style.css',
+		content_css: '../data/editor-style.css',
 		language: 'ja',
 		setup: function (ed) { ed.on('change', function (ed) { changed = true; }); },
 		code_dialog_width: 800,
