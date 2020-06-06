@@ -8,8 +8,7 @@
 <title>Newtrino Sample</title>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-	const API_URL = 'nt/core/ajax.php';
-	NT.renderRecentPosts(API_URL, { count: 1, base_url: './topic/' }, '.template');
+	NT.renderRecentPosts('nt/core/ajax.php', { count: 1, base_url: './topic/' }, '[type="text/html"]');
 });
 </script>
 </head>
@@ -19,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	</header>
 	<main>
 		<div class="section section-recent-posts">
-			<script type="text/html" class="template" data-replace=".section-recent-posts">
+			<script type="text/html">
 				<ul id="list-item-post">
 {{#posts}}
 					<li class="{{status}}">

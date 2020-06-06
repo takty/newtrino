@@ -8,30 +8,33 @@
 <title>Newtrino Sample</title>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-	const API_URL = '../nt/core/ajax.php';
-	NT.render(API_URL, '.template', 'rendered');
+	NT.render('../nt/core/ajax.php', '[type="text/html"]', 'rendered');
 });
 </script>
-<script type="text/html" class="template" data-replace="title" data-section="#post">
+<script type="text/html" data-replace="title" data-section="#post">
 	{{post.title}} - Newtrino Sample
 </script>
 </head>
 
 <body>
 	<header>
-		<h1>Newtrino Sample</h1>
-		<script type="text/html" class="template" data-replace="h1" data-section="#post">
-			<a href="./">Newtrino Sample</a>
-		</script>
+		<h1>
+			<script type="text/html" data-section="#posts">
+				Newtrino Sample
+			</script>
+			<script type="text/html" data-section="#post">
+				<a href="./">Newtrino Sample</a>
+			</script>
+		</h1>
 	</header>
 	<main>
 <!-- ======================================================================= -->
 		<header class="entry-header">
-			<script type="text/html" class="template" data-section="#posts">
+			<script type="text/html" data-section="#posts">
 				<h2>Topics</h2>
 			</script>
 <!-- ----------------------------------------------------------------------- -->
-			<script type="text/html" class="template" data-section="#post">
+			<script type="text/html" data-section="#post">
 {{#post}}
 				{{#taxonomy.category}}
 				<div class="category">{{label}}</div>
@@ -50,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		</header>
 <!-- ======================================================================= -->
 		<div class="aside aside-filter">
-			<script type="text/html" class="template" data-section="#posts">
+			<script type="text/html" data-section="#posts">
 				<div class="filter-date">
 {{#filter.date}}
 					<select onchange="document.location.href = this.value;">
@@ -79,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		</div>
 <!-- ======================================================================= -->
 		<div class="entry-content">
-			<script type="text/html" class="template" data-section="#posts">
+			<script type="text/html" data-section="#posts">
 				<ul id="list-item-post">
 {{#posts}}
 					<li class="{{status}}" id="temp-item-post">
@@ -99,14 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				</ul>
 			</script>
 <!-- ----------------------------------------------------------------------- -->
-			<script type="text/html" class="template" data-section="#post">
+			<script type="text/html" data-section="#post">
 				{{&post.content}}
 			</script>
 		</div>
 <!-- ======================================================================= -->
 		<div class="aside aside-navigation">
 			<div class="post_navigation">
-				<script type="text/html" class="template">
+				<script type="text/html">
 {{#navigation.post_navigation}}
 					{{#previous}}<a href="{{url}}">Previous</a>{{/previous}}
 					{{#next}}<a href="{{url}}">Next</a>{{/next}}
@@ -115,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			</div>
 <!-- ----------------------------------------------------------------------- -->
 			<div class="pagination">
-				<script type="text/html" class="template">
+				<script type="text/html">
 {{#navigation.pagination}}
 					<a href="{{previous}}">Previous</a>
 					<select onchange="document.location.href = this.value;">
