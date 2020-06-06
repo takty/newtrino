@@ -267,7 +267,8 @@ window.NT = window['NT'] || {};
 		const ts = document.querySelectorAll(tmplSel);
 		for (let i = 0; i < ts.length; i += 1) {
 			const tmpl = ts[i];
-			const tarSel = tmpl.dataset['target'];
+			const repSel = tmpl.dataset['replace'];
+			const appSel = tmpl.dataset['append'];
 			const sec = tmpl.dataset['section'];
 			if (sec && 0 < sec.length) {
 				const k = sec.substring(1);
@@ -278,8 +279,22 @@ window.NT = window['NT'] || {};
 					if (view[k] !== undefined && !isEmptyArray(view[k]) &&  view[k]) continue;
 				}
 			}
-			const tar = (tarSel) ? document.querySelector(tarSel) : tmpl.parentElement;
-			tar.innerHTML = Mustache.render(tmpl.innerHTML, view);
+			if (appSel) {
+				const tar = document.querySelector(appSel);
+				if (tar) {
+					const t = document.createElement('div');
+					t.innerHTML = Mustache.render(tmpl.innerHTML, view);
+					const cs = [].slice.call(t.childNodes, 0);
+					for (let i = 0; i < cs.length; i += 1) {
+						tar.appendChild(cs[i]);
+					}
+				}
+			} else {
+				const tar = (repSel) ? document.querySelector(repSel) : tmpl.parentElement;
+				if (tar) {
+					tar.innerHTML = Mustache.render(tmpl.innerHTML, view);
+				}
+			}
 		}
 	}
 
