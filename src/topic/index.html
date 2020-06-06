@@ -6,21 +6,15 @@
 	<script src="https://unpkg.com/mustache"></script>
 	<script src="http://localhost/newtrino/topic/core/ajax.min.js"></script>
 	<title>Newtrino Sample</title>
-	<script type="text/html" class="template" data-target="title" data-section="#post">
+	<script type="text/html" class="template" data-replace="title" data-section="#post">
 		{{post.title}} - Newtrino Sample
-	</script>
-	<script>
-		document.addEventListener('DOMContentLoaded', () => {
-			const API_URL = 'http://localhost/newtrino/topic/core/ajax.php';
-			NT.render(API_URL, '.template', 'rendered');
-		});
 	</script>
 </head>
 
 <body>
 	<header>
 		<h1>Newtrino Sample</h1>
-		<script type="text/html" class="template" data-target="h1" data-section="#post">
+		<script type="text/html" class="template" data-replace="h1" data-section="#post">
 			<a href="./index.html">Newtrino Sample</a>
 		</script>
 	</header>
@@ -128,6 +122,10 @@
 		</div>
 <!-- ======================================================================= -->
 	</main>
+	<script>
+		const API_URL = 'http://localhost/newtrino/topic/core/ajax.php';
+		NT.render(API_URL, '.template', 'rendered');
+	</script>
 </body>
 
 </html>
