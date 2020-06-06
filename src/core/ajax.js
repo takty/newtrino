@@ -3,7 +3,7 @@
  * Ajax (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-05-30
+ * @version 2020-06-07
  *
  */
 
@@ -267,35 +267,47 @@ window.NT = window['NT'] || {};
 		const ts = document.querySelectorAll(tmplSel);
 		for (let i = 0; i < ts.length; i += 1) {
 			const tmpl = ts[i];
-			const repSel = tmpl.dataset['replace'];
-			const appSel = tmpl.dataset['append'];
-			const sec = tmpl.dataset['section'];
+			const sec = tmpl.dataset.section;
 			if (sec && 0 < sec.length) {
 				const k = sec.substring(1);
 				if (sec[0] === '#') {
-					if (view[k] === undefined ||  isEmptyArray(view[k]) || !view[k]) continue;
-				}
-				if (sec[0] === '^') {
-					if (view[k] !== undefined && !isEmptyArray(view[k]) &&  view[k]) continue;
-				}
-			}
-			if (appSel) {
-				const tar = document.querySelector(appSel);
-				if (tar) {
-					const t = document.createElement('div');
-					t.innerHTML = Mustache.render(tmpl.innerHTML, view);
-					const cs = [].slice.call(t.childNodes, 0);
-					for (let i = 0; i < cs.length; i += 1) {
-						tar.appendChild(cs[i]);
+					if (view[k] === undefined ||  isEmptyArray(view[k]) || !view[k]) {
+						tmpl.parentElement.removeChild(tmpl);
+						continue;
 					}
 				}
-			} else {
-				const tar = (repSel) ? document.querySelector(repSel) : tmpl.parentElement;
-				if (tar) {
-					tar.innerHTML = Mustache.render(tmpl.innerHTML, view);
+				if (sec[0] === '^') {
+					if (view[k] !== undefined && !isEmptyArray(view[k]) &&  view[k]) {
+						tmpl.parentElement.removeChild(tmpl);
+						continue;
+					}
 				}
 			}
+			const frag = createRenderedFragment(tmpl, view);
+			const app = tmpl.dataset.append ? document.querySelector(tmpl.dataset.append) : null;
+			const rep = tmpl.dataset.replace ? document.querySelector(tmpl.dataset.replace) : null;
+			if (app) {
+				app.appendChild(frag);
+			} else if (rep) {
+				rep.textContent = null;
+				rep.appendChild(frag);
+			} else {
+				const tar = tmpl.parentElement;
+				if (tar) tar.replaceChild(frag, tmpl);
+			}
 		}
+	}
+
+	function createRenderedFragment(tmpl, view) {
+		const frag = document.createDocumentFragment();
+		const t = document.createElement('div');
+		t.innerHTML = Mustache.render(tmpl.innerHTML, view);
+
+		const cs = [].slice.call(t.childNodes, 0);
+		for (let i = 0; i < cs.length; i += 1) {
+			frag.appendChild(cs[i]);
+		}
+		return frag;
 	}
 
 	function sendRequest(url, params, callback) {
