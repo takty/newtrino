@@ -5,7 +5,7 @@ namespace nt;
  * Template Tags
  *
  * @author Space-Time Inc.
- * @version 2018-11-02
+ * @version 2020-06-07
  *
  */
 
@@ -26,14 +26,14 @@ function get_recent($count = 10, $cat = '', $omitFinishedEvent = false) {
 // -----------------------------------------------------------------------------
 
 
-function the_recent($count = 10, $cat = '', $omitFinishedEvent = false) {
+function the_recent($count = 10, $cat = '', $omitFinishedEvent = false, $baseUrl = NT_URL_BASE) {
 	$posts = get_recent($count, $cat, $omitFinishedEvent);
 
 	foreach ($posts as $p) {
 		$cls = ($p->getCategory() === 'event') ? (' ' . $p->getEventState()) : '';
 ?>
 <li class="<?= _h($p->getStateClasses()) ?>">
-	<a href="<?= _h(\nt\get_permalink(NT_URL_BASE . 'view.php', $p)) ?>">
+	<a href="<?= _h(\nt\get_permalink($baseUrl . 'view.php', $p)) ?>">
 		<span class="nt-cat<?= _h($cls) ?>"><?= _ht($p->getCategoryName(), 'category') ?></span>
 <?php if ($p->getCategory() === 'event'): ?>
 		<span class="nt-event-term"><?= _ht('Event Date: ') ?><?= _h($p->getEventDateBgn()) ?><?= _ht(' to ') ?><?= _h($p->getEventDateEnd()) ?></span>

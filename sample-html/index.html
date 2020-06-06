@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://unpkg.com/mustache"></script>
-<script src="http://localhost/newtrino/topic/core/ajax.min.js"></script>
+<script src="nt/core/ajax.min.js"></script>
 <title>Newtrino Sample</title>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-	const API_URL = 'http://localhost/newtrino/topic/core/ajax.php';
-	NT.renderRecentPosts(API_URL, { count: 1, base_url: './topic/index.html' }, '.template');
+	const API_URL = 'nt/core/ajax.php';
+	NT.renderRecentPosts(API_URL, { count: 1, base_url: './topic/' }, '.template');
 });
 </script>
 </head>
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			</script>
 		</div>
 		<nav>
-			<a href="topic/index.html">Show More...</a>
+			<a href="topic/">Show More...</a>
 		</nav>
 	</main>
 </body>

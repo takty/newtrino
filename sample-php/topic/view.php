@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/core/init.php');
+require_once(__DIR__ . '/../nt/core/init.php');
 global $nt_post;
 if ($nt_post === false) { header('Location: ../'); exit(1); }
 
@@ -11,11 +11,11 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= \nt\_h($nt_post->getTitle()) ?> - Newtrino Sample Website</title>
+<title><?= \nt\_h($nt_post->getTitle()) ?> - Newtrino Sample</title>
 </head>
 <body>
 	<header>
-		<a href="../"><h1>Newtrino Sample Website</h1></a>
+		<a href="../"><h1>Newtrino Sample</h1></a>
 	</header>
 	<main>
 		<header>

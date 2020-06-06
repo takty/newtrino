@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script src="https://unpkg.com/mustache"></script>
-	<script src="http://localhost/newtrino/topic/core/ajax.min.js"></script>
-	<title>Newtrino Sample</title>
-	<script type="text/html" class="template" data-replace="title" data-section="#post">
-		{{post.title}} - Newtrino Sample
-	</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/mustache"></script>
+<script src="../nt/core/ajax.min.js"></script>
+<title>Newtrino Sample</title>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const API_URL = '../nt/core/ajax.php';
+	NT.render(API_URL, '.template', 'rendered');
+});
+</script>
+<script type="text/html" class="template" data-replace="title" data-section="#post">
+	{{post.title}} - Newtrino Sample
+</script>
 </head>
 
 <body>
 	<header>
 		<h1>Newtrino Sample</h1>
 		<script type="text/html" class="template" data-replace="h1" data-section="#post">
-			<a href="./index.html">Newtrino Sample</a>
+			<a href="./">Newtrino Sample</a>
 		</script>
 	</header>
 	<main>
@@ -122,10 +128,6 @@
 		</div>
 <!-- ======================================================================= -->
 	</main>
-	<script>
-		const API_URL = 'http://localhost/newtrino/topic/core/ajax.php';
-		NT.render(API_URL, '.template', 'rendered');
-	</script>
 </body>
 
 </html>
