@@ -19,8 +19,8 @@ function copySync(from, to) {
 	}
 }
 
-const SRC_PRIVATE = './src/topic/private/';
-const DIST_BASE = './dist/topic/';
+const SRC_PRIVATE = './src/private/';
+const DIST_BASE = './dist/';
 const DIST_PRIVATE = DIST_BASE + 'private/';
 
 gulp.task('copy-jssha', (done) => {
@@ -105,15 +105,6 @@ gulp.task('delete-var', (done) => {
 	done();
 });
 
-// gulp.task('js', () => {
-// 	return gulp.src([SRC_PRIVATE + 'js/**/*.js'])
-// 		.pipe($.plumber())
-// 		.pipe($.babel())
-// 		.pipe($.uglify())
-// 		.pipe($.rename({ extname: '.min.js' }))
-// 		.pipe(gulp.dest(DIST_PRIVATE + 'js'));
-// });
-
 gulp.task('js', () => gulp.src(['src/**/*.js', '!src/**/*.min.js'])
 	.pipe($.plumber())
 	.pipe($.babel())
@@ -131,10 +122,29 @@ gulp.task('sass', () => {
 		.pipe(gulp.dest(DIST_PRIVATE + 'css/'));
 });
 
+gulp.task('sample-html', () => {
+	return gulp.src(['dist/**/*'])
+		.pipe($.plumber())
+		.pipe($.ignore.include({ isFile: true }))
+		.pipe($.changed('sample-html/nt', { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest('sample-html/nt'));
+});
+
+gulp.task('sample-php', () => {
+	return gulp.src(['dist/**/*'])
+		.pipe($.plumber())
+		.pipe($.ignore.include({ isFile: true }))
+		.pipe($.changed('sample-php/nt', { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest('sample-php/nt'));
+});
+
+gulp.task('sample', gulp.series('sample-html', 'sample-php'));
+
 gulp.task('watch', () => {
 	gulp.watch('src/**/*.js', gulp.series('js'));
 	gulp.watch('src/**/*.scss', gulp.series('sass'));
 	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy'));
+	gulp.watch('src/**/*', gulp.series('sample'));
 });
 
 gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass', 'watch'));
