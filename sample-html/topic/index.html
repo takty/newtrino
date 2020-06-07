@@ -20,14 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <body>
 	<header>
-		<h1>
-			<script type="text/html" data-section="#posts">
-				Newtrino Sample
-			</script>
-			<script type="text/html" data-section="#post">
-				<a href="./">Newtrino Sample</a>
-			</script>
-		</h1>
+		<h1><a href="../">Newtrino Sample</a></h1>
 	</header>
 	<main>
 <!-- ======================================================================= -->
@@ -59,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				<div class="filter-date">
 {{#filter.date}}
 					<select onchange="document.location.href = this.value;">
-						<option value="./index.html">Month</option>
+						<option value="./">Month</option>
 						{{#month}}<option value="{{url}}" {{#current}}selected{{/current}}>{{label}}</option>{{/month}}
 					</select>
 {{/filter.date}}
@@ -67,14 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				<div class="filter-taxonomy">
 {{#filter.taxonomy}}
 					<select onchange="document.location.href = this.value;">
-						<option value="./index.html">Category</option>
+						<option value="./">Category</option>
 						{{#category}}<option value="{{url}}" {{#current}}selected{{/current}}>{{label}}</option>{{/category}}
 					</select>
 {{/filter.taxonomy}}
 				</div>
 				<div class="filter-search">
 {{#filter.search}}
-					<form action="./index.html" type="GET">
+					<form action="./" type="GET">
 						<input type="text" name="search" value="{{keyword}}">
 						<input type="submit" value="Search">
 					</form>

@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/nt/core/view.php');
+require_once( __DIR__ . '/nt/core/view.php' );
 $view = \nt\query_recent_posts( 2, './topic/' );
 header('Content-Type: text/html;charset=utf-8');
 ?>
@@ -16,7 +16,7 @@ header('Content-Type: text/html;charset=utf-8');
 	</header>
 	<main>
 		<div class="section section-recent-posts">
-			<?php \nt\render_template_begin(); ?>
+			<?php \nt\begin(); ?>
 				<ul id="list-item-post">
 {{#posts}}
 					<li class="{{status}}">
@@ -34,7 +34,7 @@ header('Content-Type: text/html;charset=utf-8');
 					</li>
 {{/posts}}
 				</ul>
-			<?php \nt\render_template_end( $view ); ?>
+			<?php \nt\end( $view ); ?>
 		</div>
 		<nav>
 			<a href="topic/">Show More...</a>

@@ -165,7 +165,7 @@ window.NT = window['NT'] || {};
 	// -------------------------------------------------------------------------
 
 
-	function _createCanonicalQuery(ps, overwrite) {
+	function _createCanonicalQuery(ps, overwrite = []) {
 		ps = Object.assign({}, ps, overwrite);
 		const qs = [];
 		if (ps['id']) {

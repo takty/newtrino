@@ -14,11 +14,16 @@ require_once( __DIR__ . '/response.php' );
 require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
 
-function query( $callback, $filter = [], $base_url = false ) {
-
+function query( $filter = [ 'date' => 'month', 'taxonomy' => [ 'category' ] ], $base_url = false ) {
+	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+	$msg = [ 'query' => parse_query_string( 'id' ) ];
+	$msg['filter'] = $filter;
+	if ( isset( $msg['query']['id'] ) ) return _create_view_single( $msg, $base_url );
+	return _create_view_archive( $msg, $base_url );
 }
 
 function query_recent_posts( $count = 10, $base_url = false ) {
+	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 	$msg = [ 'query' => [ 'posts_per_page' => $count ], 'filter' => [] ];
 	return _create_view_archive( $msg, $base_url );
 }
@@ -57,6 +62,7 @@ function _create_view_single( $msg, $base_url ) {
 
 function _process_posts_for_view( $items, $base_url ) {
 	foreach ( $items as &$p ) {
+		if ( ! $p ) continue;
 		if ( isset( $p['taxonomy'] ) ) {
 			foreach ( $p['taxonomy'] as $tax_slug => $terms ) {
 				$a = [];
@@ -135,7 +141,7 @@ function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
 }
 
 function _create_taxonomy_filter_view( $msg, $taxonomy, $terms, $base_url ) {
-	$cur = isset( $msg['query']['taxonomy'] ) ? $msg['query']['taxonomy'] : '';
+	$cur = isset( $msg['query'][ $taxonomy ] ) ? $msg['query'][ $taxonomy ] : '';
 	$as = [];
 	foreach ( $terms as $term ) {
 		$cq = _create_canonical_query( [ $taxonomy => $term['slug'] ] );
@@ -153,7 +159,7 @@ function _create_taxonomy_filter_view( $msg, $taxonomy, $terms, $base_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _create_canonical_query( $ps, $overwrite ) {
+function _create_canonical_query( $ps, $overwrite = [] ) {
 	$ps = array_merge( [], $ps, $overwrite );
 	$qs = [];
 	if ( isset( $ps['id'] ) ) {
@@ -181,7 +187,7 @@ function _create_canonical_query( $ps, $overwrite ) {
 
 $mustache_engine = null;
 
-function render_template_begin() {
+function begin() {
 	global $mustache_engine;
 	if ( $mustache_engine === null ) {
 		$mustache_engine = new \Mustache_Engine( [ 'entity_flags' => ENT_QUOTES ] );
@@ -189,16 +195,30 @@ function render_template_begin() {
 	ob_start();
 }
 
-function render_template_end( $view ) {
+function end( $view, $condition = true ) {
 	global $mustache_engine;
 	$tmpl = ob_get_contents();
 	ob_end_clean();
-	echo $mustache_engine->render( $tmpl, $view );
+	if ( $condition ) echo $mustache_engine->render( $tmpl, $view );
 }
 
 
 // -----------------------------------------------------------------------------
 
+
+function parse_query_string( $default_key ) {
+	$ps = [];
+	$default_val = '';
+	foreach ( $_GET as $key => $val ) {
+		if ( empty( $val ) ) {
+			$default_val = $key;
+		} else {
+			$ps[ $key ] = $val;
+		}
+	}
+	if ( ! empty( $default_val ) ) $ps[ $default_key ] = $default_val;
+	return $ps;
+}
 
 function create_query_string( $params ) {
 	$kvs = [];
