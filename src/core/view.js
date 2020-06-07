@@ -234,8 +234,8 @@ window.NT = window['NT'] || {};
 		t.innerHTML = Mustache.render(tmpl.innerHTML, view);
 
 		const cs = [].slice.call(t.childNodes, 0);
-		for (let i = 0; i < cs.length; i += 1) {
-			frag.appendChild(cs[i]);
+		for (let c of cs) {
+			frag.appendChild(c);
 		}
 		return frag;
 	}

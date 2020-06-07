@@ -114,7 +114,9 @@ gulp.task('delete-var', (done) => {
 
 gulp.task('js', () => gulp.src(['src/**/*.js', '!src/**/*.min.js'])
 	.pipe($.plumber())
-	.pipe($.babel())
+	.pipe($.babel({
+		presets: [['@babel/preset-env']],
+	}))
 	.pipe($.terser())
 	.pipe($.rename({ extname: '.min.js' }))
 	.pipe(gulp.dest('./dist'))
