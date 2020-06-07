@@ -1,7 +1,6 @@
 <?php
-require_once(__DIR__ . '/nt/core/init.php');
-
-
+require_once(__DIR__ . '/nt/core/view.php');
+$view = \nt\query_recent_posts( 2, './topic/' );
 header('Content-Type: text/html;charset=utf-8');
 ?>
 <!DOCTYPE html>
@@ -16,7 +15,27 @@ header('Content-Type: text/html;charset=utf-8');
 		<h1>Newtrino Sample</h1>
 	</header>
 	<main>
-		<ul><?php \nt\the_recent(6, '', false, 'topic/'); ?></ul>
+		<div class="section section-recent-posts">
+			<?php \nt\render_template_begin(); ?>
+				<ul id="list-item-post">
+{{#posts}}
+					<li class="{{status}}">
+						<a href="{{url}}">
+							{{#taxonomy.category}}
+							<span class="category">{{label}}</span>
+							{{/taxonomy.category}}
+							{{#taxonomy.$category.event}}
+							<span class="event-date">Event Date: {{meta.event_date_bgn}} to {{meta.event_date_end}}</span>
+							{{/taxonomy.$category.event}}
+							<div class="title">{{title}}</div>
+							<div class="excerpt">{{excerpt}}</div>
+							<div class="date">{{date}}</div>
+						</a>
+					</li>
+{{/posts}}
+				</ul>
+			<?php \nt\render_template_end( $view ); ?>
+		</div>
 		<nav>
 			<a href="topic/">Show More...</a>
 		</nav>
