@@ -75,11 +75,17 @@ gulp.task('copy-stile-sass', (done) => {
 	done();
 });
 
+gulp.task('copy-mustache', (done) => {
+	copySync('./vendor/mustache/mustache/src/Mustache/*', DIST_BASE + 'core/lib/mustache/');
+	done();
+});
+
 gulp.task('copy-lib', gulp.parallel(
 	'copy-jssha',
 	'copy-flatpickr',
 	'copy-tinymce',
 	'copy-stile-sass',
+	'copy-mustache',
 ));
 
 gulp.task('copy-src', (done) => {
@@ -89,6 +95,7 @@ gulp.task('copy-src', (done) => {
 	fs.removeSync(DIST_PRIVATE + 'sass');
 	fs.removeSync(DIST_PRIVATE + 'lib');
 	for (let f of glob.sync(DIST_PRIVATE + 'js/*.js')) fs.removeSync(f);
+	for (let f of glob.sync(DIST_BASE + 'core/*.js')) fs.removeSync(f);
 	done();
 });
 

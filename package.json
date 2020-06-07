@@ -9,7 +9,7 @@
   "author": "Space-Time Inc.",
   "license": "MIT",
   "scripts": {
-    "postinstall": "gulp",
+    "postinstall": "gulp && composer i",
     "start": "gulp"
   },
   "browserslist": [
