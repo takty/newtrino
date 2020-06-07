@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://unpkg.com/mustache"></script>
-<script src="../nt/core/ajax.min.js"></script>
+<script src="../nt/core/view.min.js"></script>
 <title>Newtrino Sample</title>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-	NT.render('../nt/core/ajax.php', '[type="text/html"]', 'rendered');
+	NT.query('../nt/', (view) => {
+		NT.renderTemplate('[type="text/html"]', view);
+	});
 });
 </script>
 <script type="text/html" data-replace="title" data-section="#post">

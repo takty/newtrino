@@ -1,1 +1,4 @@
-#deny from all
+<Files ~ "^(ajax\.html)$">
+  allow from all
+</Files>
+deny from all

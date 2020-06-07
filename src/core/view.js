@@ -1,6 +1,6 @@
 /**
  *
- * Ajax (JS)
+ * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @version 2020-06-07
@@ -13,126 +13,59 @@ window.NT = window['NT'] || {};
 
 (function (NS) {
 
-	function render(url, tmplSel, bodyClass, filter = { date: 'month', taxonomy: ['category'] }) {
-		const msg = { query: NT.parseQueryString('id') };
-		msg.filter = filter;
-		if (msg.query['id']) NT.renderSingle(url, msg, tmplSel, bodyClass);
-		else NT.renderArchive(url, msg, tmplSel, bodyClass);
-	}
-
-
-	// -------------------------------------------------------------------------
-
-/*
-	msg {
-		action: 'recent' or 'archive' or 'single'
-		filter: {
-			date: 'day' or 'month' or 'year'
-			taxonomy: ['category']
-		}
-		query: {
-			id: xxxx
-			date: xxxx, xxxx-xx, xxxx-xx-xx
-			<taxonomy>: term
-			search: xxxx
-			page: x
-		}
-	}
-
-	view {
-		posts: []
-		post: {
-			id:
-			url:
-		}
-		filter: {
-			date: {
-				month: [
-					{
-						label:
-						url:
-					}
-				]
-			}
-			search: {
-				keyword: str
-			}
-			taxonomy: {
-				category: [
-					label:
-					url:
-				]
-			}
-		}
-		navigation {
-			pagination: {
-				previous: p
-				next: p
-				pages: [
-					{
-						label:
-						url:
-					}
-				]
-			}
-		}
-	}
- */
-
-	function renderRecentPosts(url, msg, tmplSel, bodyClass) {
-		msg.action = 'recent';
-		msg.query = { count: 10 }
-		sendRequest(url, msg, (res) => {
-			if (!res || res.status !== 'success') res.posts = [];
-
-			const view = {};
-			view.posts = processForTemplate(res.posts, msg.base_url);
-			renderTemplate(tmplSel, view);
-
-			if (bodyClass) document.body.classList.add(bodyClass);
-		});
-	}
-
-	function renderArchive(url, msg, tmplSel, bodyClass) {
-		msg.action = 'archive';
-		sendRequest(url, msg, (res) => {
-			if (!res || res.status !== 'success') res.posts = [];
-
-			const view = {};
-			view.posts = processForTemplate(res.posts, msg.base_url);
-			view.navigation = {}
-			view.navigation.pagination = createPaginationView(msg, res.page_count, msg.base_url);
-
-			view.filter = createFilterView(msg, res, msg.base_url);
-			renderTemplate(tmplSel, view);
-
-			if (bodyClass) document.body.classList.add(bodyClass);
-		});
-	}
-
-	function renderSingle(url, msg, tmplSel, bodyClass) {
-		msg.action = 'single';
-		sendRequest(url, msg, (res) => {
-			if (!res || res.status !== 'success') res.posts = [];
-
-			const view = {};
-			[view.post] = processForTemplate([res.post], msg.base_url);
-			view.navigation = {}
-			view.navigation.post_navigation = createPostNavigationView(msg, res.adjacent_post, msg.base_url);
-
-			view.filter = createFilterView(msg, res, msg.base_url);
-			renderTemplate(tmplSel, view);
-
-			if (bodyClass) document.body.classList.add(bodyClass);
-		});
-	}
-
-
-	// -------------------------------------------------------------------------
-
-
-	function processForTemplate(items, baseUrl = false) {
+	function query(url, callback, filter = { date: 'month', taxonomy: ['category'] }, baseUrl = false) {
+		url += (url.endsWith('/') ? '' : '/') + 'core/ajax.php';
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
+		const msg = { query: parseQueryString('id') };
+		msg.filter = filter;
+		if (msg.query['id']) _createViewSingle(url, msg, callback, baseUrl);
+		else _createViewArchive(url, msg, callback, baseUrl);
+	}
+
+	function queryRecentPosts(url, callback, count = 10, baseUrl = false) {
+		url += (url.endsWith('/') ? '' : '/') + 'core/ajax.php';
+		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
+		const msg = { query: { posts_per_page: count } };
+		_createViewArchive(url, msg, callback, baseUrl);
+	}
+
+
+	// -------------------------------------------------------------------------
+
+
+	function _createViewArchive(url, msg, callback, baseUrl) {
+		sendRequest(url, msg, (res) => {
+			if (!res || res.status !== 'success') res.posts = [];
+
+			const view = {};
+			view.posts = _processPostsForView(res.posts, baseUrl);
+			view.navigation = {};
+			view.navigation.pagination = _createPaginationView(msg, res.page_count, baseUrl);
+			view.filter = _createFilterView(msg, res, baseUrl);
+
+			callback(view);
+		});
+	}
+
+	function _createViewSingle(url, msg, callback, baseUrl) {
+		sendRequest(url, msg, (res) => {
+			if (!res || res.status !== 'success') res.post = null;
+
+			const view = {};
+			[view.post] = _processPostsForView([res.post], baseUrl);
+			view.navigation = {};
+			view.navigation.post_navigation = _createPostNavigationView(msg, res.adjacent_post, baseUrl);
+			view.filter = _createFilterView(msg, res, baseUrl);
+
+			callback(view);
+		});
+	}
+
+
+	// -------------------------------------------------------------------------
+
+
+	function _processPostsForView(items, baseUrl) {
 		for (let i = 0; i < items.length; i += 1) {
 			const p = items[i];
 			if (!p) continue;
@@ -150,12 +83,11 @@ window.NT = window['NT'] || {};
 		return items;
 	}
 
-	function createPaginationView(msg, pageCount, baseUrl = false) {
-		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
+	function _createPaginationView(msg, pageCount, baseUrl) {
 		const cur = (msg.query && msg.query.page) ? Math.max(1, Math.min(msg.query.page, pageCount)) : 1;
 		const pages = [];
 		for (let i = 1; i <= pageCount; i += 1) {
-			const cq = createCanonicalQuery(msg.query, { page: i });
+			const cq = _createCanonicalQuery(msg.query, { page: i });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: i, url: url };
 			if (i === cur) p['current'] = true;
@@ -168,43 +100,42 @@ window.NT = window['NT'] || {};
 		};
 	}
 
-	function createPostNavigationView(msg, adjacentPosts, baseUrl = false) {
-		const ps = processForTemplate([adjacentPosts.previous, adjacentPosts.next], baseUrl);
+	function _createPostNavigationView(msg, adjacentPosts, baseUrl) {
+		const ps = _processPostsForView([adjacentPosts.previous, adjacentPosts.next], baseUrl);
 		return {
 			previous: ps[0],
 			next    : ps[1],
-		}
+		};
 	}
 
 
 	// -------------------------------------------------------------------------
 
 
-	function createFilterView(msg, res, baseUrl = false) {
+	function _createFilterView(msg, res, baseUrl) {
 		const v = {};
 		if (res.date) {
 			const des = Object.entries(res.date);
-			v.date = createDateFilterView(msg, des[0][0], des[0][1], baseUrl);
+			v.date = _createDateFilterView(msg, des[0][0], des[0][1], baseUrl);
 		}
 		v.taxonomy = {};
 		if (res.taxonomy) {
 			const tes = Object.entries(res.taxonomy);
 			for (let i = 0; i < tes.length; i += 1) {
-				Object.assign(v.taxonomy, createTaxonomyFilterView(msg, tes[i][0], tes[i][1], baseUrl));
+				Object.assign(v.taxonomy, _createTaxonomyFilterView(msg, tes[i][0], tes[i][1], baseUrl));
 			}
 		}
 		v.search = {
 			keyword: (msg.query && msg.query.search) ? msg.query.search : ''
-		}
+		};
 		return v;
 	}
 
-	function createDateFilterView(msg, type, dates, baseUrl = false) {
-		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
+	function _createDateFilterView(msg, type, dates, baseUrl) {
 		const cur = (msg.query && msg.query.date) ? msg.query.date : '';
 		const as = [];
 		for (let i = 0; i < dates.length; i += 1) {
-			const cq = createCanonicalQuery({ date: dates[i].slug });
+			const cq = _createCanonicalQuery({ date: dates[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: dates[i].label, url: url };
 			if (dates[i].slug == cur /* == */) p['current'] = true;
@@ -215,12 +146,11 @@ window.NT = window['NT'] || {};
 		};
 	}
 
-	function createTaxonomyFilterView(msg, taxonomy, terms, baseUrl = false) {
-		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
+	function _createTaxonomyFilterView(msg, taxonomy, terms, baseUrl) {
 		const cur = (msg.query && msg.query[taxonomy]) ? msg.query[taxonomy] : '';
 		const as = [];
 		for (let i = 0; i < terms.length; i += 1) {
-			const cq = createCanonicalQuery({ [taxonomy]: terms[i].slug});
+			const cq = _createCanonicalQuery({ [taxonomy]: terms[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: terms[i].label, url: url };
 			if (terms[i].slug === cur) p['current'] = true;
@@ -235,7 +165,7 @@ window.NT = window['NT'] || {};
 	// -------------------------------------------------------------------------
 
 
-	function createCanonicalQuery(ps, overwrite) {
+	function _createCanonicalQuery(ps, overwrite) {
 		ps = Object.assign({}, ps, overwrite);
 		const qs = [];
 		if (ps['id']) {
@@ -283,7 +213,7 @@ window.NT = window['NT'] || {};
 					}
 				}
 			}
-			const frag = createRenderedFragment(tmpl, view);
+			const frag = _createRenderedFragment(tmpl, view);
 			const app = tmpl.dataset.append ? document.querySelector(tmpl.dataset.append) : null;
 			const rep = tmpl.dataset.replace ? document.querySelector(tmpl.dataset.replace) : null;
 			if (app) {
@@ -298,7 +228,7 @@ window.NT = window['NT'] || {};
 		}
 	}
 
-	function createRenderedFragment(tmpl, view) {
+	function _createRenderedFragment(tmpl, view) {
 		const frag = document.createDocumentFragment();
 		const t = document.createElement('div');
 		t.innerHTML = Mustache.render(tmpl.innerHTML, view);
@@ -375,16 +305,14 @@ window.NT = window['NT'] || {};
 	// -------------------------------------------------------------------------
 
 
-	NS.render             = render;
-	NS.renderRecentPosts  = renderRecentPosts;
-	NS.renderArchive      = renderArchive;
-	NS.renderSingle       = renderSingle;
+	NS.query             = query;
+	NS.queryRecentPosts  = queryRecentPosts;
 
-	NS.renderTemplate     = renderTemplate;
-	NS.sendRequest        = sendRequest;
-	NS.parseQueryString   = parseQueryString;
-	NS.createQueryString  = createQueryString;
-	NS.escapeHtml         = escapeHtml;
-	NS.unescapeHtml       = unescapeHtml;
+	NS.renderTemplate    = renderTemplate;
+	NS.sendRequest       = sendRequest;
+	NS.parseQueryString  = parseQueryString;
+	NS.createQueryString = createQueryString;
+	NS.escapeHtml        = escapeHtml;
+	NS.unescapeHtml      = unescapeHtml;
 
 })(window.NT);
