@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-07
+ * @version 2020-06-22
  *
  */
 
@@ -78,7 +78,7 @@ window.NT = window['NT'] || {};
 					p['taxonomy']['$' + tax_slug] = a;
 				}
 			}
-			p.url = baseUrl + '?' + encodeURIComponent(p.id);
+			p.url = baseUrl + '?' + encodeQueryParam(p.id);
 		}
 		return items;
 	}
@@ -252,13 +252,12 @@ window.NT = window['NT'] || {};
 	}
 
 	function parseQueryString(defaultKey) {
-		const decode = (s) => { return decodeURIComponent(s.replace(/\+/g, ' ')); };
 		const regex = /([^&=]+)=?([^&]*)/g;
 		const str = window.location.search.substring(1);
 
 		let m;
 		const ps = {};
-		while (m = regex.exec(str)) ps[decode(m[1])] = decode(m[2]);
+		while (m = regex.exec(str)) ps[decodeQueryParam(m[1])] = decodeQueryParam(m[2]);
 
 		const es = Object.entries(ps);
 		let defaultVal = '';
@@ -274,22 +273,32 @@ window.NT = window['NT'] || {};
 		const kvs = [];
 		if (Array.isArray(params)) {
 			for (let i = 0; i < params.length; i += 1) {
-				const _key = encodeURIComponent(params[i][0]);
+				const _key = encodeQueryParam(params[i][0]);
 				let v = params[i][1];
 				if (v.constructor.name === 'Array' || v.constructor.name === 'Object') v = JSON.stringify(v);
-				const _val = encodeURIComponent(v);
+				const _val = encodeQueryParam(v);
 				kvs.push(_key + '=' + _val);
 			}
 		} else {
 			for (let key in params) {
-				const _key = encodeURIComponent(key);
+				const _key = encodeQueryParam(key);
 				let v = params[key];
 				if (v.constructor.name === 'Array' || v.constructor.name === 'Object') v = JSON.stringify(v);
-				const _val = encodeURIComponent(v);
+				const _val = encodeQueryParam(v);
 				kvs.push(_key + '=' + _val);
 			}
 		}
 		return kvs.join('&');
+	}
+
+	function encodeQueryParam(str) {
+		return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
+			return '%' + c.charCodeAt(0).toString(16);
+		});
+	}
+
+	function decodeQueryParam(str) {
+		return decodeURIComponent(str.replace(/\+/g, ' '));
 	}
 
 	function escapeHtml(str) {
