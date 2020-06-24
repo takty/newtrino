@@ -2,8 +2,8 @@
  *
  * View (JS)
  *
- * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-22
+ * @author Takuto Yanagida
+ * @version 2020-06-24
  *
  */
 
@@ -16,16 +16,20 @@ window.NT = window['NT'] || {};
 	function query(url, callback, filter = { date: 'month', taxonomy: ['category'] }, baseUrl = false) {
 		url += (url.endsWith('/') ? '' : '/') + 'core/ajax.php';
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
-		const msg = { query: parseQueryString('id') };
-		msg.filter = filter;
-		if (msg.query['id']) _createViewSingle(url, msg, callback, baseUrl);
-		else _createViewArchive(url, msg, callback, baseUrl);
+
+		const msg = { query: parseQueryString('id'), filter: filter };
+		if (msg.query['id']) {
+			_createViewSingle(url, msg, callback, baseUrl);
+		} else {
+			_createViewArchive(url, msg, callback, baseUrl);
+		}
 	}
 
 	function queryRecentPosts(url, callback, count = 10, baseUrl = false) {
 		url += (url.endsWith('/') ? '' : '/') + 'core/ajax.php';
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
-		const msg = { query: { posts_per_page: count } };
+
+		const msg = { query: { posts_per_page: count }, filter: {} };
 		_createViewArchive(url, msg, callback, baseUrl);
 	}
 
