@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida
- * @version 2020-06-07
+ * @version 2020-06-24
  *
  */
 
@@ -16,14 +16,18 @@ require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
 
 function query( $filter = [ 'date' => 'month', 'taxonomy' => [ 'category' ] ], $base_url = false ) {
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-	$msg = [ 'query' => parse_query_string( 'id' ) ];
-	$msg['filter'] = $filter;
-	if ( isset( $msg['query']['id'] ) ) return _create_view_single( $msg, $base_url );
-	return _create_view_archive( $msg, $base_url );
+
+	$msg = [ 'query' => parse_query_string( 'id' ), 'filter' => $filter ];
+	if ( isset( $msg['query']['id'] ) ) {
+		return _create_view_single( $msg, $base_url );
+	} else {
+		return _create_view_archive( $msg, $base_url );
+	}
 }
 
 function query_recent_posts( $count = 10, $base_url = false ) {
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+
 	$msg = [ 'query' => [ 'posts_per_page' => $count ], 'filter' => [] ];
 	return _create_view_archive( $msg, $base_url );
 }

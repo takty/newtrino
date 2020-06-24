@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida
- * @version 2020-06-07
+ * @version 2020-06-24
  *
  */
 
@@ -29,9 +29,12 @@ $nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 function create_response_archive( $query, $filter ) {
 	global $nt_store, $nt_config;
 
+	$query = rearrange_query( $query );
+
 	$_page           = get_param_int( 'page', 1, $query );
 	$_posts_per_page = get_param_int( 'posts_per_page', $nt_config['posts_per_page'], $query );
-	$_cat            = get_param_slug( 'category', '', $query );
+	// $_cat            = get_param_slug( 'category', '', $query );
+	$_cat            = isset( $query['taxonomy']['category'] ) ? $query['taxonomy']['category'] : '';
 	$_date           = get_param_slug( 'date', '', $query );
 	$_search         = get_param_string( 'search', '', $query );
 
@@ -51,8 +54,11 @@ function create_response_archive( $query, $filter ) {
 function create_response_single( $query, $filter ) {
 	global $nt_store;
 
+	$query = rearrange_query( $query );
+
 	$_id     = get_param_slug( 'id', '', $query );
-	$_cat    = get_param_slug( 'category', '', $query );
+	// $_cat    = get_param_slug( 'category', '', $query );
+	$_cat    = isset( $query['taxonomy']['category'] ) ? $query['taxonomy']['category'] : '';
 	$_date   = get_param_slug( 'date', '', $query );
 	$_search = get_param_string( 'search', '', $query );
 
@@ -68,6 +74,47 @@ function create_response_single( $query, $filter ) {
 	];
 	$res += create_archive_data( $filter );
 	return $res;
+}
+
+function rearrange_query( $query ) {
+	$query_vars = [
+		'id'             => 'int',
+		'page'           => 'int',
+		'posts_per_page' => 'int',
+		'date'           => 'slug',
+		'search'         => 'string',
+	];
+	$ret = [];
+	$tcs = [];
+	foreach ( $query as $key => $val ) {
+		if ( ! isset( $query_vars[ $key ] ) ) {
+			$tcs[] = $key;
+			continue;
+		}
+		$fval = null;
+		switch ( $query_vars[ $key ] ) {
+			case 'int':
+				if ( preg_match( '/[^0-9]/', $val ) ) break;
+				$fval = intval( $val );
+				break;
+			case 'slug':
+				if ( preg_match( '/[^a-zA-Z0-9-_]/', $val ) ) break;
+				$fval = $val;
+				break;
+			case 'string':
+				$fval = $val;
+				break;
+		}
+		if ( $fval !== null ) $ret[ $key ] = $val;
+	}
+	$taxonomies = [ 'category' ];  // TODO
+	foreach( $tcs as $tc ) {
+		if ( in_array( $tc, $taxonomies, true ) ) {
+			if ( ! isset( $ret['taxonomy'] ) ) $ret['taxonomy'] = [];
+			$ret['taxonomy'][ $tc ] = $query[ $key ];
+		}
+	}
+	return $ret;
 }
 
 
