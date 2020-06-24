@@ -29,54 +29,58 @@ $nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 function create_response_archive( $query, $filter ) {
 	global $nt_store, $nt_config;
 
-	$query = rearrange_query( $query );
+	$query  = _rearrange_query( $query );
+	$filter = _rearrange_filter( $filter );
 
-	$_page           = get_param_int( 'page', 1, $query );
-	$_posts_per_page = get_param_int( 'posts_per_page', $nt_config['posts_per_page'], $query );
-	// $_cat            = get_param_slug( 'category', '', $query );
+	$_page           = _get_param( 'page', 1, $query );
+	$_posts_per_page = _get_param( 'posts_per_page', $nt_config['posts_per_page'], $query );
 	$_cat            = isset( $query['taxonomy']['category'] ) ? $query['taxonomy']['category'] : '';
-	$_date           = get_param_slug( 'date', '', $query );
-	$_search         = get_param_string( 'search', '', $query );
+	$_date           = _get_param( 'date', '', $query );
+	$_search         = _get_param( 'search', '', $query );
 
 	$ret = $nt_store->getPostsByPage( $_page - 1, $_posts_per_page, [ 'cat' => $_cat, 'date' => $_date, 'search_word' => $_search ] );
 	$posts = [];
-	foreach ( $ret['posts'] as $p ) $posts[] = create_post_data( $p );
+	foreach ( $ret['posts'] as $p ) $posts[] = _create_post_data( $p );
 
 	$res = [
 		'status'     => 'success',
 		'posts'      => $posts,
 		'page_count' => ceil( $ret['size'] / $_posts_per_page ),
 	];
-	$res += create_archive_data( $filter );
+	$res += _create_archive_data( $filter );
 	return $res;
 }
 
 function create_response_single( $query, $filter ) {
 	global $nt_store;
 
-	$query = rearrange_query( $query );
+	$query  = _rearrange_query( $query );
+	$filter = _rearrange_filter( $filter );
 
-	$_id     = get_param_slug( 'id', '', $query );
-	// $_cat    = get_param_slug( 'category', '', $query );
+	$_id     = _get_param( 'id', '', $query );
 	$_cat    = isset( $query['taxonomy']['category'] ) ? $query['taxonomy']['category'] : '';
-	$_date   = get_param_slug( 'date', '', $query );
-	$_search = get_param_string( 'search', '', $query );
+	$_date   = _get_param( 'date', '', $query );
+	$_search = _get_param( 'search', '', $query );
 
 	$ret = $nt_store->getPostWithNextAndPrevious( $_id, [ 'cat' => $_cat, 'date' => $_date, 'search_word' => $_search ] );
 
 	$res = [
 		'status' => 'success',
-		'post'   => create_post_data( $ret ? $ret[1] : false, true ),
+		'post'   => _create_post_data( $ret ? $ret[1] : false, true ),
 		'adjacent_post' => [
-			'previous' => create_post_data( $ret ? $ret[0] : false ),
-			'next'     => create_post_data( $ret ? $ret[2] : false ),
+			'previous' => _create_post_data( $ret ? $ret[0] : false ),
+			'next'     => _create_post_data( $ret ? $ret[2] : false ),
 		]
 	];
-	$res += create_archive_data( $filter );
+	$res += _create_archive_data( $filter );
 	return $res;
 }
 
-function rearrange_query( $query ) {
+
+// -----------------------------------------------------------------------------
+
+
+function _rearrange_query( $query ) {
 	$query_vars = [
 		'id'             => 'int',
 		'page'           => 'int',
@@ -91,20 +95,7 @@ function rearrange_query( $query ) {
 			$tcs[] = $key;
 			continue;
 		}
-		$fval = null;
-		switch ( $query_vars[ $key ] ) {
-			case 'int':
-				if ( preg_match( '/[^0-9]/', $val ) ) break;
-				$fval = intval( $val );
-				break;
-			case 'slug':
-				if ( preg_match( '/[^a-zA-Z0-9-_]/', $val ) ) break;
-				$fval = $val;
-				break;
-			case 'string':
-				$fval = $val;
-				break;
-		}
+		$fval = _filter_param( $val, $query_vars[ $key ] );
 		if ( $fval !== null ) $ret[ $key ] = $val;
 	}
 	$taxonomies = [ 'category' ];  // TODO
@@ -117,11 +108,57 @@ function rearrange_query( $query ) {
 	return $ret;
 }
 
+function _rearrange_filter( $filter ) {
+	$filter_vars = [
+		'date'     => 'slug',
+		'taxonomy' => 'slug_array',
+	];
+	$ret = [];
+	foreach ( $filter as $key => $val ) {
+		$fval = _filter_param( $val, $filter_vars[ $key ] );
+		if ( $fval !== null ) $ret[ $key ] = $val;
+	}
+	return $ret;
+}
+
+function _filter_param( $val, $type ) {
+	$fval = null;
+	switch ( $type ) {
+		case 'int':
+			if ( preg_match( '/[^0-9]/', $val ) ) break;
+			$fval = intval( $val );
+			break;
+		case 'slug':
+			if ( preg_match( '/[^a-zA-Z0-9-_]/', $val ) ) break;
+			$fval = $val;
+			break;
+		case 'string':
+			$fval = $val;
+			break;
+		case 'slug_array':
+			$fval = [];
+			$vals = is_array( $val ) ? $val : [ $val ];
+			foreach ( $val as $v ) {
+				if ( preg_match( '/[^a-zA-Z0-9-_]/', $v ) ) continue;
+				$fval[] = $v;
+			}
+			break;
+	}
+	return $fval;
+}
+
+function _get_param( $key, $default, $assoc ) {
+	if ( isset( $assoc[ $key ] ) ) {
+		return $assoc[ $key ];
+	}
+	return $default;
+}
+
 
 // -----------------------------------------------------------------------------
 
 
-function create_post_data( $p, $include_content = false ) {
+function _create_post_data( $p, $include_content = false ) {
 	if ( ! $p ) return false;
 	$d = [
 		'id'        => $p->getId(),
@@ -153,21 +190,21 @@ function create_post_data( $p, $include_content = false ) {
 	return $d;
 }
 
-function create_archive_data( $filter ) {
+function _create_archive_data( $filter ) {
 	if ( empty( $filter ) ) return [];
 	$res = [];
 	if ( isset( $filter['date'] ) ) {
-		$_date  = get_param_slug( 'date', '', $filter );
-		$res += [ 'date' => get_date_archive( $_date ) ];
+		$_date  = _get_param( 'date', '', $filter );
+		$res += [ 'date' => _get_date_archive( $_date ) ];
 	}
 	if ( isset( $filter['taxonomy'] ) ) {
-		$_taxes = get_param_slug_array( 'taxonomy', [], $filter );
-		$res += [ 'taxonomy' => get_taxonomy_archive( $_taxes ) ];
+		$_taxes = _get_param( 'taxonomy', [], $filter );
+		$res += [ 'taxonomy' => _get_taxonomy_archive( $_taxes ) ];
 	}
 	return $res;
 }
 
-function get_date_archive( $type ) {
+function _get_date_archive( $type ) {
 	global $nt_store;
 	if ( $type === 'month' ) {
 		$dates = $nt_store->getCountByDate();
@@ -182,7 +219,7 @@ function get_date_archive( $type ) {
 	}
 }
 
-function get_taxonomy_archive( $taxonomy_s ) {
+function _get_taxonomy_archive( $taxonomy_s ) {
 	global $nt_store;
 	$ret = [];
 	foreach ( $taxonomy_s as $taxonomy ) {
@@ -194,50 +231,6 @@ function get_taxonomy_archive( $taxonomy_s ) {
 				unset($term['cur']);
 			}
 			$ret[ $taxonomy ] = $terms;
-		}
-	}
-	return $ret;
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-function get_param_int( $key, $default, $assoc ) {
-	if ( isset( $assoc[ $key ] ) && ! preg_match( '/[^0-9]/', $assoc[ $key ] ) ) {
-		return intval( $assoc[ $key ] );
-	}
-	return $default;
-}
-
-function get_param_slug( $key, $default, $assoc ) {
-	if ( isset( $assoc[ $key ] ) && ! preg_match( '/[^a-zA-Z0-9-_]/', $assoc[ $key ] ) ) {
-		return $assoc[ $key ];
-	}
-	return $default;
-}
-
-function get_param_string( $key, $default, $assoc ) {
-	if ( isset( $assoc[ $key ] ) ) {
-		return $assoc[ $key ];
-	}
-	return $default;
-}
-
-function get_param_slug_array( $key, $default, $assoc ) {
-	if ( ! isset( $assoc[ $key ] ) ) return $default;
-	$ret = [];
-	if ( is_array( $assoc[ $key ] ) ) {
-		$vs = $assoc[ $key ];
-		foreach ( $vs as $v ) {
-			if ( ! preg_match( '/[^a-zA-Z0-9-_]/', $v ) ) {
-				$ret[] = $v;
-			}
-		}
-	} else {
-		$v = $assoc[ $key ];
-		if ( ! preg_match( '/[^a-zA-Z0-9-_]/', $v ) ) {
-			$ret[] = $v;
 		}
 	}
 	return $ret;
