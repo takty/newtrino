@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	<main>
 <!-- ======================================================================= -->
 		<header class="entry-header">
-			<script type="text/html" data-section="#posts">
+			<script type="text/html" data-section="^post">
 				<h2>Topics</h2>
 			</script>
 <!-- ----------------------------------------------------------------------- -->
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		</header>
 <!-- ======================================================================= -->
 		<div class="aside aside-filter">
-			<script type="text/html" data-section="#posts">
+			<script type="text/html" data-section="^post">
 				<div class="filter-date">
 {{#filter.date}}
 					<select onchange="document.location.href = this.value;">

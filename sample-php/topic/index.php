@@ -22,7 +22,7 @@ header('Content-Type: text/html;charset=utf-8');
 		<header class="entry-header">
 			<?php \nt\begin(); ?>
 				<h2>Topics</h2>
-			<?php \nt\end( $view, isset( $view['posts'] ) ); ?>
+			<?php \nt\end( $view, ! isset( $view['post'] ) ); ?>
 <!-- ----------------------------------------------------------------------- -->
 			<?php \nt\begin(); ?>
 {{#post}}
@@ -68,7 +68,7 @@ header('Content-Type: text/html;charset=utf-8');
 					</form>
 {{/filter.search}}
 				</div>
-			<?php \nt\end( $view, isset( $view['posts'] ) ); ?>
+			<?php \nt\end( $view, ! isset( $view['post'] ) ); ?>
 		</div>
 <!-- ======================================================================= -->
 		<div class="entry-content">
@@ -90,7 +90,7 @@ header('Content-Type: text/html;charset=utf-8');
 					</li>
 {{/posts}}
 				</ul>
-			<?php \nt\end( $view, isset( $view['posts'] ) ); ?>
+			<?php \nt\end( $view, ! empty( $view['posts'] ) ); ?>
 <!-- ----------------------------------------------------------------------- -->
 			<?php \nt\begin(); ?>
 				{{&post.content}}
