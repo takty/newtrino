@@ -5,7 +5,7 @@ namespace nt;
  * Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2020-06-25
  *
  */
 
@@ -44,10 +44,11 @@ function load_config($dirData) {
 	}
 	// Default Config
 	$conf += [
-		'language' => 'en',
-		'language_private' => 'en',
-		'posts_per_page' => 10,
-		'newly_arrived_day' => 3
+		'language'          => 'en',
+		'language_private'  => 'en',
+		'posts_per_page'    => 10,
+		'newly_arrived_day' => 3,
+		'default_lang'      => 'en',
 	];
 	return $conf;
 }

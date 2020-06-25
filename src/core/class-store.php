@@ -4,15 +4,17 @@ namespace nt;
  *
  * Store
  *
- * @author Space-Time Inc.
- * @version 2018-10-19
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-06-25
  *
  */
 
 
+require_once(__DIR__ . '/compat.php');
 require_once(__DIR__ . '/class-logger.php');
 require_once(__DIR__ . '/class-indexer.php');
 require_once(__DIR__ . '/class-post.php');
+require_once(__DIR__ . '/class-taxonomy.php');
 
 
 class Store {
@@ -60,7 +62,11 @@ class Store {
 
 		$this->_conf = $conf;
 		$this->_urlPrivate = $urlPrivate;  // Only In Private Area
+
+		$this->_taxonomy = new Taxonomy( $dirData, [ 'lang' => 'en' ] );
 	}
+
+	public function taxonomy() { return $this->_taxonomy; }
 
 	private function createPost($id) {
 		return new Post($this->_urlPost, $id, $this->_urlPrivate);
@@ -71,7 +77,7 @@ class Store {
 	public function getPost($id) {
 		$post = $this->createPost($id);
 		if (!$post->load($this->_dirPost)) return false;
-		$post->setCategoryName($this->categorySlugToName($post->getCategory()));
+		$post->setCategoryName( $this->taxonomy()->getTermLabel( 'category', $post->getCategory() ) );
 
 		$pd = date('YmdHis') - $post->getDateTimeNumber();
 		if ($this->_conf['newly_arrived_day'] > 0) {
@@ -215,7 +221,7 @@ class Store {
 				if (strpos($fn, '.') !== 0 && is_dir($this->_dirPost . $fn)) {
 					$post = $this->createPost($fn);
 					$post->load($this->_dirPost);
-					$post->setCategoryName($this->categorySlugToName($post->getCategory()));
+					$post->setCategoryName( $this->taxonomy()->getTermLabel( 'category', $post->getCategory() ) );
 					if (!$published_only || $post->isPublished()) $posts[] = $post;
 				}
 			}
@@ -247,43 +253,9 @@ class Store {
 		return $ret;
 	}
 
-	public function getCategoryData($curCat = '') {
-		if (empty($curCat)) return $this->_loadCategoryData();
-		$data = [];
-		foreach ($this->_catData as $a) {
-			$data[] = ['slug' => $a['slug'], 'name' => $a['name'], 'cur' => ($a['slug'] === $curCat)];
-		}
-		return $data;
-	}
-
-	public function categorySlugToName($slug) {
-		$catName = '';
-		$cd = $this->_loadCategoryData();
-		if ($cd !== false) {
-			foreach ($cd as $c) {
-				if ($c['slug'] === $slug) return $c['name'];
-			}
-		}
-		return '';
-	}
-
-	private function _loadCategoryData() {
-		if (isset($this->_catData)) return $this->_catData;
-		$path = $this->_dirData . 'category';
-		$lines = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		if ($lines === false) {
-			Logger::output('Error (Store::getCategoryData file) [' . $path . ']');
-			return false;
-		}
-		$data = [];
-		foreach ($lines as $line) {
-			$a = explode("\t", $line);
-			$data[] = ['slug' => $a[0], 'name' => $a[1], 'cur' => false];
-		}
-		return $this->_catData = $data;
-	}
 
 	// ------------------------------------------------------------------------
+
 
 	public function createNewPost() {
 		if ($dir = opendir($this->_dirPost)) {
@@ -310,7 +282,9 @@ class Store {
 		return file_exists($this->_dirPost . $id) || file_exists($this->_dirPost . '.' . $id);
 	}
 
+
 	// ------------------------------------------------------------------------
+
 
 	public function writePost($post) {
 		$post->save($this->_dirPost);

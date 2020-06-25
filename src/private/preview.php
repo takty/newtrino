@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2020-06-25
  *
  */
 
@@ -13,9 +13,9 @@ namespace nt;
 require_once(__DIR__ . '/init-private.php');
 
 
-$t_title = $nt_q['post_title'];
-$t_pdate = $nt_q['post_published_date'];
-$t_cat = $nt_store->categorySlugToName($nt_q['post_cat']);
+$t_title   = $nt_q['post_title'];
+$t_pdate   = $nt_q['post_published_date'];
+$t_cat     = $nt_store->taxonomy()->getTermLabel( 'category', $nt_q['post_cat'] );
 $t_content = $nt_q['post_content'];
 
 

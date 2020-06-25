@@ -4,8 +4,8 @@ namespace nt;
  *
  * Response
  *
- * @author Takuto Yanagida
- * @version 2020-06-24
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-06-25
  *
  */
 
@@ -179,7 +179,7 @@ function _create_post_data( $p, $include_content = false ) {
 	$d['taxonomy']['category'] = [
 		[
 			'slug'  => $p->getCategory(),
-			'label' => translate($p->getCategoryName(), 'category'),
+			'label' => $p->getCategoryName(),
 		]
 	];
 	if ($p->getCategory() === 'event') {
@@ -219,19 +219,16 @@ function _get_date_archive( $type ) {
 	}
 }
 
-function _get_taxonomy_archive( $taxonomy_s ) {
+function _get_taxonomy_archive( $taxes ) {
 	global $nt_store;
 	$ret = [];
-	foreach ( $taxonomy_s as $taxonomy ) {
-		if ( $taxonomy === 'category' ) {
-			$terms = $nt_store->getCategoryData();
-			foreach ( $terms as &$term ) {
-				$term['label'] = $term['name'];
-				unset($term['name']);
-				unset($term['cur']);
-			}
-			$ret[ $taxonomy ] = $terms;
+	foreach ( $taxes as $tax ) {
+		$ts = $nt_store->taxonomy()->getTerms( $tax );
+		$cs = [];
+		foreach ( $ts as $t ) {
+			$cs[] = [ 'slug' => $t['slug'], 'label' => $t['label'] ];
 		}
+		$ret[ $tax ] = $cs;
 	}
 	return $ret;
 }

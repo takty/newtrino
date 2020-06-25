@@ -4,8 +4,8 @@ namespace nt;
  *
  * View (PHP)
  *
- * @author Takuto Yanagida
- * @version 2020-06-24
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-06-25
  *
  */
 
@@ -86,7 +86,7 @@ function _create_pagination_view( $msg, $page_count, $base_url ) {
 		$cq = _create_canonical_query( $msg['query'], [ 'page' => $i ] );
 		$url = $base_url . ( ! empty( $cq ) ? ('?' . $cq) : '');
 		$p = [ 'label' => $i, 'url' => $url ];
-		if ( $i === $cur ) $p['current'] = true;
+		if ( $i === $cur ) $p['is_current'] = true;
 		$pages[] = $p;
 	}
 	return [
@@ -136,7 +136,7 @@ function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
 		$cq = _create_canonical_query( [ 'date' => $date['slug'] ] );
 		$url = $base_url . (! empty( $cq ) ? ('?' . $cq) : '');
 		$p = [ 'label' => $date['label'], 'url' => $url ];
-		if ( $date['slug'] === $cur . '' ) $p['current'] = true;
+		if ( $date['slug'] === $cur . '' ) $p['is_current'] = true;
 		$as[] = $p;
 	}
 	return [
@@ -151,7 +151,7 @@ function _create_taxonomy_filter_view( $msg, $taxonomy, $terms, $base_url ) {
 		$cq = _create_canonical_query( [ $taxonomy => $term['slug'] ] );
 		$url = $base_url . (! empty( $cq ) ? ('?' . $cq) : '');
 		$p = [ 'label' => $term['label'], 'url' => $url ];
-		if ( $term['slug'] === $cur ) $p['current'] = true;
+		if ( $term['slug'] === $cur ) $p['is_current'] = true;
 		$as[] = $p;
 	}
 	return [

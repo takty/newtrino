@@ -34,7 +34,7 @@ $t_date_bgn = $nt_q['date_bgn'];
 $t_date_end = $nt_q['date_end'];
 
 $t_page = $nt_q['page'];
-$t_cats = $nt_store->getCategoryData($t_p->getCategory());
+$t_cats = $nt_store->taxonomy()->getTerms( 'category', $t_p->getCategory() );
 
 
 header('Content-Type: text/html;charset=utf-8');

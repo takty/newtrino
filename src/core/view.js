@@ -2,8 +2,8 @@
  *
  * View (JS)
  *
- * @author Takuto Yanagida
- * @version 2020-06-24
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-06-25
  *
  */
 
@@ -94,7 +94,7 @@ window.NT = window['NT'] || {};
 			const cq = _createCanonicalQuery(msg.query, { page: i });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: i, url: url };
-			if (i === cur) p['current'] = true;
+			if (i === cur) p['is_current'] = true;
 			pages.push(p);
 		}
 		return {
@@ -142,7 +142,7 @@ window.NT = window['NT'] || {};
 			const cq = _createCanonicalQuery({ date: dates[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: dates[i].label, url: url };
-			if (dates[i].slug == cur /* == */) p['current'] = true;
+			if (dates[i].slug == cur /* == */) p['is_current'] = true;
 			as.push(p);
 		}
 		return {
@@ -157,7 +157,7 @@ window.NT = window['NT'] || {};
 			const cq = _createCanonicalQuery({ [taxonomy]: terms[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: terms[i].label, url: url };
-			if (terms[i].slug === cur) p['current'] = true;
+			if (terms[i].slug === cur) p['is_current'] = true;
 			as.push(p);
 		}
 		return {
