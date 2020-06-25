@@ -48,7 +48,7 @@ header('Content-Type: text/html;charset=utf-8');
 {{#filter.date}}
 					<select onchange="document.location.href = this.value;">
 						<option value="./">Month</option>
-						{{#month}}<option value="{{url}}" {{#current}}selected{{/current}}>{{label}}</option>{{/month}}
+						{{#month}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/month}}
 					</select>
 {{/filter.date}}
 				</div>
@@ -56,7 +56,7 @@ header('Content-Type: text/html;charset=utf-8');
 {{#filter.taxonomy}}
 					<select onchange="document.location.href = this.value;">
 						<option value="./">Category</option>
-						{{#category}}<option value="{{url}}" {{#current}}selected{{/current}}>{{label}}</option>{{/category}}
+						{{#category}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/category}}
 					</select>
 {{/filter.taxonomy}}
 				</div>
@@ -112,7 +112,7 @@ header('Content-Type: text/html;charset=utf-8');
 {{#navigation.pagination}}
 					<a href="{{previous}}">Previous</a>
 					<select onchange="document.location.href = this.value;">
-						{{#pages}}<option value="{{url}}" {{#current}}selected{{/current}}>{{label}}</option>{{/pages}}
+						{{#pages}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/pages}}
 					</select>
 					<a href="{{next}}">Next</a>
 {{/navigation.pagination}}
