@@ -1,6 +1,6 @@
 <?php
 require_once( __DIR__ . '/../nt/core/view.php' );
-$view = \nt\query();
+$view = \nt\query( [ 'config' => [ 'lang' => 'ja' ] ] );
 header('Content-Type: text/html;charset=utf-8');
 ?>
 <!DOCTYPE html>
@@ -32,7 +32,7 @@ header('Content-Type: text/html;charset=utf-8');
 				<h2>{{title}}</h2>
 				{{#taxonomy.$category.event}}
 				<span class="event-term {{meta.event_state}}">
-					Event Date: {{meta.event_date_bgn}} to {{meta.event_date_end}}
+					Event Date: {{meta.date_bgn}} to {{meta.date_end}}
 				</span>
 				{{/taxonomy.$category.event}}
 				{{^taxonomy.$category.event}}
@@ -47,8 +47,8 @@ header('Content-Type: text/html;charset=utf-8');
 				<div class="filter-date">
 {{#filter.date}}
 					<select onchange="document.location.href = this.value;">
-						<option value="./">Month</option>
-						{{#month}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/month}}
+						<option value="./">Year</option>
+						{{#year}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/year}}
 					</select>
 {{/filter.date}}
 				</div>
@@ -81,7 +81,7 @@ header('Content-Type: text/html;charset=utf-8');
 							<span class="category">{{label}}</span>
 							{{/taxonomy.category}}
 							{{#taxonomy.$category.event}}
-							<span class="event-date">Event Date: {{meta.event_date_bgn}} to {{meta.event_date_end}}</span>
+							<span class="event-date">Event Date: {{meta.date_bgn}} to {{meta.date_end}}</span>
 							{{/taxonomy.$category.event}}
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{excerpt}}</div>

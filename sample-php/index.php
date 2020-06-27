@@ -1,6 +1,6 @@
 <?php
 require_once( __DIR__ . '/nt/core/view.php' );
-$view = \nt\query_recent_posts( 2, './topic/' );
+$view = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/' ] );
 header('Content-Type: text/html;charset=utf-8');
 ?>
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ header('Content-Type: text/html;charset=utf-8');
 							<span class="category">{{label}}</span>
 							{{/taxonomy.category}}
 							{{#taxonomy.$category.event}}
-							<span class="event-date">Event Date: {{meta.event_date_bgn}} to {{meta.event_date_end}}</span>
+							<span class="event-date">Event Date: {{meta.date_bgn}} to {{meta.date_end}}</span>
 							{{/taxonomy.$category.event}}
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{excerpt}}</div>

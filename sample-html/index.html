@@ -22,7 +22,7 @@
 							<span class="category">{{label}}</span>
 							{{/taxonomy.category}}
 							{{#taxonomy.$category.event}}
-							<span class="event-date">Event Date: {{meta.event_date_bgn}} to {{meta.event_date_end}}</span>
+							<span class="event-date">Event Date: {{meta.date_bgn}} to {{meta.date_end}}</span>
 							{{/taxonomy.$category.event}}
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{excerpt}}</div>
@@ -41,7 +41,7 @@
 		document.addEventListener('DOMContentLoaded', () => {
 			NT.queryRecentPosts('nt/', (view) => {
 				NT.renderTemplate('[type="text/html"]', view);
-			}, 2, './topic/');
+			}, { count: 2, base_url: './topic/' } );
 		});
 	</script>
 </body>
