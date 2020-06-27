@@ -24,7 +24,7 @@ const DIST_BASE = './dist/';
 const DIST_PRIVATE = DIST_BASE + 'private/';
 
 gulp.task('copy-jssha', (done) => {
-	copySync('./node_modules/jssha/src/sha256.js', DIST_PRIVATE + 'js/jssha/');
+	copySync('./node_modules/jssha/dist/sha256.js', DIST_PRIVATE + 'js/jssha/');
 	done();
 });
 
