@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-24
+ * @version 2020-06-25
  *
  */
 
@@ -34,7 +34,24 @@ $t_date_bgn = $nt_q['date_bgn'];
 $t_date_end = $nt_q['date_end'];
 
 $t_page = $nt_q['page'];
-$t_cats = $nt_store->taxonomy()->getTerms( 'category', $t_p->getCategory() );
+
+
+function echo_taxonomy_metabox( $tax_slug, $post ) {
+	global $nt_store;
+	$tax = $nt_store->taxonomy()->getTaxonomy( $tax_slug );
+	$tss = $post->getTermSlugs( $tax_slug );
+	$ts  = $nt_store->taxonomy()->getTermAll( $tax_slug, $tss );
+?>
+	<div class="frame">
+		<h3><?= _h( $tax['label'] ) ?></h3>
+		<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
+<?php foreach( $ts as $t ): ?>
+			<option value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_current'] ) _eh( ' selected' ); ?>><?= _h( $t['label'] ) ?></option>
+<?php endforeach; ?>
+		</select>
+	</div>
+<?php
+}
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -85,10 +102,10 @@ header('Content-Type: text/html;charset=utf-8');
 					<h3><?= _ht('Publish') ?></h3>
 					<input form="form-post" type="text" name="post_published_date" id="post_published_date" value="<?= _h($t_p->getPublishedDateTime()) ?>">
 					<div class="btn-row">
-						<select form="form-post" name="post_state" id="post_state">
-							<option id="post_state_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>><?= _ht('Published') ?></option>
-							<option id="post_state_reserved" value="reserved"<?php if ($t_p->isReserved()) {_eh(' selected');} ?>><?= _ht('Reserved') ?></option>
-							<option id="post_state_draft" value="draft"<?php if ($t_p->isDraft()) {_eh(' selected');} ?>><?= _ht('Draft') ?></option>
+						<select form="form-post" name="post_status" id="post_status">
+							<option id="post_status_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>><?= _ht('Published') ?></option>
+							<option id="post_status_reserved" value="reserved"<?php if ($t_p->isReserved()) {_eh(' selected');} ?>><?= _ht('Reserved') ?></option>
+							<option id="post_status_draft" value="draft"<?php if ($t_p->isDraft()) {_eh(' selected');} ?>><?= _ht('Draft') ?></option>
 						</select>
 					</div>
 					<div>
@@ -97,23 +114,16 @@ header('Content-Type: text/html;charset=utf-8');
 					</div>
 					<p class="message" id="message_enter_title"><?= _ht('The title is blank.') ?></p>
 				</div>
-				<div class="frame">
-					<h3><?= _ht('Category') ?></h3>
-					<select form="form-post" name="post_cat" id="post_cat">
-<?php foreach($t_cats as $c): ?>
-						<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected'); ?>><?= _ht($c['name'], 'category') ?></option>
-<?php endforeach; ?>
-					</select>
-				</div>
+				<?php echo_taxonomy_metabox( 'category', $t_p ); ?>
 				<div class="frame" id="frame-event-duration">
 					<h3><?= _ht('Event Duration') ?></h3>
 					<p class="flatpickr" id="event_date_bgn_wrap">
-						<input form="form-post" type="text" name="event_date_bgn" id="event_date_bgn" value="<?= _h($t_p->getEventDateBgn()) ?>" data-input>
+						<input form="form-post" type="text" name="date_bgn" id="event_date_bgn" value="<?= _h($t_p->getEventDateBgn()) ?>" data-input>
 						<a class="input-button" data-clear></a>
 					</p>
 					<div class="to"> - </div>
 					<p class="flatpickr" id="event_date_end_wrap">
-						<input form="form-post" type="text" name="event_date_end" id="event_date_end" value="<?= _h($t_p->getEventDateEnd()) ?>" data-input>
+						<input form="form-post" type="text" name="date_end" id="event_date_end" value="<?= _h($t_p->getEventDateEnd()) ?>" data-input>
 						<a class="input-button" data-clear></a>
 					</p>
 				</div>

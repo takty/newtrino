@@ -1,0 +1,24 @@
+[
+    {
+        "slug": "category",
+        "label": "Categories",
+        "label@ja": "カテゴリ",
+        "sg_label": "Category",
+        "is_exclusive": true,
+        "post_types": [
+            "post"
+        ],
+        "terms": [
+            {
+                "slug": "news",
+                "label@en": "News",
+                "label@ja": "ニュース"
+            },
+            {
+                "slug": "event",
+                "label@en": "Events",
+                "label@ja": "イベント"
+            }
+        ]
+    }
+]

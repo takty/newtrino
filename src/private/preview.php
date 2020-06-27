@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-06-26
  *
  */
 
@@ -15,8 +15,21 @@ require_once(__DIR__ . '/init-private.php');
 
 $t_title   = $nt_q['post_title'];
 $t_pdate   = $nt_q['post_published_date'];
-$t_cat     = $nt_store->taxonomy()->getTermLabel( 'category', $nt_q['post_cat'] );
 $t_content = $nt_q['post_content'];
+
+global $nt_store;
+$taxes = $nt_store->taxonomy()->getTaxonomyAll();
+$tax_labels = [];
+foreach ( $taxes as $tax => $data ) {
+	if ( ! isset( $nt_q["taxonomy:$tax"] ) ) continue;
+	$ts = is_array( $nt_q["taxonomy:$tax"] ) ? $nt_q["taxonomy:$tax"] : [ $nt_q["taxonomy:$tax"] ];
+	$ls = [];
+	foreach ( $ts as $t ) {
+		$l = $nt_store->taxonomy()->getTermLabel( $tax, $t );
+		if ( ! empty( $l ) ) $ls[] = $l;
+	}
+	if ( ! empty( $ls ) ) $tax_labels[ $tax ] = implode( ', ', $ls );
+}
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -37,7 +50,9 @@ header('Content-Type: text/html;charset=utf-8');
 		<header>
 			<h3><?= _h($t_title) ?></h3>
 			<span class="date"><?= _h($t_pdate) ?></span>
-			<span class="cat"> [<?= _ht($t_cat, 'category') ?>]</span>
+<?php foreach ( $tax_labels as $tax => $labels ) : ?>
+			<span class="taxonomy-<?= _h( $tax ) ?>"> [<?= _h( $labels  ) ?>]</span>
+<?php endforeach; ?>
 		</header>
 		<div class="post-content"><?= $t_content ?></div>
 	</main>

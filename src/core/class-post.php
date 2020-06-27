@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-08-05
+ * @version 2020-06-26
  *
  */
 
@@ -25,9 +25,9 @@ class Post {
 	const CONT_FILE_NAME = 'content.html';
 	const WORD_FILE_NAME = 'word.txt';
 
-	const STATE_PUBLISHED = 'published';
-	const STATE_RESERVED  = 'reserved';
-	const STATE_DRAFT     = 'draft';
+	const STATUS_PUBLISHED = 'published';
+	const STATUS_RESERVED  = 'reserved';
+	const STATUS_DRAFT     = 'draft';
 
 	static function compareDate($a, $b) {
 		$da = $a->getDateTimeNumber();
@@ -43,12 +43,36 @@ class Post {
 		return ($da > $db) ? -1 : 1;
 	}
 
+	static function parseDateTime( $dateTime ) {
+		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dataTime );
+	}
+
+	static function numberifyDateTime( $dateTime ) {
+		return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dataTime );
+	}
+
+	static function parseDate( $date ) {
+		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $data );
+	}
+
+	static function numberifyDate( $date ) {
+		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $dataTime );
+	}
+
+	static function parseTime( $time ) {
+		return preg_replace( '/(\d{2})(\d{2})(\d{2})/', '$1:$2:$3', $time );
+	}
+
+	static function numberifyTime( $time ) {
+		return preg_replace( '/(\d{2}):(\d{2}):(\d{2})/', '$1$2$3', $time );
+	}
+
 	// ------------------------------------------------------------------------
 
 	private $_postPath = '';
 	private $_id;
 
-	function __construct($urlPost, $id, $urlPrivate = false) {
+	function __construct($urlPost, $id, $urlPrivate = false ) {
 		$this->_urlPost = $urlPost;
 		$this->_id = $id;
 		$this->_urlPrivate = $urlPrivate;  // Only In Private Area
@@ -63,24 +87,31 @@ class Post {
 		$this->_id = $id;
 	}
 
-	function assign($vals) {
-		$modDate = date('Y-m-d H:i:s');
-		$creDate = (!empty($vals['post_created_date'])) ? $vals['post_created_date'] : $modDate;
-		$pubDate = (!empty($vals['post_published_date'])) ? $vals['post_published_date'] : $modDate;
+	function assign( $vals ) {
+		$modDate = date( 'Y-m-d H:i:s' );
+		// $creDate = empty( $vals['post_created_date'] )   ? $modDate : $vals['post_created_date'];
+		$pubDate = empty( $vals['post_published_date'] ) ? $modDate : $vals['post_published_date'];
 
 		$this->setTitle($vals['post_title']);
-		$this->setCategory($vals['post_cat']);
-		$this->setCreatedDate($creDate);
+
+		global $nt_store;
+		$taxes = $nt_store->taxonomy()->getTaxonomyAll();
+		foreach ( $taxes as $tax => $data ) {
+			if ( ! isset( $vals["taxonomy:$tax"] ) ) continue;
+			$ts = is_array( $vals["taxonomy:$tax"] ) ? $vals["taxonomy:$tax"] : [ $vals["taxonomy:$tax"] ];
+			$this->setTermSlugs( '$tax', $ts );
+		}
+		// $this->setCreatedDate($creDate);
 		$this->setModifiedDate($modDate);
 		$this->setPublishedDate($pubDate);
-		$this->setState($vals['post_state']);
+		$this->setState($vals['post_status']);
 		$this->setContent($vals['post_content']);
 		$this->_assignCustom($vals);
 	}
 
-	function load($storePath) {
+	function load( $storePath, $meta = false ) {
 		$this->_postPath = $storePath . $this->_id . '/';
-		$ret = $this->_readMeta($this->_postPath);
+		$ret = $this->_readMeta( $this->_postPath, $meta );
 		return $ret;
 	}
 
@@ -105,35 +136,41 @@ class Post {
 	// Meta Data --------------------------------------------------------------
 
 	private $_title = '';
-	private $_cat = '';
+	private $_taxonomy = [];
 	private $_datePublished = '';
 	private $_dateCreated = '';
 	private $_dateModified = '';
 	private $_isPublished = false;
-	private $_state = self::STATE_PUBLISHED;
+	private $_status = self::STATUS_PUBLISHED;
 
-	private function _readMeta($postDir) {
-		$metaPath = $postDir . self::META_FILE_NAME;
-		$metaStr = @file_get_contents($metaPath);
-		if ($metaStr === false) {
-			Logger::output('Error (Post::_readMeta file_get_contents) [' . $metaPath . ']');
-			return false;
+	private function _readMeta( $postDir, $preloadedMeta = false ) {
+		if ( $preloadedMeta ) {
+			$metaAssoc = $preloadedMeta;
+			if ( isset( $metaAssoc['_index_score'] ) ) $this->_indexScore = $metaAssoc['_index_score'];
+		} else {
+			$metaPath = $postDir . self::META_FILE_NAME;
+			$metaStr = @file_get_contents($metaPath);
+			if ($metaStr === false) {
+				Logger::output('Error (Post::_readMeta file_get_contents) [' . $metaPath . ']');
+				return false;
+			}
+			$metaAssoc = json_decode($metaStr, true);
 		}
-		$metaAssoc = json_decode($metaStr, true);
-		$metaAssoc += ['title' => '', 'category' => '', 'state' => self::STATE_PUBLISHED];
 
-		$this->_title = $metaAssoc['title'];
-		$this->_cat   = $metaAssoc['category'];
-		$this->_state = $metaAssoc['state'];
-		$this->_dateCreated   = $metaAssoc['created_date'];
+		$metaAssoc += [ 'title' => '', 'taxonomy' => [], 'status' => self::STATUS_PUBLISHED ];
+
+		$this->_title         = $metaAssoc['title'];
+		$this->_status        = $metaAssoc['status'];
+		$this->_taxonomy      = $metaAssoc['taxonomy'];
+		// $this->_dateCreated   = $metaAssoc['created_date'];
 		$this->_dateModified  = $metaAssoc['modified_date'];
 		$this->_datePublished = $metaAssoc['published_date'];
 		$this->_readCustomMeta($metaAssoc);
 
-		if ($this->_state !== self::STATE_DRAFT) {
-			$newState = $this->canPublished() ? self::STATE_PUBLISHED : self::STATE_RESERVED;
-			if ($newState !== $this->_state) {
-				$this->_state = $newState;
+		if ($this->_status !== self::STATUS_DRAFT) {
+			$newState = $this->canPublished() ? self::STATUS_PUBLISHED : self::STATUS_RESERVED;
+			if ($newState !== $this->_status) {
+				$this->_status = $newState;
 				$this->_writeMeta($postDir);
 			}
 		}
@@ -143,10 +180,10 @@ class Post {
 	private function _writeMeta($postDir) {
 		$metaAssoc = [];
 
-		$metaAssoc['title']    = $this->_title;
-		$metaAssoc['category'] = $this->_cat;
-		$metaAssoc['state']    = $this->_state;
-		$metaAssoc['created_date']   = $this->_dateCreated;
+		$metaAssoc['title']          = $this->_title;
+		$metaAssoc['status']         = $this->_status;
+		$metaAssoc['taxonomy']       = $this->_taxonomy;
+		// $metaAssoc['created_date']   = $this->_dateCreated;
 		$metaAssoc['modified_date']  = $this->_dateModified;
 		$metaAssoc['published_date'] = $this->_datePublished;
 		$this->_writeCustomMeta($metaAssoc);
@@ -167,9 +204,25 @@ class Post {
 		return $this->_title;
 	}
 
-	function getCategory() {
-		return $this->_cat;
+	// ----
+
+	function hasTerm( string $tax_slug, string $term_slug ) {
+		return in_array( $term_slug, $this->getTermSlugs( $tax_slug ), true );
 	}
+
+	function getTermSlugs( string $tax_slug ) {
+		return isset( $this->_taxonomy[ $tax_slug ] ) ? $this->_taxonomy[ $tax_slug ] : [];
+	}
+
+	function getTaxonomyToTermSlugs() {
+		return $this->_taxonomy;
+	}
+
+	function setTermSlugs( string $tax_slug, array $term_slugs ) {
+		$this->_taxonomy[ $tax_slug ] = array_values( array_unique( $term_slugs ) );
+	}
+
+	// ----
 
 	function getPublishedDate() {
 		$dt = explode(' ', $this->_datePublished);
@@ -193,24 +246,24 @@ class Post {
 		return $this->_dateModified;
 	}
 
-	function getCreatedDateTime() {
-		return $this->_dateCreated;
-	}
+	// function getCreatedDateTime() {
+	// 	return $this->_dateCreated;
+	// }
 
 	function getState() {
-		return $this->_state;
+		return $this->_status;
 	}
 
 	function isPublished() {
-		return $this->_state === self::STATE_PUBLISHED;
+		return $this->_status === self::STATUS_PUBLISHED;
 	}
 
 	function isReserved() {
-		return $this->_state === self::STATE_RESERVED;
+		return $this->_status === self::STATUS_RESERVED;
 	}
 
 	function isDraft() {
-		return $this->_state === self::STATE_DRAFT;
+		return $this->_status === self::STATUS_DRAFT;
 	}
 
 	function canPublished() {
@@ -223,9 +276,6 @@ class Post {
 		$this->_title = $val;
 	}
 
-	function setCategory($val) {
-		$this->_cat = $val;
-	}
 
 	function setPublishedDate($val) {
 		if ($val === 'now') $val = date('Y-m-d H:i:s');
@@ -241,30 +291,30 @@ class Post {
 	}
 
 	function setState($val) {
-		if ($val !== self::STATE_PUBLISHED && $val !== self::STATE_RESERVED && $val !== self::STATE_DRAFT) return;
-		$this->_state = $val;
+		if ($val !== self::STATUS_PUBLISHED && $val !== self::STATUS_RESERVED && $val !== self::STATUS_DRAFT) return;
+		$this->_status = $val;
 	}
 
 	// Custom Meta Data -------------------------------------------------------
 
-	const EVENT_STATE_SCHEDULED = 'scheduled';
-	const EVENT_STATE_HELD      = 'held';
-	const EVENT_STATE_FINISHED  = 'finished';
+	const EVENT_STATUS_SCHEDULED = 'scheduled';
+	const EVENT_STATUS_HELD      = 'held';
+	const EVENT_STATUS_FINISHED  = 'finished';
 	const EVENT_DATE_NAN = 'NaN-aN-aN';
 
 	protected function _assignCustom($vals) {
-		if (!empty($vals['event_date_bgn'])) $this->setEventDateBgn($vals['event_date_bgn']);
-		if (!empty($vals['event_date_end'])) $this->setEventDateEnd($vals['event_date_end']);
+		if (!empty($vals['date_bgn'])) $this->setEventDateBgn($vals['date_bgn']);
+		if (!empty($vals['date_end'])) $this->setEventDateEnd($vals['date_end']);
 	}
 
 	protected function _readCustomMeta($metaAssoc) {
-		$this->_dateEventBgn = empty($metaAssoc['event_date_bgn']) ? null : $metaAssoc['event_date_bgn'];
-		$this->_dateEventEnd = empty($metaAssoc['event_date_end']) ? null : $metaAssoc['event_date_end'];
+		$this->_dateEventBgn = empty($metaAssoc['meta']['date_bgn']) ? null : $metaAssoc['meta']['date_bgn'];
+		$this->_dateEventEnd = empty($metaAssoc['meta']['date_end']) ? null : $metaAssoc['meta']['date_end'];
 	}
 
 	protected function _writeCustomMeta(&$metaAssoc) {
-		if (!empty($this->_dateEventBgn)) $metaAssoc['event_date_bgn'] = $this->_dateEventBgn;
-		if (!empty($this->_dateEventEnd)) $metaAssoc['event_date_end'] = $this->_dateEventEnd;
+		if (!empty($this->_dateEventBgn)) $metaAssoc['meta']['date_bgn'] = $this->_dateEventBgn;
+		if (!empty($this->_dateEventEnd)) $metaAssoc['meta']['date_end'] = $this->_dateEventEnd;
 	}
 
 	function getEventDateBgn() {
@@ -287,9 +337,9 @@ class Post {
 		$bgn = str_replace(['-'], '', empty($this->_dateEventBgn) ? 0 : $this->_dateEventBgn);
 		$end = str_replace(['-'], '', empty($this->_dateEventEnd) ? 99999999 : $this->_dateEventEnd);
 		$now = date('Ymd');
-		if ($now < $bgn) return self::EVENT_STATE_SCHEDULED;
-		if ($end < $now) return self::EVENT_STATE_FINISHED;
-		return self::EVENT_STATE_HELD;
+		if ($now < $bgn) return self::EVENT_STATUS_SCHEDULED;
+		if ($end < $now) return self::EVENT_STATUS_FINISHED;
+		return self::EVENT_STATUS_HELD;
 	}
 
 	// Content ----------------------------------------------------------------
@@ -391,17 +441,8 @@ class Post {
 
 	// Unstored Meta ----------------------------------------------------------
 
-	private $_catName    = '';
 	private $_isNewItem  = false;
 	private $_indexScore = null;
-
-	function setCategoryName($val) {
-		$this->_catName = $val;
-	}
-
-	function getCategoryName() {
-		return $this->_catName;
-	}
 
 	function setNewItem($val) {
 		$this->_isNewItem = $val;
@@ -421,7 +462,7 @@ class Post {
 	function getStateClasses() {
 		$cs = [];
 		if ($this->isNewItem()) $cs[] = 'new';
-		if ($this->getCategory() === 'event') $cs[] = $this->getEventState();
+		if ( $this->hasTerm( 'category', 'event' ) ) $cs[] = $this->getEventState();
 		return implode(' ', $cs);
 	}
 

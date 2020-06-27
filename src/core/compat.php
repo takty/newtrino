@@ -9,8 +9,13 @@ namespace nt;
  *
  */
 
+require_once( __DIR__ . '/define.php' );
+require_once( __DIR__ . '/function.php' );
+require_once( __DIR__ . '/class-logger.php' );
+require_once( __DIR__ . '/class-post.php' );
 
-require_once(__DIR__ . '/class-logger.php');
+convert_category_file( NT_DIR_DATA );
+convert_post_file( NT_DIR_POST );
 
 
 function convert_category_file( $dir_data ) {
@@ -40,13 +45,62 @@ function convert_category_file( $dir_data ) {
 		'post_types' => [ 'post' ],
 		'terms'     => $terms
 	];
-	$json = json_encode( $taxonomy, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 	$out_path = $dir_data . 'taxonomy.json';
+	$json = json_encode( $taxonomy, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 	$res = file_put_contents( $out_path, $json, LOCK_EX );
 
 	if ( $res === false ) {
 		Logger::output( 'Error (convert_category_file) [' . $out_path . ']' );
 		return false;
 	}
+	echo "<p>convert_category_file: ok</p>";
 	return true;
+}
+
+function convert_post_file( $dirPost ) {
+	if ( $dir = opendir( $dirPost ) ) {
+		while ( ( $fn = readdir( $dir ) ) !== false ) {
+			if ( strpos( $fn, '.' ) !== 0 && is_dir( $dirPost . $fn ) ) {
+				$path = $dirPost . $fn . '/' . Post::META_FILE_NAME;
+
+				$json = file_get_contents( $path );
+				if ( $json === false ) {
+					Logger::output('Error (convert_post_file file_get_contents) [' . $path . ']');
+					return false;
+				}
+				$d = json_decode( $json, true );
+
+				if ( isset( $d['state'] ) ) {
+					$d['status'] = $d['state'];
+					unset( $d['state'] );
+				}
+
+				if ( isset( $d['category'] ) ) {
+					$d['taxonomy'] = [ 'category' => [ $d['category'] ] ];
+					unset( $d['category'] );
+				}
+
+				$meta = [];
+				if ( isset( $d['event_date_bgn'] ) ) {
+					$meta['date_bgn'] = $d['event_date_bgn'];
+					unset( $d['event_date_bgn'] );
+				}
+				if ( isset( $d['event_date_end'] ) ) {
+					$meta['date_end'] = $d['event_date_end'];
+					unset( $d['event_date_end'] );
+				}
+				if ( ! empty( $meta ) ) $d['meta'] = $meta;
+
+				$json = json_encode( $d, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+				$res = file_put_contents( $path, $json, LOCK_EX );
+
+				if ( $res === false ) {
+					Logger::output( 'Error (convert_post_file file_put_contents) [' . $out_path . ']' );
+					return false;
+				}
+			}
+		}
+		closedir($dir);
+	}
+	echo "<p>convert_post_file: ok</p>";
 }

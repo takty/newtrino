@@ -5,7 +5,7 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-11-02
+ * @version 2020-06-25
  *
  */
 
@@ -17,9 +17,35 @@ if ($nt_q['mode'] === 'delete') {
 	$nt_store->delete($nt_q['id']);
 }
 $ppp = $nt_q['posts_per_page'];
-$ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'date_bgn' => $nt_q['date_bgn'], 'date_end' => $nt_q['date_end'], 'published_only' => false]);
+// $ret = $nt_store->getPostsByPage($nt_q['page'] - 1, $ppp, ['cat' => $nt_q['cat'], 'date' => $nt_q['date'], 'date_bgn' => $nt_q['date_bgn'], 'date_end' => $nt_q['date_end'], 'published_only' => false]);
+$args = [
+	'page' => $nt_q['page'],
+	'posts_per_page' => $ppp,
+	'status' => null,
+];
+if ( $nt_q['date'] ) $args['date_query'] = [ [ 'date' => $nt_q['date'] ] ];
+if ( $nt_q['date_bgn'] || $nt_q['date_end'] ) {
+	$dq = [];
+	if ( $nt_q['date_bgn'] ) {
+		$dq['after'] = [ 'date' => $nt_q['date_bgn'] ];
+	}
+	if ( $nt_q['date_end'] ) {
+		$dq['before'] = [ 'date' => $nt_q['date_end'] ];
+	}
+	$args['date_query'] = [ $dq ];
+}
+if ( ! empty( $nt_q['cat'] ) ) {
+	$tq = [];
+	// foreach ( $query['taxonomy'] as $tax => $ts ) {
+		$tq[] = [ 'taxonomy' => 'category', 'terms' => [ $nt_q['cat'] ] ];
+	// }
+	if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
+}
+$ret = $nt_store->getPostsByPage( $args );
+
+
 $t_posts = $ret['posts'];
-$page = $ret['page'] + 1;
+$page = $ret['page'];
 
 $t_pgs = []; $t_pg_prev = false; $t_pg_next = false;
 if ($ppp < $ret['size']) {
@@ -36,7 +62,7 @@ $t_date     = $nt_q['date'];
 $t_date_bgn = $nt_q['date_bgn'];
 $t_date_end = $nt_q['date_end'];
 
-$t_cats = $nt_store->taxonomy()->getTerms( 'category', $nt_q['cat'] );
+$t_cats = $nt_store->taxonomy()->getTermAll( 'category', [ $nt_q['cat'] ] );
 $t_page = $page;
 
 
@@ -80,7 +106,7 @@ header('Content-Type: text/html;charset=utf-8');
 				<select onchange="changeCategory(this.value);">
 					<option value=""><?= _ht('All') ?></option>
 <?php foreach($t_cats as $c): ?>
-						<option value="<?= _h($c['slug']) ?>"<?php if ($c['cur']) _eh(' selected') ?>><?= _ht($c['name'], 'category') ?></option>
+						<option value="<?= _h($c['slug']) ?>"<?php if ( isset( $c['is_current'] ) && $c['is_current'] ) _eh(' selected') ?>><?= _h($c['label']) ?></option>
 <?php endforeach; ?>
 				</select>
 			</div>
@@ -100,7 +126,10 @@ header('Content-Type: text/html;charset=utf-8');
 	</div>
 	<table class="list">
 		<tr><th><?= _ht('State') ?></th><th><?= _ht('Date') ?></th><th><?= _ht('Title') ?></th><th><?= _ht('Category') ?></th><th><?= _ht('Updated') ?></th><th></th></tr>
-<?php foreach($t_posts as $p): ?>
+<?php foreach($t_posts as $p):
+		$ss = $p->getTermSlugs( 'category' );
+		$categoryLabel = empty( $ss ) ? '' : $nt_store->taxonomy()->getTermLabel( 'category', $ss[0] );
+	?>
 		<tr>
 			<td>
 				<select onchange="setPostState(<?= _h($p->getId()) ?>, this.value);">
@@ -114,10 +143,10 @@ header('Content-Type: text/html;charset=utf-8');
 			</td>
 			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getPublishedDate()) ?></a></td>
 			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getTitle()) ?></a></td>
-<?php if ($p->getCategory() === 'event'): ?>
-			<td class="category"><div><?= _ht($p->getCategoryName(), 'category') ?></div> <span><?= _h($p->getEventDateBgn()) ?></span> <span>- <?= _h($p->getEventDateEnd()) ?></span></td>
+<?php if ( $p->hasTerm( 'category', 'event' ) ) : ?>
+			<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div> <span><?= _h($p->getEventDateBgn()) ?></span> <span>- <?= _h($p->getEventDateEnd()) ?></span></td>
 <?php else: ?>
-			<td class="category"><div><?= _ht($p->getCategoryName(), 'category') ?></div></td>
+			<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div></td>
 <?php endif ?>
 			<td class="mod-date-time"><?= implode('', array_map(function ($e) {return '<span>'._h($e).'</span> ';}, explode(' ', $p->getModifiedDateTime()))) ?></td>
 			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>

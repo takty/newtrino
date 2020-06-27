@@ -1,1 +1,4 @@
+<Files ~ "editor-style.css">
+allow from all
+</Files>
 deny from all

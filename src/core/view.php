@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-06-27
  *
  */
 
@@ -14,10 +14,18 @@ require_once( __DIR__ . '/response.php' );
 require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
 
-function query( $filter = [ 'date' => 'month', 'taxonomy' => [ 'category' ] ], $base_url = false ) {
+function query( $args = [] ) {
+	$filter   = isset( $args['filter'] )   ? $args['filter']   : [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];
+	$config   = isset( $args['config'] )   ? $args['config']   : [];
+	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : false;
+
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
-	$msg = [ 'query' => parse_query_string( 'id' ), 'filter' => $filter ];
+	$msg = [
+		'query'  => parse_query_string( 'id' ),
+		'filter' => $filter,
+		'config' => $config
+	];
 	if ( isset( $msg['query']['id'] ) ) {
 		return _create_view_single( $msg, $base_url );
 	} else {
@@ -25,10 +33,18 @@ function query( $filter = [ 'date' => 'month', 'taxonomy' => [ 'category' ] ], $
 	}
 }
 
-function query_recent_posts( $count = 10, $base_url = false ) {
+function query_recent_posts( $args = [] ) {
+	$config   = isset( $args['config'] )   ? $args['config']   : [];
+	$count    = isset( $args['count'] )    ? $args['count']    : 10;
+	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : false;
+
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
-	$msg = [ 'query' => [ 'posts_per_page' => $count ], 'filter' => [] ];
+	$msg = [
+		'query'  => [ 'posts_per_page' => $count ],
+		'filter' => [],
+		'config' => $config
+	];
 	return _create_view_archive( $msg, $base_url );
 }
 
@@ -37,7 +53,7 @@ function query_recent_posts( $count = 10, $base_url = false ) {
 
 
 function _create_view_archive( $msg, $base_url ) {
-	$res = create_response_archive( $msg['query'], $msg['filter'] );
+	$res = create_response_archive( $msg['query'], $msg['filter'], $msg['config'] );
 	if ( $res['status'] !== 'success' ) $res['posts'] = [];
 
 	$view = [];
@@ -49,7 +65,7 @@ function _create_view_archive( $msg, $base_url ) {
 }
 
 function _create_view_single( $msg, $base_url ) {
-	$res = create_response_single( $msg['query'], $msg['filter'] );
+	$res = create_response_single( $msg['query'], $msg['filter'], $msg['config'] );
 	if ( $res['status'] !== 'success' ) $res['post'] = null;
 
 	$view = [];
@@ -134,29 +150,25 @@ function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
 	$as = [];
 	foreach ( $dates as $date ) {
 		$cq = _create_canonical_query( [ 'date' => $date['slug'] ] );
-		$url = $base_url . (! empty( $cq ) ? ('?' . $cq) : '');
+		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
 		$p = [ 'label' => $date['label'], 'url' => $url ];
-		if ( $date['slug'] === $cur . '' ) $p['is_current'] = true;
+		if ( strval( $date['slug'] ) === $cur ) $p['is_current'] = true;
 		$as[] = $p;
 	}
-	return [
-		$type => $as
-	];
+	return [ $type => $as ];
 }
 
-function _create_taxonomy_filter_view( $msg, $taxonomy, $terms, $base_url ) {
-	$cur = isset( $msg['query'][ $taxonomy ] ) ? $msg['query'][ $taxonomy ] : '';
+function _create_taxonomy_filter_view( $msg, $tax, $terms, $base_url ) {
+	$cur = isset( $msg['query'][ $tax ] ) ? $msg['query'][ $tax ] : '';
 	$as = [];
 	foreach ( $terms as $term ) {
-		$cq = _create_canonical_query( [ $taxonomy => $term['slug'] ] );
-		$url = $base_url . (! empty( $cq ) ? ('?' . $cq) : '');
+		$cq = _create_canonical_query( [ $tax => $term['slug'] ] );
+		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
 		$p = [ 'label' => $term['label'], 'url' => $url ];
 		if ( $term['slug'] === $cur ) $p['is_current'] = true;
 		$as[] = $p;
 	}
-	return [
-		$taxonomy => $as
-	];
+	return [ $tax => $as ];
 }
 
 

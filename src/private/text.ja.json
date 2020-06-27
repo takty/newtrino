@@ -1,26 +1,4 @@
 {
-	"default": {
-		"Topic List": "記事一覧",
-		"Month": "月",
-		"Category": "カテゴリー",
-		"View": "表示",
-		"Search": "検索",
-		"Previous": "前へ",
-		"Next": "次へ",
-		"List": "一覧",
-		"Updated: ": "更新: ",
-		"Event Date: ": "開催日: ",
-		" to ": " ～ "
-	},
-	"post-count": {
-		" (": "（",
-		")": "件）"
-	},
-	"category": {
-		"Events": "イベント",
-		"News": "ニュース",
-		"Columns": "コラム"
-	},
 	"private": {
 		"Logining...": "ログイン中...",
 		"User name or password is wrong.": "ユーザー名かパスワードが異なります。",

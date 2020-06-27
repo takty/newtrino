@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-06-27
  *
  */
 
@@ -16,53 +16,71 @@ require_once( __DIR__ . '/class-store.php' );
 
 set_locale_setting();
 
-global $nt_config, $nt_res, $nt_store;
+global $nt_config, $nt_store;
 
 $nt_config = load_config( NT_DIR_DATA );
-$nt_res    = load_resource( NT_DIR_DATA, $nt_config['language'] );
-$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 
 
 // -----------------------------------------------------------------------------
 
 
-function create_response_archive( $query, $filter ) {
+function create_response_archive( $query, $filter, $config = [] ) {
 	global $nt_store, $nt_config;
+	$nt_config += $config;
+	$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$_page           = _get_param( 'page', 1, $query );
-	$_posts_per_page = _get_param( 'posts_per_page', $nt_config['posts_per_page'], $query );
-	$_cat            = isset( $query['taxonomy']['category'] ) ? $query['taxonomy']['category'] : '';
-	$_date           = _get_param( 'date', '', $query );
-	$_search         = _get_param( 'search', '', $query );
+	$page   = _get_param( 'page',           null, $query );
+	$ppp    = _get_param( 'posts_per_page', null, $query );
+	$date   = _get_param( 'date',           null, $query );
+	$search = _get_param( 'search',         null, $query );
 
-	$ret = $nt_store->getPostsByPage( $_page - 1, $_posts_per_page, [ 'cat' => $_cat, 'date' => $_date, 'search_word' => $_search ] );
-	$posts = [];
-	foreach ( $ret['posts'] as $p ) $posts[] = _create_post_data( $p );
+	$args = [];
+	if ( $page )   $args['page']           = $page;
+	if ( $search ) $args['search']         = $search;
+	if ( $ppp )    $args['posts_per_page'] = $ppp;
+	if ( $date )   $args['date_query']     = [ [ 'date' => $date ] ];
+
+	if ( ! empty( $query['taxonomy'] ) ) {
+		$tq = [];
+		foreach ( $query['taxonomy'] as $tax => $ts ) {
+			$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];
+		}
+		if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
+	}
+	$ret = $nt_store->getPostsByPage( $args );
+	$posts = array_map( '\nt\_create_post_data', $ret['posts'] );
 
 	$res = [
 		'status'     => 'success',
 		'posts'      => $posts,
-		'page_count' => ceil( $ret['size'] / $_posts_per_page ),
+		'page_count' => $ret['page_count'],
 	];
 	$res += _create_archive_data( $filter );
 	return $res;
 }
 
-function create_response_single( $query, $filter ) {
-	global $nt_store;
+function create_response_single( $query, $filter, $config = [] ) {
+	global $nt_store, $nt_config;
+	$nt_config += $config;
+	$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$_id     = _get_param( 'id', '', $query );
-	$_cat    = isset( $query['taxonomy']['category'] ) ? $query['taxonomy']['category'] : '';
-	$_date   = _get_param( 'date', '', $query );
-	$_search = _get_param( 'search', '', $query );
+	$id = _get_param( 'id', null, $query );
 
-	$ret = $nt_store->getPostWithNextAndPrevious( $_id, [ 'cat' => $_cat, 'date' => $_date, 'search_word' => $_search ] );
+	$args = [];
+	if ( ! empty( $query['taxonomy'] ) ) {
+		$tq = [];
+		foreach ( $query['taxonomy'] as $tax => $ts ) {
+			$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];
+		}
+		if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
+	}
+	$ret = $nt_store->getPostWithNextAndPrevious( $id, $args );
 
 	$res = [
 		'status' => 'success',
@@ -98,11 +116,13 @@ function _rearrange_query( $query ) {
 		$fval = _filter_param( $val, $query_vars[ $key ] );
 		if ( $fval !== null ) $ret[ $key ] = $val;
 	}
-	$taxonomies = [ 'category' ];  // TODO
+	global $nt_store;
+	$existing_taxes = array_keys( $nt_store->taxonomy()->getTaxonomyAll() );
 	foreach( $tcs as $tc ) {
-		if ( in_array( $tc, $taxonomies, true ) ) {
+		if ( in_array( $tc, $existing_taxes, true ) ) {
 			if ( ! isset( $ret['taxonomy'] ) ) $ret['taxonomy'] = [];
-			$ret['taxonomy'][ $tc ] = $query[ $key ];
+			$ts = array_map( 'trim', explode( ',', $query[ $key ] ) );
+			$ret['taxonomy'][ $tc ] = $ts;
 		}
 	}
 	return $ret;
@@ -159,33 +179,35 @@ function _get_param( $key, $default, $assoc ) {
 
 
 function _create_post_data( $p, $include_content = false ) {
+	global $nt_store;
 	if ( ! $p ) return false;
 	$d = [
 		'id'        => $p->getId(),
 		'slug'      => '',  // preserved
 		'type'      => '',  // preserved
-		'author'    => '',  // preserved
 		'title'     => $p->getTitle( true ),
-		'date'      => $p->getPublishedDateTime(),
-		'modified'  => $p->getModifiedDateTime(),
+		'date'      => $nt_store->formatDate( $p->getPublishedDateTime() ),
+		'modified'  => $nt_store->formatDate( $p->getModifiedDateTime() ),
 		'excerpt'   => $p->getExcerpt( 60 ),
 		'meta'      => [],
 		'taxonomy'  => [],
-		'state'     => $p->getStateClasses(),  // temporary
+		'status'    => $p->getStateClasses(),  // temporary
 	];
-	if ( $include_content ) {
-		$d['content'] = $p->getContent();
+	if ( $include_content ) $d['content'] = $p->getContent();
+
+	foreach ( $p->getTaxonomyToTermSlugs() as $tax => $ts ) {
+		$ls = [];
+		foreach ( $ts as $t ) {
+			$l = $nt_store->taxonomy()->getTermLabel( $tax, $t );
+			$ls[] = [ 'slug' => $t, 'label' => $l ];
+		}
+		$d['taxonomy'][ $tax ] = $ls;
 	}
-	$d['taxonomy']['category'] = [
-		[
-			'slug'  => $p->getCategory(),
-			'label' => $p->getCategoryName(),
-		]
-	];
-	if ($p->getCategory() === 'event') {
-		$d['meta']['event_state']    = $p->getEventState();
-		$d['meta']['event_date_bgn'] = $p->getEventDateBgn();
-		$d['meta']['event_date_end'] = $p->getEventDateEnd();
+
+	if ( $p->hasTerm( 'category', 'event' ) ) {
+		$d['meta']['event_state'] = $p->getEventState();
+		$d['meta']['date_bgn']    = $p->getEventDateBgn();
+		$d['meta']['date_end']    = $p->getEventDateEnd();
 	}
 	return $d;
 }
@@ -206,24 +228,19 @@ function _create_archive_data( $filter ) {
 
 function _get_date_archive( $type ) {
 	global $nt_store;
-	if ( $type === 'month' ) {
-		$dates = $nt_store->getCountByDate();
-		foreach ( $dates as &$date ) {
-			$date['label'] = $date['name'];
-			$date['slug'] = $date['date'];
-			unset($date['name']);
-			unset($date['cur']);
-			unset($date['date']);
-		}
-		return [ $type => $dates ];
+	$ds = $nt_store->getCountByDate( $type );
+	$cs = [];
+	foreach ( $ds as $d ) {
+		$cs[] = [ 'slug' => $d['slug'], 'label' => $d['label'], 'count' => $d['count'] ];
 	}
+	return [ $type => $cs ];
 }
 
 function _get_taxonomy_archive( $taxes ) {
 	global $nt_store;
 	$ret = [];
 	foreach ( $taxes as $tax ) {
-		$ts = $nt_store->taxonomy()->getTerms( $tax );
+		$ts = $nt_store->taxonomy()->getTermAll( $tax );
 		$cs = [];
 		foreach ( $ts as $t ) {
 			$cs[] = [ 'slug' => $t['slug'], 'label' => $t['label'] ];

@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-06-27
  *
  */
 
@@ -13,31 +13,49 @@ window.NT = window['NT'] || {};
 
 (function (NS) {
 
-	function query(url, callback, filter = { date: 'month', taxonomy: ['category'] }, baseUrl = false) {
-		url += (url.endsWith('/') ? '' : '/') + 'core/ajax.php';
+	const AJAX_API = 'core/view-ajax.php';
+
+	function query(url, callback, args = {}) {
+		const filter  = args.filter   ? args.filter   : { date: 'year', taxonomy: ['category'] };
+		const config  = args.config   ? args.config   : {};
+		let   baseUrl = args.base_url ? args.base_url : false;
+
+		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
 
-		const msg = { query: parseQueryString('id'), filter: filter };
+		const msg = {
+			query : parseQueryString('id'),
+			filter: filter,
+			config: config
+		};
 		if (msg.query['id']) {
-			_createViewSingle(url, msg, callback, baseUrl);
+			_createViewSingle(url, callback, msg, baseUrl);
 		} else {
-			_createViewArchive(url, msg, callback, baseUrl);
+			_createViewArchive(url, callback, msg, baseUrl);
 		}
 	}
 
-	function queryRecentPosts(url, callback, count = 10, baseUrl = false) {
-		url += (url.endsWith('/') ? '' : '/') + 'core/ajax.php';
+	function queryRecentPosts(url, callback, args = {}) {
+		const config  = args.config   ? args.config   : {};
+		const count   = args.count    ? args.count    : 10;
+		let   baseUrl = args.base_url ? args.base_url : false;
+
+		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
 
-		const msg = { query: { posts_per_page: count }, filter: {} };
-		_createViewArchive(url, msg, callback, baseUrl);
+		const msg = {
+			query:  { posts_per_page: count },
+			filter: {},
+			config: config
+		};
+		_createViewArchive(url, callback, msg, baseUrl);
 	}
 
 
 	// -------------------------------------------------------------------------
 
 
-	function _createViewArchive(url, msg, callback, baseUrl) {
+	function _createViewArchive(url, callback, msg, baseUrl) {
 		sendRequest(url, msg, (res) => {
 			if (!res || res.status !== 'success') res.posts = [];
 
@@ -51,7 +69,7 @@ window.NT = window['NT'] || {};
 		});
 	}
 
-	function _createViewSingle(url, msg, callback, baseUrl) {
+	function _createViewSingle(url, callback, msg, baseUrl) {
 		sendRequest(url, msg, (res) => {
 			if (!res || res.status !== 'success') res.post = null;
 
@@ -145,24 +163,20 @@ window.NT = window['NT'] || {};
 			if (dates[i].slug == cur /* == */) p['is_current'] = true;
 			as.push(p);
 		}
-		return {
-			[type]: as
-		};
+		return { [type]: as };
 	}
 
-	function _createTaxonomyFilterView(msg, taxonomy, terms, baseUrl) {
-		const cur = (msg.query && msg.query[taxonomy]) ? msg.query[taxonomy] : '';
+	function _createTaxonomyFilterView(msg, tax, terms, baseUrl) {
+		const cur = (msg.query && msg.query[tax]) ? msg.query[tax] : '';
 		const as = [];
 		for (let i = 0; i < terms.length; i += 1) {
-			const cq = _createCanonicalQuery({ [taxonomy]: terms[i].slug });
+			const cq = _createCanonicalQuery({ [tax]: terms[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: terms[i].label, url: url };
 			if (terms[i].slug === cur) p['is_current'] = true;
 			as.push(p);
 		}
-		return {
-			[taxonomy]: as
-		};
+		return { [tax]: as };
 	}
 
 

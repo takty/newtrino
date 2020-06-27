@@ -16,7 +16,7 @@ require_once(__DIR__ . '/init-private.php');
 $res = 'NG';
 if ($nt_q['mode'] === 'set_state') {
 	$p = $nt_store->getPost($nt_q['id']);
-	$p->setState($nt_q['state']);
+	$p->setState($nt_q['status']);
 	$nt_store->writePost($p);
 	$res = 'OK';
 }

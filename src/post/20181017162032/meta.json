@@ -1,10 +1,16 @@
 {
     "title": "Test Event",
-    "category": "event",
-    "state": "published",
+    "status": "published",
     "created_date": "2018-10-17 16:20:56",
     "modified_date": "2018-10-17 16:20:56",
     "published_date": "2018-10-17 16:20:32",
-    "event_date_bgn": "2018-10-17",
-    "event_date_end": "2018-10-31"
+    "taxonomy": {
+        "category": [
+            "event"
+        ]
+    },
+    "meta": {
+        "date_bgn": "2018-10-17",
+        "date_end": "2018-10-31"
+    }
 }

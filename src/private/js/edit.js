@@ -15,18 +15,18 @@ function initEdit() {
 	const fp = flatpickr('#post_published_date', {
 		enableSeconds: true, time_24hr: true, enableTime: true,
 		onChange: function(dateObj, dateStr, instance) {
-			if (document.getElementById('post_state').value === 'draft') return;
+			if (document.getElementById('post_status').value === 'draft') return;
 			const s = dateStr.replace(/-|:|\s/g, '');
 			const dn = parseInt(s, 10);
 			const cn = parseInt(formatDate(new Date(), 'YYYYMMDDhhmmss'));
 			if (dn <= cn) {
-				document.getElementById('post_state_published').selected = true;
+				document.getElementById('post_status_published').selected = true;
 			} else {
-				document.getElementById('post_state_reserved').selected = true;
+				document.getElementById('post_status_reserved').selected = true;
 			}
 		}
 	});
-	document.getElementById('post_state').addEventListener('change', function () {
+	document.getElementById('post_status').addEventListener('change', function () {
 		if (this.value === 'draft') return;
 		if (this.value === 'published') {
 			const s = document.getElementById('post_published_date').value.replace(/-|:|\s/g, '');
@@ -65,12 +65,14 @@ function initEdit() {
 		onChanged();
 	});
 	document.getElementById('post_published_date').addEventListener('change', onChanged);
-	document.getElementById('post_state').addEventListener('change', onChanged);
-	document.getElementById('post_cat').addEventListener('change', function () {
+	document.getElementById('post_status').addEventListener('change', onChanged);
+
+	document.getElementById('taxonomy:category').addEventListener('change', function () {
 		onChanged();
-		const isEvent = document.getElementById('post_cat').value === 'event';
+		const isEvent = document.getElementById('taxonomy:category').value === 'event';
 		document.getElementById('frame-event-duration').style.display = (isEvent ? 'block' : 'none');
 	});
+
 	window.addEventListener('beforeunload', function (e) {
 		if (changed) {
 			const msg = 'Do you want to move from the page you are inputting?';
@@ -81,7 +83,7 @@ function initEdit() {
 	flatpickr('#event_date_bgn_wrap', { wrap: true });
 	flatpickr('#event_date_end_wrap', { wrap: true });
 
-	const isEvent = document.getElementById('post_cat').value === 'event';
+	const isEvent = document.getElementById('taxonomy:category').value === 'event';
 	document.getElementById('frame-event-duration').style.display = (isEvent ? 'block' : 'none');
 
 	function onResize() {
