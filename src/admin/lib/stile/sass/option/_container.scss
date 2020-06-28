@@ -1,0 +1,120 @@
+/**
+ *
+ * Container Classes (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-03-04
+ *
+ * @import '../basic/base';
+ * @import '../basic/query';
+ * @import '../basic/layout';
+ *
+ */
+
+
+$stile-container-column-gap       : base-vr(2) !default;
+$stile-container-column-gap-v     : base-vr(4) !default;
+$stile-container-card-gap         : base-vr(2) !default;
+$stile-container-card-gap-v       : base-vr(4) !default;
+$stile-container-2-child-min-width: 16rem !default;
+$stile-container-3-child-min-width: 12rem !default;
+$stile-container-4-child-min-width: 10rem !default;
+
+
+@mixin stile-container {
+	@include stile-container-column;
+	@include stile-container-card;
+}
+
+%stile-container-child-inside {
+	flex-grow: 1;
+	> *:first-child { margin-top:    0; }
+	> *:last-child  { margin-bottom: 0; }
+	*[data-stile ~= 'only-child-element'] { margin: { top: 0; bottom: 0; } }
+}
+
+@mixin stile-container-column {
+	.column-2,
+	.column-3,
+	.column-4 {
+		@include layout-gap($stile-container-column-gap, $stile-container-column-gap-v);
+		display  : flex;
+		flex-wrap: wrap;
+
+		// One of Columns
+		> * {
+			@extend %stile-container-child-inside;
+		}
+	}
+	.column-2 {
+		> * {
+			width    : calc(50% - #{$stile-container-column-gap});
+			min-width: $stile-container-2-child-min-width;
+		}
+	}
+	.column-3 {
+		> * {
+			width    : calc((#{$stile-container-3-child-min-width * 3 + $stile-container-column-gap * 2} - 100%) * 1000);
+			min-width: calc(33% - #{$stile-container-column-gap});
+			max-width: 100%;
+		}
+		&.column-center { justify-content: center; }
+	}
+	.column-4 {
+		> * {
+			width    : calc(50% - #{$stile-container-column-gap});
+			min-width: $stile-container-2-child-min-width;
+
+			@include for-tablet-up {
+				width    : calc((#{$stile-container-4-child-min-width * 4 + $stile-container-column-gap * 3} - 100%) * 1000);
+				min-width: calc(25% - #{$stile-container-column-gap});
+				max-width: calc(50% - #{$stile-container-column-gap});
+			}
+		}
+	}
+}
+
+@mixin stile-container-card {
+	.card-2,
+	.card-3,
+	.card-4 {
+		@include layout-gap($stile-container-card-gap, $stile-container-card-gap-v);
+		display        : flex;
+		flex-wrap      : wrap;
+		justify-content: space-between;
+
+		// One of Cards
+		> * {
+			@extend %stile-container-child-inside;
+			&:empty { margin-right: $stile-container-card-gap; }
+		}
+	}
+	.card-2 {
+		> * {
+			width    : calc(50% - #{$stile-container-card-gap});
+			min-width: $stile-container-2-child-min-width;
+		}
+		&::after {
+			content: '';
+			display: block;
+
+			margin-right: $stile-container-card-gap;
+			flex-grow   : 1;
+
+			width    : calc(50% - #{$stile-container-card-gap});
+			min-width: $stile-container-2-child-min-width;
+		}
+	}
+	.card-3 {
+		> * {
+			flex-basis: calc(32% - #{$stile-container-card-gap} - 1px);
+			min-width : $stile-container-3-child-min-width;
+		}
+	}
+	.card-4 {
+		> * {
+			flex-basis: calc(24% - #{$stile-container-card-gap} - 1px);
+			min-width : $stile-container-4-child-min-width;
+		}
+	}
+}

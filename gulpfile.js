@@ -19,32 +19,32 @@ function copySync(from, to) {
 	}
 }
 
-const SRC_PRIVATE = './src/private/';
+const SRC_ADMIN = './src/admin/';
 const DIST_BASE = './dist/';
-const DIST_PRIVATE = DIST_BASE + 'private/';
+const DIST_ADMIN = DIST_BASE + 'admin/';
 
 gulp.task('copy-jssha', (done) => {
-	copySync('./node_modules/jssha/dist/sha256.js', DIST_PRIVATE + 'js/jssha/');
+	copySync('./node_modules/jssha/dist/sha256.js', DIST_ADMIN + 'js/jssha/');
 	done();
 });
 
 gulp.task('copy-flatpickr', (done) => {
 	const dir = './node_modules/flatpickr/dist/';
-	copySync(dir + 'flatpickr.min.js', DIST_PRIVATE + 'js/flatpickr/');
-	copySync(dir + 'flatpickr.min.css', DIST_PRIVATE + 'css/flatpickr/');
-	copySync(dir + 'l10n/ja.js', DIST_PRIVATE + 'js/flatpickr/');
+	copySync(dir + 'flatpickr.min.js', DIST_ADMIN + 'js/flatpickr/');
+	copySync(dir + 'flatpickr.min.css', DIST_ADMIN + 'css/flatpickr/');
+	copySync(dir + 'l10n/ja.js', DIST_ADMIN + 'js/flatpickr/');
 	done();
 });
 
 gulp.task('copy-tinymce', (done) => {
 	const dir = './node_modules/tinymce/';
-	copySync(dir + 'tinymce.min.js', DIST_PRIVATE + 'js/tinymce/');
-	copySync(dir + 'plugins/**/*', DIST_PRIVATE + 'js/tinymce/plugins/');
-	copySync(dir + 'skins/**/*', DIST_PRIVATE + 'js/tinymce/skins/');
-	copySync(dir + 'themes/**/*', DIST_PRIVATE + 'js/tinymce/themes/');
-	copySync('./node_modules/tinymce-i18n/langs/ja.js', DIST_PRIVATE + 'js/tinymce/langs/');
-	fs.removeSync(DIST_PRIVATE + 'js/tinymce/themes/inlite');
-	fs.removeSync(DIST_PRIVATE + 'js/tinymce/themes/mobile');
+	copySync(dir + 'tinymce.min.js', DIST_ADMIN + 'js/tinymce/');
+	copySync(dir + 'plugins/**/*', DIST_ADMIN + 'js/tinymce/plugins/');
+	copySync(dir + 'skins/**/*', DIST_ADMIN + 'js/tinymce/skins/');
+	copySync(dir + 'themes/**/*', DIST_ADMIN + 'js/tinymce/themes/');
+	copySync('./node_modules/tinymce-i18n/langs/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
+	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/inlite');
+	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/mobile');
 	const ups = [
 		'autoresize',
 		'autosave',
@@ -66,12 +66,12 @@ gulp.task('copy-tinymce', (done) => {
 		'textpattern',
 		'wordcount',
 	];
-	for (let up of ups) fs.removeSync(DIST_PRIVATE + 'js/tinymce/plugins/' + up);
+	for (let up of ups) fs.removeSync(DIST_ADMIN + 'js/tinymce/plugins/' + up);
 	done();
 });
 
 gulp.task('copy-stile-sass', (done) => {
-	copySync('./node_modules/stile/dist/sass/*', SRC_PRIVATE + 'lib/stile/sass/');
+	copySync('./node_modules/stile/dist/sass/*', SRC_ADMIN + 'lib/stile/sass/');
 	done();
 });
 
@@ -90,17 +90,16 @@ gulp.task('copy-lib', gulp.parallel(
 
 gulp.task('copy-src', (done) => {
 	copySync('./src', './dist');
-	copySync(SRC_PRIVATE + 'sass/*.css', DIST_PRIVATE + 'css/');
-	// fs.removeSync(DIST_BASE + 'post');
-	fs.removeSync(DIST_PRIVATE + 'sass');
-	fs.removeSync(DIST_PRIVATE + 'lib');
-	for (let f of glob.sync(DIST_PRIVATE + 'js/*.js')) fs.removeSync(f);
+	copySync(SRC_ADMIN + 'sass/*.css', DIST_ADMIN + 'css/');
+	fs.removeSync(DIST_ADMIN + 'sass');
+	fs.removeSync(DIST_ADMIN + 'lib');
+	for (let f of glob.sync(DIST_ADMIN + 'js/*.js')) fs.removeSync(f);
 	for (let f of glob.sync(DIST_BASE + 'core/*.js')) fs.removeSync(f);
 	done();
 });
 
 gulp.task('copy-res', (done) => {
-	copySync(SRC_PRIVATE + 'sass/*.svg', DIST_PRIVATE + 'css');
+	copySync(SRC_ADMIN + 'sass/*.svg', DIST_ADMIN + 'css');
 	done();
 });
 
@@ -108,7 +107,7 @@ gulp.task('copy', gulp.series('copy-src', 'copy-lib', 'copy-res'));
 
 gulp.task('delete-var', (done) => {
 	fs.removeSync(DIST_BASE + 'core/var/log');
-	fs.removeSync(DIST_PRIVATE + 'var/session');
+	fs.removeSync(DIST_ADMIN + 'var/session');
 	done();
 });
 
@@ -123,12 +122,12 @@ gulp.task('js', () => gulp.src(['src/**/*.js', '!src/**/*.min.js'])
 );
 
 gulp.task('sass', () => {
-	return gulp.src([SRC_PRIVATE + 'sass/style.scss'])
+	return gulp.src([SRC_ADMIN + 'sass/style.scss'])
 		.pipe($.plumber())
 		.pipe($.sass({ outputStyle: 'compressed' }))
 		.pipe($.autoprefixer({ remove: false }))
 		.pipe($.rename({ extname: '.min.css' }))
-		.pipe(gulp.dest(DIST_PRIVATE + 'css/'));
+		.pipe(gulp.dest(DIST_ADMIN + 'css/'));
 });
 
 gulp.task('sample-html', () => {

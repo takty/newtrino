@@ -1,0 +1,18 @@
+/**
+ *
+ * Anchor Offset (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2019-06-07
+ *
+ */
+
+
+span[data-stile ~= 'anchor-offset'] {
+	display       : inline-block !important;
+	position      : absolute     !important;
+	z-index       : -9999        !important;
+	pointer-events: none         !important;
+	left          : 0            !important;
+	width         : 100%         !important;
+}

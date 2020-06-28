@@ -1,0 +1,45 @@
+/**
+ *
+ * Text Styles
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2019-07-07
+ *
+ * @import '../basic/base';
+ *
+ */
+
+
+@mixin stile-text-ellipsis {
+	overflow     : hidden;
+	white-space  : nowrap;
+	text-overflow: ellipsis;
+}
+
+@mixin stile-text-ellipsis-multiline($line-height: base-vr(2), $line-count: 1, $color-bg: #fff) {
+	overflow   : hidden;
+	position   : relative;
+	line-height: $line-height;
+	max-height : $line-height * $line-count;
+
+	padding-right: 0.8rem;
+	margin-right : -0.8rem;
+
+	&:before,
+	&:after {
+		position: absolute;
+		right   : 0;
+	}
+	&:before {
+		content  : '…';
+		bottom   : 0;
+		font-size: 0.8rem;
+	}
+	&:after {
+		content   : '';
+		width     : 1em;
+		height    : 1em;
+		margin-top: 0.2em;
+		background: $color-bg;
+	}
+}
