@@ -140,15 +140,15 @@ header('Content-Type: text/html;charset=utf-8');
 					<option value="draft"<?php if ($p->isDraft()) _eh(' selected'); ?>><?= _ht('Draft') ?></option>
 				</select>
 			</td>
-			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getPublishedDateTime()) ?></a></td>
+			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getDate()) ?></a></td>
 			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getTitle()) ?></a></td>
 <?php if ( $p->hasTerm( 'category', 'event' ) ) : ?>
 			<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div> <span><?= _h($p->getEventDateBgn()) ?></span> <span>- <?= _h($p->getEventDateEnd()) ?></span></td>
 <?php else: ?>
 			<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div></td>
 <?php endif ?>
-			<td class="mod-date-time"><?= implode('', array_map(function ($e) {return '<span>'._h($e).'</span> ';}, explode(' ', $p->getModifiedDateTime()))) ?></td>
-			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDateTime()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>
+			<td class="mod-date-time"><?= implode('', array_map(function ($e) {return '<span>'._h($e).'</span> ';}, explode(' ', $p->getModified()))) ?></td>
+			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>
 		</tr>
 <?php endforeach ?>
 	</table>

@@ -218,11 +218,11 @@ class Post {
 
 	// ----
 
-	function getPublishedDateTime() {
+	function getDate() {
 		return Post::parseDateTime( $this->_date );
 	}
 
-	function getModifiedDateTime() {
+	function getModified() {
 		return Post::parseDateTime( $this->_modified );
 	}
 
