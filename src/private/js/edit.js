@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-06-06
+ * @version 2020-06-28
  *
  */
 
@@ -12,7 +12,7 @@
 function initEdit() {
 	setButtonEvents();
 
-	const fp = flatpickr('#post_published_date', {
+	const fp = flatpickr('#post_date', {
 		enableSeconds: true, time_24hr: true, enableTime: true,
 		onChange: function(dateObj, dateStr, instance) {
 			if (document.getElementById('post_status').value === 'draft') return;
@@ -29,15 +29,15 @@ function initEdit() {
 	document.getElementById('post_status').addEventListener('change', function () {
 		if (this.value === 'draft') return;
 		if (this.value === 'published') {
-			const s = document.getElementById('post_published_date').value.replace(/-|:|\s/g, '');
+			const s = document.getElementById('post_date').value.replace(/-|:|\s/g, '');
 			const dn = parseInt(s, 10);
 			const cn = parseInt(formatDate(new Date(), 'YYYYMMDDhhmmss'));
 			if (dn > cn) {
-				document.getElementById('post_published_date').value = formatDate(new Date(), 'YYYY-MM-DD hh:mm:ss');
+				document.getElementById('post_date').value = formatDate(new Date(), 'YYYY-MM-DD hh:mm:ss');
 			}
 		}
 		if (this.value === 'reserved') {
-			const s = document.getElementById('post_published_date').value.replace(/-|:|\s/g, '');
+			const s = document.getElementById('post_date').value.replace(/-|:|\s/g, '');
 			const dn = parseInt(s, 10);
 			const cn = parseInt(formatDate(new Date(), 'YYYYMMDDhhmmss'));
 			if (dn <= cn) {
@@ -64,7 +64,7 @@ function initEdit() {
 		}
 		onChanged();
 	});
-	document.getElementById('post_published_date').addEventListener('change', onChanged);
+	document.getElementById('post_date').addEventListener('change', onChanged);
 	document.getElementById('post_status').addEventListener('change', onChanged);
 
 	document.getElementById('taxonomy:category').addEventListener('change', function () {

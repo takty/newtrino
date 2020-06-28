@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-06-28
  *
  */
 
@@ -39,9 +39,9 @@ class Store {
 		$post = new Post( $this->_urlPost, $id, $this->_urlPrivate );
 		if (!$post->load( $this->_dirPost ) ) return false;
 
-		$pd = date( 'YmdHis' ) - $post->getDateTimeNumber();
+		$pd = intval( date( 'Ymd' ) ) - intval( substr( $post->getDateRaw(), 0, 8 ) );
 		if ( $this->_conf['newly_arrived_day'] > 0 ) {
-			$post->setNewItem( $pd < $this->_conf['newly_arrived_day'] * 1000000 );
+			$post->setNewItem( $pd < $this->_conf['newly_arrived_day'] );
 		}
 		return $post;
 	}
@@ -94,9 +94,7 @@ class Store {
 		}
 		$count = [];
 		foreach ( $ms as $m ) {
-			$date = $m['meta']['published_date'];
-			$date = str_replace(['-', '/', ':', ' '], '', $date );
-
+			$date = $m['meta']['date'];
 			$key = substr( $date, 0, $digit );
 			if ( ! isset( $count[ $key ] ) ) $count[ $key ] = 0;
 			$count[ $key ] += 1;
@@ -250,8 +248,8 @@ class Store {
 			}
 			if ($this->_checkIdExists($id)) return false;  // when the loop finished without break
 			$post = new Post( '.', $id );
-			$post->setPublishedDate('now');
-			$post->save($this->_dirPost);
+			$post->setDate( 'now' );
+			$post->save( $this->_dirPost );
 			flock($dir, LOCK_UN);
 			return $post;
 		}

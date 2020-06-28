@@ -103,6 +103,15 @@ function convert_post_file( $dirPost ) {
 				}
 				if ( ! empty( $meta ) ) $d['meta'] = $meta;
 
+				if ( isset( $d['meta']['date_bgn'] ) ) {
+					$date = str_replace( [ '-', '/', ':', ' ' ], '', $d['meta']['date_bgn'] );
+					$d['meta']['date_bgn'] = $date;
+				}
+				if ( isset( $d['meta']['date_end'] ) ) {
+					$date = str_replace( [ '-', '/', ':', ' ' ], '', $d['meta']['date_end'] );
+					$d['meta']['date_end'] = $date;
+				}
+
 				$json = json_encode( $d, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 				$res = file_put_contents( $path, $json, LOCK_EX );
 

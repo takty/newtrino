@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-06-28
  *
  */
 
@@ -23,7 +23,7 @@ if ($mode === 'update') {
 } else if ($mode === 'new') {
 	$t_p = $nt_store->createNewPost();
 	$nt_session->addTempPostId($t_p->getId());
-	$t_p->setPublishedDate('now');
+	$t_p->setDate( 'now' );
 } else {
 	$t_p = $nt_store->getPost($nt_q['id']);
 }
@@ -100,7 +100,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<div class="column-sub">
 				<div class="frame">
 					<h3><?= _ht('Publish') ?></h3>
-					<input form="form-post" type="text" name="post_published_date" id="post_published_date" value="<?= _h($t_p->getPublishedDateTime()) ?>">
+					<input form="form-post" type="text" name="post_date" id="post_date" value="<?= _h($t_p->getPublishedDateTime()) ?>">
 					<div class="btn-row">
 						<select form="form-post" name="post_status" id="post_status">
 							<option id="post_status_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>><?= _ht('Published') ?></option>

@@ -5,7 +5,7 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-06-28
  *
  */
 
@@ -63,13 +63,13 @@ class Query {
 			if ( ! is_numeric( $idx ) ) continue;
 			$q = [];
 			if ( empty( $ai['after'] ) && empty( $ai['before'] ) ) {
-				$q['date'] = self::_normalizeDate( $ai );
+				$q['date'] = self::_normalizeDate( $ai, '' );
 			} else {
-				if ( isset( $ai['after'] ) ) {
-					$q['after'] = self::_normalizeDate( $ai['after'] );
+				if ( ! empty( $ai['after'] ) ) {
+					$q['after'] = self::_normalizeDate( $ai['after'], 0 );
 				}
-				if ( isset( $ai['before'] ) ) {
-					$q['before'] = self::_normalizeDate( $ai['before'] );
+				if ( ! empty( $ai['before'] ) ) {
+					$q['before'] = self::_normalizeDate( $ai['before'], 9 );
 				}
 			}
 			$qs[] = $q;
@@ -141,7 +141,7 @@ class Query {
 	}
 
 	private function _matchDateQuery( $meta ) {
-		$pd = preg_split( '/[- ]/', $meta['published_date'] );
+		$pd = $meta['date'];
 		$qs = $this->_date['qs'];
 		if ( $this->_date['rel'] === 'AND' ) {
 			foreach ( $qs as $q ) {
@@ -187,30 +187,14 @@ class Query {
 
 	static private function _matchDate( $q, $pd ) {
 		if ( ! empty( $q['date'] ) ) {
-			$d = $q['date'];
-			if ( $d[0] !== $pd[0] ) return false;
-			if ( ! empty( $d[1] ) && $d[1] !== $pd[1] ) return false;
-			if ( ! empty( $d[2] ) && $d[2] !== $pd[2] ) return false;
+			if ( strpos( $pd, $q['date'] ) !== 0 ) return false;
 		}
+		$pd_int = intval( $pd );
 		if ( ! empty( $q['after'] ) ) {
-			$da = $q['after'];
-			if ( $da[0] > $pd[0] ) return false;
-			if ( $da[0] === $pd[0] && ! empty( $da[1] ) ) {
-				if ( $da[1] > $pd[1] ) return false;
-				if ( $da[1] === $pd[1] && ! empty( $da[2] ) ) {
-					if ( $da[2] > $pd[2] ) return false;
-				}
-			}
+			if ( intval( $q['after'] ) > $pd_int ) return false;
 		}
 		if ( ! empty( $q['before'] ) ) {
-			$db = $q['before'];
-			if ( $db[0] < $pd[0] ) return false;
-			if ( $db[0] === $pd[0] && ! empty( $db[1] ) ) {
-				if ( $db[1] < $pd[1] ) return false;
-				if ( $db[1] === $pd[1] && ! empty( $db[2] ) ) {
-					if ( $db[2] < $pd[2] ) return false;
-				}
-			}
+			if ( intval( $q['before'] ) < $pd_int ) return false;
 		}
 		return true;
 	}
@@ -220,82 +204,49 @@ class Query {
 		$comp = $q['compare'];
 		$type = $q['type'];
 
-		if ( $comp === 'exist' ) return isset( $ms[ $key ] );
+		if ( $comp === 'exist' )     return isset( $ms[ $key ] );
 		if ( $comp === 'not exist' ) return ! isset( $ms[ $key ] );
 
 		if ( empty( $ms[ $key ] ) ) return false;
-		$v = $ms[ $key ];
-		$val = $q['val'];
+		$v  = $ms[ $key ];
+		$qv = $q['val'];
 
-		if ( $type === 'date' )     return self::_compareDate( $type, $v, $val );
-		if ( $type === 'time' )     return self::_compareTime( $type, $v, $val );
-		if ( $type === 'datetime' ) return self::_compareDateTime( $type, $v, $val );
+		if ( $type === 'datetime' ) return self::_compareDateTime( $type, $v, $qv );
 
-		if ( $type === 'numeric' ) {
-			$v = intval( $v );
-			$val = intval( $val );
+		if ( $type === 'date' ) {
+			$v  = substr( $v,  0, 8 );
+			$qv = substr( $qv, 0, 8 );
+		} else if ( $type === 'time' ) {
+			$v  = substr( $v,  8, 14 );
+			$qv = substr( $qv, 8, 14 );
 		}
+		$v  = intval( $v );
+		$qv = intval( $qv );
 
 		switch ( $comp ) {
-			case '=':  return $v === $val;
-			case '!=': return $v !== $val;
-			case '<':  return $v < $val;
-			case '>':  return $v > $val;
-			case '<=': return $v <= $val;
-			case '>=': return $v >= $val;
+			case '=':  return $v === $qv;
+			case '!=': return $v !== $qv;
+			case '<':  return $v  <  $qv;
+			case '>':  return $v  >  $qv;
+			case '<=': return $v  <= $qv;
+			case '>=': return $v  >= $qv;
 		}
 		return false;
 	}
 
-	static private function _compareDate( $type, $d1, $d2 ) {
-		switch ( $type ) {
-			case '=':  return $d1 === $d2;
-			case '!=': return $d1 !== $d2;
-		}
-		$date1 = intval( preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $d1 ) );
-		$date2 = intval( preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $d2 ) );
+	static private function _compareDateTime( $type, $dt1, $dt2 ) {
+		$d1 = intval( substr( $dt1, 0, 8 ) );
+		$t1 = intval( substr( $dt1, 8, 14 ) );
+		$d2 = intval( substr( $dt2, 0, 8 ) );
+		$t2 = intval( substr( $dt2, 8, 14 ) );
 
 		switch ( $type ) {
-			case '<':  return $date1 <  $date2;
-			case '>':  return $date1 >  $date2;
-			case '<=': return $date1 <= $date2;
-			case '>=': return $date1 >= $date2;
-		}
-		return false;
-	}
-
-	static private function _compareTime( $type, $d1, $d2 ) {
-		switch ( $type ) {
-			case '=':  return $d1 === $d2;
-			case '!=': return $d1 !== $d2;
-		}
-		$time1 = intval( preg_replace( '/(\d{2}):(\d{2}):(\d{2})/', '$1$2$3', $d1 ) );
-		$time2 = intval( preg_replace( '/(\d{2}):(\d{2}):(\d{2})/', '$1$2$3', $d2 ) );
-
-		switch ( $type ) {
-			case '<':  return $time1 <  $time2;
-			case '>':  return $time1 >  $time2;
-			case '<=': return $time1 <= $time2;
-			case '>=': return $time1 >= $time2;
-		}
-		return false;
-	}
-
-	static private function _compareDateTime( $type, $d1, $d2 ) {
-		switch ( $type ) {
-			case '=':  return $d1 === $d2;
-			case '!=': return $d1 !== $d2;
-		}
-		$date1 = intval( preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $d1 ) );
-		$time1 = intval( preg_replace( '/(\d{2}):(\d{2}):(\d{2})/', '$1$2$3', $d1 ) );
-		$date2 = intval( preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $d2 ) );
-		$time2 = intval( preg_replace( '/(\d{2}):(\d{2}):(\d{2})/', '$1$2$3', $d2 ) );
-
-		switch ( $type ) {
-			case '<':  return ( $date1 < $date2 ) || ( $date1 === $date2 && $time1 <  $time2 );
-			case '>':  return ( $date1 > $date2 ) || ( $date1 === $date2 && $time1 >  $time2 );
-			case '<=': return ( $date1 < $date2 ) || ( $date1 === $date2 && $time1 <= $time2 );
-			case '>=': return ( $date1 > $date2 ) || ( $date1 === $date2 && $time1 >= $time2 );
+			case '=':  return ( $d1 === $d2 ) && ( $t1 === $t2 );
+			case '!=': return ( $d1 !== $d2 ) || ( $t1 !== $t2 );
+			case '<':  return ( $d1 < $d2 ) || ( $d1 === $d2 && $t1 <  $t2 );
+			case '>':  return ( $d1 > $d2 ) || ( $d1 === $d2 && $t1 >  $t2 );
+			case '<=': return ( $d1 < $d2 ) || ( $d1 === $d2 && $t1 <= $t2 );
+			case '>=': return ( $d1 > $d2 ) || ( $d1 === $d2 && $t1 >= $t2 );
 		}
 		return false;
 	}
@@ -307,21 +258,21 @@ class Query {
 		return false;
 	}
 
-	static private function _normalizeDate( $dq ) {
-		$n_y = date('Y');
-		$n_m = date('m');
-
+	static private function _normalizeDate( $dq, $padding ) {
 		$y = empty( $dq['year'] )  ? '' : $dq['year'];
 		$m = empty( $dq['month'] ) ? '' : $dq['month'];
 		$d = empty( $dq['day'] )   ? '' : $dq['day'];
+
 		if ( empty( $y ) && empty( $m ) && empty( $d ) ) {
 			$y = substr( $dq['date'], 0, 4 );
 			$m = substr( $dq['date'], 4, 2 );
 			$d = substr( $dq['date'], 6, 2 );
 		}
-		if ( ! empty( $m ) && empty( $y ) ) $y = $n_y;
-		if ( ! empty( $d ) && empty( $m ) ) $m = $n_m;
-		return [ $y, $m, $d ];
+		if ( ! empty( $m ) && empty( $y ) ) $y = date('Y');
+		if ( ! empty( $d ) && empty( $m ) ) $m = date('m');
+
+		$date = "$y$m$d";
+		return empty( $padding ) ? $date : str_pad( $date, 8, $padding );
 	}
 
 }

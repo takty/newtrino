@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-26
+ * @version 2020-06-28
  *
  */
 
@@ -14,7 +14,7 @@ require_once(__DIR__ . '/init-private.php');
 
 
 $t_title   = $nt_q['post_title'];
-$t_pdate   = $nt_q['post_published_date'];
+$t_pdate   = $nt_q['post_date'];
 $t_content = $nt_q['post_content'];
 
 global $nt_store;

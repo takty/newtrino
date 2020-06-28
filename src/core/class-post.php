@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-26
+ * @version 2020-06-28
  *
  */
 
@@ -29,11 +29,11 @@ class Post {
 	const STATUS_RESERVED  = 'reserved';
 	const STATUS_DRAFT     = 'draft';
 
-	static function compareDate($a, $b) {
-		$da = $a->getDateTimeNumber();
-		$db = $b->getDateTimeNumber();
-		if ($da === $db) return 0;
-		return ($da > $db) ? -1 : 1;
+	static function compareDate( $a, $b ) {
+		$da = $a->_date;
+		$db = $b->_date;
+		if ( $da === $db ) return 0;
+		return ( $da > $db ) ? -1 : 1;
 	}
 
 	static function compareIndexScore($a, $b) {
@@ -44,19 +44,19 @@ class Post {
 	}
 
 	static function parseDateTime( $dateTime ) {
-		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dataTime );
+		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dateTime );
 	}
 
 	static function numberifyDateTime( $dateTime ) {
-		return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dataTime );
+		return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dateTime );
 	}
 
 	static function parseDate( $date ) {
-		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $data );
+		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );
 	}
 
 	static function numberifyDate( $date ) {
-		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $dataTime );
+		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $date );
 	}
 
 	static function parseTime( $time ) {
@@ -88,11 +88,13 @@ class Post {
 	}
 
 	function assign( $vals ) {
-		$modDate = date( 'Y-m-d H:i:s' );
-		// $creDate = empty( $vals['post_created_date'] )   ? $modDate : $vals['post_created_date'];
-		$pubDate = empty( $vals['post_published_date'] ) ? $modDate : $vals['post_published_date'];
+		$this->setTitle( $vals['post_title'] );
+		$this->setState( $vals['post_status'] );
 
-		$this->setTitle($vals['post_title']);
+		$mod  = date( 'YmdHis' );
+		$date = empty( $vals['post_date'] ) ? $mod : Post::numberifyDateTime( $vals['post_date'] );
+		$this->setDate( $date );
+		$this->setModified( $mod );
 
 		global $nt_store;
 		$taxes = $nt_store->taxonomy()->getTaxonomyAll();
@@ -101,12 +103,8 @@ class Post {
 			$ts = is_array( $vals["taxonomy:$tax"] ) ? $vals["taxonomy:$tax"] : [ $vals["taxonomy:$tax"] ];
 			$this->setTermSlugs( '$tax', $ts );
 		}
-		// $this->setCreatedDate($creDate);
-		$this->setModifiedDate($modDate);
-		$this->setPublishedDate($pubDate);
-		$this->setState($vals['post_status']);
-		$this->setContent($vals['post_content']);
-		$this->_assignCustom($vals);
+		$this->setContent( $vals['post_content'] );
+		$this->_assignCustom( $vals );
 	}
 
 	function load( $storePath, $meta = false ) {
@@ -119,7 +117,7 @@ class Post {
 		if (!file_exists($storePath . $this->_id)) {
 			mkdir($storePath . $this->_id, self::MODE_DIR);
 		}
-		$this->setModifiedDate(date('Y-m-d H:i:s'));
+		$this->setModified( 'now' );
 		$this->_postPath = $storePath . $this->_id . '/';
 		$this->_writeMeta($this->_postPath);
 		if ($this->_content === null) $this->_readContent();
@@ -135,13 +133,11 @@ class Post {
 
 	// Meta Data --------------------------------------------------------------
 
-	private $_title = '';
+	private $_title    = '';
+	private $_status   = self::STATUS_PUBLISHED;
+	private $_date     = '';
+	private $_modified = '';
 	private $_taxonomy = [];
-	private $_datePublished = '';
-	private $_dateCreated = '';
-	private $_dateModified = '';
-	private $_isPublished = false;
-	private $_status = self::STATUS_PUBLISHED;
 
 	private function _readMeta( $postDir, $preloadedMeta = false ) {
 		if ( $preloadedMeta ) {
@@ -159,12 +155,11 @@ class Post {
 
 		$metaAssoc += [ 'title' => '', 'taxonomy' => [], 'status' => self::STATUS_PUBLISHED ];
 
-		$this->_title         = $metaAssoc['title'];
-		$this->_status        = $metaAssoc['status'];
-		$this->_taxonomy      = $metaAssoc['taxonomy'];
-		// $this->_dateCreated   = $metaAssoc['created_date'];
-		$this->_dateModified  = $metaAssoc['modified_date'];
-		$this->_datePublished = $metaAssoc['published_date'];
+		$this->_title    = $metaAssoc['title'];
+		$this->_status   = $metaAssoc['status'];
+		$this->_date     = $metaAssoc['date'];
+		$this->_modified = $metaAssoc['modified'];
+		$this->_taxonomy = $metaAssoc['taxonomy'];
 		$this->_readCustomMeta($metaAssoc);
 
 		if ($this->_status !== self::STATUS_DRAFT) {
@@ -180,12 +175,11 @@ class Post {
 	private function _writeMeta($postDir) {
 		$metaAssoc = [];
 
-		$metaAssoc['title']          = $this->_title;
-		$metaAssoc['status']         = $this->_status;
-		$metaAssoc['taxonomy']       = $this->_taxonomy;
-		// $metaAssoc['created_date']   = $this->_dateCreated;
-		$metaAssoc['modified_date']  = $this->_dateModified;
-		$metaAssoc['published_date'] = $this->_datePublished;
+		$metaAssoc['title']    = $this->_title;
+		$metaAssoc['status']   = $this->_status;
+		$metaAssoc['date']     = $this->_date;
+		$metaAssoc['modified'] = $this->_modified;
+		$metaAssoc['taxonomy'] = $this->_taxonomy;
 		$this->_writeCustomMeta($metaAssoc);
 
 		$metaStr = json_encode($metaAssoc, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -224,31 +218,21 @@ class Post {
 
 	// ----
 
-	function getPublishedDate() {
-		$dt = explode(' ', $this->_datePublished);
-		return $dt[0];
-	}
-
-	function getPublishedTime() {
-		$dt = explode(' ', $this->_datePublished);
-		return $dt[1];
-	}
-
 	function getPublishedDateTime() {
-		return $this->_datePublished;
-	}
-
-	function getDateTimeNumber() {
-		return str_replace(['-', '/', ':', ' '], '', $this->_datePublished);
+		return Post::parseDateTime( $this->_date );
 	}
 
 	function getModifiedDateTime() {
-		return $this->_dateModified;
+		return Post::parseDateTime( $this->_modified );
 	}
 
-	// function getCreatedDateTime() {
-	// 	return $this->_dateCreated;
-	// }
+	function getDateRaw() {
+		return $this->_date;
+	}
+
+	function getModifiedRaw() {
+		return $this->_modified;
+	}
 
 	function getState() {
 		return $this->_status;
@@ -267,27 +251,21 @@ class Post {
 	}
 
 	function canPublished() {
-		$now = date('YmdHis');
-		$pd = str_pad($this->getDateTimeNumber(), 14, '0');
-		return $pd < $now;
+		return intval( substr( $this->_date, 0, 8 ) ) < intval( date( 'Ymd' ) );
 	}
 
 	function setTitle($val) {
 		$this->_title = $val;
 	}
 
-
-	function setPublishedDate($val) {
-		if ($val === 'now') $val = date('Y-m-d H:i:s');
-		$this->_datePublished = $val;
+	function setDate( $val ) {
+		if ( $val === 'now' ) $val = date( 'YmdHis' );
+		$this->_date = $val;
 	}
 
-	function setCreatedDate($val) {
-		$this->_dateCreated = $val;
-	}
-
-	function setModifiedDate($val) {
-		$this->_dateModified = $val;
+	function setModified( $val ) {
+		if ( $val === 'now' ) $val = date( 'YmdHis' );
+		$this->_modified = $val;
 	}
 
 	function setState($val) {
