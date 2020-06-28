@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-22
+ * @version 2020-06-28
  *
  */
 
@@ -14,12 +14,11 @@ class Media {
 
 	const MODE_DIR       = 0755;
 	const MODE_FILE      = 0644;
-	const MEDIA_DIR_NAME = 'media';
 
-	public function __construct( $postPath, $postUrl, $id ) {
+	public function __construct( $postPath, $postUrl, $mediaDirName, $id ) {
 		$this->_id = $id;
-		$this->_mediaPath = $postPath . $id . '/' . self::MEDIA_DIR_NAME . '/';
-		$this->_mediaUrl  = $postUrl  . $id . '/' . self::MEDIA_DIR_NAME . '/';
+		$this->_mediaPath = $postPath . $id . '/' . $mediaDirName . '/';
+		$this->_mediaUrl  = $postUrl  . $id . '/' . $mediaDirName . '/';
 	}
 
 	public function getItemList() {

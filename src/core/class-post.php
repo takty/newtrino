@@ -13,7 +13,6 @@ namespace nt;
 require_once(__DIR__ . '/lib/simple_html_dom.php');
 require_once(__DIR__ . '/class-indexer.php');
 require_once(__DIR__ . '/class-logger.php');
-require_once(__DIR__ . '/class-media.php');
 
 
 class Post {
@@ -24,6 +23,7 @@ class Post {
 	const META_FILE_NAME = 'meta.json';
 	const CONT_FILE_NAME = 'content.html';
 	const WORD_FILE_NAME = 'word.txt';
+	const MEDIA_DIR_NAME = 'media';
 
 	const STATUS_PUBLISHED = 'published';
 	const STATUS_RESERVED  = 'reserved';
@@ -391,7 +391,7 @@ class Post {
 			$sub = substr($url, 1);
 			return $this->_urlPost . $sub;
 		} else {
-			if (strpos($url, Media::MEDIA_DIR_NAME . '/') === 0){
+			if (strpos($url, self::MEDIA_DIR_NAME . '/') === 0){
 				return $this->_urlPost . $this->_id . '/' . $url;
 			}
 		}
@@ -402,9 +402,9 @@ class Post {
 		$url = resolve_url($url, $this->_urlPrivate);
 		if (strpos($url, $this->_urlPost) === 0) {
 			$url = substr($url, strlen($this->_urlPost) - 1);
-			$pu = '/' . $this->_id . '/' . Media::MEDIA_DIR_NAME . '/';
+			$pu = '/' . $this->_id . '/' . self::MEDIA_DIR_NAME . '/';
 			if (strpos($url, $pu) === 0) {
-				$url = substr($url, strlen($pu) - strlen(Media::MEDIA_DIR_NAME . '/'));
+				$url = substr($url, strlen($pu) - strlen(self::MEDIA_DIR_NAME . '/'));
 			}
 		}
 		return $url;

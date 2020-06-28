@@ -6,7 +6,7 @@ namespace nt;
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2020-06-28
  *
  */
 
@@ -14,7 +14,7 @@ namespace nt;
 require_once(__DIR__ . '/init-private.php');
 
 
-$media = new Media(NT_DIR_POST, NT_URL_POST, $nt_q['id']);
+$media = new Media(NT_DIR_POST, NT_URL_POST, Post::MEDIA_DIR_NAME, $nt_q['id']);
 
 if ($nt_q['mode'] === 'delete') {
 	$file = $nt_q['deleted_file'];

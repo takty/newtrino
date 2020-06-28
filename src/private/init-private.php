@@ -5,7 +5,7 @@ namespace nt;
  * Init for Private
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-26
+ * @version 2020-06-28
  *
  */
 
@@ -16,6 +16,7 @@ require_once(__DIR__ . '/../core/define.php');
 require_once(__DIR__ . '/../core/function.php');
 require_once(__DIR__ . '/../core/class-store.php');
 require_once(__DIR__ . '/class-session.php');
+require_once(__DIR__ . '/class-media.php');
 
 reject_direct_access(NT_URL_HOST, __FILE__, 2);
 set_locale_setting();
