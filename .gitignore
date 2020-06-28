@@ -2,6 +2,10 @@
 /vendor/
 /dist/
 npm-debug.log
-/sample-html/nt/
-/sample-php/nt/
+/sample-html/nt/core/
+/sample-html/nt/data/
+/sample-html/nt/private/
+/sample-php/nt/core/
+/sample-php/nt/data/
+/sample-php/nt/private/
 /_removed/

@@ -91,7 +91,7 @@ gulp.task('copy-lib', gulp.parallel(
 gulp.task('copy-src', (done) => {
 	copySync('./src', './dist');
 	copySync(SRC_PRIVATE + 'sass/*.css', DIST_PRIVATE + 'css/');
-	fs.removeSync(DIST_BASE + 'post/*');
+	// fs.removeSync(DIST_BASE + 'post');
 	fs.removeSync(DIST_PRIVATE + 'sass');
 	fs.removeSync(DIST_PRIVATE + 'lib');
 	for (let f of glob.sync(DIST_PRIVATE + 'js/*.js')) fs.removeSync(f);
@@ -156,4 +156,4 @@ gulp.task('watch', () => {
 	gulp.watch('src/**/*', gulp.series('sample'));
 });
 
-gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass', 'watch'));
+gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass', 'sample', 'watch'));

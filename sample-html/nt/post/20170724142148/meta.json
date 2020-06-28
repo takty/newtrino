@@ -1,0 +1,11 @@
+{
+    "title": "Test Post",
+    "status": "published",
+    "taxonomy": {
+        "category": [
+            "news"
+        ]
+    },
+    "date": "20170829000000",
+    "modified": "20181017162156"
+}
