@@ -3,10 +3,5 @@
 	"lang_private": "ja",
 	"posts_per_page": 10,
 	"newly_arrived_day": 7,
-	"date_format_ymd@ja": "Y年n月j日",
-	"date_format_ym@ja": "Y年n月",
-	"date_format_y@ja": "Y年",
-	"date_format_ymd@en": "M d, Y",
-	"date_format_ym@en": "M, Y",
-	"date_format_y@en": "Y"
+	"date_format": "Y-m-d"
 }

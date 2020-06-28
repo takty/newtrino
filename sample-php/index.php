@@ -1,6 +1,6 @@
 <?php
 require_once( __DIR__ . '/nt/core/view.php' );
-$view = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/' ] );
+$view = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'option' => [ 'date_format' => 'Y-m-d' ] ] );
 header('Content-Type: text/html;charset=utf-8');
 ?>
 <!DOCTYPE html>

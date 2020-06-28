@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://unpkg.com/mustache"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 <script src="nt/core/view.min.js"></script>
 <title>Newtrino Sample</title>
 </head>
@@ -41,7 +42,7 @@
 		document.addEventListener('DOMContentLoaded', () => {
 			NT.queryRecentPosts('nt/', (view) => {
 				NT.renderTemplate('[type="text/html"]', view);
-			}, { count: 2, base_url: './topic/' } );
+			}, { count: 2, base_url: './topic/', option: { date_format: 'Y-MM-DD'} } );
 		});
 	</script>
 </body>

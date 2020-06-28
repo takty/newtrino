@@ -9,7 +9,12 @@ message {
 	}
 	filter: {
 		date: 'day' or 'month' or 'year'
+		date_format: 'Y-m-d'
 		taxonomy: ['category']
+	}
+	option: {
+		lang: 'en'
+		date_format: 'Y-m-d'
 	}
 }
 

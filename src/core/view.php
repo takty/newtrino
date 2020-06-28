@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-06-28
  *
  */
 
@@ -15,8 +15,10 @@ require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
 
 function query( $args = [] ) {
-	$filter   = isset( $args['filter'] )   ? $args['filter']   : [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];
-	$config   = isset( $args['config'] )   ? $args['config']   : [];
+	$filter = [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];
+	if ( isset( $args['filter'] ) ) $filter = array_merge( $filter, $args['filter'] );
+
+	$option   = isset( $args['option'] )   ? $args['option']   : [];
 	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : false;
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
@@ -24,7 +26,7 @@ function query( $args = [] ) {
 	$msg = [
 		'query'  => parse_query_string( 'id' ),
 		'filter' => $filter,
-		'config' => $config
+		'option' => $option
 	];
 	if ( isset( $msg['query']['id'] ) ) {
 		return _create_view_single( $msg, $base_url );
@@ -34,7 +36,7 @@ function query( $args = [] ) {
 }
 
 function query_recent_posts( $args = [] ) {
-	$config   = isset( $args['config'] )   ? $args['config']   : [];
+	$option   = isset( $args['option'] )   ? $args['option']   : [];
 	$count    = isset( $args['count'] )    ? $args['count']    : 10;
 	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : false;
 
@@ -43,7 +45,7 @@ function query_recent_posts( $args = [] ) {
 	$msg = [
 		'query'  => [ 'posts_per_page' => $count ],
 		'filter' => [],
-		'config' => $config
+		'option' => $option
 	];
 	return _create_view_archive( $msg, $base_url );
 }
@@ -53,11 +55,12 @@ function query_recent_posts( $args = [] ) {
 
 
 function _create_view_archive( $msg, $base_url ) {
-	$res = create_response_archive( $msg['query'], $msg['filter'], $msg['config'] );
+	$res = create_response_archive( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['posts'] = [];
+	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
 
 	$view = [];
-	$view['posts'] = _process_posts_for_view( $res['posts'], $base_url );
+	$view['posts'] = _process_posts_for_view( $res['posts'], $df, $base_url );
 	$view['navigation'] = [];
 	$view['navigation']['pagination'] = _create_pagination_view( $msg, $res['page_count'], $base_url );
 	$view['filter'] = _create_filter_view( $msg, $res, $base_url );
@@ -65,11 +68,12 @@ function _create_view_archive( $msg, $base_url ) {
 }
 
 function _create_view_single( $msg, $base_url ) {
-	$res = create_response_single( $msg['query'], $msg['filter'], $msg['config'] );
+	$res = create_response_single( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['post'] = null;
+	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
 
 	$view = [];
-	list( $view['post'] ) = _process_posts_for_view( [ $res['post'] ], $base_url );
+	list( $view['post'] ) = _process_posts_for_view( [ $res['post'] ], $df, $base_url );
 	$view['navigation'] = [];
 	$view['navigation']['post_navigation'] = _create_post_navigation_view( $msg, $res['adjacent_post'], $base_url );
 	$view['filter'] = _create_filter_view( $msg, $res, $base_url );
@@ -80,7 +84,7 @@ function _create_view_single( $msg, $base_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _process_posts_for_view( $items, $base_url ) {
+function _process_posts_for_view( $items, $date_format, $base_url ) {
 	foreach ( $items as &$p ) {
 		if ( ! $p ) continue;
 		if ( isset( $p['taxonomy'] ) ) {
@@ -91,6 +95,10 @@ function _process_posts_for_view( $items, $base_url ) {
 			}
 		}
 		$p['url'] = $base_url . '?' . urlencode( $p['id'] );
+		if ( $date_format ) {
+			$p['date']     = date_create( $p['date'] )->format( $date_format );
+			$p['modified'] = date_create( $p['modified'] )->format( $date_format );
+		}
 	}
 	return $items;
 }
@@ -113,7 +121,8 @@ function _create_pagination_view( $msg, $page_count, $base_url ) {
 }
 
 function _create_post_navigation_view( $msg, $adjacent_posts, $base_url ) {
-	$ps = _process_posts_for_view( [ $adjacent_posts['previous'], $adjacent_posts['next'] ], $base_url );
+	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
+	$ps = _process_posts_for_view( [ $adjacent_posts['previous'], $adjacent_posts['next'] ], $df, $base_url );
 	return [
 		'previous' => $ps[0],
 		'next'     => $ps[1],
@@ -147,15 +156,34 @@ function _create_filter_view( $msg, $res, $base_url ) {
 
 function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
 	$cur = isset( $msg['query']['date'] ) ? $msg['query']['date'] : '';
+	if ( isset( $msg['filter']['date_format'] ) ) {
+		$df = $msg['filter']['date_format'];
+	} else {
+		switch ( $type ) {
+			case 'year':  $df = 'Y';     break;
+			case 'month': $df = 'Y-m';   break;
+			case 'day':   $df = 'Y-m-d'; break;
+		}
+	}
 	$as = [];
 	foreach ( $dates as $date ) {
 		$cq = _create_canonical_query( [ 'date' => $date['slug'] ] );
 		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
-		$p = [ 'label' => $date['label'], 'url' => $url ];
+		$label = _format_date_label( $date['slug'], $df );
+		$p = [ 'label' => $label, 'url' => $url ];
 		if ( strval( $date['slug'] ) === $cur ) $p['is_current'] = true;
 		$as[] = $p;
 	}
 	return [ $type => $as ];
+}
+
+function _format_date_label( $slug, $df ) {
+	$y = substr( $slug, 0, 4 );
+	$m = substr( $slug, 4, 2 );
+	$d = substr( $slug, 6, 2 );
+	$date = ( $y ? $y : '1970' ) . '-' . ( $m ? $m : '01' ) . '-' . ( $d ? $d : '01' );
+	$date = date_create( $date );
+	return $date->format( $df );
 }
 
 function _create_taxonomy_filter_view( $msg, $tax, $terms, $base_url ) {

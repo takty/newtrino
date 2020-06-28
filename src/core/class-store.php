@@ -101,42 +101,41 @@ class Store {
 		}
 		$ret = [];
 		foreach ( $count as $key => $val ) {
-			$label = $this->formatDate( $key );
-			$ret[] = [ 'slug' => $key, 'label' => $label, 'count' => $val ];
+			$ret[] = [ 'slug' => $key, 'count' => $val ];
 		}
 		return $ret;
 	}
 
-	public function formatDate( string $dateNum ): string {
-		global $nt_config;
-		$lang = $nt_config['lang'];
-		$dateNum = str_replace( '-', '', $dateNum );
-		if ( strpos( $dateNum, ' ' ) !== false ) $dateNum = explode( ' ', $dateNum )[0];
-		$len = strlen( $dateNum );
+	// public function formatDate( string $dateNum ): string {
+	// 	global $nt_config;
+	// 	$lang = $nt_config['lang'];
+	// 	$dateNum = str_replace( '-', '', $dateNum );
+	// 	if ( strpos( $dateNum, ' ' ) !== false ) $dateNum = explode( ' ', $dateNum )[0];
+	// 	$len = strlen( $dateNum );
 
-		$fmt = 'Y-m-d';
-		if ( $len === 4 ) {
-			if      ( isset( $nt_config["date_format_y@$lang"] ) ) $fmt = $nt_config["date_format_y@$lang"];
-			else if ( isset( $nt_config["date_format_y"]       ) ) $fmt = $nt_config["date_format_y"];
-			else if ( isset( $nt_config["date_format@$lang"]   ) ) $fmt = $nt_config["date_format@$lang"];
-			else if ( isset( $nt_config["date_format"]         ) ) $fmt = $nt_config["date_format"];
-			$dateNum .= '0101';
-		} else if ( $len === 6 ) {
-			if      ( isset( $nt_config["date_format_ym@$lang"] ) ) $fmt = $nt_config["date_format_ym@$lang"];
-			else if ( isset( $nt_config["date_format_ym"]       ) ) $fmt = $nt_config["date_format_ym"];
-			else if ( isset( $nt_config["date_format@$lang"]    ) ) $fmt = $nt_config["date_format@$lang"];
-			else if ( isset( $nt_config["date_format"]          ) ) $fmt = $nt_config["date_format"];
-			$dateNum .= '01';
-		} else if ( $len === 8 ) {
-			if      ( isset( $nt_config["date_format_ymd@$lang"] ) ) $fmt = $nt_config["date_format_ymd@$lang"];
-			else if ( isset( $nt_config["date_format_ymd"]       ) ) $fmt = $nt_config["date_format_ymd"];
-			else if ( isset( $nt_config["date_format@$lang"]     ) ) $fmt = $nt_config["date_format@$lang"];
-			else if ( isset( $nt_config["date_format"]           ) ) $fmt = $nt_config["date_format"];
-		}
-		$nd = preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $dateNum );
-		$date = date_create( $nd );
-		return $date->format( $fmt );
-	}
+	// 	$fmt = 'Y-m-d';
+	// 	if ( $len === 4 ) {
+	// 		if      ( isset( $nt_config["date_format_y@$lang"] ) ) $fmt = $nt_config["date_format_y@$lang"];
+	// 		else if ( isset( $nt_config["date_format_y"]       ) ) $fmt = $nt_config["date_format_y"];
+	// 		else if ( isset( $nt_config["date_format@$lang"]   ) ) $fmt = $nt_config["date_format@$lang"];
+	// 		else if ( isset( $nt_config["date_format"]         ) ) $fmt = $nt_config["date_format"];
+	// 		$dateNum .= '0101';
+	// 	} else if ( $len === 6 ) {
+	// 		if      ( isset( $nt_config["date_format_ym@$lang"] ) ) $fmt = $nt_config["date_format_ym@$lang"];
+	// 		else if ( isset( $nt_config["date_format_ym"]       ) ) $fmt = $nt_config["date_format_ym"];
+	// 		else if ( isset( $nt_config["date_format@$lang"]    ) ) $fmt = $nt_config["date_format@$lang"];
+	// 		else if ( isset( $nt_config["date_format"]          ) ) $fmt = $nt_config["date_format"];
+	// 		$dateNum .= '01';
+	// 	} else if ( $len === 8 ) {
+	// 		if      ( isset( $nt_config["date_format_ymd@$lang"] ) ) $fmt = $nt_config["date_format_ymd@$lang"];
+	// 		else if ( isset( $nt_config["date_format_ymd"]       ) ) $fmt = $nt_config["date_format_ymd"];
+	// 		else if ( isset( $nt_config["date_format@$lang"]     ) ) $fmt = $nt_config["date_format@$lang"];
+	// 		else if ( isset( $nt_config["date_format"]           ) ) $fmt = $nt_config["date_format"];
+	// 	}
+	// 	$nd = preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $dateNum );
+	// 	$date = date_create( $nd );
+	// 	return $date->format( $fmt );
+	// }
 
 	// 	$posts = $this->_loadPostsAll($published_only);
 	// 	if (!empty($date_bgn) || !empty($date_end)) {

@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-06-28
  *
  */
 
@@ -24,9 +24,9 @@ $nt_config = load_config( NT_DIR_DATA );
 // -----------------------------------------------------------------------------
 
 
-function create_response_archive( $query, $filter, $config = [] ) {
+function create_response_archive( $query, $filter, $option = [] ) {
 	global $nt_store, $nt_config;
-	$nt_config += $config;
+	$nt_config += $option;
 	$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 
 	$query  = _rearrange_query( $query );
@@ -62,9 +62,9 @@ function create_response_archive( $query, $filter, $config = [] ) {
 	return $res;
 }
 
-function create_response_single( $query, $filter, $config = [] ) {
+function create_response_single( $query, $filter, $option = [] ) {
 	global $nt_store, $nt_config;
-	$nt_config += $config;
+	$nt_config += $option;
 	$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
 
 	$query  = _rearrange_query( $query );
@@ -130,8 +130,9 @@ function _rearrange_query( $query ) {
 
 function _rearrange_filter( $filter ) {
 	$filter_vars = [
-		'date'     => 'slug',
-		'taxonomy' => 'slug_array',
+		'date'        => 'slug',
+		'date_format' => 'string',
+		'taxonomy'    => 'slug_array',
 	];
 	$ret = [];
 	foreach ( $filter as $key => $val ) {
@@ -186,8 +187,8 @@ function _create_post_data( $p, $include_content = false ) {
 		'slug'      => '',  // preserved
 		'type'      => '',  // preserved
 		'title'     => $p->getTitle( true ),
-		'date'      => $nt_store->formatDate( $p->getDate() ),
-		'modified'  => $nt_store->formatDate( $p->getModified() ),
+		'date'      => $p->getDate(),
+		'modified'  => $p->getModified(),
 		'excerpt'   => $p->getExcerpt( 60 ),
 		'meta'      => [],
 		'taxonomy'  => [],
@@ -231,7 +232,7 @@ function _get_date_archive( $type ) {
 	$ds = $nt_store->getCountByDate( $type );
 	$cs = [];
 	foreach ( $ds as $d ) {
-		$cs[] = [ 'slug' => $d['slug'], 'label' => $d['label'], 'count' => $d['count'] ];
+		$cs[] = [ 'slug' => $d['slug'], 'count' => $d['count'] ];
 	}
 	return [ $type => $cs ];
 }

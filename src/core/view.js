@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-06-28
  *
  */
 
@@ -16,8 +16,10 @@ window.NT = window['NT'] || {};
 	const AJAX_API = 'core/view-ajax.php';
 
 	function query(url, callback, args = {}) {
-		const filter  = args.filter   ? args.filter   : { date: 'year', taxonomy: ['category'] };
-		const config  = args.config   ? args.config   : {};
+		let filter = { date: 'year', taxonomy: ['category'] };
+		if (args.filter) filter = Object.assign(filter, args.filter);
+
+		const option  = args.option   ? args.option   : {};
 		let   baseUrl = args.base_url ? args.base_url : false;
 
 		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
@@ -26,7 +28,7 @@ window.NT = window['NT'] || {};
 		const msg = {
 			query : parseQueryString('id'),
 			filter: filter,
-			config: config
+			option: option
 		};
 		if (msg.query['id']) {
 			_createViewSingle(url, callback, msg, baseUrl);
@@ -36,7 +38,7 @@ window.NT = window['NT'] || {};
 	}
 
 	function queryRecentPosts(url, callback, args = {}) {
-		const config  = args.config   ? args.config   : {};
+		const option  = args.option   ? args.option   : {};
 		const count   = args.count    ? args.count    : 10;
 		let   baseUrl = args.base_url ? args.base_url : false;
 
@@ -46,7 +48,7 @@ window.NT = window['NT'] || {};
 		const msg = {
 			query:  { posts_per_page: count },
 			filter: {},
-			config: config
+			option: option
 		};
 		_createViewArchive(url, callback, msg, baseUrl);
 	}
@@ -58,9 +60,10 @@ window.NT = window['NT'] || {};
 	function _createViewArchive(url, callback, msg, baseUrl) {
 		sendRequest(url, msg, (res) => {
 			if (!res || res.status !== 'success') res.posts = [];
+			const df = (msg.option && msg.option.date_format) ? msg.option.date_format : null;
 
 			const view = {};
-			view.posts = _processPostsForView(res.posts, baseUrl);
+			view.posts = _processPostsForView(res.posts, df, baseUrl);
 			view.navigation = {};
 			view.navigation.pagination = _createPaginationView(msg, res.page_count, baseUrl);
 			view.filter = _createFilterView(msg, res, baseUrl);
@@ -72,9 +75,10 @@ window.NT = window['NT'] || {};
 	function _createViewSingle(url, callback, msg, baseUrl) {
 		sendRequest(url, msg, (res) => {
 			if (!res || res.status !== 'success') res.post = null;
+			const df = (msg.option && msg.option.date_format) ? msg.option.date_format : null;
 
 			const view = {};
-			[view.post] = _processPostsForView([res.post], baseUrl);
+			[view.post] = _processPostsForView([res.post], df, baseUrl);
 			view.navigation = {};
 			view.navigation.post_navigation = _createPostNavigationView(msg, res.adjacent_post, baseUrl);
 			view.filter = _createFilterView(msg, res, baseUrl);
@@ -87,7 +91,7 @@ window.NT = window['NT'] || {};
 	// -------------------------------------------------------------------------
 
 
-	function _processPostsForView(items, baseUrl) {
+	function _processPostsForView(items, dateFormat, baseUrl) {
 		for (let i = 0; i < items.length; i += 1) {
 			const p = items[i];
 			if (!p) continue;
@@ -101,6 +105,10 @@ window.NT = window['NT'] || {};
 				}
 			}
 			p.url = baseUrl + '?' + encodeQueryParam(p.id);
+			if (dateFormat) {
+				p['date']     = moment(p['date']).format(dateFormat);
+				p['modified'] = moment(p['modified']).format(dateFormat);
+			}
 		}
 		return items;
 	}
@@ -123,7 +131,8 @@ window.NT = window['NT'] || {};
 	}
 
 	function _createPostNavigationView(msg, adjacentPosts, baseUrl) {
-		const ps = _processPostsForView([adjacentPosts.previous, adjacentPosts.next], baseUrl);
+		const df = (msg.option && msg.option.date_format) ? msg.option.date_format : null;
+		const ps = _processPostsForView([adjacentPosts.previous, adjacentPosts.next], df, baseUrl);
 		return {
 			previous: ps[0],
 			next    : ps[1],
@@ -155,15 +164,37 @@ window.NT = window['NT'] || {};
 
 	function _createDateFilterView(msg, type, dates, baseUrl) {
 		const cur = (msg.query && msg.query.date) ? msg.query.date : '';
+		let df = '';
+		if (msg.filter && msg.filter.date_format) {
+			df = msg.filter.date_format;
+		} else {
+			switch (type) {
+				case 'year':  df = 'Y'; break;
+				case 'month': df = 'Y-m'; break;
+				case 'day':   df = 'Y-m-d'; break;
+			}
+		}
 		const as = [];
 		for (let i = 0; i < dates.length; i += 1) {
 			const cq = _createCanonicalQuery({ date: dates[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
-			const p = { label: dates[i].label, url: url };
+			const label = _format_date_label('' + dates[i].slug, df);
+			const p = { label: label, url: url };
 			if (dates[i].slug == cur /* == */) p['is_current'] = true;
 			as.push(p);
 		}
 		return { [type]: as };
+	}
+
+	function _format_date_label( slug, df ) {
+		let y = slug.substring(0, 4);
+		let m = slug.substring(4, 2);
+		let d = slug.substring(6, 2);
+		if (!y) y = '1970';
+		if (!m) m = '01';
+		if (!d) d = '01';
+		const date = new Date(parseInt(y), parseInt(m), parseInt(d));
+		return moment(date).format(df);
 	}
 
 	function _createTaxonomyFilterView(msg, tax, terms, baseUrl) {
@@ -258,16 +289,9 @@ window.NT = window['NT'] || {};
 		return frag;
 	}
 
-	function sendRequest(url, params, callback) {
-		const xhr = new XMLHttpRequest();
-		xhr.open('POST', url);
-		xhr.onload = () => {
-			const json = JSON.parse(xhr.response);
-			callback(json);
-		};
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send(createQueryString(params));
-	}
+
+	// -------------------------------------------------------------------------
+
 
 	function parseQueryString(defaultKey) {
 		const regex = /([^&=]+)=?([^&]*)/g;
@@ -307,6 +331,21 @@ window.NT = window['NT'] || {};
 			}
 		}
 		return kvs.join('&');
+	}
+
+
+	// -------------------------------------------------------------------------
+
+
+	function sendRequest(url, params, callback) {
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', url);
+		xhr.onload = () => {
+			const json = JSON.parse(xhr.response);
+			callback(json);
+		};
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.send(createQueryString(params));
 	}
 
 	function encodeQueryParam(str) {
