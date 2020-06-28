@@ -1,1 +1,2 @@
-<?php define( 'NT_DIR', __DIR__ ); ?>
+<?php
+define( 'NT_DIR', __DIR__ );

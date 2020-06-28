@@ -83,7 +83,7 @@ class Taxonomy {
 		$path = $this->_dir . 'taxonomy.json';
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output('Error (Taxonomy::_loadData file_get_contents) [' . $path . ']');
+			Logger::output( 'Error (Taxonomy::_loadData file_get_contents) [' . $path . ']' );
 			return [];
 		}
 		$data = json_decode( $json, true );

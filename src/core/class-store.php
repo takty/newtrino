@@ -19,7 +19,7 @@ require_once(__DIR__ . '/class-query.php');
 
 class Store {
 
-	public function __construct($urlPost, $dirPost, $dirData, $conf, $urlPrivate = false) {
+	public function __construct( $urlPost, $dirPost, $dirData, $conf, $urlPrivate = false ) {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
 		$this->_conf    = $conf;
@@ -46,21 +46,21 @@ class Store {
 		return $post;
 	}
 
-	public function getPostWithNextAndPrevious($id, $cond = []) {
+	public function getPostWithNextAndPrevious( $id, $cond = [] ) {
 		$posts = $this->_getPosts( $cond );
 		$idIndex = null;
-		for ($i = 0; $i < count($posts); $i += 1) {
-			$p = $posts[$i];
+		for ($i = 0; $i < count( $posts ); $i += 1 ) {
+			$p = $posts[ $i ];
 			if ( $p->getId() === $id ) {
 				$idIndex = $i;
 				break;
 			}
 		}
-		if ($idIndex === null) return false;
+		if ( $idIndex === null ) return false;
 
-		$prev = ($idIndex > 0) ? $posts[$idIndex - 1] : null;
-		$next = ($idIndex < count($posts) - 1) ? $posts[$idIndex + 1] : null;
-		return [$prev, $posts[$idIndex], $next];
+		$prev = ( $idIndex > 0 ) ? $posts[ $idIndex - 1 ] : null;
+		$next = ( $idIndex < count( $posts ) - 1) ? $posts[ $idIndex + 1 ] : null;
+		return [ $prev, $posts[ $idIndex ], $next ];
 	}
 
 	public function getPostsByPage( $cond = [] ) {
@@ -105,37 +105,6 @@ class Store {
 		}
 		return $ret;
 	}
-
-	// public function formatDate( string $dateNum ): string {
-	// 	global $nt_config;
-	// 	$lang = $nt_config['lang'];
-	// 	$dateNum = str_replace( '-', '', $dateNum );
-	// 	if ( strpos( $dateNum, ' ' ) !== false ) $dateNum = explode( ' ', $dateNum )[0];
-	// 	$len = strlen( $dateNum );
-
-	// 	$fmt = 'Y-m-d';
-	// 	if ( $len === 4 ) {
-	// 		if      ( isset( $nt_config["date_format_y@$lang"] ) ) $fmt = $nt_config["date_format_y@$lang"];
-	// 		else if ( isset( $nt_config["date_format_y"]       ) ) $fmt = $nt_config["date_format_y"];
-	// 		else if ( isset( $nt_config["date_format@$lang"]   ) ) $fmt = $nt_config["date_format@$lang"];
-	// 		else if ( isset( $nt_config["date_format"]         ) ) $fmt = $nt_config["date_format"];
-	// 		$dateNum .= '0101';
-	// 	} else if ( $len === 6 ) {
-	// 		if      ( isset( $nt_config["date_format_ym@$lang"] ) ) $fmt = $nt_config["date_format_ym@$lang"];
-	// 		else if ( isset( $nt_config["date_format_ym"]       ) ) $fmt = $nt_config["date_format_ym"];
-	// 		else if ( isset( $nt_config["date_format@$lang"]    ) ) $fmt = $nt_config["date_format@$lang"];
-	// 		else if ( isset( $nt_config["date_format"]          ) ) $fmt = $nt_config["date_format"];
-	// 		$dateNum .= '01';
-	// 	} else if ( $len === 8 ) {
-	// 		if      ( isset( $nt_config["date_format_ymd@$lang"] ) ) $fmt = $nt_config["date_format_ymd@$lang"];
-	// 		else if ( isset( $nt_config["date_format_ymd"]       ) ) $fmt = $nt_config["date_format_ymd"];
-	// 		else if ( isset( $nt_config["date_format@$lang"]     ) ) $fmt = $nt_config["date_format@$lang"];
-	// 		else if ( isset( $nt_config["date_format"]           ) ) $fmt = $nt_config["date_format"];
-	// 	}
-	// 	$nd = preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $dateNum );
-	// 	$date = date_create( $nd );
-	// 	return $date->format( $fmt );
-	// }
 
 	// 	$posts = $this->_loadPostsAll($published_only);
 	// 	if (!empty($date_bgn) || !empty($date_end)) {
@@ -224,7 +193,7 @@ class Store {
 			$json = false;
 		}
 		if ( $json === false ) {
-			Logger::output('Error (Post::_loadMeta file_get_contents) [' . $meta_path . ']');
+			Logger::output( 'Error (Post::_loadMeta file_get_contents) [' . $meta_path . ']' );
 			return null;
 		}
 		return json_decode( $json, true );
@@ -235,68 +204,68 @@ class Store {
 
 
 	public function createNewPost() {
-		if ($dir = opendir($this->_dirPost)) {
-			$date = date('YmdHis');
+		if ( $dir = opendir( $this->_dirPost ) ) {
+			$date = date( 'YmdHis' );
 			$id = $date;
-			flock($dir, LOCK_EX);
-			if ($this->_checkIdExists($id)) {
-				for ($i = 1; $i < 10; $i += 1) {
+			flock( $dir, LOCK_EX );
+			if ( $this->_checkIdExists( $id ) ) {
+				for ( $i = 1; $i < 10; $i += 1 ) {
 					$id = $date . '_' . $i;
-					if (!$this->_checkIdExists($id)) break;
+					if ( ! $this->_checkIdExists( $id ) ) break;
 				}
 			}
-			if ($this->_checkIdExists($id)) return false;  // when the loop finished without break
+			if ( $this->_checkIdExists( $id ) ) return false;  // when the loop finished without break
 			$post = new Post( '.', $id );
 			$post->setDate( 'now' );
 			$post->save( $this->_dirPost );
-			flock($dir, LOCK_UN);
+			flock( $dir, LOCK_UN );
 			return $post;
 		}
 		return false;
 	}
 
-	private function _checkIdExists($id) {
-		return file_exists($this->_dirPost . $id) || file_exists($this->_dirPost . '.' . $id);
+	private function _checkIdExists( $id ) {
+		return file_exists( $this->_dirPost . $id ) || file_exists( $this->_dirPost . '.' . $id );
 	}
 
 
 	// ------------------------------------------------------------------------
 
 
-	public function writePost($post) {
-		$post->save($this->_dirPost);
-		if (strpos($post->getId(), '.') === 0) {
-			$newId = substr($post->getId(), 1);
-			rename($this->_dirPost . $post->getId(), $this->_dirPost . $newId);
-			$post->setId($newId);
-			$post->save($this->_dirPost);
+	public function writePost( $post ) {
+		$post->save( $this->_dirPost );
+		if ( strpos( $post->getId(), '.' ) === 0 ) {
+			$newId = substr( $post->getId(), 1 );
+			rename( $this->_dirPost . $post->getId(), $this->_dirPost . $newId );
+			$post->setId( $newId );
+			$post->save( $this->_dirPost );
 		}
 		return $post;
 	}
 
-	public function delete($id) {
+	public function delete( $id ) {
 		// We plan to add Trash function
 		$pdir = $this->_dirPost . $id;
-		self::deleteAll($pdir);
+		self::deleteAll( $pdir );
 	}
 
-	static public function deleteAll($dir) {
-		if (!file_exists($dir)) {
-			Logger::output('File Does Not Exist (Store::deleteAll file_exists) [' . $dir . ']');
+	static public function deleteAll( $dir ) {
+		if ( ! file_exists( $dir ) ) {
+			Logger::output( 'File Does Not Exist (Store::deleteAll file_exists) [' . $dir . ']' );
 			return false;
 		}
-		if ($handle = opendir($dir)) {
-			while (false !== ($item = readdir($handle))) {
-				if ($item !== '.' && $item !== '..') {
-					if (is_dir($dir . '/' . $item)) {
-						self::deleteAll($dir . '/' . $item);
+		if ( $handle = opendir( $dir ) ) {
+			while ( false !== ( $item = readdir( $handle ) ) ) {
+				if ( $item !== '.' && $item !== '..' ) {
+					if ( is_dir( $dir . '/' . $item ) ) {
+						self::deleteAll( $dir . '/' . $item );
 					} else {
-						unlink($dir . '/' . $item);
+						unlink( $dir . '/' . $item );
 					}
 				}
 			}
-			closedir($handle);
-			rmdir($dir);
+			closedir( $handle );
+			rmdir( $dir );
 		}
 	}
 

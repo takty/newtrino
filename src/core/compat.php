@@ -5,12 +5,12 @@ namespace nt;
  * Compatibility Utilities
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-06-28
  *
  */
 
-require_once( __DIR__ . '/define.php' );
-require_once( __DIR__ . '/function.php' );
+
+require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-logger.php' );
 require_once( __DIR__ . '/class-post.php' );
 
@@ -65,7 +65,7 @@ function convert_post_file( $dirPost ) {
 
 				$json = file_get_contents( $path );
 				if ( $json === false ) {
-					Logger::output('Error (convert_post_file file_get_contents) [' . $path . ']');
+					Logger::output( 'Error (convert_post_file file_get_contents) [' . $path . ']' );
 					return false;
 				}
 				$d = json_decode( $json, true );

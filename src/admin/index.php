@@ -12,6 +12,13 @@ namespace nt;
 
 require_once(__DIR__ . '/init-private.php');
 
+function wrap($flag, $before, $cont, $after) {
+	if ($flag) {
+		echo $before . $cont . $after;
+	} else {
+		echo $cont;
+	}
+}
 
 if ($nt_q['mode'] === 'delete') {
 	$nt_store->delete($nt_q['id']);
