@@ -5,7 +5,7 @@ namespace nt;
  * Compatibility Utilities
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-06-27
  *
  */
 
@@ -79,6 +79,18 @@ function convert_post_file( $dirPost ) {
 					$d['taxonomy'] = [ 'category' => [ $d['category'] ] ];
 					unset( $d['category'] );
 				}
+
+				if ( isset( $d['published_date'] ) ) {
+					$date = str_replace( [ '-', '/', ':', ' ' ], '', $d['published_date'] );
+					$d['date'] = $date;
+					unset( $d['published_date'] );
+				}
+				if ( isset( $d['modified_date'] ) ) {
+					$date = str_replace( [ '-', '/', ':', ' ' ], '', $d['modified_date'] );
+					$d['modified'] = $date;
+					unset( $d['modified_date'] );
+				}
+				if ( isset( $d['created_date'] ) ) unset( $d['created_date'] );
 
 				$meta = [];
 				if ( isset( $d['event_date_bgn'] ) ) {
