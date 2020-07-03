@@ -227,7 +227,7 @@ function _get_meta( $p, &$cls ) {
 		$val = $pms[ $key ];
 
 		switch ( $type ) {
-			case 'date-duration':
+			case 'date-range':
 				$es = Post::EVENT_STATUS_HELD;
 				$now = date( 'Ymd' );
 				if ( $now < $val[0] ) $es = Post::EVENT_STATUS_SCHEDULED;

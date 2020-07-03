@@ -16,7 +16,7 @@
 			},
 			{
 				"key": "duration",
-				"type": "date-duration",
+				"type": "date-range",
 				"label": "Event Duration"
 			}
 		]
@@ -27,7 +27,7 @@
 		"meta": [
 			{
 				"key": "duration",
-				"type": "date-duration",
+				"type": "date-range",
 				"label": "Event Duration"
 			}
 		]

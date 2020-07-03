@@ -115,7 +115,7 @@ window.NT = window['NT'] || {};
 					const [key, val] = meta[i];
 					if (key.indexOf('@') === -1) continue;
 					if (!p['meta'] && p['meta'][key + '@type']) continue;
-					if (p['meta'][key + '@type'] === 'date-duration') {
+					if (p['meta'][key + '@type'] === 'date-range') {
 						val[0] = moment(val[0]).format(dateFormat);
 						val[1] = moment(val[1]).format(dateFormat);
 					}

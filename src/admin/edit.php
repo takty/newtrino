@@ -94,7 +94,7 @@ function echo_meta_metaboxes( $post ) {
 		if ( empty( $key ) || empty( $type ) || empty( $label ) ) continue;
 
 		switch ( $type ) {
-			case 'date-duration':
+			case 'date-range':
 				echo_meta_duration_metabox( $post, $key, $label );
 				break;
 		}

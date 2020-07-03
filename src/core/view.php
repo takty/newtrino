@@ -103,7 +103,7 @@ function _process_posts_for_view( $items, $date_format, $base_url ) {
 			foreach ( $p['meta'] as $key => &$val ) {
 				if ( strpos( $key, '@' ) !== false ) continue;
 				if ( ! isset( $p['meta']["$key@type"] ) ) continue;
-				if ( $p['meta']["$key@type"] === 'date-duration' ) {
+				if ( $p['meta']["$key@type"] === 'date-range' ) {
 					$val[0] = date_create( $val[0] )->format( $date_format );
 					$val[1] = date_create( $val[1] )->format( $date_format );
 				}
