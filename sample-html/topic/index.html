@@ -18,43 +18,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	{{post.title}} - Newtrino Sample
 </script>
 </head>
-
 <body>
 	<header>
 		<h1><a href="../">Newtrino Sample</a></h1>
 	</header>
-	<main>
 <!-- ======================================================================= -->
-		<header class="entry-header">
-			<script type="text/html" data-section="^post">
+	<script type="text/html" data-section="^post">
+		<main>
+			<header class="entry-header">
 				<h2>Topics</h2>
-			</script>
-<!-- ----------------------------------------------------------------------- -->
-			<script type="text/html" data-section="#post">
-{{#post}}
-				{{#taxonomy.category}}
-				<div class="category">{{label}}</div>
-				{{/taxonomy.category}}
-				<h2>{{title}}</h2>
-				{{#taxonomy.$category.event}}
-				<span class="event-term {{meta.event_state}}">
-					Event Date: {{meta.date_bgn}} to {{meta.date_end}}
-				</span>
-				{{/taxonomy.$category.event}}
-				{{^taxonomy.$category.event}}
-				<div class="date">{{date}}</div>
-				{{/taxonomy.$category.event}}
-{{/post}}
-			</script>
-		</header>
-<!-- ======================================================================= -->
-		<div class="aside aside-filter">
-			<script type="text/html" data-section="^post">
+			</header>
+			<div class="aside aside-filter">
 				<div class="filter-date">
 {{#filter.date}}
 					<select onchange="document.location.href = this.value;">
 						<option value="./">Year</option>
-						{{#year}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/year}}
+						{{#year}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/year}}
 					</select>
 {{/filter.date}}
 				</div>
@@ -62,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 {{#filter.taxonomy}}
 					<select onchange="document.location.href = this.value;">
 						<option value="./">Category</option>
-						{{#category}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/category}}
+						{{#category}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/category}}
 					</select>
 {{/filter.taxonomy}}
 				</div>
@@ -74,21 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
 					</form>
 {{/filter.search}}
 				</div>
-			</script>
-		</div>
-<!-- ======================================================================= -->
-		<div class="entry-content">
-			<script type="text/html" data-section="#posts">
+			</div>
+			<div class="entry-content">
 				<ul id="list-item-post">
 {{#posts}}
-					<li class="{{status}}" id="temp-item-post">
+					<li class="{{class@joined}}" id="temp-item-post">
 						<a href="{{url}}">
-							{{#taxonomy.category}}
+{{#taxonomy.category}}
 							<span class="category">{{label}}</span>
-							{{/taxonomy.category}}
-							{{#taxonomy.$category.event}}
-							<span class="event-date">Event Date: {{meta.date_bgn}} to {{meta.date_end}}</span>
-							{{/taxonomy.$category.event}}
+{{/taxonomy.category}}
+{{#taxonomy.$category.event}}
+							<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
+{{/taxonomy.$category.event}}
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{excerpt}}</div>
 							<div class="date">{{date}}</div>
@@ -96,37 +72,57 @@ document.addEventListener('DOMContentLoaded', () => {
 					</li>
 {{/posts}}
 				</ul>
-			</script>
-<!-- ----------------------------------------------------------------------- -->
-			<script type="text/html" data-section="#post">
-				{{&post.content}}
-			</script>
+			</div>
+		</main>
+	</script>
+	<script type="text/html" data-section="^post">
+{{#navigation.pagination}}
+		<div class="aside aside-navigation">
+			<div class="pagination">
+				<a href="{{previous}}">Previous</a>
+				<select onchange="document.location.href = this.value;">
+					{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
+				</select>
+				<a href="{{next}}">Next</a>
+			</div>
 		</div>
+{{/navigation.pagination}}
+	</script>
 <!-- ======================================================================= -->
+	<script type="text/html" data-section="#post">
+{{#post}}
+		<main class="entry {{class@joined}}">
+			<header class="entry-header">
+{{#taxonomy.category}}
+				<div class="category">{{label}}</div>
+{{/taxonomy.category}}
+				<h2>{{title}}</h2>
+{{#taxonomy.$category.event}}
+				<span class="event-term">
+					Event Date: {{meta.duration.0}} to {{meta.duration.1}}
+				</span>
+{{/taxonomy.$category.event}}
+{{^taxonomy.$category.event}}
+				<div class="date">{{date}}</div>
+{{/taxonomy.$category.event}}
+			</header>
+			<div class="entry-content">
+				{{&post.content}}
+			</div>
+		</main>
+{{/post}}
+	</script>
+	<script type="text/html" data-section="#post">
+{{#navigation.post_navigation}}
 		<div class="aside aside-navigation">
 			<div class="post_navigation">
-				<script type="text/html">
-{{#navigation.post_navigation}}
-					{{#previous}}<a href="{{url}}">Previous</a>{{/previous}}
-					{{#next}}<a href="{{url}}">Next</a>{{/next}}
-{{/navigation.post_navigation}}
-				</script>
-			</div>
-<!-- ----------------------------------------------------------------------- -->
-			<div class="pagination">
-				<script type="text/html">
-{{#navigation.pagination}}
-					<a href="{{previous}}">Previous</a>
-					<select onchange="document.location.href = this.value;">
-						{{#pages}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/pages}}
-					</select>
-					<a href="{{next}}">Next</a>
-{{/navigation.pagination}}
-				</script>
+				{{#previous}}<a href="{{url}}">Previous</a>{{/previous}}
+				{{#next}}<a href="{{url}}">Next</a>{{/next}}
 			</div>
 		</div>
+{{/navigation.post_navigation}}
+	</script>
 <!-- ======================================================================= -->
-	</main>
 </body>
 
 </html>

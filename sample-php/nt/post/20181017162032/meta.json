@@ -1,15 +1,21 @@
 {
+    "type": "event",
     "title": "Test Event",
     "status": "published",
+    "date": "20181017162032",
+    "modified": "20200703134006",
     "taxonomy": {
         "category": [
             "event"
+        ],
+        "lang": [
+            "en"
         ]
     },
     "meta": {
-        "date_bgn": "20181017",
-        "date_end": "20181031"
-    },
-    "date": "20181017162032",
-    "modified": "20181017162056"
+        "duration": [
+            "20180107",
+            "20180330"
+        ]
+    }
 }

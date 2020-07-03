@@ -17,109 +17,106 @@ header('Content-Type: text/html;charset=utf-8');
 	<header>
 		<h1><a href="../">Newtrino Sample</a></h1>
 	</header>
+<!-- ======================================================================= -->
+<?php \nt\begin(); ?>
 	<main>
-<!-- ======================================================================= -->
 		<header class="entry-header">
-			<?php \nt\begin(); ?>
-				<h2>Topics</h2>
-			<?php \nt\end( $view, ! isset( $view['post'] ) ); ?>
-<!-- ----------------------------------------------------------------------- -->
-			<?php \nt\begin(); ?>
-{{#post}}
-				{{#taxonomy.category}}
-				<div class="category">{{label}}</div>
-				{{/taxonomy.category}}
-				<h2>{{title}}</h2>
-				{{#taxonomy.$category.event}}
-				<span class="event-term {{meta.event_state}}">
-					Event Date: {{meta.date_bgn}} to {{meta.date_end}}
-				</span>
-				{{/taxonomy.$category.event}}
-				{{^taxonomy.$category.event}}
-				<div class="date">{{date}}</div>
-				{{/taxonomy.$category.event}}
-{{/post}}
-			<?php \nt\end( $view, isset( $view['post'] ) ); ?>
+			<h2>Topics</h2>
 		</header>
-<!-- ======================================================================= -->
 		<div class="aside aside-filter">
-			<?php \nt\begin(); ?>
-				<div class="filter-date">
+			<div class="filter-date">
 {{#filter.date}}
-					<select onchange="document.location.href = this.value;">
-						<option value="./">Year</option>
-						{{#year}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/year}}
-					</select>
+				<select onchange="document.location.href = this.value;">
+					<option value="./">Year</option>
+					{{#year}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/year}}
+				</select>
 {{/filter.date}}
-				</div>
-				<div class="filter-taxonomy">
+			</div>
+			<div class="filter-taxonomy">
 {{#filter.taxonomy}}
-					<select onchange="document.location.href = this.value;">
-						<option value="./">Category</option>
-						{{#category}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/category}}
-					</select>
+				<select onchange="document.location.href = this.value;">
+					<option value="./">Category</option>
+					{{#category}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/category}}
+				</select>
 {{/filter.taxonomy}}
-				</div>
-				<div class="filter-search">
+			</div>
+			<div class="filter-search">
 {{#filter.search}}
-					<form action="./" type="GET">
-						<input type="text" name="search" value="{{keyword}}">
-						<input type="submit" value="Search">
-					</form>
+				<form action="./" type="GET">
+					<input type="text" name="search" value="{{keyword}}">
+					<input type="submit" value="Search">
+				</form>
 {{/filter.search}}
-				</div>
-			<?php \nt\end( $view, ! isset( $view['post'] ) ); ?>
+			</div>
 		</div>
-<!-- ======================================================================= -->
 		<div class="entry-content">
-			<?php \nt\begin(); ?>
-				<ul id="list-item-post">
+			<ul id="list-item-post">
 {{#posts}}
-					<li class="{{status}}" id="temp-item-post">
-						<a href="{{url}}">
-							{{#taxonomy.category}}
-							<span class="category">{{label}}</span>
-							{{/taxonomy.category}}
-							{{#taxonomy.$category.event}}
-							<span class="event-date">Event Date: {{meta.date_bgn}} to {{meta.date_end}}</span>
-							{{/taxonomy.$category.event}}
-							<div class="title">{{title}}</div>
-							<div class="excerpt">{{excerpt}}</div>
-							<div class="date">{{date}}</div>
-						</a>
-					</li>
+				<li class="{{class@joined}}" id="temp-item-post">
+					<a href="{{url}}">
+{{#taxonomy.category}}
+						<span class="category">{{label}}</span>
+{{/taxonomy.category}}
+{{#taxonomy.$category.event}}
+						<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
+{{/taxonomy.$category.event}}
+						<div class="title">{{title}}</div>
+						<div class="excerpt">{{excerpt}}</div>
+						<div class="date">{{date}}</div>
+					</a>
+				</li>
 {{/posts}}
-				</ul>
-			<?php \nt\end( $view, ! empty( $view['posts'] ) ); ?>
-<!-- ----------------------------------------------------------------------- -->
-			<?php \nt\begin(); ?>
-				{{&post.content}}
-			<?php \nt\end( $view, isset( $view['post'] ) ); ?>
+			</ul>
 		</div>
-<!-- ======================================================================= -->
-		<div class="aside aside-navigation">
-			<?php \nt\begin(); ?>
-				<div class="post_navigation">
-{{#navigation.post_navigation}}
-					{{#previous}}<a href="{{url}}">Previous</a>{{/previous}}
-					{{#next}}<a href="{{url}}">Next</a>{{/next}}
-{{/navigation.post_navigation}}
-				</div>
-			<?php \nt\end( $view, isset( $view['navigation']['post_navigation'] ) ); ?>
-<!-- ----------------------------------------------------------------------- -->
-			<?php \nt\begin(); ?>
-				<div class="pagination">
-{{#navigation.pagination}}
-					<a href="{{previous}}">Previous</a>
-					<select onchange="document.location.href = this.value;">
-						{{#pages}}<option value="{{url}}" {{#is_current}}selected{{/is_current}}>{{label}}</option>{{/pages}}
-					</select>
-					<a href="{{next}}">Next</a>
-{{/navigation.pagination}}
-				</div>
-			<?php \nt\end( $view, isset( $view['navigation']['pagination'] ) ); ?>
-		</div>
-<!-- ======================================================================= -->
 	</main>
+<?php \nt\end( $view, empty( $view['post'] ) ); ?>
+<?php \nt\begin(); ?>
+	<div class="aside aside-navigation">
+		<div class="pagination">
+{{#navigation.pagination}}
+			<a href="{{previous}}">Previous</a>
+			<select onchange="document.location.href = this.value;">
+				{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
+			</select>
+			<a href="{{next}}">Next</a>
+{{/navigation.pagination}}
+		</div>
+	</div>
+<?php \nt\end( $view, empty( $view['post'] ) ); ?>
+<!-- ======================================================================= -->
+<?php \nt\begin(); ?>
+{{#post}}
+	<main class="entry {{class@joined}}">
+		<header class="entry-header">
+{{#taxonomy.category}}
+			<div class="category">{{label}}</div>
+{{/taxonomy.category}}
+			<h2>{{title}}</h2>
+{{#taxonomy.$category.event}}
+			<span class="event-term">
+				Event Date: {{meta.duration.0}} to {{meta.duration.1}}
+			</span>
+{{/taxonomy.$category.event}}
+{{^taxonomy.$category.event}}
+			<div class="date">{{date}}</div>
+{{/taxonomy.$category.event}}
+		</header>
+		<div class="entry-content">
+			{{&post.content}}
+		</div>
+	</main>
+{{/post}}
+<?php \nt\end( $view, ! empty( $view['post'] ) ); ?>
+<?php \nt\begin(); ?>
+{{#navigation.post_navigation}}
+	<div class="aside aside-navigation">
+		<div class="post_navigation">
+			{{#previous}}<a href="{{url}}">Previous</a>{{/previous}}
+			{{#next}}<a href="{{url}}">Next</a>{{/next}}
+		</div>
+	</div>
+{{/navigation.post_navigation}}
+<?php \nt\end( $view, ! empty( $view['post'] ) ); ?>
+<!-- ======================================================================= -->
 </body>
 </html>
