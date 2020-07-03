@@ -111,6 +111,16 @@ function convert_post_file( $dirPost ) {
 					$date = str_replace( [ '-', '/', ':', ' ' ], '', $d['meta']['date_end'] );
 					$d['meta']['date_end'] = $date;
 				}
+				if ( isset( $d['meta']['date_bgn'] ) || isset( $d['meta']['date_end'] ) ) {
+					$bgn = $d['meta']['date_bgn'];
+					$end = $d['meta']['date_end'];
+					$d['meta']['duration'] = [ $bgn, $end ];
+					unset( $d['meta']['date_bgn'] );
+					unset( $d['meta']['date_end'] );
+				}
+				if ( isset( $d['meta']['duration'] ) ) {
+					$d['type'] = 'event';
+				}
 
 				$json = json_encode( $d, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 				$res = file_put_contents( $path, $json, LOCK_EX );

@@ -1,0 +1,35 @@
+[
+    {
+        "slug": "post",
+		"taxonomy": [ "category", "lang" ],
+		"meta": [
+			{
+				"label": "Group",
+				"type": "group",
+				"children": [
+					{
+						"label": "Text Field",
+						"type": "text",
+						"key": "text"
+					}
+				]
+			},
+			{
+				"key": "duration",
+				"type": "date-duration",
+				"label": "Event Duration"
+			}
+		]
+    },
+	{
+		"slug": "event",
+		"taxonomy": [ "category", "lang" ],
+		"meta": [
+			{
+				"key": "duration",
+				"type": "date-duration",
+				"label": "Event Duration"
+			}
+		]
+	}
+]

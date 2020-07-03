@@ -100,21 +100,21 @@ table.list {
 		&:last-child { padding-right: 1px; }
 	}
 	td {
+		// &:nth-child(2) {
+		// 	width: 9em;
+		// 	font-size: 0.75rem;
+		// 	a {
+		// 		color: #666;
+		// 		text-decoration: none;
+		// 	}
+		// }
 		&:nth-child(2) {
-			width: 9em;
-			font-size: 0.75rem;
-			a {
-				color: #666;
-				text-decoration: none;
-			}
-		}
-		&:nth-child(3) {
 			width: 100%;
 			white-space: normal;
 			text-decoration: underline;
 			line-height: 1.25;
 		}
-		&:nth-child(n+4) {
+		&:nth-child(n+3) {
 			color: #666;
 			width: 9em;
 			font-size: 0.75rem;

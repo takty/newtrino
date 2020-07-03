@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -43,6 +43,14 @@ class Post {
 		return ( $da > $db ) ? -1 : 1;
 	}
 
+	static function parseDate( $date ) {
+		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );
+	}
+
+	static function numberifyDate( $date ) {
+		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $date );
+	}
+
 	static function parseDateTime( $dateTime ) {
 		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dateTime );
 	}
@@ -58,10 +66,9 @@ class Post {
 	private $_postPath = '';
 	private $_id;
 
-	function __construct( $urlPost, $id, $urlPrivate = false ) {
+	function __construct( $urlPost, $id ) {
 		$this->_urlPost = $urlPost;
 		$this->_id = $id;
-		$this->_urlPrivate = $urlPrivate;  // Only In Private Area
 	}
 
 	function getId() {
@@ -69,11 +76,19 @@ class Post {
 	}
 
 	function setId( $id ) {
-		$oldId = $this->_id;
 		$this->_id = $id;
 	}
 
-	function assign( $vals ) {
+	function getType() {
+		return $this->_type;
+	}
+
+	function setType( $type ) {
+		$this->_type = $type;
+	}
+
+	function assign( $vals, $urlPrivate ) {
+		$type = $this->getType();
 		$this->setTitle( $vals['post_title'] );
 		$this->setState( $vals['post_status'] );
 
@@ -83,14 +98,24 @@ class Post {
 		$this->setModified( $mod );
 
 		global $nt_store;
-		$taxes = $nt_store->taxonomy()->getTaxonomyAll();
-		foreach ( $taxes as $tax => $data ) {
+		$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
+		foreach ( $taxes as $tax ) {
 			if ( ! isset( $vals["taxonomy:$tax"] ) ) continue;
 			$ts = is_array( $vals["taxonomy:$tax"] ) ? $vals["taxonomy:$tax"] : [ $vals["taxonomy:$tax"] ];
-			$this->setTermSlugs( '$tax', $ts );
+			$this->setTermSlugs( $tax, $ts );
 		}
-		$this->setContent( $vals['post_content'] );
-		$this->_assignCustom( $vals );
+
+		$ms = $nt_store->type()->getMetaAll( $type );
+		foreach ( $ms as $m ) {
+			$key = isset( $m['key'] ) ? $m['key'] : '';
+			$type = isset( $m['type'] ) ? $m['type'] : '';
+			if ( empty( $key ) || empty( $type ) ) continue;
+			if ( ! isset( $vals["meta:$key"] ) ) continue;
+			$vals["meta:$key"] = array_map( function ( $e ) { return self::numberifyDate( $e ); }, $vals["meta:$key"] );
+			$this->setMetaValue( $key, $vals["meta:$key"] );
+		}
+
+		$this->setContent( $vals['post_content'], $urlPrivate );
 	}
 
 	function load( $storePath, $meta = false ) {
@@ -121,11 +146,13 @@ class Post {
 	// Meta Data --------------------------------------------------------------
 
 
+	private $_type     = '';
 	private $_title    = '';
 	private $_status   = self::STATUS_PUBLISHED;
 	private $_date     = '';
 	private $_modified = '';
 	private $_taxonomy = [];
+	private $_meta     = [];
 
 	private function _readMeta( $postDir, $preloadedMeta = false ) {
 		if ( $preloadedMeta ) {
@@ -141,14 +168,15 @@ class Post {
 			$metaAssoc = json_decode( $metaStr, true );
 		}
 
-		$metaAssoc += [ 'title' => '', 'taxonomy' => [], 'status' => self::STATUS_PUBLISHED ];
+		$metaAssoc += [ 'type' => 'post', 'title' => '', 'taxonomy' => [], 'meta' => [], 'status' => self::STATUS_PUBLISHED ];
 
+		$this->_type     = $metaAssoc['type'];
 		$this->_title    = $metaAssoc['title'];
 		$this->_status   = $metaAssoc['status'];
 		$this->_date     = $metaAssoc['date'];
 		$this->_modified = $metaAssoc['modified'];
 		$this->_taxonomy = $metaAssoc['taxonomy'];
-		$this->_readCustomMeta( $metaAssoc );
+		$this->_meta     = $metaAssoc['meta'];
 
 		if ( $this->_status !== self::STATUS_DRAFT ) {
 			$newState = $this->canPublished() ? self::STATUS_PUBLISHED : self::STATUS_RESERVED;
@@ -163,12 +191,13 @@ class Post {
 	private function _writeMeta( $postDir ) {
 		$metaAssoc = [];
 
+		$metaAssoc['type']     = $this->_type;
 		$metaAssoc['title']    = $this->_title;
 		$metaAssoc['status']   = $this->_status;
 		$metaAssoc['date']     = $this->_date;
 		$metaAssoc['modified'] = $this->_modified;
 		$metaAssoc['taxonomy'] = $this->_taxonomy;
-		$this->_writeCustomMeta( $metaAssoc );
+		$metaAssoc['meta']     = $this->_meta;
 
 		$metaStr = json_encode( $metaAssoc, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 
@@ -206,6 +235,16 @@ class Post {
 
 	// ----
 
+	function getMeta() {
+		return $this->_meta;
+	}
+
+	function setMetaValue( $key, $val ) {
+		$this->_meta[ $key ] = $val;
+	}
+
+	// ----
+
 	function getDate() {
 		return Post::parseDateTime( $this->_date );
 	}
@@ -222,7 +261,7 @@ class Post {
 		return $this->_modified;
 	}
 
-	function getState() {
+	function getStatus() {
 		return $this->_status;
 	}
 
@@ -268,47 +307,6 @@ class Post {
 	const EVENT_STATUS_SCHEDULED = 'scheduled';
 	const EVENT_STATUS_HELD      = 'held';
 	const EVENT_STATUS_FINISHED  = 'finished';
-	const EVENT_DATE_NAN = 'NaN-aN-aN';
-
-	protected function _assignCustom($vals) {
-		if (!empty($vals['date_bgn'])) $this->setEventDateBgn($vals['date_bgn']);
-		if (!empty($vals['date_end'])) $this->setEventDateEnd($vals['date_end']);
-	}
-
-	protected function _readCustomMeta($metaAssoc) {
-		$this->_dateEventBgn = empty($metaAssoc['meta']['date_bgn']) ? null : $metaAssoc['meta']['date_bgn'];
-		$this->_dateEventEnd = empty($metaAssoc['meta']['date_end']) ? null : $metaAssoc['meta']['date_end'];
-	}
-
-	protected function _writeCustomMeta(&$metaAssoc) {
-		if (!empty($this->_dateEventBgn)) $metaAssoc['meta']['date_bgn'] = $this->_dateEventBgn;
-		if (!empty($this->_dateEventEnd)) $metaAssoc['meta']['date_end'] = $this->_dateEventEnd;
-	}
-
-	function getEventDateBgn() {
-		return (isset($this->_dateEventBgn) && $this->_dateEventBgn !== self::EVENT_DATE_NAN) ? $this->_dateEventBgn : '';
-	}
-
-	function setEventDateBgn($val) {
-		$this->_dateEventBgn = ($val === self::EVENT_DATE_NAN) ? '' : $val;
-	}
-
-	function getEventDateEnd() {
-		return (isset($this->_dateEventEnd) && $this->_dateEventEnd !== self::EVENT_DATE_NAN) ? $this->_dateEventEnd : '';
-	}
-
-	function setEventDateEnd($val) {
-		$this->_dateEventEnd = ($val === self::EVENT_DATE_NAN) ? '' : $val;
-	}
-
-	function getEventState() {
-		$bgn = str_replace(['-'], '', empty($this->_dateEventBgn) ? 0 : $this->_dateEventBgn);
-		$end = str_replace(['-'], '', empty($this->_dateEventEnd) ? 99999999 : $this->_dateEventEnd);
-		$now = date('Ymd');
-		if ($now < $bgn) return self::EVENT_STATUS_SCHEDULED;
-		if ($end < $now) return self::EVENT_STATUS_FINISHED;
-		return self::EVENT_STATUS_HELD;
-	}
 
 
 	// Content ----------------------------------------------------------------
@@ -360,17 +358,17 @@ class Post {
 		return $content;
 	}
 
-	function setContent( $val ) {
+	function setContent( $val, $urlPrivate ) {
 		if ( empty( $val ) ) {
 			$this->_content = '';
 			return;
 		}
 		$dom = str_get_html($val);
 		foreach ( $dom->find( 'img' ) as &$elm ) {
-			$elm->src = $this->convertToPortableUrl( $elm->src );
+			$elm->src = $this->convertToPortableUrl( $elm->src, $urlPrivate );
 		}
 		foreach ( $dom->find( 'a' ) as &$elm ) {
-			$elm->href = $this->convertToPortableUrl( $elm->href );
+			$elm->href = $this->convertToPortableUrl( $elm->href, $urlPrivate );
 		}
 		$this->_content = $dom->save();
 		$dom->clear();
@@ -390,8 +388,8 @@ class Post {
 		return $url;
 	}
 
-	private function convertToPortableUrl( $url ) {
-		$url = resolve_url( $url, $this->_urlPrivate );
+	private function convertToPortableUrl( $url, $urlPrivate ) {
+		$url = resolve_url( $url, $urlPrivate );
 		if ( strpos( $url, $this->_urlPost ) === 0 ) {
 			$url = substr( $url, strlen( $this->_urlPost ) - 1 );
 			$pu = '/' . $this->_id . '/' . self::MEDIA_DIR_NAME . '/';
@@ -407,31 +405,6 @@ class Post {
 		$str = mb_substr( $str, 0, $len );
 		if ( $str < mb_strlen( $str ) ) $str .= '...';
 		return $str;
-	}
-
-
-	// Unstored Meta ----------------------------------------------------------
-
-
-	private $_isNewItem  = false;
-
-	function setNewItem( $val ) {
-		$this->_isNewItem = $val;
-	}
-
-	function isNewItem() {
-		return $this->_isNewItem;
-	}
-
-
-	// Utility Methods --------------------------------------------------------
-
-
-	function getStateClasses() {
-		$cs = [];
-		if ( $this->isNewItem() ) $cs[] = 'new';
-		if ( $this->hasTerm( 'category', 'event' ) ) $cs[] = $this->getEventState();
-		return implode( ' ', $cs );
 	}
 
 }

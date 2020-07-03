@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -109,6 +109,22 @@ window.NT = window['NT'] || {};
 				p['date']     = moment(p['date']).format(dateFormat);
 				p['modified'] = moment(p['modified']).format(dateFormat);
 			}
+			if (p['meta']) {
+				const meta = Object.entries(p['meta']);
+				for (let i = 0; i < meta.length; i += 1) {
+					const [key, val] = meta[i];
+					if (key.indexOf('@') === -1) continue;
+					if (!p['meta'] && p['meta'][key + '@type']) continue;
+					if (p['meta'][key + '@type'] === 'date-duration') {
+						val[0] = moment(val[0]).format(dateFormat);
+						val[1] = moment(val[1]).format(dateFormat);
+					}
+				}
+			}
+			if (p['class']) {
+				const cs = p['class'].join(' ');
+				p['class@joined'] = cs;
+			}
 		}
 		return items;
 	}
@@ -120,7 +136,7 @@ window.NT = window['NT'] || {};
 			const cq = _createCanonicalQuery(msg.query, { page: i });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: i, url: url };
-			if (i === cur) p['is_current'] = true;
+			if (i === cur) p['is_selected'] = true;
 			pages.push(p);
 		}
 		return {
@@ -180,7 +196,7 @@ window.NT = window['NT'] || {};
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const label = _format_date_label('' + dates[i].slug, df);
 			const p = { label: label, url: url };
-			if (dates[i].slug == cur /* == */) p['is_current'] = true;
+			if (dates[i].slug == cur /* == */) p['is_selected'] = true;
 			as.push(p);
 		}
 		return { [type]: as };
@@ -204,7 +220,7 @@ window.NT = window['NT'] || {};
 			const cq = _createCanonicalQuery({ [tax]: terms[i].slug });
 			const url = baseUrl + (cq.length ? ('?' + cq) : '');
 			const p = { label: terms[i].label, url: url };
-			if (terms[i].slug === cur) p['is_current'] = true;
+			if (terms[i].slug === cur) p['is_selected'] = true;
 			as.push(p);
 		}
 		return { [tax]: as };

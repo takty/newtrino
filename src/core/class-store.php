@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -13,40 +13,36 @@ namespace nt;
 require_once(__DIR__ . '/class-logger.php');
 require_once(__DIR__ . '/class-indexer.php');
 require_once(__DIR__ . '/class-post.php');
+require_once(__DIR__ . '/class-type.php');
 require_once(__DIR__ . '/class-taxonomy.php');
 require_once(__DIR__ . '/class-query.php');
 
 
 class Store {
 
-	public function __construct( $urlPost, $dirPost, $dirData, $conf, $urlPrivate = false ) {
+	public function __construct( string $urlPost, string $dirPost, string $dirData, array $conf ) {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
 		$this->_conf    = $conf;
 
-		$this->_urlPrivate = $urlPrivate;  // Only In Private Area
-
-		$this->_taxonomy = new Taxonomy( $dirData, $this->_conf );
+		$this->_type     = new Type( $dirData, $conf );
+		$this->_taxonomy = new Taxonomy( $dirData, $conf );
 	}
 
+	public function type()     { return $this->_type; }
 	public function taxonomy() { return $this->_taxonomy; }
 
 
 	// ------------------------------------------------------------------------
 
 
-	public function getPost( $id ) {
-		$post = new Post( $this->_urlPost, $id, $this->_urlPrivate );
-		if (!$post->load( $this->_dirPost ) ) return false;
-
-		$pd = intval( date( 'Ymd' ) ) - intval( substr( $post->getDateRaw(), 0, 8 ) );
-		if ( $this->_conf['newly_arrived_day'] > 0 ) {
-			$post->setNewItem( $pd < $this->_conf['newly_arrived_day'] );
-		}
+	public function getPost( string $id ) {
+		$post = new Post( $this->_urlPost, $id );
+		if ( ! $post->load( $this->_dirPost ) ) return false;
 		return $post;
 	}
 
-	public function getPostWithNextAndPrevious( $id, $cond = [] ) {
+	public function getPostWithNextAndPrevious( string $id, $cond = [] ) {
 		$posts = $this->_getPosts( $cond );
 		$idIndex = null;
 		for ($i = 0; $i < count( $posts ); $i += 1 ) {
@@ -63,7 +59,7 @@ class Store {
 		return [ $prev, $posts[ $idIndex ], $next ];
 	}
 
-	public function getPostsByPage( $cond = [] ) {
+	public function getPosts( $cond = [] ) {
 		$posts_per_page = isset( $cond['posts_per_page'] ) ? $cond['posts_per_page'] : $this->_conf['posts_per_page'];
 		$page = isset( $cond['page'] ) ? $cond['page'] : 1;
 
@@ -106,38 +102,6 @@ class Store {
 		return $ret;
 	}
 
-	// 	$posts = $this->_loadPostsAll($published_only);
-	// 	if (!empty($date_bgn) || !empty($date_end)) {
-	// 		$posts = $this->_filterPostsByDateRange($posts, $date_bgn, $date_end);
-	// 	} else if (!empty($date)) {
-	// 		$posts = $this->_filterPostsByDate($posts, $date);
-	// 	}
-	// 	if (!empty($cat)) {
-	// 		$temp = [];
-	// 		foreach ($posts as $p) {
-	// 			// TODO Allow multiple categories to be specified
-	// 			if ($cat[0] === '-') {
-	// 				if ( ! $p->hasTerm( 'category', substr( $cat, 1 ) ) ) {
-	// 					if ($cond['omit_finished_event'] && $p->getEventState() === Post::EVENT_STATE_FINISHED) continue;
-	// 					$temp[] = $p;
-	// 				}
-	// 			} else {
-	// 				if ( $p->hasTerm( 'category', $cat ) ) {
-	// 					if ($cond['omit_finished_event'] && $p->getEventState() === Post::EVENT_STATE_FINISHED) continue;
-	// 					$temp[] = $p;
-	// 				}
-	// 			}
-	// 		}
-	// 		$posts = $temp;
-	// 	}
-	// 	if ($this->_conf['newly_arrived_day'] > 0) {
-	// 		$now = date('YmdHis');
-	// 		foreach ($posts as $p) {
-	// 			$pd = $now - $p->getDateTimeNumber();
-	// 			$p->setNewItem($pd < $this->_conf['newly_arrived_day'] * 1000000);
-	// 		}
-	// 	}
-
 
 	// -------------------------------------------------------------------------
 
@@ -161,7 +125,7 @@ class Store {
 		$ret = [];
 		$this->_loadMatchedMetaAll( $path, $args, $ret );
 		foreach ( $ret as $m ) {
-			$p = new Post( $m['path'], $m['id'], $this->_urlPrivate );
+			$p = new Post( $m['path'], $m['id'] );
 			$p->load( $this->_dirPost, $m['meta'] );
 			$posts[] = $p;
 		}
@@ -203,7 +167,7 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
-	public function createNewPost() {
+	public function createNewPost( string $type = 'post' ) {
 		if ( $dir = opendir( $this->_dirPost ) ) {
 			$date = date( 'YmdHis' );
 			$id = $date;
@@ -216,6 +180,7 @@ class Store {
 			}
 			if ( $this->_checkIdExists( $id ) ) return false;  // when the loop finished without break
 			$post = new Post( '.', $id );
+			$post->setType( $type );
 			$post->setDate( 'now' );
 			$post->save( $this->_dirPost );
 			flock( $dir, LOCK_UN );

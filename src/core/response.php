@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -48,7 +48,7 @@ function create_response_archive( $query, $filter, $option = [] ) {
 		}
 		if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
 	}
-	$ret = $nt_store->getPostsByPage( $args );
+	$ret = $nt_store->getPosts( $args );
 	$posts = array_map( '\nt\_create_post_data', $ret['posts'] );
 
 	$res = [
@@ -180,36 +180,94 @@ function _get_param( $key, $default, $assoc ) {
 function _create_post_data( $p, $include_content = false ) {
 	global $nt_store;
 	if ( ! $p ) return false;
+	$cls = [];
 	$d = [
 		'id'        => $p->getId(),
 		'slug'      => '',  // preserved
-		'type'      => '',  // preserved
+		'type'      => $p->getType(),
 		'title'     => $p->getTitle( true ),
 		'date'      => $p->getDate(),
 		'modified'  => $p->getModified(),
 		'excerpt'   => $p->getExcerpt( 60 ),
-		'meta'      => [],
-		'taxonomy'  => [],
-		'status'    => $p->getStateClasses(),  // temporary
+		'meta'      => _get_meta( $p, $cls ),
+		'status'    => $p->getStatus(),
+		'taxonomy'  => _get_taxonomy( $p ),
 	];
+	$d['class'] = _get_class( $p, $cls );
 	if ( $include_content ) $d['content'] = $p->getContent();
+	return $d;
+}
 
+function _get_taxonomy( $p ) {
+	global $nt_store;
+	$ret = [];
 	foreach ( $p->getTaxonomyToTermSlugs() as $tax => $ts ) {
 		$ls = [];
 		foreach ( $ts as $t ) {
 			$l = $nt_store->taxonomy()->getTermLabel( $tax, $t );
 			$ls[] = [ 'slug' => $t, 'label' => $l ];
 		}
-		$d['taxonomy'][ $tax ] = $ls;
+		$ret[ $tax ] = $ls;
 	}
-
-	if ( $p->hasTerm( 'category', 'event' ) ) {
-		$d['meta']['event_state'] = $p->getEventState();
-		$d['meta']['date_bgn']    = $p->getEventDateBgn();
-		$d['meta']['date_end']    = $p->getEventDateEnd();
-	}
-	return $d;
+	return $ret;
 }
+
+function _get_meta( $p, &$cls ) {
+	global $nt_store;
+	$ms = $nt_store->type()->getMetaAll( $p->getType() );
+	$fs = [];
+	_flatten_meta_structure( $ms, $fs );
+	$pms = $p->getMeta();
+
+	$ret = [];
+	foreach ( $fs as $m ) {
+		$key = $m['key'];
+		$type = $m['type'];
+		if ( $type !== 'group' && ! isset( $pms[ $key ] ) ) continue;
+		$val = $pms[ $key ];
+
+		switch ( $type ) {
+			case 'date-duration':
+				$es = Post::EVENT_STATUS_HELD;
+				$now = date( 'Ymd' );
+				if ( $now < $val[0] ) $es = Post::EVENT_STATUS_SCHEDULED;
+				else if ( $val[1] < $now ) $es = Post::EVENT_STATUS_FINISHED;
+				$ret[ "$key@staus" ] = $es;
+				$cls[] = "$key-$es";
+				$ret[ $key ] = array_map( function ( $e ) { return Post::parseDate( $e ); }, $val );
+				break;
+		}
+		$ret[ "$key@type" ] = $type;
+	}
+	return $ret;
+}
+
+function _flatten_meta_structure( $ms, &$ret ) {
+	foreach ( $ms as $m ) {
+		$type = $m['type'];
+		if ( $type === 'group' ) {
+			$children = $m['children'];
+			_flatten_meta_structure( $children, $ret );
+		} else {
+			$ret[] = $m;
+		}
+	}
+}
+
+function _get_class( $p, $cls ) {
+	global $nt_store, $nt_config;
+	$pd = intval( date( 'Ymd' ) ) - intval( substr( $p->getDateRaw(), 0, 8 ) );
+	if ( $nt_config['newly_arrived_day'] > 0 ) {
+		if ( $pd < $nt_config['newly_arrived_day'] ) $cls[] = 'new';
+	}
+	$cls[] = 'status-' . $p->getStatus();
+	$cls[] = 'type-' . $p->getType();
+	return $cls;
+}
+
+
+// -----------------------------------------------------------------------------
+
 
 function _create_archive_data( $filter ) {
 	if ( empty( $filter ) ) return [];

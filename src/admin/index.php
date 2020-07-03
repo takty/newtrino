@@ -5,15 +5,15 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-25
+ * @version 2020-07-03
  *
  */
 
 
 require_once(__DIR__ . '/init-private.php');
 
-function wrap($flag, $before, $cont, $after) {
-	if ($flag) {
+function wrap( $flag, $before, $cont, $after ) {
+	if ( $flag ) {
 		echo $before . $cont . $after;
 	} else {
 		echo $cont;
@@ -47,21 +47,11 @@ if ( ! empty( $nt_q['cat'] ) ) {
 	// }
 	if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
 }
-$ret = $nt_store->getPostsByPage( $args );
-
+$ret = $nt_store->getPosts( $args );
 
 $t_posts = $ret['posts'];
 $page = $ret['page'];
 
-$t_pgs = []; $t_pg_prev = false; $t_pg_next = false;
-if ($ppp < $ret['size']) {
-	$maxPage = ceil($ret['size'] / $ppp);
-	for ($i = 1; $i <= $maxPage; $i += 1) {
-		$t_pgs[] = ['page' => $i, 'index' => ($i === $page) ? false : $i];
-	}
-	if ($page > 1) $t_pg_prev = $page - 1;
-	if ($page < $maxPage) $t_pg_next = $page + 1;
-}
 $t_ppp      = $nt_q['posts_per_page'];
 $t_cat      = $nt_q['cat'];
 $t_date     = $nt_q['date'];
@@ -70,6 +60,65 @@ $t_date_end = $nt_q['date_end'];
 
 $t_cats = $nt_store->taxonomy()->getTermAll( 'category', [ $nt_q['cat'] ] );
 $t_page = $page;
+
+
+function echo_post_tr( $p ) {
+	global $nt_store;
+	$pid = $p->getId();
+	$ss = $p->getTermSlugs( 'category' );
+	$categoryLabel = empty( $ss ) ? '' : $nt_store->taxonomy()->getTermLabel( 'category', $ss[0] );
+	$mod = implode( '', array_map( function ( $e ) {
+		return '<span>' . _h( $e ) . '</span> ';
+	}, explode( ' ', $p->getModified() ) ) );
+?>
+	<tr>
+		<td>
+			<select onchange="setPostState(<?= _h( $pid ) ?>, this.value);">
+<?php if ($p->canPublished()): ?>
+				<option value="published"<?php if ($p->isPublished()) _eh(' selected'); ?>><?= _ht('Published') ?></option>
+<?php else: ?>
+				<option value="reserved"<?php if ($p->isReserved()) _eh(' selected'); ?>><?= _ht('Reserved') ?></option>
+<?php endif ?>
+				<option value="draft"<?php if ($p->isDraft()) _eh(' selected'); ?>><?= _ht('Draft') ?></option>
+			</select>
+		</td>
+		<td><a href="#" onclick="editPost(<?= _h( $pid ) ?>);"><?= _h($p->getTitle()) ?></a></td>
+		<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div></td>
+		<td class="mod-date-time"><?= $mod ?></td>
+		<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h( $pid ) ?>, '<?= _h($p->getDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>
+	</tr>
+<?php
+}
+
+function echo_pagination( $size, $ppp ) {
+	$t_pgs = [];
+	$t_pg_prev = false;
+	$t_pg_next = false;
+	if ( $ppp < $size ) {
+		$maxPage = ceil( $size / $ppp );
+		for ( $i = 1; $i <= $maxPage; $i += 1 ) {
+			$t_pgs[] = [ 'page' => $i, 'index' => ( $i === $page ) ? false : $i ];
+		}
+		if ( $page > 1 ) $t_pg_prev = $page - 1;
+		if ( $page < $maxPage ) $t_pg_next = $page + 1;
+	}
+?>
+	<nav>
+		<ul class="pagination-nav">
+<?php if ( $t_pg_prev ): ?>
+				<li><a href="#" onClick="submitPage(<?= _h( $t_pg_prev ) ?>);"><?= _ht('Next') ?></a></li>
+<?php endif ?>
+<?php foreach( $t_pgs as $pg ): ?>
+				<li><?php wrap($pg['index'], '<a href="#" onclick="submitPage(' . $pg['page'] . ')">', $pg['page'], '</a>') ?></li>
+<?php endforeach ?>
+<?php if ( $t_pg_next ): ?>
+				<li><a href="#" onClick="submitPage(<?= _h( $t_pg_next ) ?>);"><?= _ht('Previous') ?></a></li>
+<?php endif ?>
+		</ul>
+	</nav>
+<?php
+}
+
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -99,6 +148,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<div class="filter-item">
 				<h3><?= _ht('Display Period') ?></h3>
 				<div class="period-filter">
+					<input type="date">
 					<p class="flatpickr"><input type="text" id="fp-date-bgn" size="12" value="" data-input><a class="input-button" data-clear></a></p>
 					<span>-</span>
 					<p class="flatpickr"><input type="text" id="fp-date-end" size="12" value="" data-input><a class="input-button" data-clear></a></p>
@@ -112,7 +162,7 @@ header('Content-Type: text/html;charset=utf-8');
 				<select onchange="changeCategory(this.value);">
 					<option value=""><?= _ht('All') ?></option>
 <?php foreach($t_cats as $c): ?>
-						<option value="<?= _h($c['slug']) ?>"<?php if ( isset( $c['is_current'] ) && $c['is_current'] ) _eh(' selected') ?>><?= _h($c['label']) ?></option>
+						<option value="<?= _h($c['slug']) ?>"<?php if ( isset( $c['is_selected'] ) && $c['is_selected'] ) _eh(' selected') ?>><?= _h($c['label']) ?></option>
 <?php endforeach; ?>
 				</select>
 			</div>
@@ -131,47 +181,10 @@ header('Content-Type: text/html;charset=utf-8');
 		</div>
 	</div>
 	<table class="list">
-		<tr><th><?= _ht('State') ?></th><th><?= _ht('Date') ?></th><th><?= _ht('Title') ?></th><th><?= _ht('Category') ?></th><th><?= _ht('Updated') ?></th><th></th></tr>
-<?php foreach($t_posts as $p):
-		$ss = $p->getTermSlugs( 'category' );
-		$categoryLabel = empty( $ss ) ? '' : $nt_store->taxonomy()->getTermLabel( 'category', $ss[0] );
-	?>
-		<tr>
-			<td>
-				<select onchange="setPostState(<?= _h($p->getId()) ?>, this.value);">
-<?php if ($p->canPublished()): ?>
-					<option value="published"<?php if ($p->isPublished()) _eh(' selected'); ?>><?= _ht('Published') ?></option>
-<?php else: ?>
-					<option value="reserved"<?php if ($p->isReserved()) _eh(' selected'); ?>><?= _ht('Reserved') ?></option>
-<?php endif ?>
-					<option value="draft"<?php if ($p->isDraft()) _eh(' selected'); ?>><?= _ht('Draft') ?></option>
-				</select>
-			</td>
-			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getDate()) ?></a></td>
-			<td><a href="#" onclick="editPost(<?= _h($p->getId()) ?>);"><?= _h($p->getTitle()) ?></a></td>
-<?php if ( $p->hasTerm( 'category', 'event' ) ) : ?>
-			<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div> <span><?= _h($p->getEventDateBgn()) ?></span> <span>- <?= _h($p->getEventDateEnd()) ?></span></td>
-<?php else: ?>
-			<td class="category"><div><?= _ht( $categoryLabel, 'category') ?></div></td>
-<?php endif ?>
-			<td class="mod-date-time"><?= implode('', array_map(function ($e) {return '<span>'._h($e).'</span> ';}, explode(' ', $p->getModified()))) ?></td>
-			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>
-		</tr>
-<?php endforeach ?>
+		<tr><th><?= _ht('State') ?></th><th><?= _ht('Title') ?></th><th><?= _ht('Category') ?></th><th><?= _ht('Updated') ?></th><th></th></tr>
+		<?php foreach($t_posts as $p): echo_post_tr( $p ); endforeach ?>
 	</table>
-	<nav>
-		<ul class="pagination-nav">
-<?php if ($t_pg_prev): ?>
-				<li><a href="#" onClick="submitPage(<?= _h($t_pg_prev) ?>);"><?= _ht('Next') ?></a></li>
-<?php endif ?>
-<?php foreach($t_pgs as $pg): ?>
-				<li><?php wrap($pg['index'], '<a href="#" onclick="submitPage(' . $pg['page'] . ')">', $pg['page'], '</a>') ?></li>
-<?php endforeach ?>
-<?php if ($t_pg_next): ?>
-				<li><a href="#" onClick="submitPage(<?= _h($t_pg_next) ?>);"><?= _ht('Previous') ?></a></li>
-<?php endif ?>
-		</ul>
-	</nav>
+	<?php echo_pagination( $ret['size'], $ppp ); ?>
 	<form name="form" id="form" action="" method="post">
 		<input type="hidden" name="mode" id="mode" value="">
 		<input type="hidden" name="id" id="id" value="">

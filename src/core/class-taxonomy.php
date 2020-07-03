@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-27
+ * @version 2020-07-02
  *
  */
 
@@ -16,6 +16,7 @@ require_once(__DIR__ . '/class-logger.php');
 class Taxonomy {
 
 	private $_dir  = '';
+	private $_lang = '';
 	private $_data = '';
 
 	public function __construct( string $data_dir, array $args = [] ) {
@@ -54,7 +55,7 @@ class Taxonomy {
 		$ret = [];
 		foreach ( $tax['terms'] as $idx => $t ) {
 			if ( $current_term_slugs !== null ) {
-				$t['is_current'] = in_array( $t['slug'], $current_term_slugs, true );
+				$t['is_selected'] = in_array( $t['slug'], $current_term_slugs, true );
 			}
 			$ret[] = $t;
 		}

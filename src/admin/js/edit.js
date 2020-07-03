@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -20,9 +20,9 @@ function initEdit() {
 			const dn = parseInt(s, 10);
 			const cn = parseInt(formatDate(new Date(), 'YYYYMMDDhhmmss'));
 			if (dn <= cn) {
-				document.getElementById('post_status_published').selected = true;
+				document.getElementById('post-status-published').selected = true;
 			} else {
-				document.getElementById('post_status_reserved').selected = true;
+				document.getElementById('post-status-reserved').selected = true;
 			}
 		}
 	});

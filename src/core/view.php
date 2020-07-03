@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -99,6 +99,20 @@ function _process_posts_for_view( $items, $date_format, $base_url ) {
 			$p['date']     = date_create( $p['date'] )->format( $date_format );
 			$p['modified'] = date_create( $p['modified'] )->format( $date_format );
 		}
+		if ( isset( $p['meta'] ) ) {
+			foreach ( $p['meta'] as $key => &$val ) {
+				if ( strpos( $key, '@' ) !== false ) continue;
+				if ( ! isset( $p['meta']["$key@type"] ) ) continue;
+				if ( $p['meta']["$key@type"] === 'date-duration' ) {
+					$val[0] = date_create( $val[0] )->format( $date_format );
+					$val[1] = date_create( $val[1] )->format( $date_format );
+				}
+			}
+		}
+		if ( ! empty( $p['class'] ) ) {
+			$cs = implode( ' ', $p['class'] );
+			$p['class@joined'] = $cs;
+		}
 	}
 	return $items;
 }
@@ -110,7 +124,7 @@ function _create_pagination_view( $msg, $page_count, $base_url ) {
 		$cq = _create_canonical_query( $msg['query'], [ 'page' => $i ] );
 		$url = $base_url . ( ! empty( $cq ) ? ('?' . $cq) : '');
 		$p = [ 'label' => $i, 'url' => $url ];
-		if ( $i === $cur ) $p['is_current'] = true;
+		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
 	}
 	return [
@@ -171,7 +185,7 @@ function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
 		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
 		$label = _format_date_label( $date['slug'], $df );
 		$p = [ 'label' => $label, 'url' => $url ];
-		if ( strval( $date['slug'] ) === $cur ) $p['is_current'] = true;
+		if ( strval( $date['slug'] ) === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
 	}
 	return [ $type => $as ];
@@ -193,7 +207,7 @@ function _create_taxonomy_filter_view( $msg, $tax, $terms, $base_url ) {
 		$cq = _create_canonical_query( [ $tax => $term['slug'] ] );
 		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
 		$p = [ 'label' => $term['label'], 'url' => $url ];
-		if ( $term['slug'] === $cur ) $p['is_current'] = true;
+		if ( $term['slug'] === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
 	}
 	return [ $tax => $as ];

@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-03
  *
  */
 
@@ -13,45 +13,117 @@ namespace nt;
 require_once(__DIR__ . '/init-private.php');
 
 
-$mode = $nt_q['mode'];
 $t_msg = '';
-if ($mode === 'update') {
-	$p = $nt_store->getPost($nt_q['id']);
-	$p->assign($nt_q);
-	$t_p = $nt_store->writePost($p);
-	$t_msg = _ht('Update Complete');
-} else if ($mode === 'new') {
-	$t_p = $nt_store->createNewPost();
-	$nt_session->addTempPostId($t_p->getId());
-	$t_p->setDate( 'now' );
-} else {
-	$t_p = $nt_store->getPost($nt_q['id']);
+
+switch ( $nt_q['mode'] ) {
+	case 'new':
+		$t_p = $nt_store->createNewPost();
+		$nt_session->addTempPostId( $t_p->getId() );
+		$t_p->setDate( 'now' );
+		break;
+	case 'update':
+		$p = $nt_store->getPost( $nt_q['id'] );
+		$p->assign( $nt_q, NT_URL_PRIVATE );
+		$t_p = $nt_store->writePost( $p );
+		$t_msg = _ht( 'Update Complete' );
+		break;
+	default:
+		$t_p = $nt_store->getPost( $nt_q['id'] );
+		break;
 }
-$t_ppp      = $nt_q['posts_per_page'];
-$t_cat      = $nt_q['cat'];
-$t_date     = $nt_q['date'];
-$t_date_bgn = $nt_q['date_bgn'];
-$t_date_end = $nt_q['date_end'];
 
-$t_page = $nt_q['page'];
 
+// -----------------------------------------------------------------------------
+
+
+function echo_state_select( $post ) {
+	$s = $post->getStatus();
+?>
+	<select form="form-post" name="post_status" id="post_status">
+		<option id="post-status-published" value="published"<?php if ( $s === 'published' ) _eh( ' selected' ); ?>><?= _ht( 'Published' ) ?></option>
+		<option id="post-status-reserved" value="reserved"<?php if ( $s === 'reserved' ) _eh( ' selected' ); ?>><?= _ht( 'Reserved' ) ?></option>
+		<option id="post-status-draft" value="draft"<?php if ( $s === 'draft' ) _eh( ' selected' ); ?>><?= _ht( 'Draft' ) ?></option>
+	</select>
+<?php
+}
+
+function echo_taxonomy_metaboxes( $post ) {
+	global $nt_store;
+	$type = $post->getType();
+	$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
+	foreach ( $taxes as $tax ) {
+		echo_taxonomy_metabox( $tax, $post );
+	}
+}
 
 function echo_taxonomy_metabox( $tax_slug, $post ) {
 	global $nt_store;
 	$tax = $nt_store->taxonomy()->getTaxonomy( $tax_slug );
+	$is_exclusive = isset( $tax['is_exclusive'] ) && $tax['is_exclusive'] === true;
 	$tss = $post->getTermSlugs( $tax_slug );
 	$ts  = $nt_store->taxonomy()->getTermAll( $tax_slug, $tss );
 ?>
 	<div class="frame">
 		<h3><?= _h( $tax['label'] ) ?></h3>
+<?php if ( $is_exclusive ) : ?>
 		<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
 <?php foreach( $ts as $t ): ?>
-			<option value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_current'] ) _eh( ' selected' ); ?>><?= _h( $t['label'] ) ?></option>
+			<option value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' selected' ); ?>><?= _h( $t['label'] ) ?></option>
 <?php endforeach; ?>
 		</select>
+<?php else : ?>
+<?php foreach( $ts as $t ): ?>
+		<label>
+			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' checked' ); ?>>
+			<?= _h( $t['label'] ) ?>
+		</label>
+<?php endforeach; ?>
+<?php endif; ?>
 	</div>
 <?php
 }
+
+function echo_meta_metaboxes( $post ) {
+	global $nt_store;
+	$type = $post->getType();
+	$ms = $nt_store->type()->getMetaAll( $type );
+	foreach ( $ms as $m ) {
+		$key   = isset( $m['key'] ) ? $m['key'] : '';
+		$type  = isset( $m['type'] ) ? $m['type'] : '';
+		$label = isset( $m['label'] ) ? $m['label'] : '';
+		if ( empty( $key ) || empty( $type ) || empty( $label ) ) continue;
+
+		switch ( $type ) {
+			case 'date-duration':
+				echo_meta_duration_metabox( $post, $key, $label );
+				break;
+		}
+	}
+}
+
+function echo_meta_duration_metabox( $post, $key, $label ) {
+	$m = $post->getMeta();
+	if ( ! isset( $m[ $key ] ) ) return;
+	$bgn = Post::parseDate( $m[ $key ][0] );
+	$end = Post::parseDate( $m[ $key ][1] );
+?>
+	<div class="frame" id="frame-duration">
+		<h3><?= _ht( $label ) ?></h3>
+		<p class="flatpickr" id="event_date_bgn_wrap">
+			<input form="form-post" type="text" name="meta:<?= _h( $key ) ?>[]" id="event_date_bgn" value="<?= _h( $bgn ) ?>" data-input>
+			<a class="input-button" data-clear></a>
+		</p>
+		<div class="to"> - </div>
+		<p class="flatpickr" id="event_date_end_wrap">
+			<input form="form-post" type="text" name="meta:<?= _h( $key ) ?>[]" id="event_date_end" value="<?= _h( $end ) ?>" data-input>
+			<a class="input-button" data-clear></a>
+		</p>
+	</div>
+<?php
+}
+
+
+// -----------------------------------------------------------------------------
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -84,13 +156,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<div class="column-main">
 				<div class="form-post">
 					<input type="hidden" name="mode" id="mode" value="update">
-					<input type="hidden" name="id" id="id" value="<?= _h($t_p->getId()) ?>">
-					<input type="hidden" name="page" id="page" value="<?= _h($t_page) ?>">
-					<input type="hidden" name="posts_per_page" id="posts_per_page" value="<?= _h($t_ppp) ?>">
-					<input type="hidden" name="cat" id="cat" value="<?= _h($t_cat) ?>">
-					<input type="hidden" name="date" id="date" value="<?= _h($t_date) ?>">
-					<input type="hidden" name="date_bgn" id="date_bgn" value="<?= _h($t_date_bgn) ?>">
-					<input type="hidden" name="date_end" id="date_end" value="<?= _h($t_date_end) ?>">
+					<input type="hidden" name="id" id="id" value="<?= _h( $t_p->getId() ) ?>">
 
 					<input placeholder="<?= _ht('Enter Title Here') ?>" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
 					<div class="btn-row"><button class="btn" id="show-media-chooser" type="button"><?= _ht('Insert Media') ?></button></div>
@@ -102,11 +168,7 @@ header('Content-Type: text/html;charset=utf-8');
 					<h3><?= _ht('Publish') ?></h3>
 					<input form="form-post" type="text" name="post_date" id="post_date" value="<?= _h($t_p->getDate()) ?>">
 					<div class="btn-row">
-						<select form="form-post" name="post_status" id="post_status">
-							<option id="post_status_published" value="published"<?php if ($t_p->isPublished()) {_eh(' selected');} ?>><?= _ht('Published') ?></option>
-							<option id="post_status_reserved" value="reserved"<?php if ($t_p->isReserved()) {_eh(' selected');} ?>><?= _ht('Reserved') ?></option>
-							<option id="post_status_draft" value="draft"<?php if ($t_p->isDraft()) {_eh(' selected');} ?>><?= _ht('Draft') ?></option>
-						</select>
+						<?php echo_state_select( $t_p ); ?>
 					</div>
 					<div>
 						<button class="btn" id="show-preview" type="button"><?= _ht('Preview') ?></button>
@@ -114,19 +176,8 @@ header('Content-Type: text/html;charset=utf-8');
 					</div>
 					<p class="message" id="message_enter_title"><?= _ht('The title is blank.') ?></p>
 				</div>
-				<?php echo_taxonomy_metabox( 'category', $t_p ); ?>
-				<div class="frame" id="frame-event-duration">
-					<h3><?= _ht('Event Duration') ?></h3>
-					<p class="flatpickr" id="event_date_bgn_wrap">
-						<input form="form-post" type="text" name="date_bgn" id="event_date_bgn" value="<?= _h($t_p->getEventDateBgn()) ?>" data-input>
-						<a class="input-button" data-clear></a>
-					</p>
-					<div class="to"> - </div>
-					<p class="flatpickr" id="event_date_end_wrap">
-						<input form="form-post" type="text" name="date_end" id="event_date_end" value="<?= _h($t_p->getEventDateEnd()) ?>" data-input>
-						<a class="input-button" data-clear></a>
-					</p>
-				</div>
+				<?php echo_taxonomy_metaboxes( $t_p ); ?>
+				<?php echo_meta_metaboxes( $t_p ); ?>
 			</div>
 		</div>
 	</form>
