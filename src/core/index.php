@@ -19,7 +19,7 @@ define( 'NT_URL_HOST', ( empty( $_SERVER['HTTPS'] ) ? 'http://' : 'https://' ) .
 define( 'NT_URL', NT_URL_HOST . get_url_from_path( NT_DIR ) . '/' );
 define( 'NT_URL_POST', NT_URL_HOST . get_url_from_path( NT_DIR_POST ) . '/' );
 
-if ( defined( 'NT_PRIVATE' ) ) {
+if ( defined( 'NT_ADMIN' ) ) {
 	define( 'NT_DIR_ADMIN', NT_DIR . '/admin/' );
 	define( 'NT_DIR_SESSION', NT_DIR_ADMIN . 'var/session/' );
 
@@ -178,7 +178,7 @@ function _eht( $str, $context = 'default' ) {
 }
 
 function translate( $str, $context = 'default' ) {
-	if ( defined( 'NT_PRIVATE' ) && $context === 'default' ) {
+	if ( defined( 'NT_ADMIN' ) && $context === 'default' ) {
 		$context = 'private';
 	}
 	global $nt_res;

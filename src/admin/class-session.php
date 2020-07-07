@@ -24,9 +24,8 @@ class Session {
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
 
-	function __construct( $urlPrivate, $dirPost, $dirAccount, $dirSession ) {
-		$this->_urlPrivate = $urlPrivate;
-		$this->_dirPost    = $dirPost;
+	function __construct( $urlAdmin, $dirAccount, $dirSession ) {
+		$this->_urlAdmin   = $urlAdmin;
 		$this->_dirAccount = $dirAccount;
 		$this->_dirSession = $dirSession;
 
@@ -39,14 +38,14 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	public function login( $user, $digest, $nonce, $cnonce, &$error ) {
-		if ( empty( $user ) || empty( $digest ) || empty( $nonce ) || empty( $cnonce ) ) {
+	public function login( $params, &$error ) {
+		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['nonce'] ) || empty( $params['cnonce'] ) ) {
 			$error = 'Parameters are wrong.';
 			return false;
 		}
 		$this->_cleanUp();
 
-		$url = $this->_urlPrivate;
+		$url = $this->_urlAdmin;
 		$a2 = hash( self::HASH_ALGORITHM, 'post:' . $url );
 
 		$accountPath = $this->_dirAccount . self::ACCOUNT_FILE_NAME;
@@ -63,10 +62,11 @@ class Session {
 		}
 		foreach ( $as as $a ) {
 			$d = explode( "\t", trim( $a ) );
-			if ( $d[0] !== $user ) continue;
+			if ( $d[0] !== $params['user'] ) continue;
 			$a1 = strtolower( $d[1] );
-			$dgst = hash( self::HASH_ALGORITHM, "$a1:$nonce:$cnonce:$a2" );
-			if ( $dgst === $digest ) return $this->_startNew( $error );
+			$code = implode( ':', [ $a1, $params['nonce'], $params['cnonce'], $a2 ] );
+			$dgst = hash( self::HASH_ALGORITHM, $code );
+			if ( $dgst === $params['digest'] ) return $this->_startNew( $error );
 		}
 		return false;
 	}
@@ -80,7 +80,7 @@ class Session {
 		session_destroy();
 	}
 
-	public function check() {
+	public function start() {
 		session_start();
 		$sid = session_id();
 		if ( $sid === '' ) return false;
@@ -92,11 +92,12 @@ class Session {
 		return $this->_checkTime( $sid, true );
 	}
 
-	public function addTempPostId( $pid ) {
-		$lines = $this->_loadSessionFile( $this->sessionId );
-		if ( $lines === false ) return false;
-		$lines[] = $pid;
-		$this->_saveSessionFile( $this->sessionId, $lines );
+	public function addTempDir( $dir ) {
+		$data = $this->_loadSessionFile( $this->sessionId );
+		if ( $data === null ) return false;
+		if ( ! isset( $data['temp_dir'] ) || ! is_array( $data['temp_dir'] ) ) $data['temp_dir'] = [];
+		$data['temp_dir'][] = $dir;
+		$this->_saveSessionFile( $this->sessionId, $data );
 		return true;
 	}
 
@@ -105,17 +106,13 @@ class Session {
 
 
 	private function _cleanUp() {
-		if ( ! file_exists( $this->_dirSession ) ) return;
+		if ( ! is_dir( $this->_dirSession ) ) return;
 		$fns = [];
-		$handle = self::_ensureDir( $this->_dirSession ) ? opendir( $this->_dirSession ) : false;
-		if ( $handle ) {
-			while ( ( $fn = readdir( $handle ) ) !== false ) {
-				if ( is_file( $this->_dirSession . $fn ) ) $fns[] = $fn;
-			}
-			closedir( $handle );
-		}
-		foreach ( $fns as $fn ) {
-			$this->_checkTime( $fn, false );
+		$sids = scandir( $this->_dirSession );
+		if ( $sids === false ) return;
+		foreach ( $sids as $sid ) {
+			if ( is_dir( $this->_dirSession . $sid ) ) continue;
+			$this->_checkTime( $sid, false );
 		}
 	}
 
@@ -124,7 +121,7 @@ class Session {
 		$this->sessionId = session_id();
 		$_SESSION['fingerprint'] = self::_getFingerprint();
 
-		$res = $this->_saveSessionFile( $this->sessionId, [ time() ] );
+		$res = $this->_saveSessionFile( $this->sessionId, [ 'timestamp' => time() ] );
 		if ( $res === false ) {
 			$error = 'Session file cannot be written.';
 			return false;
@@ -132,25 +129,24 @@ class Session {
 		return true;
 	}
 
-	private function _checkTime( $sid, $doUpdate ) {
-		$lines = $this->_loadSessionFile( $sid );
-		if ( $lines === false ) return false;
+	private function _checkTime( string $sid, bool $doUpdate ): bool {
+		$data = $this->_loadSessionFile( $sid );
+		if ( $data === null ) return false;
 
 		$curTime = time();
-		$sessionTime = array_shift( $lines );
+		$sessionTime = isset( $data['timestamp'] ) ? intval( $data['timestamp'] ) : 0;
 		if ( self::SESSION_ALIVE_TIME < $curTime - $sessionTime ) {
-			if ( $this->_dirPost !== false && 0 < count( $lines ) ) {
-				foreach ( $lines as $id ) {
-					$temp_post_path = $this->_dirPost . $id;
-					if ( file_exists( $temp_post_path ) ) Store::deleteAll( $temp_post_path );
+			if ( isset( $data['temp_dir'] ) && is_array( $data['temp_dir'] ) ) {
+				foreach ( $data['temp_dir'] as $dir ) {
+					if ( is_dir( $dir ) ) Store::deleteAll( $dir );
 				}
 			}
 			$this->_removeSessionFile( $sid );
 			return false;
 		}
 		if ( $doUpdate ) {
-			array_unshift( $lines, $curTime );
-			$this->_saveSessionFile( $sid, $lines );
+			$data['timestamp'] = $curTime;
+			$this->_saveSessionFile( $sid, $data );
 		}
 		return true;
 	}
@@ -159,34 +155,33 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private function _loadSessionFile( $sid ) {
+	private function _loadSessionFile( string $sid ): ?array {
 		$path = $this->_dirSession . $sid;
-		if ( ! is_file( $path ) ) return false;
-		$lines = file( $path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		if ( $lines === false ) {
-			Logger::output("Error (Session::_loadSessionFile file) [$path]");
-			return false;
+		if ( ! is_file( $path ) ) return null;
+		$json = file_get_contents( $path );
+		if ( $json === false ) {
+			Logger::output("Error (Session::_loadSessionFile file_get_contents) [$path]");
+			return null;
 		}
-		return $lines;
+		return json_decode( $json, true );
 	}
 
-	private function _removeSessionFile( $sid ) {
+	private function _removeSessionFile( string $sid ) {
 		if ( ! is_dir( $this->_dirSession ) ) return;
 		$path = $this->_dirSession . $sid;
+		if ( ! is_file( $path ) ) return;
 		$res = unlink( $path );
 		if ( $res === false ) {
 			Logger::output("Error (Session::_removeSessionFile unlink) [$path]");
 		}
 	}
 
-	private function _saveSessionFile( $sid, $lines ) {
-		if ( self::_ensureDir( $this->_dirSession ) === false ) {
-			Logger::output("Error (Session::_saveSessionFile ensureDir) [$this->_dirSession]");
-			return false;
-		}
+	private function _saveSessionFile( string $sid, array $data ): bool {
+		if ( ! self::_ensureDir( $this->_dirSession ) ) return false;
 		$path = $this->_dirSession . $sid;
-		$cont = implode("\n", $lines);
-		if ( file_put_contents( $path, $cont, LOCK_EX ) === false ) {
+		$json = json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		$res = file_put_contents( $path, $json, LOCK_EX );
+		if ( $res === false ) {
 			Logger::output("Error (Session::_saveSessionFile file_put_contents) [$path]");
 			return false;
 		}
@@ -221,6 +216,7 @@ class Session {
 			chmod( $path, self::MODE_DIR );
 			return true;
 		}
+		Logger::output("Error (Session::_ensureDir) [$path]");
 		return false;
 	}
 

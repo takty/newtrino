@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
- define( 'NT_PRIVATE', true );
+ define( 'NT_ADMIN', true );
 
 require_once( __DIR__ . '/../core/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
@@ -35,9 +35,9 @@ $nt_q      += [
 ];
 
 $nt_store   = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
-$nt_session = new Session( NT_URL_ADMIN, NT_DIR_POST, NT_DIR_DATA, NT_DIR_SESSION );
+$nt_session = new Session( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_SESSION );
 
-if ( ! $nt_session->check() ) {
+if ( ! $nt_session->start() ) {
 	header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 	exit( 1 );
 }

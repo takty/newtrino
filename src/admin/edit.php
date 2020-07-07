@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-04
+ * @version 2020-07-07
  *
  */
 
@@ -18,7 +18,7 @@ $t_msg = '';
 switch ( $nt_q['mode'] ) {
 	case 'new':
 		$t_p = $nt_store->createNewPost();
-		$nt_session->addTempPostId( $t_p->getId() );
+		$nt_session->addTempDir( $nt_store->getPostDir( $t_p->getId() ) );
 		$t_p->setDate();
 		break;
 	case 'update':
