@@ -6,11 +6,13 @@ message {
 		date: xxxx, xxxx-xx, xxxx-xx-xx
 		<taxonomy>: term
 		search: xxxx
+		type: xxxx
 	}
 	filter: {
 		date: 'day' or 'month' or 'year'
 		date_format: 'Y-m-d'
 		taxonomy: ['category']
+		type: xxxx
 	}
 	option: {
 		lang: 'en'

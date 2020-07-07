@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-05
+ * @version 2020-07-07
  *
  */
 
@@ -63,10 +63,8 @@ class Post {
 
 	private $_id;
 	private $_subPath;
-	// private $_postUrl;
-	// private $_postPath = '';
 
-	function __construct( $postUrl, $id, $subPath = '' ) {  // TODO $id, $subPath ('post/' or 'post/2020/' or 'event/2020/')
+	function __construct( $id, $subPath = '' ) {
 		$this->_id = $id;
 		$this->_subPath = $subPath;
 	}
@@ -111,7 +109,6 @@ class Post {
 
 	private function _updateSearchIndex( string $postDir ) {
 		$text = $this->_title . strip_tags( $this->_content );
-		// $path = $this->_postPath . self::WORD_FILE_NAME;
 		$path = $postDir . self::WORD_FILE_NAME;
 		return Indexer::updateSearchIndex( $text, $path, self::MODE_FILE );
 	}
@@ -210,7 +207,6 @@ class Post {
 	}
 
 	private function _readInfoFile( string $postDir ): ?array {
-		// $path = $this->_postPath . self::INFO_FILE_NAME;
 		$path = $postDir . self::INFO_FILE_NAME;
 		$json = @file_get_contents( $path );
 		if ( $json === false ) {
@@ -221,7 +217,6 @@ class Post {
 	}
 
 	private function _writeInfoFile( string $postDir, array $info ): bool {
-		// $path = $this->_postPath . self::INFO_FILE_NAME;
 		$path = $postDir . self::INFO_FILE_NAME;
 		$json = json_encode( $info, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
@@ -334,7 +329,6 @@ class Post {
 	private $_content = null;
 
 	private function _readContent( string $postDir ): bool {
-		// $path = $this->_postPath . self::CONT_FILE_NAME;
 		$path = $postDir . self::CONT_FILE_NAME;
 		$cont = @file_get_contents( $path );
 		if ( $cont === false ) {
@@ -348,7 +342,6 @@ class Post {
 	private function _writeContent( string $postDir ): bool {
 		if ( $this->_content === null ) $this->_readContent( $postDir );
 
-		// $path = $this->_postPath . self::CONT_FILE_NAME;
 		$path = $postDir . self::CONT_FILE_NAME;
 		$res = file_put_contents( $path, $this->_content, LOCK_EX );
 		if ( $res === false ) {

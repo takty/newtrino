@@ -5,7 +5,7 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-07
  *
  */
 
@@ -18,6 +18,7 @@ require_once(__DIR__ . '/class-taxonomy.php');
 
 class Query {
 
+	private $_type   = null;
 	private $_status = null;
 	private $_search = null;
 	private $_tax    = null;
@@ -25,6 +26,9 @@ class Query {
 	private $_meta   = null;
 
 	public function __construct( $args ) {
+		if ( ! empty( $args['type'] ) ) {
+			$this->_type = is_array( $args['type'] ) ? $args['type'] : [ $args['type'] ];
+		}
 		if ( ! empty( $args['status'] ) ) {
 			$this->_status = is_array( $args['status'] ) ? $args['status'] : [ $args['status'] ];
 		}
@@ -101,36 +105,39 @@ class Query {
 		}
 	}
 
-	public function match( &$meta, $word_file_path ) {
+	public function match( &$info, $word_file_path ) {
+		if ( $this->_type ) {
+			if ( ! empty( $info['type'] ) && ! in_array( $info['type'], $this->_type, true ) ) return false;
+		}
 		if ( $this->_status ) {
-			if ( ! in_array( $meta['status'], $this->_status, true ) ) return false;
+			if ( ! in_array( $info['status'], $this->_status, true ) ) return false;
 		}
 		if ( $this->_search ) {
-			$meta['_index_score'] = Indexer::calcIndexScore( $this->_search, $word_file_path );
-			if ( $meta['_index_score'] === 0 ) return false;
+			$info['_index_score'] = Indexer::calcIndexScore( $this->_search, $word_file_path );
+			if ( $info['_index_score'] === 0 ) return false;
 		}
 		if ( $this->_tax ) {
-			if ( ! $this->_matchTaxQuery( $meta ) ) return false;
+			if ( ! $this->_matchTaxQuery( $info ) ) return false;
 		}
 		if ( $this->_date ) {
-			if ( ! $this->_matchDateQuery( $meta ) ) return false;
+			if ( ! $this->_matchDateQuery( $info ) ) return false;
 		}
 		if ( $this->_meta ) {
-			if ( ! $this->_matchMetaQuery( $meta ) ) return false;
+			if ( ! $this->_matchMetaQuery( $info ) ) return false;
 		}
 		return true;
 	}
 
-	private function _matchTaxQuery( $meta ) {
+	private function _matchTaxQuery( $info ) {
 		$qs = $this->_tax['qs'];
 		if ( $this->_tax['rel'] === 'AND' ) {
 			foreach ( $qs as $tax => $ts ) {
-				if ( ! self::_matchTax( $tax, $ts, $meta ) ) return false;
+				if ( ! self::_matchTax( $tax, $ts, $info ) ) return false;
 			}
 		} else if ( $this->_tax['rel'] === 'OR' ) {
 			$ok = false;
 			foreach ( $qs as $tax => $ts ) {
-				if ( self::_matchTax( $tax, $ts, $meta ) ) {
+				if ( self::_matchTax( $tax, $ts, $info ) ) {
 					$ok = true;
 					break;
 				}
@@ -140,8 +147,8 @@ class Query {
 		return true;
 	}
 
-	private function _matchDateQuery( $meta ) {
-		$pd = $meta['date'];
+	private function _matchDateQuery( $info ) {
+		$pd = $info['date'];
 		$qs = $this->_date['qs'];
 		if ( $this->_date['rel'] === 'AND' ) {
 			foreach ( $qs as $q ) {
@@ -160,9 +167,9 @@ class Query {
 		return true;
 	}
 
-	private function _matchMetaQuery( $meta ) {
+	private function _matchMetaQuery( $info ) {
 		$qs = $this->_meta['qs'];
-		$ms = isset( $meta['meta'] ) ? $meta['meta'] : [];
+		$ms = isset( $info['meta'] ) ? $info['meta'] : [];
 		if ( $this->_meta['rel'] === 'AND' ) {
 			foreach ( $qs as $q ) {
 				if ( ! self::_matchMeta( $q, $ms ) ) return false;
@@ -180,9 +187,9 @@ class Query {
 		return true;
 	}
 
-	static private function _matchTax( $tax, $ts, $meta ) {
-		if ( ! isset( $meta['taxonomy'][ $tax ] ) ) return false;
-		return self::_isIntersect( $ts, $meta['taxonomy'][ $tax ] );
+	static private function _matchTax( $tax, $ts, $info ) {
+		if ( ! isset( $info['taxonomy'][ $tax ] ) ) return false;
+		return self::_isIntersect( $ts, $info['taxonomy'][ $tax ] );
 	}
 
 	static private function _matchDate( $q, $pd ) {

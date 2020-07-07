@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-07
  *
  */
 
@@ -20,16 +20,13 @@ require_once(__DIR__ . '/class-query.php');
 
 class Store {
 
-	public function __construct( string $urlPost, string $dirPost, string $dirData, array $conf ) {
-		$this->_urlPost = $urlPost;
-		$this->_dirPost = $dirPost;
+	public function __construct( string $ntUrl, string $ntDir, string $dataDir, array $conf ) {
+		$this->_dirUrl  = $ntUrl;
+		$this->_dirRoot = $ntDir;
 		$this->_conf    = $conf;
 
-		$this->_dirRoot = NT_DIR;
-		$this->_dirUrl  = NT_URL;
-
-		$this->_type     = new Type( $dirData, $conf );
-		$this->_taxonomy = new Taxonomy( $dirData, $conf );
+		$this->_type     = new Type( $dataDir, $conf );
+		$this->_taxonomy = new Taxonomy( $dataDir, $conf );
 	}
 
 	public function type()     { return $this->_type; }
@@ -39,16 +36,51 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
-	public function getPostDir( $id, $subPath ) {
-		return $this->_dirRoot . $subPath . $id . '/';
-	}
-
-	public function getPostUrl( $id, $subPath ) {
+	public function getPostUrl( string $id, ?string $subPath ): string {
+		if ( $subPath === null ) $subPath = $this->getSubPath( $id );
 		return $this->_dirUrl . $subPath . $id . '/';
 	}
 
-	public function createSubPath( $type ) {
+	public function getPostDir( string $id, ?string $subPath ): string {
+		if ( $subPath === null ) $subPath = $this->getSubPath( $id );
+		return $this->_dirRoot . $subPath . $id . '/';
+	}
 
+	public function createArchAndSubPath( string $type, string $dateRaw, bool $ensureExistence = false ): array {
+		$ret = $this->_conf['archive_by_type'] ? "$type/" : 'post/';
+		if ( $this->_conf['archive_by_year'] ) {
+			$year = substr( $dateRow, 0, 4 );
+			$ret .= "$year/";
+		}
+		if ( $ensureExistence ) {
+			mkdir( $this->_dirRoot . rtrim( $ret, '/' ), 0777, true );
+		}
+		return [ $this->_dirRoot . $ret, $ret ];
+	}
+
+	public function getSubPath( $id ) {
+		$ds = $this->_getSubPaths();
+		foreach ( $ds as $d ) {
+			if ( is_dir( $this->_dirRoot . $d . $id ) ) return $d;
+		}
+		return null;
+	}
+
+	private function _getSubPaths() {
+		$typeDirs = $this->_type->getTypeDirAll();
+		if ( ! $this->_conf['archive_by_year'] ) return $typeDirs;
+
+		$ret = [];
+		foreach ( $typeDirs as $t ) {
+			$ds = scandir( $this->_dirRoot . $t );
+			foreach ( $ds as $d ) {
+				if ( $d[0] === '.' ) continue;
+				if ( preg_match( '/[^0-9]/', $d ) ) continue;
+				if ( is_file( $t . $d ) ) continue;
+				$ret[] = $t . $d . '/';
+			}
+		}
+		return $ret;
 	}
 
 
@@ -56,9 +88,9 @@ class Store {
 
 
 	public function getPost( string $id ) {
-		$post = new Post( $this->_urlPost, $id );
-		if ( ! $post->load() ) return false;
-		return $post;
+		$p = new Post( $id, $this->getSubPath( $id ) );
+		if ( ! $p->load() ) return false;
+		return $p;
 	}
 
 	public function getPostWithNextAndPrevious( string $id, $cond = [] ) {
@@ -97,9 +129,10 @@ class Store {
 		return ['posts' => $ret, 'size' => $size, 'page' => $pageIdx + 1, 'page_count' => ceil( $size / $ppp ) ];
 	}
 
-	public function getCountByDate( $type = 'year' ) {
+	public function getCountByDate( $type = 'year', $args ) {
+		$paths = $this->_getPostTypeSubDirs( $args );
 		$ms = [];
-		$this->_loadMatchedInfoAll( $this->_dirRoot, 'post/', [], $ms );
+		$this->_loadMatchedInfoAll( $this->_dirRoot, $paths, $args, $ms );
 
 		$digit = 4;
 		switch ( $type ) {
@@ -109,7 +142,7 @@ class Store {
 		}
 		$count = [];
 		foreach ( $ms as $m ) {
-			$date = $m['meta']['date'];
+			$date = $m['info']['date'];
 			$key = substr( $date, 0, $digit );
 			if ( ! isset( $count[ $key ] ) ) $count[ $key ] = 0;
 			$count[ $key ] += 1;
@@ -127,11 +160,10 @@ class Store {
 
 	private function _getPosts( $args ) {
 		$args += [
-			'post_type' => 'post',  // reserved
-			'status'    => Post::STATUS_PUBLISHED,
+			'status' => Post::STATUS_PUBLISHED,
 		];
 		$posts = [];
-		$this->_loadMatchedPostAll( $this->_dirRoot, 'post/', $args, $posts );
+		$this->_loadMatchedPostAll( $this->_dirRoot, $args, $posts );
 
 		usort( $posts, '\nt\Post::compareDate' );
 		if ( ! empty( $args['search'] ) ) {
@@ -140,43 +172,58 @@ class Store {
 		return $posts;
 	}
 
-	private function _loadMatchedPostAll( $root, $path, $args, &$posts = [] ) {
+	private function _loadMatchedPostAll( $root, $args, &$posts = [] ) {
+		$paths = $this->_getPostTypeSubDirs( $args );
 		$ret = [];
-		$this->_loadMatchedInfoAll( $root, $path, $args, $ret );
+		$this->_loadMatchedInfoAll( $root, $paths, $args, $ret );
 		foreach ( $ret as $m ) {
-			$p = new Post( $m['path'], $m['id'], $m['subPath'] );
+			$p = new Post( $m['id'], $m['subPath'] );
 			$p->load( $m['info'] );
 			$posts[] = $p;
 		}
 	}
 
-	private function _loadMatchedInfoAll( $root, $path, $args, &$ret = [] ) {
+	private function _getPostTypeSubDirs( $args ) {
+		if ( $this->_conf['archive_by_type'] ) {
+			if ( empty( $args['type'] ) ) {
+				return $this->_type->getTypeDirAll();
+			} else {
+				$ats = is_array( $args['type'] ) ? $args['type'] : [ $args['type'] ];
+				return array_map( function ( $e ) { return "$e/"; }, $ats );
+			}
+		}
+		return ['post/'];
+	}
+
+	private function _loadMatchedInfoAll( $root, $paths, $args, &$ret = [] ) {
 		$query = new Query( $args );
-		if ( $dir = opendir( $root . $path ) ) {
-			while ( ( $fn = readdir( $dir ) ) !== false ) {
+
+		foreach ( $paths as $path ) {
+			$dir = dir( $root . $path );
+			while ( false !== ( $fn = $dir->read() ) ) {
 				if ( strpos( $fn, '.' ) === 0 || is_file( $root . $path . $fn ) ) continue;
 				if ( strlen( $fn ) === 4 ) {
-					$this->_loadMatchedInfoAll( $root, "$path$fn/", $args, $ret );
+					$this->_loadMatchedInfoAll( $root, ["$path$fn/"], $args, $ret );
 					continue;
 				}
 				$info = $this->_loadInfo( $root . $path . $fn );
 				if ( $query->match( $info, "$root$path$fn/" . Post::WORD_FILE_NAME ) ) {
-					$ret[] = [ 'path' => $path, 'id' => $fn, 'info' => $info, 'subPath' => $path ];
+					$ret[] = [ 'id' => $fn, 'subPath' => $path, 'info' => $info ];
 				}
 			}
-			closedir( $dir );
+			$dir->close();
 		}
 	}
 
-	private function _loadInfo( $path ) {
-		$info_path = $path . '/' . Post::INFO_FILE_NAME;
+	private function _loadInfo( $postDir ) {
+		$infoPath = $postDir . '/' . Post::INFO_FILE_NAME;
 		try {
-			$json = file_get_contents( $info_path );
+			$json = file_get_contents( $infoPath );
 		} catch ( Error $e ) {
 			$json = false;
 		}
 		if ( $json === false ) {
-			Logger::output( "Error (Post::_loadInfo file_get_contents) [$info_path]" );
+			Logger::output( "Error (Post::_loadInfo file_get_contents) [$infoPath]" );
 			return null;
 		}
 		return json_decode( $json, true );
@@ -187,29 +234,35 @@ class Store {
 
 
 	public function createNewPost( string $type = 'post' ) {
-		if ( $dir = opendir( $this->_dirPost ) ) {
-			$date = date( 'YmdHis' );
-			$id = $date;
+		$dateRaw = date( 'YmdHis' );
+		list( $archPath, $subPath ) = $this->createArchAndSubPath( $type, $dateRaw, true );
+
+		if ( $dir = opendir( $archPath ) ) {
 			flock( $dir, LOCK_EX );
-			if ( $this->_checkIdExists( $id ) ) {
-				for ( $i = 1; $i < 10; $i += 1 ) {
-					$id = $date . '_' . $i;
-					if ( ! $this->_checkIdExists( $id ) ) break;
-				}
-			}
-			if ( $this->_checkIdExists( $id ) ) return false;  // when the loop finished without break
-			$post = new Post( '.', $id );
-			$post->setType( $type );
-			$post->setDate();
-			$post->save();
+			$id = $this->_ensureUniquePostId( $archPath, $dateRaw );
+			if ( $id === null ) return false;
+			$p = new Post( $id, $subPath );
+			$p->setType( $type );
+			$p->setDate();
+			$p->save();
 			flock( $dir, LOCK_UN );
-			return $post;
+			return $p;
 		}
 		return false;
 	}
 
-	private function _checkIdExists( $id ) {
-		return file_exists( $this->_dirPost . $id ) || file_exists( $this->_dirPost . '.' . $id );
+	private function _ensureUniquePostId( $archPath, $dateRaw ) {
+		$id = $dateRaw;
+		if ( ! $this->_checkIdExists( $archPath, $id ) ) return $id;
+		for ( $i = 1; $i < 10; $i += 1 ) {
+			$id = $dateRaw . '_' . $i;
+			if ( ! $this->_checkIdExists( $archPath, $id ) ) return $id;
+		}
+		return null;
+	}
+
+	private function _checkIdExists( $archPath, $id ) {
+		return file_exists( $archPath . $id ) || file_exists( $archPath . '.' . $id );
 	}
 
 
@@ -220,7 +273,8 @@ class Store {
 		$post->save();
 		if ( strpos( $post->getId(), '.' ) === 0 ) {
 			$newId = substr( $post->getId(), 1 );
-			rename( $this->_dirPost . $post->getId(), $this->_dirPost . $newId );
+			$subPath = $post->getSubPath();
+			rename( $this->getPostDir( $post->getId(), $subPath ), $this->getPostDir( $newId, $subPath ) );
 			$post->setId( $newId );
 			$post->save();
 		}
@@ -228,29 +282,26 @@ class Store {
 	}
 
 	public function delete( $id ) {
-		// We plan to add Trash function
-		$pdir = $this->_dirPost . $id;
-		self::deleteAll( $pdir );
+		// TODO Planning to add Trash function
+		$pd = $this->getPostDir( $id, null );
+		self::deleteAll( rtrim( $pd, '/' ) );
 	}
 
 	static public function deleteAll( $dir ) {
 		if ( ! file_exists( $dir ) ) {
-			Logger::output( 'File Does Not Exist (Store::deleteAll file_exists) [' . $dir . ']' );
+			Logger::output( "File Does Not Exist (Store::deleteAll file_exists) [$dir]" );
 			return false;
 		}
-		if ( $handle = opendir( $dir ) ) {
-			while ( false !== ( $item = readdir( $handle ) ) ) {
-				if ( $item !== '.' && $item !== '..' ) {
-					if ( is_dir( $dir . '/' . $item ) ) {
-						self::deleteAll( $dir . '/' . $item );
-					} else {
-						unlink( $dir . '/' . $item );
-					}
+		foreach ( scandir( $dir ) as $fn ) {
+			if ( $fn !== '.' && $fn !== '..' ) {
+				if ( is_dir( "$dir/$fn" ) ) {
+					self::deleteAll( "$dir/$fn" );
+				} else {
+					unlink( "$dir/$fn" );
 				}
 			}
-			closedir( $handle );
-			rmdir( $dir );
 		}
+		rmdir( $dir );
 	}
 
 }

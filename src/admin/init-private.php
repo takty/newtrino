@@ -5,7 +5,7 @@ namespace nt;
  * Init for Private
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-07
  *
  */
 
@@ -34,7 +34,7 @@ $nt_q      += [
 	'date_end'       =>  ''
 ];
 
-$nt_store   = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
+$nt_store   = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 $nt_session = new Session( NT_URL_PRIVATE, NT_DIR_POST, NT_DIR_DATA, NT_DIR_SESSION );
 
 if ( ! $nt_session->check() ) {

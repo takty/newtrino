@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-07
  *
  */
 
@@ -25,7 +25,7 @@ $nt_config = load_config( NT_DIR_DATA );
 function create_response_archive( $query, $filter, $option = [] ) {
 	global $nt_store, $nt_config;
 	$nt_config += $option;
-	$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
+	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
@@ -63,7 +63,7 @@ function create_response_archive( $query, $filter, $option = [] ) {
 function create_response_single( $query, $filter, $option = [] ) {
 	global $nt_store, $nt_config;
 	$nt_config += $option;
-	$nt_store  = new Store( NT_URL_POST, NT_DIR_POST, NT_DIR_DATA, $nt_config );
+	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
@@ -275,7 +275,7 @@ function _create_archive_data( $filter ) {
 	$res = [];
 	if ( isset( $filter['date'] ) ) {
 		$_date  = _get_param( 'date', '', $filter );
-		$res += [ 'date' => _get_date_archive( $_date ) ];
+		$res += [ 'date' => _get_date_archive( $_date, $filter ) ];
 	}
 	if ( isset( $filter['taxonomy'] ) ) {
 		$_taxes = _get_param( 'taxonomy', [], $filter );
@@ -284,9 +284,9 @@ function _create_archive_data( $filter ) {
 	return $res;
 }
 
-function _get_date_archive( $type ) {
+function _get_date_archive( $type, $filter ) {
 	global $nt_store;
-	$ds = $nt_store->getCountByDate( $type );
+	$ds = $nt_store->getCountByDate( $type, $filter );
 	$cs = [];
 	foreach ( $ds as $d ) {
 		$cs[] = [ 'slug' => $d['slug'], 'count' => $d['count'] ];
