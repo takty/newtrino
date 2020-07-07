@@ -15,7 +15,6 @@ require_once( __DIR__ . '/class-store.php' );
 
 set_locale_setting();
 
-global $nt_config;
 $nt_config = load_config( NT_DIR_DATA );
 
 
