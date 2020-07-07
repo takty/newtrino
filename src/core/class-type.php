@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-02
+ * @version 2020-07-04
  *
  */
 
@@ -80,6 +80,14 @@ class Type {
 		$ret = [];
 
 		foreach ( $data as $d ) {
+			if ( isset( $d['meta'] ) ) {
+				$ms = [];
+				foreach ( $d['meta'] as $m ) {
+					if ( empty( $m['key'] ) || empty( $m['type'] ) ) continue;
+					$ms[] = $m;
+				}
+				$d['meta'] = $ms;
+			}
 			$ret[ $d['slug'] ] = $d;
 		}
 		return $this->_data = $ret;

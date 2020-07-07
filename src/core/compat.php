@@ -5,7 +5,7 @@ namespace nt;
  * Compatibility Utilities
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-05
  *
  */
 
@@ -61,7 +61,11 @@ function convert_post_file( $dirPost ) {
 	if ( $dir = opendir( $dirPost ) ) {
 		while ( ( $fn = readdir( $dir ) ) !== false ) {
 			if ( strpos( $fn, '.' ) !== 0 && is_dir( $dirPost . $fn ) ) {
-				$path = $dirPost . $fn . '/' . Post::META_FILE_NAME;
+				$old = $dirPost . $fn . '/' . 'meta.json';
+				$path = $dirPost . $fn . '/' . Post::INFO_FILE_NAME;
+				if ( is_file( $old ) ) {
+					rename( $old, $path );
+				}
 
 				$json = file_get_contents( $path );
 				if ( $json === false ) {

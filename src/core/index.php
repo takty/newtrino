@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-05
  *
  */
 
@@ -16,6 +16,7 @@ define( 'NT_DIR_DATA', NT_DIR . '/data/' );
 define( 'NT_DIR_POST', NT_DIR . '/post/' );
 
 define( 'NT_URL_HOST', ( empty( $_SERVER['HTTPS'] ) ? 'http://' : 'https://' ) . $_SERVER['HTTP_HOST'] );
+define( 'NT_URL', NT_URL_HOST . get_url_from_path( NT_DIR ) . '/' );
 define( 'NT_URL_POST', NT_URL_HOST . get_url_from_path( NT_DIR_POST ) . '/' );
 
 if ( defined( 'NT_PRIVATE' ) ) {
@@ -60,10 +61,10 @@ function load_config( $dirData ) {
 	}
 	// Default Config
 	$conf += [
-		'lang'              => 'en',
-		'lang_admin'        => 'en',
-		'posts_per_page'    => 10,
-		'newly_arrived_day' => 3,
+		'lang'               => 'en',
+		'lang_admin'         => 'en',
+		'posts_per_page'     => 10,
+		'new_arrival_period' => 7,
 	];
 	return $conf;
 }

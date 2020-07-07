@@ -1,2 +1,2 @@
 <?php
-define( 'NT_DIR', __DIR__ );
+define( 'NT_DIR', __DIR__ . '/' );

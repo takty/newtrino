@@ -217,14 +217,13 @@ function _get_meta( $p, &$cls ) {
 	$ms = $nt_store->type()->getMetaAll( $p->getType() );
 	$fs = [];
 	_flatten_meta_structure( $ms, $fs );
-	$pms = $p->getMeta();
 
 	$ret = [];
 	foreach ( $fs as $m ) {
-		$key = $m['key'];
+		$key  = $m['key'];
 		$type = $m['type'];
-		if ( $type !== 'group' && ! isset( $pms[ $key ] ) ) continue;
-		$val = $pms[ $key ];
+		$val  = $p->getMetaValue( $key );
+		if ( $type !== 'group' && $val === null ) continue;
 
 		switch ( $type ) {
 			case 'date-range':
@@ -256,9 +255,11 @@ function _flatten_meta_structure( $ms, &$ret ) {
 
 function _get_class( $p, $cls ) {
 	global $nt_store, $nt_config;
-	$pd = intval( date( 'Ymd' ) ) - intval( substr( $p->getDateRaw(), 0, 8 ) );
-	if ( $nt_config['newly_arrived_day'] > 0 ) {
-		if ( $pd < $nt_config['newly_arrived_day'] ) $cls[] = 'new';
+	if ( $nt_config['new_arrival_period'] > 0 ) {
+		$now  = date_create( date( 'Y-m-d' ) );
+		$data = date_create( substr( $p->getDate(), 0, 10 ) );
+		$int  = date_diff( $now, $data );
+		if ( $int->invert === 1 && $int->days <= $nt_config['new_arrival_period'] ) $cls[] = 'new';
 	}
 	$cls[] = 'status-' . $p->getStatus();
 	$cls[] = 'type-' . $p->getType();

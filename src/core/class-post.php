@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-05
  *
  */
 
@@ -20,7 +20,7 @@ class Post {
 	const MODE_DIR  = 0755;
 	const MODE_FILE = 0640;
 
-	const META_FILE_NAME = 'meta.json';
+	const INFO_FILE_NAME = 'info.json';
 	const CONT_FILE_NAME = 'content.html';
 	const WORD_FILE_NAME = 'word.txt';
 	const MEDIA_DIR_NAME = 'media';
@@ -29,25 +29,23 @@ class Post {
 	const STATUS_RESERVED  = 'reserved';
 	const STATUS_DRAFT     = 'draft';
 
+	const EVENT_STATUS_SCHEDULED = 'scheduled';
+	const EVENT_STATUS_HELD      = 'held';
+	const EVENT_STATUS_FINISHED  = 'finished';
+
 	static function compareDate( $a, $b ) {
-		$da = $a->_date;
-		$db = $b->_date;
-		if ( $da === $db ) return 0;
-		return ( $da > $db ) ? -1 : 1;
+		return $b->_date <=> $a->_date;
 	}
 
 	static function compareIndexScore( $a, $b ) {
-		$da = $a->_indexScore;
-		$db = $b->_indexScore;
-		if ( $da === $db ) return 0;
-		return ( $da > $db ) ? -1 : 1;
+		return $b->_indexScore <=> $a->_indexScore;
 	}
 
 	static function parseDate( $date ) {
 		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );
 	}
 
-	static function numberifyDate( $date ) {
+	static function packDate( $date ) {
 		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $date );
 	}
 
@@ -55,7 +53,7 @@ class Post {
 		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dateTime );
 	}
 
-	static function numberifyDateTime( $dateTime ) {
+	static function packDateTime( $dateTime ) {
 		return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dateTime );
 	}
 
@@ -63,12 +61,14 @@ class Post {
 	// ------------------------------------------------------------------------
 
 
-	private $_postPath = '';
 	private $_id;
+	private $_subPath;
+	// private $_postUrl;
+	// private $_postPath = '';
 
-	function __construct( $urlPost, $id ) {
-		$this->_urlPost = $urlPost;
+	function __construct( $postUrl, $id, $subPath = '' ) {  // TODO $id, $subPath ('post/' or 'post/2020/' or 'event/2020/')
 		$this->_id = $id;
+		$this->_subPath = $subPath;
 	}
 
 	function getId() {
@@ -79,71 +79,87 @@ class Post {
 		$this->_id = $id;
 	}
 
-	function getType() {
-		return $this->_type;
+	function load( $info = null ) {
+		global $nt_store;
+		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
+
+		$ret = $this->_readInfo( $path, $info );
+		if ( $ret === true ) $this->_updateStatus( $path );
+		return $ret;
 	}
 
-	function setType( $type ) {
-		$this->_type = $type;
+	function save() {
+		global $nt_store;
+		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
+
+		if ( ! file_exists( $storePath . $this->_id ) ) {
+			mkdir( $path, self::MODE_DIR );
+		}
+		$this->_writeInfo( $path, true );
+		$this->_writeContent( $path );
+		$this->_updateSearchIndex( $path );
 	}
+
+	private function _updateStatus( string $postDir ) {
+		if ( $this->_status === self::STATUS_DRAFT ) return;
+		$s = $this->canPublished() ? self::STATUS_PUBLISHED : self::STATUS_RESERVED;
+		if ( $s !== $this->_status ) {
+			$this->_status = $s;
+			$this->_writeInfo( $postDir );
+		}
+	}
+
+	private function _updateSearchIndex( string $postDir ) {
+		$text = $this->_title . strip_tags( $this->_content );
+		// $path = $this->_postPath . self::WORD_FILE_NAME;
+		$path = $postDir . self::WORD_FILE_NAME;
+		return Indexer::updateSearchIndex( $text, $path, self::MODE_FILE );
+	}
+
+	// ----
 
 	function assign( $vals, $urlPrivate ) {
-		$type = $this->getType();
 		$this->setTitle( $vals['post_title'] );
-		$this->setState( $vals['post_status'] );
+		$this->setStatus( $vals['post_status'] );
 
-		$mod  = date( 'YmdHis' );
-		$date = empty( $vals['post_date'] ) ? $mod : Post::numberifyDateTime( $vals['post_date'] );
+		$date = empty( $vals['post_date'] ) ? 'now' : Post::packDateTime( $vals['post_date'] );
 		$this->setDate( $date );
-		$this->setModified( $mod );
+		$this->setModified( 'now' );
 
+		$type = $this->getType();
+		$this->_assignTaxonomy( $type, $vals );
+		$this->_assignMeta( $type, $vals );
+
+		$this->setContent( $vals['post_content'], $urlPrivate );
+	}
+
+	private function _assignTaxonomy( $type, $vals ) {
 		global $nt_store;
 		$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
+
 		foreach ( $taxes as $tax ) {
 			if ( ! isset( $vals["taxonomy:$tax"] ) ) continue;
 			$ts = is_array( $vals["taxonomy:$tax"] ) ? $vals["taxonomy:$tax"] : [ $vals["taxonomy:$tax"] ];
 			$this->setTermSlugs( $tax, $ts );
 		}
+	}
 
+	private function _assignMeta( $type, $vals ) {
+		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
+
 		foreach ( $ms as $m ) {
-			$key = isset( $m['key'] ) ? $m['key'] : '';
-			$type = isset( $m['type'] ) ? $m['type'] : '';
-			if ( empty( $key ) || empty( $type ) ) continue;
+			$key = $m['key'];
 			if ( ! isset( $vals["meta:$key"] ) ) continue;
-			$vals["meta:$key"] = array_map( function ( $e ) { return self::numberifyDate( $e ); }, $vals["meta:$key"] );
+			if ( $m['type'] === 'date-range' ) {
+				$vals["meta:$key"] = array_map( function ( $e ) { return self::packDate( $e ); }, $vals["meta:$key"] );
+			}
 			$this->setMetaValue( $key, $vals["meta:$key"] );
 		}
-
-		$this->setContent( $vals['post_content'], $urlPrivate );
-	}
-
-	function load( $storePath, $meta = false ) {
-		$this->_postPath = $storePath . $this->_id . '/';
-		$ret = $this->_readMeta( $this->_postPath, $meta );
-		return $ret;
-	}
-
-	function save( $storePath ) {
-		if ( ! file_exists( $storePath . $this->_id ) ) {
-			mkdir( $storePath . $this->_id, self::MODE_DIR );
-		}
-		$this->setModified( 'now' );
-		$this->_postPath = $storePath . $this->_id . '/';
-		$this->_writeMeta( $this->_postPath );
-		if ( $this->_content === null ) $this->_readContent();
-		$this->_writeContent();
-		$this->_updateSearchIndex();
-	}
-
-	private function _updateSearchIndex() {
-		$text = $this->_title . strip_tags( $this->_content );
-		$path = $this->_postPath . self::WORD_FILE_NAME;
-		return Indexer::updateSearchIndex( $text, $path, self::MODE_FILE );
 	}
 
 
-	// Meta Data --------------------------------------------------------------
+	// Info Data --------------------------------------------------------------
 
 
 	private $_type     = '';
@@ -154,78 +170,141 @@ class Post {
 	private $_taxonomy = [];
 	private $_meta     = [];
 
-	private function _readMeta( $postDir, $preloadedMeta = false ) {
-		if ( $preloadedMeta ) {
-			$metaAssoc = $preloadedMeta;
-			if ( isset( $metaAssoc['_index_score'] ) ) $this->_indexScore = $metaAssoc['_index_score'];
+	private function _readInfo( string $postDir, ?array $preloadedInfo = null ): bool {
+		if ( $preloadedInfo ) {
+			$info = $preloadedInfo;
 		} else {
-			$metaPath = $postDir . self::META_FILE_NAME;
-			$metaStr = @file_get_contents( $metaPath );
-			if ( $metaStr === false ) {
-				Logger::output( 'Error (Post::_readMeta file_get_contents) [' . $metaPath . ']' );
-				return false;
-			}
-			$metaAssoc = json_decode( $metaStr, true );
+			$info = $this->_readInfoFile( $postDir );
+			if ( $info === null ) return false;
 		}
-
-		$metaAssoc += [ 'type' => 'post', 'title' => '', 'taxonomy' => [], 'meta' => [], 'status' => self::STATUS_PUBLISHED ];
-
-		$this->_type     = $metaAssoc['type'];
-		$this->_title    = $metaAssoc['title'];
-		$this->_status   = $metaAssoc['status'];
-		$this->_date     = $metaAssoc['date'];
-		$this->_modified = $metaAssoc['modified'];
-		$this->_taxonomy = $metaAssoc['taxonomy'];
-		$this->_meta     = $metaAssoc['meta'];
-
-		if ( $this->_status !== self::STATUS_DRAFT ) {
-			$newState = $this->canPublished() ? self::STATUS_PUBLISHED : self::STATUS_RESERVED;
-			if ( $newState !== $this->_status ) {
-				$this->_status = $newState;
-				$this->_writeMeta( $postDir );
-			}
-		}
+		$info += [
+			'type'     => 'post',
+			'title'    => '',
+			'status'   => self::STATUS_PUBLISHED,
+			'taxonomy' => [],
+			'meta'     => [],
+		];
+		$this->_type     = $info['type'];
+		$this->_title    = $info['title'];
+		$this->_status   = $info['status'];
+		$this->_date     = $info['date'];
+		$this->_modified = $info['modified'];
+		$this->_taxonomy = $info['taxonomy'];
+		$this->_meta     = $info['meta'];
+		if ( isset( $info['_index_score'] ) ) $this->_indexScore = $info['_index_score'];
 		return true;
 	}
 
-	private function _writeMeta( $postDir ) {
-		$metaAssoc = [];
+	private function _writeInfo( string $postDir, bool $updateModified = false ): bool {
+		if ( $updateModified ) $this->setModified();
+		$info = [
+			'type'     => $this->_type,
+			'title'    => $this->_title,
+			'status'   => $this->_status,
+			'date'     => $this->_date,
+			'modified' => $this->_modified,
+			'taxonomy' => $this->_taxonomy,
+			'meta'     => $this->_meta,
+		];
+		return $this->_writeInfoFile( $postDir, $info );
+	}
 
-		$metaAssoc['type']     = $this->_type;
-		$metaAssoc['title']    = $this->_title;
-		$metaAssoc['status']   = $this->_status;
-		$metaAssoc['date']     = $this->_date;
-		$metaAssoc['modified'] = $this->_modified;
-		$metaAssoc['taxonomy'] = $this->_taxonomy;
-		$metaAssoc['meta']     = $this->_meta;
+	private function _readInfoFile( string $postDir ): ?array {
+		// $path = $this->_postPath . self::INFO_FILE_NAME;
+		$path = $postDir . self::INFO_FILE_NAME;
+		$json = @file_get_contents( $path );
+		if ( $json === false ) {
+			Logger::output( "Error (Post::_readInfoFile file_get_contents) [$path]" );
+			return null;
+		}
+		return json_decode( $json, true );
+	}
 
-		$metaStr = json_encode( $metaAssoc, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-
-		$metaPath = $postDir . self::META_FILE_NAME;
-		$suc = file_put_contents( $metaPath, $metaStr, LOCK_EX );
-		if ( $suc === false ) {
-			Logger::output( 'Error (Post::_writeMeta file_put_contents) [' . $metaPath . ']' );
+	private function _writeInfoFile( string $postDir, array $info ): bool {
+		// $path = $this->_postPath . self::INFO_FILE_NAME;
+		$path = $postDir . self::INFO_FILE_NAME;
+		$json = json_encode( $info, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		$res = file_put_contents( $path, $json, LOCK_EX );
+		if ( $res === false ) {
+			Logger::output( "Error (Post::_writeInfoFile file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $metaPath, self::MODE_FILE );
+		chmod( $path, self::MODE_FILE );
 		return true;
-	}
-
-	function getTitle() {
-		return $this->_title;
 	}
 
 	// ----
 
-	function hasTerm( string $tax_slug, string $term_slug ) {
+	function getType(): string {
+		return $this->_type;
+	}
+
+	function setType( string $val ) {
+		$this->_type = $val;
+	}
+
+	function getTitle(): string {
+		return $this->_title;
+	}
+
+	function setTitle( string $val ) {
+		$this->_title = $val;
+	}
+
+	function getStatus(): string {
+		return $this->_status;
+	}
+
+	function isStatus( string $val ): bool {
+		return $this->_status === $val;
+	}
+
+	function canPublished(): bool {
+		return intval( substr( $this->_date, 0, 8 ) ) < intval( date( 'Ymd' ) );
+	}
+
+	function setStatus( string $val ) {
+		if ( ! in_array( $val, [ self::STATUS_PUBLISHED, self::STATUS_RESERVED, self::STATUS_DRAFT ], true ) ) return;
+		$this->_status = $val;
+	}
+
+	function getDate(): string {
+		return Post::parseDateTime( $this->_date );
+	}
+
+	function getModified(): string {
+		return Post::parseDateTime( $this->_modified );
+	}
+
+	function getDateRaw(): string {
+		return $this->_date;
+	}
+
+	function getModifiedRaw(): string {
+		return $this->_modified;
+	}
+
+	function setDate( string $val = 'now' ) {
+		if ( $val === 'now' ) $val = date( 'YmdHis' );
+		$this->_date = $val;
+	}
+
+	function setModified( string $val = 'now' ) {
+		if ( $val === 'now' ) $val = date( 'YmdHis' );
+		$this->_modified = $val;
+	}
+
+	// ----
+
+	function hasTerm( string $tax_slug, string $term_slug ): bool {
 		return in_array( $term_slug, $this->getTermSlugs( $tax_slug ), true );
 	}
 
-	function getTermSlugs( string $tax_slug ) {
+	function getTermSlugs( string $tax_slug ): array {
 		return isset( $this->_taxonomy[ $tax_slug ] ) ? $this->_taxonomy[ $tax_slug ] : [];
 	}
 
-	function getTaxonomyToTermSlugs() {
+	function getTaxonomyToTermSlugs(): array {
 		return $this->_taxonomy;
 	}
 
@@ -235,78 +314,18 @@ class Post {
 
 	// ----
 
-	function getMeta() {
+	function getMeta(): array {
 		return $this->_meta;
 	}
 
-	function setMetaValue( $key, $val ) {
+	function getMetaValue( string $key ) {
+		if ( isset( $this->_meta[ $key ] ) ) return $this->_meta[ $key ];
+		return null;
+	}
+
+	function setMetaValue( string $key, $val ) {
 		$this->_meta[ $key ] = $val;
 	}
-
-	// ----
-
-	function getDate() {
-		return Post::parseDateTime( $this->_date );
-	}
-
-	function getModified() {
-		return Post::parseDateTime( $this->_modified );
-	}
-
-	function getDateRaw() {
-		return $this->_date;
-	}
-
-	function getModifiedRaw() {
-		return $this->_modified;
-	}
-
-	function getStatus() {
-		return $this->_status;
-	}
-
-	function isPublished() {
-		return $this->_status === self::STATUS_PUBLISHED;
-	}
-
-	function isReserved() {
-		return $this->_status === self::STATUS_RESERVED;
-	}
-
-	function isDraft() {
-		return $this->_status === self::STATUS_DRAFT;
-	}
-
-	function canPublished() {
-		return intval( substr( $this->_date, 0, 8 ) ) < intval( date( 'Ymd' ) );
-	}
-
-	function setTitle( $val ) {
-		$this->_title = $val;
-	}
-
-	function setDate( $val ) {
-		if ( $val === 'now' ) $val = date( 'YmdHis' );
-		$this->_date = $val;
-	}
-
-	function setModified( $val ) {
-		if ( $val === 'now' ) $val = date( 'YmdHis' );
-		$this->_modified = $val;
-	}
-
-	function setState( $val ) {
-		if ( ! in_array( $val, [ self::STATUS_PUBLISHED, self::STATUS_RESERVED, self::STATUS_DRAFT ], true ) ) return;
-		$this->_status = $val;
-	}
-
-
-	// Custom Meta Data -------------------------------------------------------
-
-
-	const EVENT_STATUS_SCHEDULED = 'scheduled';
-	const EVENT_STATUS_HELD      = 'held';
-	const EVENT_STATUS_FINISHED  = 'finished';
 
 
 	// Content ----------------------------------------------------------------
@@ -314,84 +333,49 @@ class Post {
 
 	private $_content = null;
 
-	private function _readContent() {
-		$contPath = $this->_postPath . self::CONT_FILE_NAME;
-		$contStr = @file_get_contents( $contPath );
-		if ( $contPath === false ) {
-			Logger::output( 'Error (Post::_readContent file_get_contents) [' . $contPath . ']' );
+	private function _readContent( string $postDir ): bool {
+		// $path = $this->_postPath . self::CONT_FILE_NAME;
+		$path = $postDir . self::CONT_FILE_NAME;
+		$cont = @file_get_contents( $path );
+		if ( $cont === false ) {
+			Logger::output( "Error (Post::_readContent file_get_contents) [$path]" );
 			return false;
 		}
-		$this->_content = $contStr;
+		$this->_content = $cont;
 		return true;
 	}
 
-	private function _writeContent() {
-		$contPath = $this->_postPath . self::CONT_FILE_NAME;
-		$suc = file_put_contents( $contPath, $this->_content, LOCK_EX );
-		if ( $suc === false ) {
-			Logger::output( 'Error (Post::_writeContent file_put_contents) [' . $contPath . ']' );
+	private function _writeContent( string $postDir ): bool {
+		if ( $this->_content === null ) $this->_readContent( $postDir );
+
+		// $path = $this->_postPath . self::CONT_FILE_NAME;
+		$path = $postDir . self::CONT_FILE_NAME;
+		$res = file_put_contents( $path, $this->_content, LOCK_EX );
+		if ( $res === false ) {
+			Logger::output( "Error (Post::_writeContent file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $contPath, self::MODE_FILE );
+		chmod( $path, self::MODE_FILE );
 		return true;
 	}
 
-	function getContent() {
-		if ( $this->_content === null ) {
-			$res = $this->_readContent();
-			if ( $res === false ) {
-				$this->_content = '';
-			}
-		}
-		if ( empty( $this->_content ) ) return '';
-
-		$dom = str_get_html( $this->_content );
-		foreach ( $dom->find( 'img' ) as &$elm ) {
-			$elm->src = $this->convertToActualUrl( $elm->src );
-		}
-		foreach ( $dom->find( 'a' ) as &$elm ) {
-			$elm->href = $this->convertToActualUrl( $elm->href );
-		}
-		$content = $dom->save();
-		$dom->clear();
-		unset( $dom );
-		return $content;
-	}
-
-	function setContent( $val, $urlPrivate ) {
-		if ( empty( $val ) ) {
-			$this->_content = '';
-			return;
-		}
-		$dom = str_get_html($val);
-		foreach ( $dom->find( 'img' ) as &$elm ) {
-			$elm->src = $this->convertToPortableUrl( $elm->src, $urlPrivate );
-		}
-		foreach ( $dom->find( 'a' ) as &$elm ) {
-			$elm->href = $this->convertToPortableUrl( $elm->href, $urlPrivate );
-		}
-		$this->_content = $dom->save();
-		$dom->clear();
-		unset( $dom );
-	}
-
-	private function convertToActualUrl( $url ) {
+	private function _convertToActualUrl( string $postUrl, string $url ): string {
 		$sp = strpos( $url, '/' );
 		if ( $sp === 0 ) {
 			$sub = substr( $url, 1 );
-			return $this->_urlPost . $sub;
+			return $postUrl . $sub;
 		} else {
 			if ( strpos( $url, self::MEDIA_DIR_NAME . '/' ) === 0 ) {
-				return $this->_urlPost . $this->_id . '/' . $url;
+				return $postUrl . $this->_id . '/' . $url;
 			}
 		}
 		return $url;
 	}
 
-	private function convertToPortableUrl( $url, $urlPrivate ) {
+	private function _convertToPortableUrl( string $postUrl, string $url, string $urlPrivate ): string {
 		$url = resolve_url( $url, $urlPrivate );
-		if ( strpos( $url, $this->_urlPost ) === 0 ) {
-			$url = substr( $url, strlen( $this->_urlPost ) - 1 );
+		if ( strpos( $url, $postUrl ) === 0 ) {
+			$url = substr( $url, strlen( $postUrl ) - 1 );
 			$pu = '/' . $this->_id . '/' . self::MEDIA_DIR_NAME . '/';
 			if ( strpos( $url, $pu ) === 0 ) {
 				$url = substr( $url, strlen( $pu ) - strlen( self::MEDIA_DIR_NAME . '/' ) );
@@ -400,11 +384,55 @@ class Post {
 		return $url;
 	}
 
-	function getExcerpt( $len ) {
+	function getContent(): string {
+		global $nt_store;
+		$dir = $nt_store->getPostDir( $this->_id, $this->_subPath );
+		$url = $nt_store->getPostUrl( $this->_id, $this->_subPath );
+
+		if ( $this->_content === null ) {
+			$res = $this->_readContent( $dir );
+			if ( $res === false ) $this->_content = '';
+		}
+		if ( empty( $this->_content ) ) return '';
+
+		$dom = str_get_html( $this->_content );
+		foreach ( $dom->find( 'img' ) as &$elm ) {
+			$elm->src = $this->_convertToActualUrl( $url, $elm->src );
+		}
+		foreach ( $dom->find( 'a' ) as &$elm ) {
+			$elm->href = $this->_convertToActualUrl( $url, $elm->href );
+		}
+		$content = $dom->save();
+		$dom->clear();
+		unset( $dom );
+		return $content;
+	}
+
+	function setContent( string $val, string $urlPrivate ) {
+		if ( empty( $val ) ) {
+			$this->_content = '';
+			return;
+		}
+		global $nt_store;
+		$url = $nt_store->getPostUrl( $this->_id, $this->_subPath );
+
+		$dom = str_get_html($val);
+		foreach ( $dom->find( 'img' ) as &$elm ) {
+			$elm->src = $this->_convertToPortableUrl( $url, $elm->src, $urlPrivate );
+		}
+		foreach ( $dom->find( 'a' ) as &$elm ) {
+			$elm->href = $this->_convertToPortableUrl( $url, $elm->href, $urlPrivate );
+		}
+		$this->_content = $dom->save();
+		$dom->clear();
+		unset( $dom );
+	}
+
+	function getExcerpt( int $len ): string {
 		$str = strip_tags( $this->getContent() );
-		$str = mb_substr( $str, 0, $len );
-		if ( $str < mb_strlen( $str ) ) $str .= '...';
-		return $str;
+		$exc = mb_substr( $str, 0, $len );
+		if ( mb_strlen( $exc ) < mb_strlen( $str ) ) $exc .= '...';
+		return $exc;
 	}
 
 }

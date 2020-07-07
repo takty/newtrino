@@ -75,11 +75,11 @@ function echo_post_tr( $p ) {
 		<td>
 			<select onchange="setPostState(<?= _h( $pid ) ?>, this.value);">
 <?php if ($p->canPublished()): ?>
-				<option value="published"<?php if ($p->isPublished()) _eh(' selected'); ?>><?= _ht('Published') ?></option>
+				<option value="published"<?php if ( $p->isStatus( Post::STATUS_PUBLISHED ) ) _eh(' selected'); ?>><?= _ht('Published') ?></option>
 <?php else: ?>
-				<option value="reserved"<?php if ($p->isReserved()) _eh(' selected'); ?>><?= _ht('Reserved') ?></option>
+				<option value="reserved"<?php if ( $p->isStatus( Post::STATUS_RESERVED ) ) _eh(' selected'); ?>><?= _ht('Reserved') ?></option>
 <?php endif ?>
-				<option value="draft"<?php if ($p->isDraft()) _eh(' selected'); ?>><?= _ht('Draft') ?></option>
+				<option value="draft"<?php if ( $p->isStatus( Post::STATUS_DRAFT ) ) _eh(' selected'); ?>><?= _ht('Draft') ?></option>
 			</select>
 		</td>
 		<td><a href="#" onclick="editPost(<?= _h( $pid ) ?>);"><?= _h($p->getTitle()) ?></a></td>

@@ -25,6 +25,9 @@ class Store {
 		$this->_dirPost = $dirPost;
 		$this->_conf    = $conf;
 
+		$this->_dirRoot = NT_DIR;
+		$this->_dirUrl  = NT_URL;
+
 		$this->_type     = new Type( $dirData, $conf );
 		$this->_taxonomy = new Taxonomy( $dirData, $conf );
 	}
@@ -36,9 +39,25 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
+	public function getPostDir( $id, $subPath ) {
+		return $this->_dirRoot . $subPath . $id . '/';
+	}
+
+	public function getPostUrl( $id, $subPath ) {
+		return $this->_dirUrl . $subPath . $id . '/';
+	}
+
+	public function createSubPath( $type ) {
+
+	}
+
+
+	// ------------------------------------------------------------------------
+
+
 	public function getPost( string $id ) {
 		$post = new Post( $this->_urlPost, $id );
-		if ( ! $post->load( $this->_dirPost ) ) return false;
+		if ( ! $post->load() ) return false;
 		return $post;
 	}
 
@@ -80,7 +99,7 @@ class Store {
 
 	public function getCountByDate( $type = 'year' ) {
 		$ms = [];
-		$this->_loadMatchedMetaAll( $this->_dirPost, [], $ms );
+		$this->_loadMatchedInfoAll( $this->_dirRoot, 'post/', [], $ms );
 
 		$digit = 4;
 		switch ( $type ) {
@@ -112,7 +131,7 @@ class Store {
 			'status'    => Post::STATUS_PUBLISHED,
 		];
 		$posts = [];
-		$this->_loadMatchedPostAll( $this->_dirPost, $args, $posts );
+		$this->_loadMatchedPostAll( $this->_dirRoot, 'post/', $args, $posts );
 
 		usort( $posts, '\nt\Post::compareDate' );
 		if ( ! empty( $args['search'] ) ) {
@@ -121,43 +140,43 @@ class Store {
 		return $posts;
 	}
 
-	private function _loadMatchedPostAll( $path, $args, &$posts = [] ) {
+	private function _loadMatchedPostAll( $root, $path, $args, &$posts = [] ) {
 		$ret = [];
-		$this->_loadMatchedMetaAll( $path, $args, $ret );
+		$this->_loadMatchedInfoAll( $root, $path, $args, $ret );
 		foreach ( $ret as $m ) {
-			$p = new Post( $m['path'], $m['id'] );
-			$p->load( $this->_dirPost, $m['meta'] );
+			$p = new Post( $m['path'], $m['id'], $m['subPath'] );
+			$p->load( $m['info'] );
 			$posts[] = $p;
 		}
 	}
 
-	private function _loadMatchedMetaAll( $path, $args, &$ret = [] ) {
+	private function _loadMatchedInfoAll( $root, $path, $args, &$ret = [] ) {
 		$query = new Query( $args );
-		if ( $dir = opendir( $path ) ) {
+		if ( $dir = opendir( $root . $path ) ) {
 			while ( ( $fn = readdir( $dir ) ) !== false ) {
-				if ( strpos( $fn, '.' ) === 0 || is_file( $path . $fn ) ) continue;
+				if ( strpos( $fn, '.' ) === 0 || is_file( $root . $path . $fn ) ) continue;
 				if ( strlen( $fn ) === 4 ) {
-					$this->_loadMatchedMetaAll( "$path$fn/", $args, $ret );
+					$this->_loadMatchedInfoAll( $root, "$path$fn/", $args, $ret );
 					continue;
 				}
-				$meta = $this->_loadMeta( $path . $fn );
-				if ( $query->match( $meta, "$path$fn/" . Post::WORD_FILE_NAME ) ) {
-					$ret[] = [ 'path' => $path, 'id' => $fn, 'meta' => $meta ];
+				$info = $this->_loadInfo( $root . $path . $fn );
+				if ( $query->match( $info, "$root$path$fn/" . Post::WORD_FILE_NAME ) ) {
+					$ret[] = [ 'path' => $path, 'id' => $fn, 'info' => $info, 'subPath' => $path ];
 				}
 			}
 			closedir( $dir );
 		}
 	}
 
-	private function _loadMeta( $path ) {
-		$meta_path = $path . '/' . Post::META_FILE_NAME;
+	private function _loadInfo( $path ) {
+		$info_path = $path . '/' . Post::INFO_FILE_NAME;
 		try {
-			$json = file_get_contents( $meta_path );
+			$json = file_get_contents( $info_path );
 		} catch ( Error $e ) {
 			$json = false;
 		}
 		if ( $json === false ) {
-			Logger::output( 'Error (Post::_loadMeta file_get_contents) [' . $meta_path . ']' );
+			Logger::output( "Error (Post::_loadInfo file_get_contents) [$info_path]" );
 			return null;
 		}
 		return json_decode( $json, true );
@@ -181,8 +200,8 @@ class Store {
 			if ( $this->_checkIdExists( $id ) ) return false;  // when the loop finished without break
 			$post = new Post( '.', $id );
 			$post->setType( $type );
-			$post->setDate( 'now' );
-			$post->save( $this->_dirPost );
+			$post->setDate();
+			$post->save();
 			flock( $dir, LOCK_UN );
 			return $post;
 		}
@@ -198,12 +217,12 @@ class Store {
 
 
 	public function writePost( $post ) {
-		$post->save( $this->_dirPost );
+		$post->save();
 		if ( strpos( $post->getId(), '.' ) === 0 ) {
 			$newId = substr( $post->getId(), 1 );
 			rename( $this->_dirPost . $post->getId(), $this->_dirPost . $newId );
 			$post->setId( $newId );
-			$post->save( $this->_dirPost );
+			$post->save();
 		}
 		return $post;
 	}

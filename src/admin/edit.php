@@ -5,7 +5,7 @@ namespace nt;
  * Edit
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-04
  *
  */
 
@@ -19,7 +19,7 @@ switch ( $nt_q['mode'] ) {
 	case 'new':
 		$t_p = $nt_store->createNewPost();
 		$nt_session->addTempPostId( $t_p->getId() );
-		$t_p->setDate( 'now' );
+		$t_p->setDate();
 		break;
 	case 'update':
 		$p = $nt_store->getPost( $nt_q['id'] );
@@ -88,24 +88,21 @@ function echo_meta_metaboxes( $post ) {
 	$type = $post->getType();
 	$ms = $nt_store->type()->getMetaAll( $type );
 	foreach ( $ms as $m ) {
-		$key   = isset( $m['key'] ) ? $m['key'] : '';
-		$type  = isset( $m['type'] ) ? $m['type'] : '';
 		$label = isset( $m['label'] ) ? $m['label'] : '';
-		if ( empty( $key ) || empty( $type ) || empty( $label ) ) continue;
-
-		switch ( $type ) {
+		if ( empty( $label ) ) continue;
+		switch ( $m['type'] ) {
 			case 'date-range':
-				echo_meta_duration_metabox( $post, $key, $label );
+				echo_meta_duration_metabox( $post, $m['key'], $label );
 				break;
 		}
 	}
 }
 
 function echo_meta_duration_metabox( $post, $key, $label ) {
-	$m = $post->getMeta();
-	if ( ! isset( $m[ $key ] ) ) return;
-	$bgn = Post::parseDate( $m[ $key ][0] );
-	$end = Post::parseDate( $m[ $key ][1] );
+	$val = $post->getMetaValue( $key );
+	if ( $val === null ) return;
+	$bgn = Post::parseDate( $val[0] );
+	$end = Post::parseDate( $val[1] );
 ?>
 	<div class="frame" id="frame-duration">
 		<h3><?= _ht( $label ) ?></h3>
