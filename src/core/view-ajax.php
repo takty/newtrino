@@ -5,7 +5,7 @@ namespace nt;
  * Ajax API
  *
  * @author Takuto Yanagida
- * @version 2020-06-28
+ * @version 2020-07-07
  *
  */
 
@@ -23,4 +23,4 @@ if ( isset( $query['id'] ) ) {
 }
 
 header( 'Content-Type: text/html; charset=UTF-8' );
-echo json_encode( $d, JSON_UNESCAPED_UNICODE );
+echo json_encode( $d, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );

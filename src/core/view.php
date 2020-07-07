@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-07
  *
  */
 
@@ -284,7 +284,7 @@ function create_query_string( $params ) {
 		foreach ( $params as $kv ) {
 			$_key = urlencode( $kv[0] );
 			$v = $kv[1];
-			if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_UNICODE );
+			if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 			$_val = urlencode( $v );
 			$kvs[] = $_key . '=' . $_val;
 		}
