@@ -23,7 +23,7 @@ if ( defined( 'NT_PRIVATE' ) ) {
 	define( 'NT_DIR_ADMIN', NT_DIR . '/admin/' );
 	define( 'NT_DIR_SESSION', NT_DIR_ADMIN . 'var/session/' );
 
-	define( 'NT_URL_PRIVATE', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );
+	define( 'NT_URL_ADMIN', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );
 }
 
 

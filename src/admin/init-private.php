@@ -35,9 +35,9 @@ $nt_q      += [
 ];
 
 $nt_store   = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
-$nt_session = new Session( NT_URL_PRIVATE, NT_DIR_POST, NT_DIR_DATA, NT_DIR_SESSION );
+$nt_session = new Session( NT_URL_ADMIN, NT_DIR_POST, NT_DIR_DATA, NT_DIR_SESSION );
 
 if ( ! $nt_session->check() ) {
-	header( 'Location: ' . NT_URL_PRIVATE . 'login.php' );
+	header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 	exit( 1 );
 }

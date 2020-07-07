@@ -23,7 +23,7 @@ switch ( $nt_q['mode'] ) {
 		break;
 	case 'update':
 		$p = $nt_store->getPost( $nt_q['id'] );
-		$p->assign( $nt_q, NT_URL_PRIVATE );
+		$p->assign( $nt_q, NT_URL_ADMIN );
 		$t_p = $nt_store->writePost( $p );
 		$t_msg = _ht( 'Update Complete' );
 		break;
