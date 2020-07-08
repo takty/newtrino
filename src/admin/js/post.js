@@ -102,7 +102,7 @@ function initEdit() {
 }
 
 function setButtonEvents() {
-	addBtnEvent('show-list', showList, 'index.php');
+	addBtnEvent('show-list', showList, 'list.php');
 	addBtnEvent('show-post', showPost, '../view.php?id=' + document.getElementById('id').value);
 	addBtnEvent('show-media-chooser', showMediaChooser);
 	addBtnEvent('show-preview', showPreview);
@@ -165,7 +165,7 @@ function update() {
 	document.getElementById('mode').value = 'update';
 	const fp = document.getElementById('form-post');
 	fp.target = '';
-	fp.action = 'edit.php';
+	fp.action = 'post.php';
 	changed = false;
 	fp.submit();
 }
@@ -173,7 +173,7 @@ function update() {
 function showList() {
 	const fp = document.getElementById('form-post');
 	fp.target = '';
-	fp.action = 'index.php';
+	fp.action = 'list.php';
 	fp.submit();
 }
 

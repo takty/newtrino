@@ -11,7 +11,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/init-private.php');
+require_once(__DIR__ . '/admin.php');
 
 
 $media = new Media(NT_DIR_POST, NT_URL_POST, Post::MEDIA_DIR_NAME, $nt_q['id']);
@@ -61,7 +61,7 @@ header('Content-Type: text/html;charset=utf-8');
 		<button class="btn-delete" type="button" id="delete" onClick="deleteFile();"><?= _ht('Permanently Delete') ?></button>
 	</form>
 </div>
-<div class="media-list">
+<div class="frame frame-inside media-list">
 	<div class="filechooser">
 <?php for ($i = 0; $i < count($t_items); $i += 1): $item = $t_items[$i]; ?>
 		<div class="item">
@@ -88,7 +88,7 @@ if ($is_img):
 <?php endfor ?>
 	</div>
 </div>
-<div class="image-option">
+<div class="frame frame-inside image-option">
 	<div>
 		<h2><?= _ht('Image Alignment') ?></h2>
 		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"> <?= _ht('Left') ?></label>

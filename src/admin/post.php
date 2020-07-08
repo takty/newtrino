@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/init-private.php');
+require_once(__DIR__ . '/admin.php');
 
 
 $t_msg = '';
@@ -136,7 +136,7 @@ header('Content-Type: text/html;charset=utf-8');
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/edit.min.js"></script>
+<script src="js/post.min.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function () {initEdit();});</script>
 </head>
 <body class="edit">
@@ -148,7 +148,7 @@ header('Content-Type: text/html;charset=utf-8');
 		<a class="btn" href="#" id="show-post"><?= _ht('Show Post') ?></a>
 	</div>
 	<h2><?= _ht('Post Edit') ?>  <span id="update-msg"><?= _h($t_msg) ?></span></h2>
-	<form name="form-post" id="form-post" action="edit.php" method="post">
+	<form name="form-post" id="form-post" action="post.php" method="post">
 		<div class="column">
 			<div class="column-main">
 				<div class="form-post">

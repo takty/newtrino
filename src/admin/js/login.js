@@ -29,8 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		const digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
 
 		if (showKey) {
-			const elm = document.getElementById('key');
-			elm.innerHTML = user + '\t' + a1;
+			if (user && pw) {
+				const elm = document.getElementById('key');
+				elm.innerHTML = user + '\t' + a1;
+			}
 			event.preventDefault();
 			return;
 		}

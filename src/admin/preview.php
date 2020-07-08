@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
-require_once(__DIR__ . '/init-private.php');
+require_once(__DIR__ . '/admin.php');
 
 
 $t_title   = $nt_q['post_title'];

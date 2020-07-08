@@ -78,7 +78,21 @@ body.edit {
 	z-index: 999;
 
 	& > iframe {
-		@include clickable-design;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		// box-shadow: 0 2px 6px #aaa;
+		font-size: 0.9rem;
+
+		background-color: #fff;
+		color: #333;
+		white-space: nowrap;
+
+		&:hover { border-color: #88f; }
+		&:disabled {
+			pointer-events: none;
+			border-color: #ccc;
+			color: #aaa;
+		}
 	}
 }
 

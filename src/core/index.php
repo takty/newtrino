@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-08
  *
  */
 
@@ -149,6 +149,21 @@ function get_right_intersection( $str1, $str2 ) {
 	return $temp;
 }
 
+function normalize_label( array &$d, string $l ) {
+	if ( isset( $d[ "label@$l" ] ) )    $d['label']    = $d[ "label@$l" ];
+	if ( isset( $d[ "sg_label@$l" ] ) ) $d['sg_label'] = $d[ "sg_label@$l" ];
+
+	if ( ! isset( $d['label'] ) && isset( $d['sg_label'] ) ) {
+		$d['label'] = $d['sg_label'];
+	} else if ( isset( $d['label'] ) && ! isset( $d['sg_label'] ) ) {
+		$d['sg_label'] = $d['label'];
+	} else if ( ! isset( $d['label'] ) && ! isset( $d['sg_label'] ) ) {
+		$t = ucwords( str_replace( '_', ' ', $d['slug'] ) );
+		$d['label']    = $t;
+		$d['sg_label'] = $t;
+	}
+}
+
 
 // Output Functions ------------------------------------------------------------
 
@@ -179,7 +194,7 @@ function _eht( $str, $context = 'default' ) {
 
 function translate( $str, $context = 'default' ) {
 	if ( defined( 'NT_ADMIN' ) && $context === 'default' ) {
-		$context = 'private';
+		$context = 'admin';
 	}
 	global $nt_res;
 	if ( isset( $nt_res[ $context ][ $str ] ) ) {

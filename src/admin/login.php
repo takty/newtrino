@@ -26,7 +26,7 @@ $error      = '';
 if ( ! empty( $_POST['digest'] ) ) {
 	$success = $nt_session->login( $_POST, $error );
 	if ( $success ) {
-		header( 'Location: ' . NT_URL_ADMIN . 'index.php' );
+		header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
 		exit();
 	}
 } else {
@@ -48,7 +48,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <script>console.log('<?= $error ?>');</script>
 </head>
 <body class="login">
-<div class="frame-login">
+<div class="frame frame-login">
 	<h1>Newtrino</h1>
 	<form action="login.php" method="post">
 		<dl>
@@ -64,7 +64,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<p><?= _ht( 'User name or password is wrong.' ) ?></p>
 <?php endif; ?>
 		<nav>
-			<button type="submit" id="btn-login"><?= _ht( 'Login' ) ?></button>
+			<button type="submit" id="btn-login" class="accent"><?= _ht( 'Login' ) ?></button>
 		</nav>
 	</form>
 	<div id="key"></div>

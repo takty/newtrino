@@ -22,7 +22,7 @@ set_locale_setting();
 
 $nt_config  = load_config( NT_DIR_DATA );
 $nt_res     = load_resource( NT_DIR_ADMIN, $nt_config['lang_admin'] );
-$nt_q       = empty( $_POST ) ? $_GET : $_POST;
+$nt_q       = $_REQUEST;
 $nt_q      += [
 	'mode'           => '',
 	'id'             => 0,

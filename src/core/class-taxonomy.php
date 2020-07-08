@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-08
  *
  */
 
@@ -91,32 +91,16 @@ class Taxonomy {
 		$ret = [];
 
 		foreach ( $data as $d ) {
-			$this->_normalizeLabel( $d );
+			normalize_label( $d, $this->_lang );
 			$ti = [];
 			foreach ( $d['terms'] as $idx => &$t ) {
-				$this->_normalizeLabel( $t );
+				normalize_label( $t, $this->_lang );
 				$ti[ $t['slug'] ] = $idx;
 			}
 			$ret[ $d['slug'] ] = $d;
 			$ret[ $d['slug'] ]['#terms'] = $ti;
 		}
 		return $this->_data = $ret;
-	}
-
-	private function _normalizeLabel( array &$d ) {
-		$l = $this->_lang;
-		if ( isset( $d[ "label@$l" ] ) )    $d['label']    = $d[ "label@$l" ];
-		if ( isset( $d[ "sg_label@$l" ] ) ) $d['sg_label'] = $d[ "sg_label@$l" ];
-
-		if ( ! isset( $d['label'] ) && isset( $d['sg_label'] ) ) {
-			$d['label'] = $d['sg_label'];
-		} else if ( isset( $d['label'] ) && ! isset( $d['sg_label'] ) ) {
-			$d['sg_label'] = $d['label'];
-		} else if ( ! isset( $d['label'] ) && ! isset( $d['sg_label'] ) ) {
-			$t = ucwords( str_replace( '_', ' ', $d['slug'] ) );
-			$d['label']    = $t;
-			$d['sg_label'] = $t;
-		}
 	}
 
 }

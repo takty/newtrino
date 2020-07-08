@@ -1,6 +1,7 @@
 [
     {
         "slug": "post",
+		"label": "投稿",
 		"taxonomy": [ "category", "lang" ],
 		"meta": [
 			{
@@ -23,6 +24,7 @@
     },
 	{
 		"slug": "event",
+		"label": "イベント",
 		"taxonomy": [ "category", "lang" ],
 		"meta": [
 			{
