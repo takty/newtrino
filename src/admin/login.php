@@ -52,7 +52,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<h1>Newtrino</h1>
 	<form action="login.php" method="post">
 		<dl>
-			<dt><?= _ht( 'User Name:' ) ?></dt><dd><input type="text" name="user" id="user"></dd>
+			<dt><?= _ht( 'Username:' ) ?></dt><dd><input type="text" name="user" id="user"></dd>
 			<dt><?= _ht( 'Password:' ) ?></dt><dd><input type="password" id="pw"></dd>
 		</dl>
 		<input type="hidden" name="realm" id="realm" value="<?= _h( 'newtrino' ) ?>">
