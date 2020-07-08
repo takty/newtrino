@@ -10,7 +10,7 @@ namespace nt;
  */
 
 
- define( 'NT_ADMIN', true );
+define( 'NT_ADMIN', true );
 
 require_once( __DIR__ . '/../core/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
