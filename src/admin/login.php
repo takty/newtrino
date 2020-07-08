@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-08
  *
  */
 
@@ -18,7 +18,7 @@ require_once( __DIR__ . '/class-session.php' );
 set_locale_setting();
 
 $nt_config  = load_config( NT_DIR_DATA );
-$nt_res     = load_resource( NT_DIR_ADMIN, $nt_config['lang'] );
+$nt_res     = load_resource( NT_DIR_ADMIN, $nt_config['lang_admin'] );
 $nt_session = new Session( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_SESSION );
 $success    = true;
 $error      = '';
@@ -48,7 +48,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <script>console.log('<?= $error ?>');</script>
 </head>
 <body class="login">
-<div class="login-frame">
+<div class="frame-login">
 	<h1>Newtrino</h1>
 	<form action="login.php" method="post">
 		<dl>
@@ -64,9 +64,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<p><?= _ht( 'User name or password is wrong.' ) ?></p>
 <?php endif; ?>
 		<nav>
-			<button type="submit" id="loginBtn"><?= _ht( 'Login' ) ?></button>
+			<button type="submit" id="btn-login"><?= _ht( 'Login' ) ?></button>
 		</nav>
 	</form>
+	<div id="key"></div>
 </div>
 </body>
 </html>

@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-08
  *
  */
 
@@ -15,7 +15,7 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Session {
 
-	public static function getNonce() {
+	static public function getNonce() {
 		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
 	}
 
@@ -24,7 +24,12 @@ class Session {
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
 
-	function __construct( $urlAdmin, $dirAccount, $dirSession ) {
+	private $_urlAdmin;
+	private $_dirAccount;
+	private $_dirSession;
+	private $_adminLang = null;
+
+	function __construct( string $urlAdmin, string $dirAccount, string $dirSession ) {
 		$this->_urlAdmin   = $urlAdmin;
 		$this->_dirAccount = $dirAccount;
 		$this->_dirSession = $dirSession;
@@ -34,11 +39,15 @@ class Session {
 		Logger::output( 'Info (Session)' );
 	}
 
+	public function getLangAdmin(): ?string {
+		return $this->_adminLang;
+	}
+
 
 	// ------------------------------------------------------------------------
 
 
-	public function login( $params, &$error ) {
+	public function login( array $params, string &$error ): bool {
 		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['nonce'] ) || empty( $params['cnonce'] ) ) {
 			$error = 'Parameters are wrong.';
 			return false;
@@ -50,7 +59,7 @@ class Session {
 
 		$accountPath = $this->_dirAccount . self::ACCOUNT_FILE_NAME;
 		if ( is_file( $accountPath ) === false ) {
-			Logger::output( "Error (Session::login file_exists) [$accountPath]" );
+			Logger::output( "Error (Session::login is_file) [$accountPath]" );
 			$error = 'Account file does not exist.';
 			return false;
 		}
@@ -61,12 +70,15 @@ class Session {
 			return false;
 		}
 		foreach ( $as as $a ) {
-			$d = explode( "\t", trim( $a ) );
-			if ( $d[0] !== $params['user'] ) continue;
-			$a1 = strtolower( $d[1] );
+			$a = trim( $a );
+			if ( empty( $a ) || $a[0] === '#' ) continue;
+			$cs = explode( "\t", trim( $a ) );
+			if ( $cs[0] !== $params['user'] ) continue;
+			$a1 = strtolower( $cs[1] );
 			$code = implode( ':', [ $a1, $params['nonce'], $params['cnonce'], $a2 ] );
 			$dgst = hash( self::HASH_ALGORITHM, $code );
-			if ( $dgst === $params['digest'] ) return $this->_startNew( $error );
+			$lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
+			if ( $dgst === $params['digest'] ) return $this->_startNew( $lang, $error );
 		}
 		return false;
 	}
@@ -80,19 +92,21 @@ class Session {
 		session_destroy();
 	}
 
-	public function start() {
+	public function start(): bool {
 		session_start();
 		$sid = session_id();
 		if ( $sid === '' ) return false;
 		if ( ! isset( $_SESSION['fingerprint'] ) ) return false;
 		$fp = self::_getFingerprint();
 		if ( $fp !== $_SESSION['fingerprint'] ) return false;
-
+		if ( isset( $_SESSION['lang_admin'] ) ) {
+			$this->_adminLang = $_SESSION['lang_admin'];
+		}
 		$this->sessionId = $sid;
 		return $this->_checkTime( $sid, true );
 	}
 
-	public function addTempDir( $dir ) {
+	public function addTempDir( string $dir ): bool {
 		$data = $this->_loadSessionFile( $this->sessionId );
 		if ( $data === null ) return false;
 		if ( ! isset( $data['temp_dir'] ) || ! is_array( $data['temp_dir'] ) ) $data['temp_dir'] = [];
@@ -116,10 +130,11 @@ class Session {
 		}
 	}
 
-	private function _startNew( &$error ) {
+	private function _startNew( ?string $lang, string &$error ): bool {
 		session_start();
 		$this->sessionId = session_id();
 		$_SESSION['fingerprint'] = self::_getFingerprint();
+		if ( $lang ) $_SESSION['lang_admin'] = $lang;
 
 		$res = $this->_saveSessionFile( $this->sessionId, [ 'timestamp' => time() ] );
 		if ( $res === false ) {
@@ -192,7 +207,7 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	static private function _getFingerprint() {
+	static private function _getFingerprint(): string {
 		$fp = 'newtrino';
 
 		if ( ! empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
@@ -205,7 +220,7 @@ class Session {
 		return md5( $fp );
 	}
 
-	static private function _ensureDir( $path ) {
+	static private function _ensureDir( string $path ): bool {
 		if ( is_dir( $path ) ) {
 			if ( self::MODE_DIR !== ( fileperms( $path ) & 0777 ) ) {
 				chmod( $path, self::MODE_DIR );

@@ -5,7 +5,7 @@ namespace nt;
  * Init for Private
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-08
  *
  */
 
@@ -37,7 +37,13 @@ $nt_q      += [
 $nt_store   = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 $nt_session = new Session( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_SESSION );
 
-if ( ! $nt_session->start() ) {
+if ( $nt_session->start() ) {
+	$la = $nt_session->getLangAdmin();
+	if ( $la ) {
+		$nt_config['lang_admin'] = $la;
+		$nt_res = load_resource( NT_DIR_ADMIN, $nt_config['lang_admin'] );
+	}
+} else {
 	header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 	exit( 1 );
 }

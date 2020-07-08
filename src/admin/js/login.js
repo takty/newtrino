@@ -9,7 +9,7 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
-	const btn = document.getElementById('loginBtn');
+	const btn = document.getElementById('btn-login');
 	btn.addEventListener('click', doLogin);
 	btn.addEventListener('contextmenu', (e) => { doLogin(e, true); });
 
@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		const user = document.getElementById('user').value;
 		const pwElm = document.getElementById('pw');
 		const pw = pwElm.value;
-		pwElm.value = '';
 
 		const realm = document.getElementById('realm').value;
 		const cnonce = createNonce();
@@ -30,10 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		const digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
 
 		if (showKey) {
-			console.log(url + '\n' + user + '\t' + a1);
+			const elm = document.getElementById('key');
+			elm.innerHTML = user + '\t' + a1;
 			event.preventDefault();
 			return;
 		}
+		pwElm.value = '';
 		document.getElementById('cnonce').value = cnonce;
 		document.getElementById('digest').value = digest;
 		document.forms[0].submit();

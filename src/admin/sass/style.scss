@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-16
+ * @version 2020-07-08
  *
  */
 
@@ -26,8 +26,8 @@ html, body {
 }
 
 body:not(.dialog) {
-	border-top: 0.75rem solid orange;
-	border-bottom: 0.75rem solid orange;
+	border-top: 0.75rem solid hsl(40, 60%, 80%);
+	border-bottom: 0.75rem solid hsl(240, 50%, 80%);
 }
 
 a {
@@ -37,7 +37,7 @@ a {
 
 body {
 	padding: 1rem;
-	font-family: sans-serif;
+	font-family: "BIZ UDPGothic", sans-serif;
 }
 
 .container {
@@ -110,14 +110,14 @@ h3 {
 
 input[type=button] {
 	@include btn;
-	max-height: 2.5rem;
+	// max-height: 2rem;
 }
 
 input[type=text], input[type=password] {
 	@include clickable-design;
 	padding: 0.5rem 0.75rem;
 	text-align: left;
-	box-shadow: 0 1px 1px #ccc inset;
+	// box-shadow: 0 1px 1px #ccc inset;
 	font-size: 0.9rem;
 	max-height: 2.5rem;
 	height: 2.5rem;
@@ -125,16 +125,17 @@ input[type=text], input[type=password] {
 
 select:not(.flatpickr-monthDropdown-months) {
 	@include clickable-design;
-	padding: 0.5rem 0.25rem;
-	@include for-tablet-landscape-up {
-		padding-left: 0.75rem;
-		padding-right: 0.75rem;
-	}
+	padding: 0.5rem 0.75rem 0.5rem 0.25rem;
+	@include for-tl { padding: 0.5rem 1rem 0.5rem 0.75rem; }
 	font-size: 0.9rem;
-	box-shadow: 0 2px 6px #999;
-	max-height: 2.5rem;
-	height: 2.5rem;
-	-webkit-appearance: menulist;
+	max-height: 2rem;
+	height: 2rem;
+	// -webkit-appearance: none;
+
+	&::after {
+		content: '';
+		display: block;
+	}
 }
 
 nav button,
@@ -142,7 +143,7 @@ nav button,
 .media button,
 .frame button {
 	@include btn;
-	font-family: sans-serif;
+	// font-family: sans-serif;
 }
 
 .btn {
