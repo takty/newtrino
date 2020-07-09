@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-10
  *
  */
 
@@ -181,16 +181,16 @@ function _create_post_data( ?Post $p, bool $include_content = false ): ?array {
 	if ( $p === null ) return null;
 	$cls = [];
 	$d = [
-		'id'        => $p->getId(),
-		'slug'      => '',  // preserved
-		'type'      => $p->getType(),
-		'title'     => $p->getTitle( true ),
-		'date'      => $p->getDate(),
-		'modified'  => $p->getModified(),
-		'excerpt'   => $p->getExcerpt( 60 ),
-		'meta'      => _get_meta( $p, $cls ),
-		'status'    => $p->getStatus(),
-		'taxonomy'  => _get_taxonomy( $p ),
+		'id'       => $p->getId(),
+		'slug'     => '',  // preserved
+		'type'     => $p->getType(),
+		'title'    => $p->getTitle( true ),
+		'date'     => $p->getDate(),
+		'modified' => $p->getModified(),
+		'excerpt'  => $p->getExcerpt( 60 ),
+		'meta'     => _get_meta( $p, $cls ),
+		'status'   => $p->getStatus(),
+		'taxonomy' => _get_taxonomy( $p ),
 	];
 	$d['class'] = _get_class( $p, $cls );
 	if ( $include_content ) $d['content'] = $p->getContent();
