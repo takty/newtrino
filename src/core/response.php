@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-09
  *
  */
 
@@ -21,7 +21,7 @@ $nt_config = load_config( NT_DIR_DATA );
 // -----------------------------------------------------------------------------
 
 
-function create_response_archive( $query, $filter, $option = [] ) {
+function create_response_archive( array $query, array $filter, array $option = [] ): array {
 	global $nt_store, $nt_config;
 	$nt_config += $option;
 	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
@@ -59,7 +59,7 @@ function create_response_archive( $query, $filter, $option = [] ) {
 	return $res;
 }
 
-function create_response_single( $query, $filter, $option = [] ) {
+function create_response_single( array $query, array $filter, array $option = [] ): array {
 	global $nt_store, $nt_config;
 	$nt_config += $option;
 	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
@@ -95,7 +95,7 @@ function create_response_single( $query, $filter, $option = [] ) {
 // -----------------------------------------------------------------------------
 
 
-function _rearrange_query( $query ) {
+function _rearrange_query( array $query ): array {
 	$query_vars = [
 		'id'             => 'int',
 		'page'           => 'int',
@@ -125,7 +125,7 @@ function _rearrange_query( $query ) {
 	return $ret;
 }
 
-function _rearrange_filter( $filter ) {
+function _rearrange_filter( array $filter ): array {
 	$filter_vars = [
 		'date'        => 'slug',
 		'date_format' => 'string',
@@ -139,7 +139,7 @@ function _rearrange_filter( $filter ) {
 	return $ret;
 }
 
-function _filter_param( $val, $type ) {
+function _filter_param( $val, string $type ) {
 	$fval = null;
 	switch ( $type ) {
 		case 'int':
@@ -165,7 +165,7 @@ function _filter_param( $val, $type ) {
 	return $fval;
 }
 
-function _get_param( $key, $default, $assoc ) {
+function _get_param( string $key, $default, array $assoc ) {
 	if ( isset( $assoc[ $key ] ) ) {
 		return $assoc[ $key ];
 	}
@@ -176,9 +176,9 @@ function _get_param( $key, $default, $assoc ) {
 // -----------------------------------------------------------------------------
 
 
-function _create_post_data( $p, $include_content = false ) {
+function _create_post_data( ?Post $p, bool $include_content = false ): ?array {
 	global $nt_store;
-	if ( ! $p ) return false;
+	if ( $p === null ) return null;
 	$cls = [];
 	$d = [
 		'id'        => $p->getId(),
@@ -197,7 +197,7 @@ function _create_post_data( $p, $include_content = false ) {
 	return $d;
 }
 
-function _get_taxonomy( $p ) {
+function _get_taxonomy( Post $p ): array {
 	global $nt_store;
 	$ret = [];
 	foreach ( $p->getTaxonomyToTermSlugs() as $tax => $ts ) {
@@ -211,7 +211,7 @@ function _get_taxonomy( $p ) {
 	return $ret;
 }
 
-function _get_meta( $p, &$cls ) {
+function _get_meta( Post $p, array &$cls ): array {
 	global $nt_store;
 	$ms = $nt_store->type()->getMetaAll( $p->getType() );
 	$fs = [];
@@ -240,7 +240,7 @@ function _get_meta( $p, &$cls ) {
 	return $ret;
 }
 
-function _flatten_meta_structure( $ms, &$ret ) {
+function _flatten_meta_structure( array $ms, array &$ret ) {
 	foreach ( $ms as $m ) {
 		$type = $m['type'];
 		if ( $type === 'group' ) {
@@ -252,7 +252,7 @@ function _flatten_meta_structure( $ms, &$ret ) {
 	}
 }
 
-function _get_class( $p, $cls ) {
+function _get_class( Post $p, array $cls ): array {
 	global $nt_store, $nt_config;
 	if ( $nt_config['new_arrival_period'] > 0 ) {
 		$now  = date_create( date( 'Y-m-d' ) );
@@ -269,7 +269,7 @@ function _get_class( $p, $cls ) {
 // -----------------------------------------------------------------------------
 
 
-function _create_archive_data( $filter ) {
+function _create_archive_data( array $filter ): array {
 	if ( empty( $filter ) ) return [];
 	$res = [];
 	if ( isset( $filter['date'] ) ) {
@@ -283,7 +283,7 @@ function _create_archive_data( $filter ) {
 	return $res;
 }
 
-function _get_date_archive( $type, $filter ) {
+function _get_date_archive( string $type, array $filter ): array {
 	global $nt_store;
 	$ds = $nt_store->getCountByDate( $type, $filter );
 	$cs = [];
@@ -293,7 +293,7 @@ function _get_date_archive( $type, $filter ) {
 	return [ $type => $cs ];
 }
 
-function _get_taxonomy_archive( $taxes ) {
+function _get_taxonomy_archive( array $taxes ): array {
 	global $nt_store;
 	$ret = [];
 	foreach ( $taxes as $tax ) {

@@ -5,7 +5,7 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-09
  *
  */
 
@@ -25,7 +25,7 @@ class Query {
 	private $_date   = null;
 	private $_meta   = null;
 
-	public function __construct( $args ) {
+	public function __construct( array $args ) {
 		if ( ! empty( $args['type'] ) ) {
 			$this->_type = is_array( $args['type'] ) ? $args['type'] : [ $args['type'] ];
 		}
@@ -46,7 +46,7 @@ class Query {
 		}
 	}
 
-	private function _initializeTaxQuery( $query ) {
+	private function _initializeTaxQuery( array $query ) {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
@@ -61,7 +61,7 @@ class Query {
 		}
 	}
 
-	private function _initializeDateQuery( $query ) {
+	private function _initializeDateQuery( array $query ) {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
@@ -86,7 +86,7 @@ class Query {
 		}
 	}
 
-	private function _initializeMetaQuery( $query ) {
+	private function _initializeMetaQuery( array $query ) {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
@@ -105,7 +105,7 @@ class Query {
 		}
 	}
 
-	public function match( &$info, $word_file_path ) {
+	public function match( array &$info, string $word_file_path ): bool {
 		if ( $this->_type ) {
 			if ( ! empty( $info['type'] ) && ! in_array( $info['type'], $this->_type, true ) ) return false;
 		}
@@ -114,7 +114,7 @@ class Query {
 		}
 		if ( $this->_search ) {
 			$info['_index_score'] = Indexer::calcIndexScore( $this->_search, $word_file_path );
-			if ( $info['_index_score'] === 0 ) return false;
+			if ( $info['_index_score'] === 0.0 ) return false;
 		}
 		if ( $this->_tax ) {
 			if ( ! $this->_matchTaxQuery( $info ) ) return false;
@@ -128,7 +128,7 @@ class Query {
 		return true;
 	}
 
-	private function _matchTaxQuery( $info ) {
+	private function _matchTaxQuery( array $info ): bool {
 		$qs = $this->_tax['qs'];
 		if ( $this->_tax['rel'] === 'AND' ) {
 			foreach ( $qs as $tax => $ts ) {
@@ -147,7 +147,7 @@ class Query {
 		return true;
 	}
 
-	private function _matchDateQuery( $info ) {
+	private function _matchDateQuery( array $info ): bool {
 		$pd = $info['date'];
 		$qs = $this->_date['qs'];
 		if ( $this->_date['rel'] === 'AND' ) {
@@ -167,7 +167,7 @@ class Query {
 		return true;
 	}
 
-	private function _matchMetaQuery( $info ) {
+	private function _matchMetaQuery( array $info ): bool {
 		$qs = $this->_meta['qs'];
 		$ms = isset( $info['meta'] ) ? $info['meta'] : [];
 		if ( $this->_meta['rel'] === 'AND' ) {
@@ -187,12 +187,12 @@ class Query {
 		return true;
 	}
 
-	static private function _matchTax( $tax, $ts, $info ) {
+	static private function _matchTax( string $tax, array $ts, array $info ): bool {
 		if ( ! isset( $info['taxonomy'][ $tax ] ) ) return false;
 		return self::_isIntersect( $ts, $info['taxonomy'][ $tax ] );
 	}
 
-	static private function _matchDate( $q, $pd ) {
+	static private function _matchDate( array $q, string $pd ): bool {
 		if ( ! empty( $q['date'] ) ) {
 			if ( strpos( $pd, $q['date'] ) !== 0 ) return false;
 		}
@@ -206,7 +206,7 @@ class Query {
 		return true;
 	}
 
-	static private function _matchMeta( $q, $ms ) {
+	static private function _matchMeta( array $q, array $ms ): bool {
 		$key  = $q['key'];
 		$comp = $q['compare'];
 		$type = $q['type'];
@@ -218,14 +218,14 @@ class Query {
 		$v  = $ms[ $key ];
 		$qv = $q['val'];
 
-		if ( $type === 'datetime' ) return self::_compareDateTime( $type, $v, $qv );
-
 		if ( $type === 'date' ) {
 			$v  = substr( $v,  0, 8 );
 			$qv = substr( $qv, 0, 8 );
 		} else if ( $type === 'time' ) {
 			$v  = substr( $v,  8, 14 );
 			$qv = substr( $qv, 8, 14 );
+		} else if ( $type === 'datetime' ) {
+			// Do nothing
 		}
 		$v  = intval( $v );
 		$qv = intval( $qv );
@@ -241,31 +241,14 @@ class Query {
 		return false;
 	}
 
-	static private function _compareDateTime( $type, $dt1, $dt2 ) {
-		$d1 = intval( substr( $dt1, 0, 8 ) );
-		$t1 = intval( substr( $dt1, 8, 14 ) );
-		$d2 = intval( substr( $dt2, 0, 8 ) );
-		$t2 = intval( substr( $dt2, 8, 14 ) );
-
-		switch ( $type ) {
-			case '=':  return ( $d1 === $d2 ) && ( $t1 === $t2 );
-			case '!=': return ( $d1 !== $d2 ) || ( $t1 !== $t2 );
-			case '<':  return ( $d1 < $d2 ) || ( $d1 === $d2 && $t1 <  $t2 );
-			case '>':  return ( $d1 > $d2 ) || ( $d1 === $d2 && $t1 >  $t2 );
-			case '<=': return ( $d1 < $d2 ) || ( $d1 === $d2 && $t1 <= $t2 );
-			case '>=': return ( $d1 > $d2 ) || ( $d1 === $d2 && $t1 >= $t2 );
-		}
-		return false;
-	}
-
-	static private function _isIntersect( $as, $bs ) {
+	static private function _isIntersect( array $as, array $bs ): bool {
 		foreach ( $as as $a ) {
 			if ( in_array( $a, $bs, true ) ) return true;
 		}
 		return false;
 	}
 
-	static private function _normalizeDate( $dq, $padding ) {
+	static private function _normalizeDate( array $dq, string $padding ): string {
 		$y = empty( $dq['year'] )  ? '' : $dq['year'];
 		$m = empty( $dq['month'] ) ? '' : $dq['month'];
 		$d = empty( $dq['day'] )   ? '' : $dq['day'];

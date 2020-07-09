@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-09
  *
  */
 
@@ -33,27 +33,27 @@ class Post {
 	const EVENT_STATUS_HELD      = 'held';
 	const EVENT_STATUS_FINISHED  = 'finished';
 
-	static function compareDate( $a, $b ) {
+	static function compareDate( Post $a, Post $b ): bool {
 		return $b->_date <=> $a->_date;
 	}
 
-	static function compareIndexScore( $a, $b ) {
+	static function compareIndexScore( Post $a, Post $b ): bool {
 		return $b->_indexScore <=> $a->_indexScore;
 	}
 
-	static function parseDate( $date ) {
+	static function parseDate( string $date ): string {
 		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );
 	}
 
-	static function packDate( $date ) {
+	static function packDate( string $date ): string {
 		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $date );
 	}
 
-	static function parseDateTime( $dateTime ) {
+	static function parseDateTime( string $dateTime ): string {
 		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dateTime );
 	}
 
-	static function packDateTime( $dateTime ) {
+	static function packDateTime( string $dateTime ): string {
 		return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dateTime );
 	}
 
@@ -64,20 +64,20 @@ class Post {
 	private $_id;
 	private $_subPath;
 
-	function __construct( $id, $subPath = '' ) {
+	function __construct( string $id, string $subPath = '' ) {
 		$this->_id = $id;
 		$this->_subPath = $subPath;
 	}
 
-	function getId() {
+	function getId(): string {
 		return $this->_id;
 	}
 
-	function setId( $id ) {
+	function setId( string $id ) {
 		$this->_id = $id;
 	}
 
-	function load( $info = null ) {
+	function load( array $info = null ): bool {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
@@ -107,7 +107,7 @@ class Post {
 		}
 	}
 
-	private function _updateSearchIndex( string $postDir ) {
+	private function _updateSearchIndex( string $postDir ): bool {
 		$text = $this->_title . strip_tags( $this->_content );
 		$path = $postDir . self::WORD_FILE_NAME;
 		return Indexer::updateSearchIndex( $text, $path, self::MODE_FILE );
@@ -115,7 +115,7 @@ class Post {
 
 	// ----
 
-	function assign( $vals, $urlPrivate ) {
+	function assign( array $vals, string $urlPrivate ) {
 		$this->setTitle( $vals['post_title'] );
 		$this->setStatus( $vals['post_status'] );
 
@@ -130,7 +130,7 @@ class Post {
 		$this->setContent( $vals['post_content'], $urlPrivate );
 	}
 
-	private function _assignTaxonomy( $type, $vals ) {
+	private function _assignTaxonomy( string $type, array $vals ) {
 		global $nt_store;
 		$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
 
@@ -141,7 +141,7 @@ class Post {
 		}
 	}
 
-	private function _assignMeta( $type, $vals ) {
+	private function _assignMeta( string $type, array $vals ) {
 		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
 

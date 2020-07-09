@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-09
  *
  */
 
@@ -16,7 +16,7 @@ require_once( __DIR__ . '/class-logger.php' );
 
 class Indexer {
 
-	static function segmentSearchQuery( $searchQuery ) {
+	static function segmentSearchQuery( string $searchQuery ): array {
 		$ts = new \TinySegmenter();
 		$ws = $ts->segment( $searchQuery );
 		foreach ( $ws as &$w ) {
@@ -26,7 +26,7 @@ class Indexer {
 		return $ws;
 	}
 
-	static function updateSearchIndex( $text, $fdPath, $mode ) {
+	static function updateSearchIndex( string $text, string $fdPath, int $mode ): bool {
 		$ts = new \TinySegmenter();
 		$ws = $ts->segment( $text );
 		$sum = [];
@@ -42,17 +42,17 @@ class Indexer {
 		}
 		$suc = file_put_contents( $fdPath, $index, LOCK_EX );
 		if ( $suc === false ) {
-			Logger::output( 'Error (Indexer::updateSearchIndex file_put_contents) [' . $fdPath . ']' );
+			Logger::output( "Error (Indexer::updateSearchIndex file_put_contents) [$fdPath]" );
 			return false;
 		}
 		chmod( $fdPath, $mode );
 		return true;
 	}
 
-	static function calcIndexScore( $words, $fdPath ) {
+	static function calcIndexScore( array $words, string $fdPath ): float {
 		$fp = @fopen( $fdPath, 'r' );
 		if ( ! $fp ) {
-			Logger::output( 'Error (Indexer::calcIndexScore fopen) [' . $fdPath . ']' );
+			Logger::output( "Error (Indexer::calcIndexScore fopen) [$fdPath]" );
 			return 0;
 		}
 		$score = 0;

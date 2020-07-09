@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-09
  *
  */
 
@@ -14,12 +14,12 @@ require_once( __DIR__ . '/response.php' );
 require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
 
-function query( $args = [] ) {
+function query( array $args = [] ): array {
 	$filter = [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];
 	if ( isset( $args['filter'] ) ) $filter = array_merge( $filter, $args['filter'] );
 
 	$option   = isset( $args['option'] )   ? $args['option']   : [];
-	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : false;
+	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : null;
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
@@ -35,10 +35,10 @@ function query( $args = [] ) {
 	}
 }
 
-function query_recent_posts( $args = [] ) {
+function query_recent_posts( array $args = [] ): array {
 	$option   = isset( $args['option'] )   ? $args['option']   : [];
 	$count    = isset( $args['count'] )    ? $args['count']    : 10;
-	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : false;
+	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : null;
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
@@ -54,7 +54,7 @@ function query_recent_posts( $args = [] ) {
 // -----------------------------------------------------------------------------
 
 
-function _create_view_archive( $msg, $base_url ) {
+function _create_view_archive( array $msg, string $base_url ): array {
 	$res = create_response_archive( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['posts'] = [];
 	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
@@ -67,7 +67,7 @@ function _create_view_archive( $msg, $base_url ) {
 	return $view;
 }
 
-function _create_view_single( $msg, $base_url ) {
+function _create_view_single( array $msg, string $base_url ): array {
 	$res = create_response_single( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['post'] = null;
 	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
@@ -84,7 +84,7 @@ function _create_view_single( $msg, $base_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _process_posts_for_view( $items, $date_format, $base_url ) {
+function _process_posts_for_view( array $items, ?string $date_format, string $base_url ): array {
 	foreach ( $items as &$p ) {
 		if ( ! $p ) continue;
 		if ( isset( $p['taxonomy'] ) ) {
@@ -117,7 +117,7 @@ function _process_posts_for_view( $items, $date_format, $base_url ) {
 	return $items;
 }
 
-function _create_pagination_view( $msg, $page_count, $base_url ) {
+function _create_pagination_view( array $msg, int $page_count, string $base_url ): array {
 	$cur = isset( $msg['query']['page'] ) ? max( 1, min( $msg['query']['page'], $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
@@ -134,7 +134,7 @@ function _create_pagination_view( $msg, $page_count, $base_url ) {
 	];
 }
 
-function _create_post_navigation_view( $msg, $adjacent_posts, $base_url ) {
+function _create_post_navigation_view( array $msg, array $adjacent_posts, string $base_url ): array {
 	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
 	$ps = _process_posts_for_view( [ $adjacent_posts['previous'], $adjacent_posts['next'] ], $df, $base_url );
 	return [
@@ -147,7 +147,7 @@ function _create_post_navigation_view( $msg, $adjacent_posts, $base_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _create_filter_view( $msg, $res, $base_url ) {
+function _create_filter_view( array $msg, array $res, string $base_url ): array {
 	$v = [];
 	if ( isset( $res['date'] ) ) {
 		$keys = array_keys( $res['date'] );
@@ -168,7 +168,7 @@ function _create_filter_view( $msg, $res, $base_url ) {
 	return $v;
 }
 
-function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
+function _create_date_filter_view( array $msg, string $type, array $dates, string $base_url ): array {
 	$cur = isset( $msg['query']['date'] ) ? $msg['query']['date'] : '';
 	if ( isset( $msg['filter']['date_format'] ) ) {
 		$df = $msg['filter']['date_format'];
@@ -191,7 +191,7 @@ function _create_date_filter_view( $msg, $type, $dates, $base_url ) {
 	return [ $type => $as ];
 }
 
-function _format_date_label( $slug, $df ) {
+function _format_date_label( string $slug, string $df ): string {
 	$y = substr( $slug, 0, 4 );
 	$m = substr( $slug, 4, 2 );
 	$d = substr( $slug, 6, 2 );
@@ -200,7 +200,7 @@ function _format_date_label( $slug, $df ) {
 	return $date->format( $df );
 }
 
-function _create_taxonomy_filter_view( $msg, $tax, $terms, $base_url ) {
+function _create_taxonomy_filter_view( array $msg, string $tax, array $terms, string $base_url ): array {
 	$cur = isset( $msg['query'][ $tax ] ) ? $msg['query'][ $tax ] : '';
 	$as = [];
 	foreach ( $terms as $term ) {
@@ -217,7 +217,7 @@ function _create_taxonomy_filter_view( $msg, $tax, $terms, $base_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _create_canonical_query( $ps, $overwrite = [] ) {
+function _create_canonical_query( array $ps, array $overwrite = [] ): string {
 	$ps = array_merge( [], $ps, $overwrite );
 	$qs = [];
 	if ( isset( $ps['id'] ) ) {
@@ -253,7 +253,7 @@ function begin() {
 	ob_start();
 }
 
-function end( $view, $condition = true ) {
+function end( array $view, bool $condition = true ) {
 	global $mustache_engine;
 	$tmpl = ob_get_contents();
 	ob_end_clean();
@@ -264,7 +264,7 @@ function end( $view, $condition = true ) {
 // -----------------------------------------------------------------------------
 
 
-function parse_query_string( $default_key ) {
+function parse_query_string( string $default_key ): array {
 	$ps = [];
 	$default_val = '';
 	foreach ( $_GET as $key => $val ) {
@@ -278,7 +278,7 @@ function parse_query_string( $default_key ) {
 	return $ps;
 }
 
-function create_query_string( $params ) {
+function create_query_string( array $params ): string {
 	$kvs = [];
 	if ( is_array( $params ) ) {
 		foreach ( $params as $kv ) {

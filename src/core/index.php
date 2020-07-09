@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2020-07-09
  *
  */
 
@@ -30,7 +30,7 @@ if ( defined( 'NT_ADMIN' ) ) {
 // Functions Used in Initial Process -------------------------------------------
 
 
-function reject_direct_access( $urlHost, $path, $depth = 1 ) {
+function reject_direct_access( string $urlHost, string $path, int $depth = 1 ) {
 	$ifs = get_included_files();
 	if ( array_shift( $ifs ) === $path ) {
 		$to = $_SERVER['SCRIPT_NAME'];
@@ -52,7 +52,7 @@ function set_locale_setting() {
 	mb_regex_encoding( 'utf-8' );
 }
 
-function load_config( $dirData ) {
+function load_config( string $dirData ): array {
 	$conf = [];
 	$path = $dirData . 'config.json';
 	if ( file_exists( $path ) ) {
@@ -71,7 +71,7 @@ function load_config( $dirData ) {
 	return $conf;
 }
 
-function load_resource( $dirData, $lang ) {
+function load_resource( string $dirData, string $lang ): array {
 	$path = $dirData . 'text.' . $lang . '.json';
 	if ( file_exists( $path ) ) {
 		$json = file_get_contents( $path );
@@ -84,7 +84,7 @@ function load_resource( $dirData, $lang ) {
 // Utility Functions -----------------------------------------------------------
 
 
-function resolve_url( $target, $base ) {
+function resolve_url( string $target, string $base ): string {
 	$comp = parse_url( $base );
 	$dir = preg_replace( '!/[^/]*$!', '/', $comp['path'] );
 
@@ -121,7 +121,7 @@ function resolve_url( $target, $base ) {
 	return $uri;
 }
 
-function get_url_from_path( $target ) {
+function get_url_from_path( string $target ): string {
 	$target = str_replace( '/', DIRECTORY_SEPARATOR, $target );
 	$target = realpath( $target );
 	$target = str_replace( DIRECTORY_SEPARATOR, '/', $target );
@@ -136,7 +136,7 @@ function get_url_from_path( $target ) {
 	return str_replace( $doc_root, $url_root, $target );
 }
 
-function get_right_intersection( $str1, $str2 ) {
+function get_right_intersection( string $str1, string $str2 ): string {
 	$str1_len = mb_strlen( $str1 );
 	$str2_len = mb_strlen( $str2 );
 	$temp = '';
@@ -168,31 +168,31 @@ function normalize_label( array &$d, string $l ) {
 // Output Functions ------------------------------------------------------------
 
 
-function _h( $str ) {
+function _h( string $str ): string {
 	return htmlspecialchars( $str, ENT_QUOTES, 'UTF-8' );
 }
 
-function _eh( $str ) {
+function _eh( string $str ) {
 	echo htmlspecialchars( $str, ENT_QUOTES, 'UTF-8' );
 }
 
-function _u( $str ) {
+function _u( string $str ): string {
 	return rawurlencode( $str );
 }
 
-function _eu( $str ) {
+function _eu( string $str ) {
 	echo rawurlencode( $str );
 }
 
-function _ht( $str, $context = 'default' ) {
+function _ht( string $str, string $context = 'default' ): string {
 	return htmlspecialchars( translate( $str, $context ), ENT_QUOTES, 'UTF-8' );
 }
 
-function _eht( $str, $context = 'default' ) {
+function _eht( string $str, string $context = 'default' ) {
 	echo htmlspecialchars( translate( $str, $context ), ENT_QUOTES, 'UTF-8' );
 }
 
-function translate( $str, $context = 'default' ) {
+function translate( string $str, string $context = 'default' ): string {
 	if ( defined( 'NT_ADMIN' ) && $context === 'default' ) {
 		$context = 'admin';
 	}

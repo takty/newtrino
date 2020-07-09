@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-09
  *
  */
 
@@ -58,7 +58,7 @@ class Store {
 		return [ $this->_dirRoot . $ret, $ret ];
 	}
 
-	public function getSubPath( $id ) {
+	public function getSubPath( string $id ): ?string {
 		$ds = $this->_getSubPaths();
 		foreach ( $ds as $d ) {
 			if ( is_dir( $this->_dirRoot . $d . $id ) ) return $d;
@@ -66,7 +66,7 @@ class Store {
 		return null;
 	}
 
-	private function _getSubPaths() {
+	private function _getSubPaths(): array {
 		$typeDirs = $this->_type->getTypeDirAll();
 		if ( ! $this->_conf['archive_by_year'] ) return $typeDirs;
 
@@ -87,13 +87,13 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
-	public function getPost( string $id ) {
+	public function getPost( string $id ): ?Post {
 		$p = new Post( $id, $this->getSubPath( $id ) );
-		if ( ! $p->load() ) return false;
+		if ( ! $p->load() ) return null;
 		return $p;
 	}
 
-	public function getPostWithNextAndPrevious( string $id, $cond = [] ) {
+	public function getPostWithNextAndPrevious( string $id, array $cond = [] ): array {
 		$posts = $this->_getPosts( $cond );
 		$idIndex = null;
 		for ($i = 0; $i < count( $posts ); $i += 1 ) {
@@ -110,7 +110,7 @@ class Store {
 		return [ $prev, $posts[ $idIndex ], $next ];
 	}
 
-	public function getPosts( $cond = [] ) {
+	public function getPosts( array $cond = [] ): array {
 		$posts_per_page = isset( $cond['posts_per_page'] ) ? $cond['posts_per_page'] : $this->_conf['posts_per_page'];
 		$page = isset( $cond['page'] ) ? $cond['page'] : 1;
 
@@ -129,7 +129,7 @@ class Store {
 		return ['posts' => $ret, 'size' => $size, 'page' => $pageIdx + 1, 'page_count' => ceil( $size / $ppp ) ];
 	}
 
-	public function getCountByDate( $type = 'year', $args ) {
+	public function getCountByDate( string $type = 'year', array $args ): array {
 		$paths = $this->_getPostTypeSubDirs( $args );
 		$ms = [];
 		$this->_loadMatchedInfoAll( $this->_dirRoot, $paths, $args, $ms );
@@ -158,7 +158,7 @@ class Store {
 	// -------------------------------------------------------------------------
 
 
-	private function _getPosts( $args ) {
+	private function _getPosts( array $args ): array {
 		$args += [
 			'status' => Post::STATUS_PUBLISHED,
 		];
@@ -172,7 +172,7 @@ class Store {
 		return $posts;
 	}
 
-	private function _loadMatchedPostAll( $root, $args, &$posts = [] ) {
+	private function _loadMatchedPostAll( string $root, array $args, array &$posts = [] ) {
 		$paths = $this->_getPostTypeSubDirs( $args );
 		$ret = [];
 		$this->_loadMatchedInfoAll( $root, $paths, $args, $ret );
@@ -183,7 +183,7 @@ class Store {
 		}
 	}
 
-	private function _getPostTypeSubDirs( $args ) {
+	private function _getPostTypeSubDirs( array $args ) {
 		if ( $this->_conf['archive_by_type'] ) {
 			if ( empty( $args['type'] ) ) {
 				return $this->_type->getTypeDirAll();
@@ -195,7 +195,7 @@ class Store {
 		return ['post/'];
 	}
 
-	private function _loadMatchedInfoAll( $root, $paths, $args, &$ret = [] ) {
+	private function _loadMatchedInfoAll( string $root, array $paths, array $args, array &$ret = [] ) {
 		$query = new Query( $args );
 
 		foreach ( $paths as $path ) {
@@ -215,7 +215,7 @@ class Store {
 		}
 	}
 
-	private function _loadInfo( $postDir ) {
+	private function _loadInfo( string $postDir ): array {
 		$infoPath = $postDir . '/' . Post::INFO_FILE_NAME;
 		try {
 			$json = file_get_contents( $infoPath );
@@ -233,14 +233,14 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
-	public function createNewPost( string $type = 'post' ) {
+	public function createNewPost( string $type = 'post' ): ?Post {
 		$dateRaw = date( 'YmdHis' );
 		list( $archPath, $subPath ) = $this->createArchAndSubPath( $type, $dateRaw, true );
 
 		if ( $dir = opendir( $archPath ) ) {
 			flock( $dir, LOCK_EX );
 			$id = $this->_ensureUniquePostId( $archPath, $dateRaw );
-			if ( $id === null ) return false;
+			if ( $id === null ) return null;
 			$p = new Post( $id, $subPath );
 			$p->setType( $type );
 			$p->setDate();
@@ -248,10 +248,10 @@ class Store {
 			flock( $dir, LOCK_UN );
 			return $p;
 		}
-		return false;
+		return null;
 	}
 
-	private function _ensureUniquePostId( $archPath, $dateRaw ) {
+	private function _ensureUniquePostId( string $archPath, string $dateRaw ): ?string {
 		$id = $dateRaw;
 		if ( ! $this->_checkIdExists( $archPath, $id ) ) return $id;
 		for ( $i = 1; $i < 10; $i += 1 ) {
@@ -261,7 +261,7 @@ class Store {
 		return null;
 	}
 
-	private function _checkIdExists( $archPath, $id ) {
+	private function _checkIdExists( string $archPath, string $id ): bool {
 		return file_exists( $archPath . $id ) || file_exists( $archPath . '.' . $id );
 	}
 
@@ -269,7 +269,7 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
-	public function writePost( $post ) {
+	public function writePost( Post $post ): Post {
 		$post->save();
 		if ( strpos( $post->getId(), '.' ) === 0 ) {
 			$newId = substr( $post->getId(), 1 );
@@ -281,13 +281,13 @@ class Store {
 		return $post;
 	}
 
-	public function delete( $id ) {
+	public function delete( string $id ) {
 		// TODO Planning to add Trash function
 		$pd = $this->getPostDir( $id, null );
 		self::deleteAll( rtrim( $pd, '/' ) );
 	}
 
-	static public function deleteAll( $dir ) {
+	static public function deleteAll( string $dir ) {
 		if ( ! file_exists( $dir ) ) {
 			Logger::output( "File Does Not Exist (Store::deleteAll file_exists) [$dir]" );
 			return false;
