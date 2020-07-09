@@ -29,16 +29,16 @@ function create_response_archive( array $query, array $filter, array $option = [
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$page   = _get_param( 'page',           null, $query );
-	$ppp    = _get_param( 'posts_per_page', null, $query );
-	$date   = _get_param( 'date',           null, $query );
-	$search = _get_param( 'search',         null, $query );
+	$page   = _get_param( 'page',     null, $query );
+	$ppp    = _get_param( 'per_page', null, $query );
+	$date   = _get_param( 'date',     null, $query );
+	$search = _get_param( 'search',   null, $query );
 
 	$args = [];
-	if ( $page )   $args['page']           = $page;
-	if ( $search ) $args['search']         = $search;
-	if ( $ppp )    $args['posts_per_page'] = $ppp;
-	if ( $date )   $args['date_query']     = [ [ 'date' => $date ] ];
+	if ( $page )   $args['page']       = $page;
+	if ( $search ) $args['search']     = $search;
+	if ( $ppp )    $args['per_page']   = $ppp;
+	if ( $date )   $args['date_query'] = [ [ 'date' => $date ] ];
 
 	if ( ! empty( $query['taxonomy'] ) ) {
 		$tq = [];
@@ -97,11 +97,11 @@ function create_response_single( array $query, array $filter, array $option = []
 
 function _rearrange_query( array $query ): array {
 	$query_vars = [
-		'id'             => 'int',
-		'page'           => 'int',
-		'posts_per_page' => 'int',
-		'date'           => 'slug',
-		'search'         => 'string',
+		'id'       => 'int',
+		'page'     => 'int',
+		'per_page' => 'int',
+		'date'     => 'slug',
+		'search'   => 'string',
 	];
 	$ret = [];
 	$tcs = [];

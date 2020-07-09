@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-09
  *
  */
 
@@ -46,7 +46,7 @@ window.NT = window['NT'] || {};
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
 
 		const msg = {
-			query:  { posts_per_page: count },
+			query:  { per_page: count },
 			filter: {},
 			option: option
 		};

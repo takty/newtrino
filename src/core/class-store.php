@@ -111,22 +111,21 @@ class Store {
 	}
 
 	public function getPosts( array $cond = [] ): array {
-		$posts_per_page = isset( $cond['posts_per_page'] ) ? $cond['posts_per_page'] : $this->_conf['posts_per_page'];
 		$page = isset( $cond['page'] ) ? $cond['page'] : 1;
 
 		$posts = $this->_getPosts( $cond );
 
 		$size    = count( $posts );
 		$pageIdx = intval( $page ) - 1;
-		$ppp     = intval( $posts_per_page );
-		$offset  = $ppp * $pageIdx;
+		$perPage = intval( isset( $cond['per_page'] ) ? $cond['per_page'] : $this->_conf['per_page'] );
+		$offset  = $perPage * $pageIdx;
 
 		if ( $size < $offset ) {
 			$offset  = 0;
 			$pageIdx = 0;
 		}
-		$ret = array_slice( $posts, $offset, 0 < $ppp ? $ppp : NULL );
-		return ['posts' => $ret, 'size' => $size, 'page' => $pageIdx + 1, 'page_count' => ceil( $size / $ppp ) ];
+		$ret = array_slice( $posts, $offset, 0 < $perPage ? $perPage : NULL );
+		return ['posts' => $ret, 'size' => $size, 'page' => $pageIdx + 1, 'page_count' => ceil( $size / $perPage ) ];
 	}
 
 	public function getCountByDate( string $type = 'year', array $args ): array {

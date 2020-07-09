@@ -63,7 +63,7 @@ function load_config( string $dirData ): array {
 	$conf += [
 		'lang'               => 'en',
 		'lang_admin'         => 'en',
-		'posts_per_page'     => 10,
+		'per_page'           => 10,
 		'new_arrival_period' => 7,
 		'archive_by_year'    => false,
 		'archive_by_type'    => false,

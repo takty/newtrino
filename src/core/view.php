@@ -15,7 +15,7 @@ require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
 
 function query( array $args = [] ): array {
-	$filter = [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];
+	$filter = [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];  // TODO
 	if ( isset( $args['filter'] ) ) $filter = array_merge( $filter, $args['filter'] );
 
 	$option   = isset( $args['option'] )   ? $args['option']   : [];
@@ -43,7 +43,7 @@ function query_recent_posts( array $args = [] ): array {
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
 	$msg = [
-		'query'  => [ 'posts_per_page' => $count ],
+		'query'  => [ 'per_page' => $count ],
 		'filter' => [],
 		'option' => $option
 	];
