@@ -9,7 +9,7 @@
 	"author": "Takuto Yanagida",
 	"license": "MIT",
 	"scripts": {
-		"postinstall": "gulp && composer i",
+		"postinstall": "composer i",
 		"start": "gulp"
 	},
 	"browserslist": [

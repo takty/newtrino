@@ -3,7 +3,7 @@
  * Tab Page Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-02-13
+ * @version 2020-06-23
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -63,9 +63,10 @@ $stile-tab-page-visible-tab-below             : false !default;
 			padding         : base-vr(2);
 		}
 		> div:not([data-stile ~= 'current']) {
-			position: absolute;
-			bottom  : 1000vh;
-			opacity : 0;
+			position      : absolute;
+			bottom        : 1000vh;
+			pointer-events: none;
+			opacity       : 0;
 			> * { opacity: 0; }
 		}
 		> div[data-stile ~= 'current'] {
