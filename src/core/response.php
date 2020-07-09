@@ -29,16 +29,16 @@ function create_response_archive( array $query, array $filter, array $option = [
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$page   = _get_param( 'page',     null, $query );
-	$ppp    = _get_param( 'per_page', null, $query );
-	$date   = _get_param( 'date',     null, $query );
-	$search = _get_param( 'search',   null, $query );
+	$page    = _get_param( 'page',     null, $query );
+	$perPage = _get_param( 'per_page', null, $query );
+	$date    = _get_param( 'date',     null, $query );
+	$search  = _get_param( 'search',   null, $query );
 
 	$args = [];
-	if ( $page )   $args['page']       = $page;
-	if ( $search ) $args['search']     = $search;
-	if ( $ppp )    $args['per_page']   = $ppp;
-	if ( $date )   $args['date_query'] = [ [ 'date' => $date ] ];
+	if ( $page )    $args['page']       = $page;
+	if ( $search )  $args['search']     = $search;
+	if ( $perPage ) $args['per_page']   = $perPage;
+	if ( $date )    $args['date_query'] = [ [ 'date' => $date ] ];
 
 	if ( ! empty( $query['taxonomy'] ) ) {
 		$tq = [];
