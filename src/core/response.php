@@ -12,6 +12,7 @@ namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-store.php' );
+require_once( __DIR__ . '/util/param.php' );
 
 set_locale_setting();
 
@@ -29,10 +30,10 @@ function create_response_archive( array $query, array $filter, array $option = [
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$page    = _get_param( 'page',     null, $query );
-	$perPage = _get_param( 'per_page', null, $query );
-	$date    = _get_param( 'date',     null, $query );
-	$search  = _get_param( 'search',   null, $query );
+	$page    = get_param( 'page',     null, $query );
+	$perPage = get_param( 'per_page', null, $query );
+	$date    = get_param( 'date',     null, $query );
+	$search  = get_param( 'search',   null, $query );
 
 	$args = [];
 	if ( $page )    $args['page']       = $page;
@@ -67,7 +68,7 @@ function create_response_single( array $query, array $filter, array $option = []
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$id = _get_param( 'id', null, $query );
+	$id = get_param( 'id', null, $query );
 
 	$args = [];
 	if ( ! empty( $query['taxonomy'] ) ) {
@@ -110,7 +111,7 @@ function _rearrange_query( array $query ): array {
 			$tcs[] = $key;
 			continue;
 		}
-		$fval = _filter_param( $val, $query_vars[ $key ] );
+		$fval = filter_param( $val, $query_vars[ $key ] );
 		if ( $fval !== null ) $ret[ $key ] = $val;
 	}
 	global $nt_store;
@@ -133,43 +134,10 @@ function _rearrange_filter( array $filter ): array {
 	];
 	$ret = [];
 	foreach ( $filter as $key => $val ) {
-		$fval = _filter_param( $val, $filter_vars[ $key ] );
+		$fval = filter_param( $val, $filter_vars[ $key ] );
 		if ( $fval !== null ) $ret[ $key ] = $val;
 	}
 	return $ret;
-}
-
-function _filter_param( $val, string $type ) {
-	$fval = null;
-	switch ( $type ) {
-		case 'int':
-			if ( preg_match( '/[^0-9]/', $val ) ) break;
-			$fval = intval( $val );
-			break;
-		case 'slug':
-			if ( preg_match( '/[^a-zA-Z0-9-_]/', $val ) ) break;
-			$fval = $val;
-			break;
-		case 'string':
-			$fval = $val;
-			break;
-		case 'slug_array':
-			$fval = [];
-			$vals = is_array( $val ) ? $val : [ $val ];
-			foreach ( $val as $v ) {
-				if ( preg_match( '/[^a-zA-Z0-9-_]/', $v ) ) continue;
-				$fval[] = $v;
-			}
-			break;
-	}
-	return $fval;
-}
-
-function _get_param( string $key, $default, array $assoc ) {
-	if ( isset( $assoc[ $key ] ) ) {
-		return $assoc[ $key ];
-	}
-	return $default;
 }
 
 
@@ -273,11 +241,11 @@ function _create_archive_data( array $filter ): array {
 	if ( empty( $filter ) ) return [];
 	$res = [];
 	if ( isset( $filter['date'] ) ) {
-		$_date  = _get_param( 'date', '', $filter );
+		$_date = get_param( 'date', '', $filter );
 		$res += [ 'date' => _get_date_archive( $_date, $filter ) ];
 	}
 	if ( isset( $filter['taxonomy'] ) ) {
-		$_taxes = _get_param( 'taxonomy', [], $filter );
+		$_taxes = get_param( 'taxonomy', [], $filter );
 		$res += [ 'taxonomy' => _get_taxonomy_archive( $_taxes ) ];
 	}
 	return $res;

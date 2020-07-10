@@ -5,14 +5,15 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-10
  *
  */
 
 
 require_once( __DIR__ . '/response.php' );
-require_once( __DIR__ . '/lib/mustache/Autoloader.php' );
-\Mustache_Autoloader::register();
+require_once( __DIR__ . '/util/template.php' );
+require_once( __DIR__ . '/util/query-string.php' );
+
 
 function query( array $args = [] ): array {
 	$filter = [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];  // TODO
@@ -237,57 +238,4 @@ function _create_canonical_query( array $ps, array $overwrite = [] ): string {
 		if ( 1 < $ps['page'] ) $qs[] = [ 'page', $ps['page'] ];
 	}
 	return create_query_string( $qs );
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-$mustache_engine = null;
-
-function begin() {
-	global $mustache_engine;
-	if ( $mustache_engine === null ) {
-		$mustache_engine = new \Mustache_Engine( [ 'entity_flags' => ENT_QUOTES ] );
-	}
-	ob_start();
-}
-
-function end( array $view, bool $condition = true ) {
-	global $mustache_engine;
-	$tmpl = ob_get_contents();
-	ob_end_clean();
-	if ( $condition ) echo $mustache_engine->render( $tmpl, $view );
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-function parse_query_string( string $default_key ): array {
-	$ps = [];
-	$default_val = '';
-	foreach ( $_GET as $key => $val ) {
-		if ( empty( $val ) ) {
-			$default_val = $key;
-		} else {
-			$ps[ $key ] = $val;
-		}
-	}
-	if ( ! empty( $default_val ) ) $ps[ $default_key ] = $default_val;
-	return $ps;
-}
-
-function create_query_string( array $params ): string {
-	$kvs = [];
-	if ( is_array( $params ) ) {
-		foreach ( $params as $kv ) {
-			$_key = urlencode( $kv[0] );
-			$v = $kv[1];
-			if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-			$_val = urlencode( $v );
-			$kvs[] = $_key . '=' . $_val;
-		}
-	}
-	return implode( '&', $kvs );
 }

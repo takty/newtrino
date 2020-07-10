@@ -5,12 +5,13 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2020-07-10
  *
  */
 
 
-require_once(__DIR__ . '/class-logger.php');
+require_once( __DIR__ . '/class-logger.php' );
+require_once( __DIR__ . '/util/label.php' );
 
 
 class Type {
