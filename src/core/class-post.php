@@ -29,9 +29,9 @@ class Post {
 	const STATUS_RESERVED  = 'reserved';
 	const STATUS_DRAFT     = 'draft';
 
-	const DATE_STATUS_SCHEDULED = 'scheduled';
-	const DATE_STATUS_HELD      = 'held';
-	const DATE_STATUS_FINISHED  = 'finished';
+	const DATE_STATUS_UPCOMING = 'upcoming';
+	const DATE_STATUS_ONGOING  = 'ongoing';
+	const DATE_STATUS_FINISHED = 'finished';
 
 	static function compareDate( Post $a, Post $b ): bool {
 		return $b->_date <=> $a->_date;

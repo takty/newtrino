@@ -224,8 +224,8 @@ function _flatten_meta_structure( array $ms, array &$ret ) {
 
 function _get_date_status( string $bgn, string $end ): string {
 	$now = date( 'Ymd' );
-	$es = Post::DATE_STATUS_HELD;
-	if ( $now < $bgn ) $es = Post::DATE_STATUS_SCHEDULED;
+	$es = Post::DATE_STATUS_ONGOING;
+	if ( $now < $bgn ) $es = Post::DATE_STATUS_UPCOMING;
 	else if ( $end < $now ) $es = Post::DATE_STATUS_FINISHED;
 	return $es;
 }
