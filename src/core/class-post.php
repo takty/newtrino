@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-10
  *
  */
 
@@ -29,9 +29,9 @@ class Post {
 	const STATUS_RESERVED  = 'reserved';
 	const STATUS_DRAFT     = 'draft';
 
-	const EVENT_STATUS_SCHEDULED = 'scheduled';
-	const EVENT_STATUS_HELD      = 'held';
-	const EVENT_STATUS_FINISHED  = 'finished';
+	const DATE_STATUS_SCHEDULED = 'scheduled';
+	const DATE_STATUS_HELD      = 'held';
+	const DATE_STATUS_FINISHED  = 'finished';
 
 	static function compareDate( Post $a, Post $b ): bool {
 		return $b->_date <=> $a->_date;
@@ -148,6 +148,9 @@ class Post {
 		foreach ( $ms as $m ) {
 			$key = $m['key'];
 			if ( ! isset( $vals["meta:$key"] ) ) continue;
+			if ( $m['type'] === 'date' ) {
+				$vals["meta:$key"] = self::packDate( $vals["meta:$key"] );
+			}
 			if ( $m['type'] === 'date-range' ) {
 				$vals["meta:$key"] = array_map( function ( $e ) { return self::packDate( $e ); }, $vals["meta:$key"] );
 			}

@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-10
  *
  */
 
@@ -115,6 +115,9 @@ window.NT = window['NT'] || {};
 					const [key, val] = meta[i];
 					if (key.indexOf('@') === -1) continue;
 					if (!p['meta'] && p['meta'][key + '@type']) continue;
+					if (p['meta'][key + '@type'] === 'date') {
+						val = moment(val).format(dateFormat);
+					}
 					if (p['meta'][key + '@type'] === 'date-range') {
 						val[0] = moment(val[0]).format(dateFormat);
 						val[1] = moment(val[1]).format(dateFormat);

@@ -150,17 +150,16 @@ function _create_post_data( ?Post $p, bool $include_content = false ): ?array {
 	$cls = [];
 	$d = [
 		'id'       => $p->getId(),
-		'slug'     => '',  // preserved
 		'type'     => $p->getType(),
 		'title'    => $p->getTitle( true ),
+		'status'   => $p->getStatus(),
 		'date'     => $p->getDate(),
 		'modified' => $p->getModified(),
 		'excerpt'  => $p->getExcerpt( 60 ),
-		'meta'     => _get_meta( $p, $cls ),
-		'status'   => $p->getStatus(),
 		'taxonomy' => _get_taxonomy( $p ),
+		'meta'     => _get_meta( $p, $cls ),  // Must before _get_class
+		'class'    => _get_class( $p, $cls ),
 	];
-	$d['class'] = _get_class( $p, $cls );
 	if ( $include_content ) $d['content'] = $p->getContent();
 	return $d;
 }
@@ -193,12 +192,15 @@ function _get_meta( Post $p, array &$cls ): array {
 		if ( $type !== 'group' && $val === null ) continue;
 
 		switch ( $type ) {
+			case 'date':
+				$es = _get_date_status( $val, $val );
+				$ret[ "$key@status" ] = $es;
+				$cls[] = "$key-$es";
+				$ret[ $key ] = Post::parseDate( $val );
+				break;
 			case 'date-range':
-				$es = Post::EVENT_STATUS_HELD;
-				$now = date( 'Ymd' );
-				if ( $now < $val[0] ) $es = Post::EVENT_STATUS_SCHEDULED;
-				else if ( $val[1] < $now ) $es = Post::EVENT_STATUS_FINISHED;
-				$ret[ "$key@staus" ] = $es;
+				$es = _get_date_status( $val[0], $val[1] );
+				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
 				$ret[ $key ] = array_map( function ( $e ) { return Post::parseDate( $e ); }, $val );
 				break;
@@ -220,8 +222,16 @@ function _flatten_meta_structure( array $ms, array &$ret ) {
 	}
 }
 
+function _get_date_status( string $bgn, string $end ): string {
+	$now = date( 'Ymd' );
+	$es = Post::DATE_STATUS_HELD;
+	if ( $now < $bgn ) $es = Post::DATE_STATUS_SCHEDULED;
+	else if ( $end < $now ) $es = Post::DATE_STATUS_FINISHED;
+	return $es;
+}
+
 function _get_class( Post $p, array $cls ): array {
-	global $nt_store, $nt_config;
+	global $nt_config;
 	if ( $nt_config['new_arrival_period'] > 0 ) {
 		$now  = date_create( date( 'Y-m-d' ) );
 		$data = date_create( substr( $p->getDate(), 0, 10 ) );

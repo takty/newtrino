@@ -104,6 +104,9 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 			foreach ( $p['meta'] as $key => &$val ) {
 				if ( strpos( $key, '@' ) !== false ) continue;
 				if ( ! isset( $p['meta']["$key@type"] ) ) continue;
+				if ( $p['meta']["$key@type"] === 'date' ) {
+					$val = date_create( $val )->format( $date_format );
+				}
 				if ( $p['meta']["$key@type"] === 'date-range' ) {
 					$val[0] = date_create( $val[0] )->format( $date_format );
 					$val[1] = date_create( $val[1] )->format( $date_format );
@@ -122,7 +125,7 @@ function _create_pagination_view( array $msg, int $page_count, string $base_url 
 	$cur = isset( $msg['query']['page'] ) ? max( 1, min( $msg['query']['page'], $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
-		$cq = _create_canonical_query( $msg['query'], [ 'page' => $i ] );
+		$cq = create_canonical_query( $msg['query'], [ 'page' => $i ] );
 		$url = $base_url . ( ! empty( $cq ) ? ('?' . $cq) : '');
 		$p = [ 'label' => $i, 'url' => $url ];
 		if ( $i === $cur ) $p['is_selected'] = true;
@@ -182,7 +185,7 @@ function _create_date_filter_view( array $msg, string $type, array $dates, strin
 	}
 	$as = [];
 	foreach ( $dates as $date ) {
-		$cq = _create_canonical_query( [ 'date' => $date['slug'] ] );
+		$cq = create_canonical_query( [ 'date' => $date['slug'] ] );
 		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
 		$label = _format_date_label( $date['slug'], $df );
 		$p = [ 'label' => $label, 'url' => $url ];
@@ -205,37 +208,11 @@ function _create_taxonomy_filter_view( array $msg, string $tax, array $terms, st
 	$cur = isset( $msg['query'][ $tax ] ) ? $msg['query'][ $tax ] : '';
 	$as = [];
 	foreach ( $terms as $term ) {
-		$cq = _create_canonical_query( [ $tax => $term['slug'] ] );
+		$cq = create_canonical_query( [ $tax => $term['slug'] ] );
 		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
 		$p = [ 'label' => $term['label'], 'url' => $url ];
 		if ( $term['slug'] === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
 	}
 	return [ $tax => $as ];
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-function _create_canonical_query( array $ps, array $overwrite = [] ): string {
-	$ps = array_merge( [], $ps, $overwrite );
-	$qs = [];
-	if ( isset( $ps['id'] ) ) {
-		$qs[] = [ 'id', $ps['id'] ];
-	} else if ( isset( $ps['date'] ) ) {
-		$qs[] = ['date', $ps['date'] ];
-	} else if ( isset( $ps['search'] ) ) {
-		$qs[] = ['search', $ps['search'] ];
-	} else {  // taxonomy
-		foreach ( $ps as $tax => $terms ) {
-			if ( $tax === 'id' || $tax === 'date' || $tax === 'search' || $tax === 'page' ) continue;
-			$ts = is_array( $terms ) ? implode( ',', $terms ) : $terms;
-			$qs[] = [ $tax, $ts ];
-		}
-	}
-	if ( isset( $ps['page'] ) ) {
-		if ( 1 < $ps['page'] ) $qs[] = [ 'page', $ps['page'] ];
-	}
-	return create_query_string( $qs );
 }

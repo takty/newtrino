@@ -37,3 +37,22 @@ function create_query_string( array $params ): string {
 	}
 	return implode( '&', $kvs );
 }
+
+function create_canonical_query( array $ps, array $overwrite = [] ): string {
+	$ps = array_merge( [], $ps, $overwrite );
+	$qs = [];
+	if ( isset( $ps['id']       ) ) $qs[] = [ 'id',       $ps['id']       ];
+	if ( isset( $ps['type']     ) ) $qs[] = [ 'type',     $ps['type']     ];
+	if ( isset( $ps['date']     ) ) $qs[] = [ 'date',     $ps['date']     ];
+	if ( isset( $ps['search']   ) ) $qs[] = [ 'search',   $ps['search']   ];
+	if ( isset( $ps['per_page'] ) ) $qs[] = [ 'per_page', $ps['per_page'] ];
+
+	$keys = [ 'id', 'type', 'date', 'search', 'per_page', 'page' ];
+	foreach ( $ps as $tax => $terms ) {  // Taxonomies
+		if ( in_array( $tax, $keys, true ) ) continue;
+		$ts = is_array( $terms ) ? implode( ',', $terms ) : $terms;
+		$qs[] = [ $tax, $ts ];
+	}
+	if ( isset( $ps['page'] ) && 1 < $ps['page'] ) $qs[] = [ 'page', $ps['page'] ];
+	return create_query_string( $qs );
+}
