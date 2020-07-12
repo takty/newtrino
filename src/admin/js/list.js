@@ -1,92 +1,43 @@
 /**
  *
- * Index (JS)
+ * List (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-23
+ * @version 2020-07-12
  *
  */
 
 
 document.addEventListener('DOMContentLoaded', () => {
-	const fm  = document.getElementById('filter-month');
-	const fmr = document.getElementById('filter-month-reset');
-	fm.addEventListener('change', () => {
-		if (!fm.value) {
-			window.location.href = 'list.php';
-		} else {
-			window.location.href = 'list.php?date=' + fm.value.replace('-', '');
-		}
-	});
-	fmr.addEventListener('click', () => {
-		fm.value = '';
-		window.location.href = 'list.php';
-	});
+	const delBtns = document.getElementsByClassName('delete-post');
+	const delMsg = document.getElementById('del-msg').value;
 
-	document.getElementById('ppp').value = document.getElementById('posts_per_page').value;
-	// const bgn = document.getElementById('date_bgn').value;
-	// const end = document.getElementById('date_end').value;
-	// document.getElementById('fp-date-bgn').value = bgn ? (bgn.substring(0, 4) + '-' + bgn.substring(4, 6) + '-' + bgn.substring(6, 8)) : null;
-	// document.getElementById('fp-date-end').value = end ? (end.substring(0, 4) + '-' + end.substring(4, 6) + '-' + end.substring(6, 8)) : null;
-	// flatpickr('.flatpickr', {wrap: true, dateFormat: 'YmdHiS', altInput: true, altFormat: 'Y-m-d'});
+	for (let delBtn of delBtns) {
+		delBtn.addEventListener('click', (e) => {
+			const s = e.target.dataset.href;
+			const tr = e.target.parentElement.parentElement;
+			const title = tr.getElementsByClassName('title')[0].innerText;
+			const date = tr.getElementsByClassName('date')[0].innerText;
+			if (!confirm(delMsg + '\n"' + title + '"\n' + date)) return false;
+			window.location.href = s;
+		});
+	}
+
+	const statSels = document.getElementsByClassName('post-status');
+
+	for (let statSel of statSels) {
+		statSel.addEventListener('change', (e) => {
+			const s = e.target.value;
+			const id = e.target.parentElement.parentElement.dataset.id;
+			setPostStatus(id, s);
+		});
+	}
+
+	function setPostStatus(id, status) {
+		const req = new XMLHttpRequest();
+		req.addEventListener('load', function (e) {});  // For debug
+		req.open('post', 'responder.php', true);
+		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		req.send('mode=set_status' + '&id=' + id + '&status=' + status + '&cache=' + Date.now());
+	}
 });
-
-// function changeDateRange() {
-// 	const m = document.getElementById('filter-month').value;
-// 	if (!m) {
-// 		window.location.href = 'list.php';
-// 	} else {
-// 		window.location.href = 'list.php?date=' + m.replace('-', '');
-// 	}
-// 	// return;
-// 	// document.getElementById('date_bgn').value = document.getElementById('fp-date-bgn').value;
-// 	// document.getElementById('date_end').value = document.getElementById('fp-date-end').value;
-// 	// document.forms[0].action = 'list.php';
-// 	// document.forms[0].submit();
-// }
-
-function changeCategory(cat) {
-	document.getElementById('cat').value = cat;
-	document.forms[0].action = 'list.php';
-	document.forms[0].submit();
-}
-
-function changePpp(ppp) {
-	document.getElementById('posts_per_page').value = ppp;
-	document.forms[0].action = 'list.php';
-	document.forms[0].submit();
-}
-
-function submitPage(page) {
-	document.getElementById('page').value = page;
-	document.forms[0].action = 'list.php';
-	document.forms[0].submit();
-}
-
-function editPost(id) {
-	document.getElementById('id').value = id;
-	document.forms[0].action = 'post.php';
-	document.forms[0].submit();
-}
-
-function newPost() {
-	document.getElementById('mode').value = 'new';
-	document.forms[0].action = 'post.php';
-	document.forms[0].submit();
-}
-
-function deletePost(id, date, title) {
-	if (!confirm(date + 'Do you want to delete "' + title + '"?')) return false;
-	document.getElementById('mode').value = 'delete';
-	document.getElementById('id').value = id;
-	document.forms[0].action = 'list.php';
-	document.forms[0].submit();
-}
-
-function setPostStatus(id, state) {
-	const req = new XMLHttpRequest();
-	req.addEventListener('load', function (e) {});  // for debugging
-	req.open('post', 'responder.php', true);
-	req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	req.send('mode=set_state' + '&id=' + id + '&state=' + state + '&cache=' + Date.now());
-}
