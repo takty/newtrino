@@ -5,7 +5,7 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-12
  *
  */
 
@@ -108,6 +108,7 @@ class Query {
 	public function match( array &$info, string $word_file_path ): bool {
 		if ( $this->_type ) {
 			if ( ! empty( $info['type'] ) && ! in_array( $info['type'], $this->_type, true ) ) return false;
+			if ( empty( $info['type'] ) && ! in_array( 'post', $this->_type, true ) ) return false;
 		}
 		if ( $this->_status ) {
 			if ( ! in_array( $info['status'], $this->_status, true ) ) return false;

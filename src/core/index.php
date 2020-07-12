@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-12
  *
  */
 
@@ -97,16 +97,8 @@ function _u( string $str ): string {
 	return rawurlencode( $str );
 }
 
-function _eu( string $str ) {
-	echo rawurlencode( $str );
-}
-
 function _ht( string $str, string $context = 'default' ): string {
 	return htmlspecialchars( translate( $str, $context ), ENT_QUOTES, 'UTF-8' );
-}
-
-function _eht( string $str, string $context = 'default' ) {
-	echo htmlspecialchars( translate( $str, $context ), ENT_QUOTES, 'UTF-8' );
 }
 
 function translate( string $str, string $context = 'default' ): string {

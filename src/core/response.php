@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-12
  *
  */
 
@@ -42,11 +42,7 @@ function create_response_archive( array $query, array $filter, array $option = [
 	if ( $date )    $args['date_query'] = [ [ 'date' => $date ] ];
 
 	if ( ! empty( $query['taxonomy'] ) ) {
-		$tq = [];
-		foreach ( $query['taxonomy'] as $tax => $ts ) {
-			$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];
-		}
-		if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
+		createTaxQueryFromTaxonomyToTerms( $query['taxonomy'], $args );
 	}
 	$ret = $nt_store->getPosts( $args );
 	$posts = array_map( '\nt\_create_post_data', $ret['posts'] );
@@ -72,11 +68,7 @@ function create_response_single( array $query, array $filter, array $option = []
 
 	$args = [];
 	if ( ! empty( $query['taxonomy'] ) ) {
-		$tq = [];
-		foreach ( $query['taxonomy'] as $tax => $ts ) {
-			$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];
-		}
-		if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
+		createTaxQueryFromTaxonomyToTerms( $query['taxonomy'], $args );
 	}
 	$ret = $nt_store->getPostWithNextAndPrevious( $id, $args );
 
@@ -97,47 +89,21 @@ function create_response_single( array $query, array $filter, array $option = []
 
 
 function _rearrange_query( array $query ): array {
-	$query_vars = [
+	return get_query_vars( $query, [
 		'id'       => 'int',
 		'page'     => 'int',
 		'per_page' => 'int',
 		'date'     => 'slug',
 		'search'   => 'string',
-	];
-	$ret = [];
-	$tcs = [];
-	foreach ( $query as $key => $val ) {
-		if ( ! isset( $query_vars[ $key ] ) ) {
-			$tcs[] = $key;
-			continue;
-		}
-		$fval = filter_param( $val, $query_vars[ $key ] );
-		if ( $fval !== null ) $ret[ $key ] = $val;
-	}
-	global $nt_store;
-	$existing_taxes = array_keys( $nt_store->taxonomy()->getTaxonomyAll() );
-	foreach( $tcs as $tc ) {
-		if ( in_array( $tc, $existing_taxes, true ) ) {
-			if ( ! isset( $ret['taxonomy'] ) ) $ret['taxonomy'] = [];
-			$ts = array_map( 'trim', explode( ',', $query[ $key ] ) );
-			$ret['taxonomy'][ $tc ] = $ts;
-		}
-	}
-	return $ret;
+	], 'taxonomy' );
 }
 
 function _rearrange_filter( array $filter ): array {
-	$filter_vars = [
+	return get_query_vars( $filter, [
 		'date'        => 'slug',
 		'date_format' => 'string',
 		'taxonomy'    => 'slug_array',
-	];
-	$ret = [];
-	foreach ( $filter as $key => $val ) {
-		$fval = filter_param( $val, $filter_vars[ $key ] );
-		if ( $fval !== null ) $ret[ $key ] = $val;
-	}
-	return $ret;
+	] );
 }
 
 

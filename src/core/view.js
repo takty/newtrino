@@ -3,7 +3,7 @@
  * View (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-12
  *
  */
 
@@ -16,7 +16,7 @@ window.NT = window['NT'] || {};
 	const AJAX_API = 'core/view-ajax.php';
 
 	function query(url, callback, args = {}) {
-		let filter = { date: 'year', taxonomy: ['category'] };
+		let filter = { date: 'year' };
 		if (args.filter) filter = Object.assign(filter, args.filter);
 
 		const option  = args.option   ? args.option   : {};
@@ -136,8 +136,7 @@ window.NT = window['NT'] || {};
 		const cur = (msg.query && msg.query.page) ? Math.max(1, Math.min(msg.query.page, pageCount)) : 1;
 		const pages = [];
 		for (let i = 1; i <= pageCount; i += 1) {
-			const cq = _createCanonicalQuery(msg.query, { page: i });
-			const url = baseUrl + (cq.length ? ('?' + cq) : '');
+			const url = createCanonicalUrl(baseUrl, msg.query, { page: i });
 			const p = { label: i, url: url };
 			if (i === cur) p['is_selected'] = true;
 			pages.push(p);
@@ -195,8 +194,7 @@ window.NT = window['NT'] || {};
 		}
 		const as = [];
 		for (let i = 0; i < dates.length; i += 1) {
-			const cq = _createCanonicalQuery({ date: dates[i].slug });
-			const url = baseUrl + (cq.length ? ('?' + cq) : '');
+			const url = createCanonicalUrl(baseUrl, { date: dates[i].slug });
 			const label = _format_date_label('' + dates[i].slug, df);
 			const p = { label: label, url: url };
 			if (dates[i].slug == cur /* == */) p['is_selected'] = true;
@@ -220,39 +218,12 @@ window.NT = window['NT'] || {};
 		const cur = (msg.query && msg.query[tax]) ? msg.query[tax] : '';
 		const as = [];
 		for (let i = 0; i < terms.length; i += 1) {
-			const cq = _createCanonicalQuery({ [tax]: terms[i].slug });
-			const url = baseUrl + (cq.length ? ('?' + cq) : '');
+			const url = createCanonicalUrl(baseUrl, { [tax]: terms[i].slug });
 			const p = { label: terms[i].label, url: url };
 			if (terms[i].slug === cur) p['is_selected'] = true;
 			as.push(p);
 		}
 		return { [tax]: as };
-	}
-
-
-	// -------------------------------------------------------------------------
-
-
-	function _createCanonicalQuery(ps, overwrite = []) {
-		ps = Object.assign({}, ps, overwrite);
-		const qs = [];
-		if (ps['id']) {
-			qs.push(['id', ps.id]);
-		} else if (ps['date']) {
-			qs.push(['date', ps.date]);
-		} else if (ps['search']) {
-			qs.push(['search', ps.search]);
-		} else {  // taxonomy
-			for (let tax in ps) {
-				if (tax === 'id' || tax === 'date' || tax === 'search' || tax === 'page') continue;
-				const ts = Array.isArray(ps[tax]) ? ps[tax].join(',') : ps[tax];
-				qs.push([tax, ts]);
-			}
-		}
-		if (ps['page']) {
-			if (1 < ps.page) qs.push('page=' + ps.page);
-		}
-		return createQueryString(qs);
 	}
 
 
@@ -350,6 +321,33 @@ window.NT = window['NT'] || {};
 			}
 		}
 		return kvs.join('&');
+	}
+
+	function createCanonicalUrl(baseUrl, ps, overwrite = []) {
+		const cq = createCanonicalQuery(ps, overwrite);
+		return baseUrl + (cq.length ? ('?' + cq) : '');
+	}
+
+	function createCanonicalQuery(ps, overwrite = []) {
+		ps = Object.assign({}, ps, overwrite);
+		const qs = [];
+		if (ps['id']) {
+			qs.push(['id', ps.id]);
+		} else if (ps['date']) {
+			qs.push(['date', ps.date]);
+		} else if (ps['search']) {
+			qs.push(['search', ps.search]);
+		} else {  // taxonomy
+			for (let tax in ps) {
+				if (tax === 'id' || tax === 'date' || tax === 'search' || tax === 'page') continue;
+				const ts = Array.isArray(ps[tax]) ? ps[tax].join(',') : ps[tax];
+				qs.push([tax, ts]);
+			}
+		}
+		if (ps['page']) {
+			if (1 < ps.page) qs.push('page=' + ps.page);
+		}
+		return createQueryString(qs);
 	}
 
 

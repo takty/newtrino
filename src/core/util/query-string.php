@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Query Strings
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-12
  *
  */
 
@@ -26,16 +26,19 @@ function parse_query_string( ?string $default_key = null ): array {
 
 function create_query_string( array $params ): string {
 	$kvs = [];
-	if ( is_array( $params ) ) {
-		foreach ( $params as $kv ) {
-			$_key = urlencode( $kv[0] );
-			$v = $kv[1];
-			if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-			$_val = urlencode( $v );
-			$kvs[] = $_key . '=' . $_val;
-		}
+	foreach ( $params as $kv ) {
+		$_key = urlencode( $kv[0] );
+		$v = $kv[1];
+		if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		$_val = urlencode( $v );
+		$kvs[] = $_key . '=' . $_val;
 	}
 	return implode( '&', $kvs );
+}
+
+function create_canonical_url( string $base_url, array $ps, array $overwrite = [] ): string {
+	$cq = create_canonical_query( $ps, $overwrite );
+	return $base_url . ( empty( $cq ) ? '' : "?$cq" );
 }
 
 function create_canonical_query( array $ps, array $overwrite = [] ): string {
@@ -47,9 +50,10 @@ function create_canonical_query( array $ps, array $overwrite = [] ): string {
 	if ( isset( $ps['search']   ) ) $qs[] = [ 'search',   $ps['search']   ];
 	if ( isset( $ps['per_page'] ) ) $qs[] = [ 'per_page', $ps['per_page'] ];
 
-	$keys = [ 'id', 'type', 'date', 'search', 'per_page', 'page' ];
+	$keys = [ 'id', 'type', 'date', 'search', 'per_page', 'page', 'taxonomy' ];
 	foreach ( $ps as $tax => $terms ) {  // Taxonomies
 		if ( in_array( $tax, $keys, true ) ) continue;
+		if ( empty( $terms ) ) continue;
 		$ts = is_array( $terms ) ? implode( ',', $terms ) : $terms;
 		$qs[] = [ $tax, $ts ];
 	}

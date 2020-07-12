@@ -16,7 +16,7 @@ require_once( __DIR__ . '/util/query-string.php' );
 
 
 function query( array $args = [] ): array {
-	$filter = [ 'date' => 'year', 'taxonomy' => [ 'category' ] ];  // TODO
+	$filter = [ 'date' => 'year' ];
 	if ( isset( $args['filter'] ) ) $filter = array_merge( $filter, $args['filter'] );
 
 	$option   = isset( $args['option'] )   ? $args['option']   : [];
@@ -125,8 +125,7 @@ function _create_pagination_view( array $msg, int $page_count, string $base_url 
 	$cur = isset( $msg['query']['page'] ) ? max( 1, min( $msg['query']['page'], $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
-		$cq = create_canonical_query( $msg['query'], [ 'page' => $i ] );
-		$url = $base_url . ( ! empty( $cq ) ? ('?' . $cq) : '');
+		$url = create_canonical_url( $base_url, $msg['query'], [ 'page' => $i ] );
 		$p = [ 'label' => $i, 'url' => $url ];
 		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
@@ -185,8 +184,7 @@ function _create_date_filter_view( array $msg, string $type, array $dates, strin
 	}
 	$as = [];
 	foreach ( $dates as $date ) {
-		$cq = create_canonical_query( [ 'date' => $date['slug'] ] );
-		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
+		$url = create_canonical_url( $base_url, [ 'date' => $date['slug'] ] );
 		$label = _format_date_label( $date['slug'], $df );
 		$p = [ 'label' => $label, 'url' => $url ];
 		if ( strval( $date['slug'] ) === $cur ) $p['is_selected'] = true;
@@ -208,8 +206,7 @@ function _create_taxonomy_filter_view( array $msg, string $tax, array $terms, st
 	$cur = isset( $msg['query'][ $tax ] ) ? $msg['query'][ $tax ] : '';
 	$as = [];
 	foreach ( $terms as $term ) {
-		$cq = create_canonical_query( [ $tax => $term['slug'] ] );
-		$url = $base_url . ( empty( $cq ) ? '' : "?$cq" );
+		$url = create_canonical_url( $base_url, [ $tax => $term['slug'] ] );
 		$p = [ 'label' => $term['label'], 'url' => $url ];
 		if ( $term['slug'] === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
