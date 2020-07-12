@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2020-07-12
  *
  */
 
@@ -18,7 +18,7 @@ require_once( __DIR__ . '/class-session.php' );
 set_locale_setting();
 
 $nt_config  = load_config( NT_DIR_DATA );
-$nt_res     = load_resource( NT_DIR_ADMIN, $nt_config['lang_admin'] );
+$nt_res     = load_resource( NT_DIR_ADMIN_RES, $nt_config['lang_admin'] );
 $nt_session = new Session( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_SESSION );
 $success    = true;
 $error      = '';
