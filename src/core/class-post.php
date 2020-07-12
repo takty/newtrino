@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-12
  *
  */
 
@@ -90,7 +90,7 @@ class Post {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
-		if ( ! file_exists( $storePath . $this->_id ) ) {
+		if ( ! file_exists( $path ) ) {
 			mkdir( $path, self::MODE_DIR );
 		}
 		$this->_writeInfo( $path, true );
