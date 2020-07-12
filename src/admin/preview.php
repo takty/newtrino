@@ -5,12 +5,12 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-12
  *
  */
 
 
-require_once(__DIR__ . '/admin.php');
+require_once( __DIR__ . '/index.php' );
 
 
 $t_title   = $nt_q['post_title'];

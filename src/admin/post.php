@@ -2,15 +2,15 @@
 namespace nt;
 /**
  *
- * Edit
+ * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-07
+ * @version 2020-07-12
  *
  */
 
 
-require_once(__DIR__ . '/admin.php');
+require_once( __DIR__ . '/index.php' );
 
 
 $t_msg = '';

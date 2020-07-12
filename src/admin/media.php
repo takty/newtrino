@@ -6,12 +6,12 @@ namespace nt;
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-06-28
+ * @version 2020-07-12
  *
  */
 
 
-require_once(__DIR__ . '/admin.php');
+require_once( __DIR__ . '/index.php' );
 
 
 $media = new Media(NT_DIR_POST, NT_URL_POST, Post::MEDIA_DIR_NAME, $nt_q['id']);
