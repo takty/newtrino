@@ -219,8 +219,9 @@ function _process_post_for_view( ?Post $p, array $query, string $base_url, strin
 		'title'    => $p->getTitle( true ),
 		'status'   => $p->getStatus(),
 		'date'     => $p->getDate(),
+		'date@sep' => explode( ' ', $p->getDate() ),
 		'modified' => $p->getModified(),
-		'url'      => $edit_url . '?' . urlencode( $p->getId() ),
+		'url'      => $edit_url . '?id=' . urlencode( $p->getId() ),
 
 		'delete'        => create_canonical_url( $base_url, $query, [ 'del_id' => $p->getId() ] ),
 		'status@select' => _create_status_select( $p ),

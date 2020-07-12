@@ -3,17 +3,20 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2020-07-13
  *
  */
 
 
 .frame-filter {
-	align-self: flex-start;
 
 	display: flex;
-	flex-direction: column;
-	width: fit-content;
+	flex-direction: row;
+	@include for-tl {
+		align-self: flex-start;
+		flex-direction: column;
+		width: fit-content;
+	}
 
 	> * {
 		display: flex;
@@ -26,28 +29,34 @@
 			padding: 0.5rem 0;
 		}
 	}
-	> * + * {
-		margin-top: 1rem;
-	}
-	#filter-month { width: 8rem; }
-
-	.filter-month-wrapper {
-		display: flex;
-		button {
-			margin-left: 0.5rem;
-			min-height: 100%;
+	> * + * { margin-left: 1rem; }
+	@include for-tl {
+		> * + * {
+			margin-left: 0;
+			margin-top: 1rem;
 		}
 	}
 
 	.button-row {
+		margin-left: auto;
 		justify-content: flex-end;
 	}
 }
 
 .frame-main {
 	padding: 1.5rem;
-	margin-left: 1rem;
 	flex-grow: 1;
+
+	margin-top: 1rem;
+	@include for-tl {
+		margin-top: 0;
+		margin-left: 1rem;
+	}
+}
+
+.list-taxonomy-cancel {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .list-item {
@@ -59,11 +68,11 @@
 	th {
 		border-bottom: 1px solid #ccc;
 		text-align: center;
+		white-space: nowrap;
 	}
 	th, td {
 		padding: 0.75rem 0.5rem;
 		@include for-tl { padding: { left: 0.75rem; right: 0.75rem; } }
-		white-space: nowrap;
 
 		&:first-child { padding-left: 2px; }
 		&:last-child { padding-right: 2px; }
@@ -71,25 +80,18 @@
 	td {
 		line-height: 1.25;
 
-		&:nth-child(2) {
+		&.title {
 			width: 100%;
 			white-space: normal;
 			text-decoration: underline;
 			line-height: 1.25;
 		}
 		&.taxonomy {
-			span {
-				display: block;
-				@include for-tablet-landscape-up {
-					display: inline-block;
-				}
-			}
-			div {
-				white-space: normal;
-			}
+			a { white-space: nowrap; }
 		}
 		&.date {
 			font-size: 0.7rem;
+			white-space: nowrap;
 			> span {
 				display: block;
 				@include for-tl { display: inline-block; }
@@ -99,43 +101,10 @@
 }
 
 .pagination {
-	@include layout-centering;
+	display        : flex;
+	align-items    : center;
+	justify-content: center;
+
 	margin-top: 1.5rem;
-
-	li > * {
-		display: inline-flex;
-
-		border: 1px solid #ccc;
-		border-radius: 4px;
-
-		background-color: #fff;
-		color: #333;
-
-		font-size: 0.85rem;
-		text-decoration: none;
-		line-height: 1.15;
-		white-space: nowrap;
-
-		&:hover { border-color: #88f; }
-
-		&:disabled {
-			pointer-events: none;
-			border-color: #ccc;
-			color: #aaa;
-		}
-
-		min-width: 1.5rem;
-		@include for-tl { min-width: 2.5rem; }
-
-		padding: 0.5rem 0.25rem;
-		@include for-tp { padding: { left: 0.75rem; right: 0.75rem; } }
-
-		text-align: center;
-		user-select: none;
-	}
-	li > span {
-		pointer-events: none;
-		color: #ccc;
-	}
-	li + li { margin-left: 0.5rem; }
+	> * + * { margin-left: 0.5rem; }
 }

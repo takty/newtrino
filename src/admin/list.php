@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-13
  *
  */
 
@@ -46,15 +46,13 @@ header('Content-Type: text/html;charset=utf-8');
 <?php \nt\begin(); ?>
 		<div>
 			<h3><?= _ht( 'Display Month' ) ?></h3>
-			<div class="filter-month-wrapper">
 {{#filter.date}}
-				<select onchange="document.location.href = this.value;">
+			<select onchange="document.location.href = this.value;">
 {{#month}}
-					<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+				<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/month}}
-				</select>
+			</select>
 {{/filter.date}}
-			</div>
 		</div>
 		<div>
 			<h3><?= _ht( 'View Count' ) ?></h3>
@@ -79,7 +77,7 @@ header('Content-Type: text/html;charset=utf-8');
 <?php \nt\begin(); ?>
 		<ul class="list-taxonomy-cancel">
 {{#taxonomy@cancels}}
-			<li><a href="{{url}}">{{label}}</a></li>
+			<li><a class="button tag cross" href="{{url}}">{{label}}</a></li>
 {{/taxonomy@cancels}}
 		</ul>
 <?php \nt\end( $view, isset( $view['taxonomy@cancels'] ) ); ?>
@@ -103,7 +101,7 @@ header('Content-Type: text/html;charset=utf-8');
 {{/status@select}}
 					</select>
 				</td>
-				<td><a href="{{url}}" class="title">{{title}}</a></td>
+				<td class="title"><a href="{{url}}" class="title">{{title}}</a></td>
 {{#taxonomy@cols}}
 				<td class="taxonomy {{taxonomy}}"><div>
 {{#terms}}
@@ -111,7 +109,7 @@ header('Content-Type: text/html;charset=utf-8');
 {{/terms}}
 				</div></td>
 {{/taxonomy@cols}}
-				<td class="date">{{date}}</td>
+				<td class="date"><span>{{date@sep.0}}</span><span>{{date@sep.1}}</span></td>
 				<td><button class="delete mini cross delete-post" data-href="{{delete}}"></button></td>
 			</tr>
 {{/posts}}
