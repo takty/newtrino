@@ -22,6 +22,7 @@ define( 'NT_URL_POST', NT_URL_HOST . get_url_from_path( NT_DIR_POST ) . '/' );
 
 if ( defined( 'NT_ADMIN' ) ) {
 	define( 'NT_DIR_ADMIN', NT_DIR . '/admin/' );
+	define( 'NT_DIR_ADMIN_RES', NT_DIR . '/admin/res/' );
 	define( 'NT_DIR_SESSION', NT_DIR_ADMIN . 'var/session/' );
 
 	define( 'NT_URL_ADMIN', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );
@@ -30,19 +31,6 @@ if ( defined( 'NT_ADMIN' ) ) {
 
 // Functions Used in Initial Process -------------------------------------------
 
-
-function reject_direct_access( string $urlHost, string $path, int $depth = 1 ) {
-	$ifs = get_included_files();
-	if ( array_shift( $ifs ) === $path ) {
-		$to = $_SERVER['SCRIPT_NAME'];
-		for ( $i = 0; $i < $depth; $i += 1 ) {
-			$to = dirname( $to );
-		}
-		$url = $urlHost . rtrim( $to, '/\\' );
-		header( "Location: $url/" );
-		exit( 1 );
-	}
-}
 
 function set_locale_setting() {
 	date_default_timezone_set( 'Asia/Tokyo' );
@@ -73,7 +61,7 @@ function load_config( string $dirData ): array {
 }
 
 function load_resource( string $dirData, string $lang ): array {
-	$path = $dirData . 'text.' . $lang . '.json';
+	$path = $dirData . $lang . '.json';
 	if ( file_exists( $path ) ) {
 		$json = file_get_contents( $path );
 		return json_decode( $json, true );
