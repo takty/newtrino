@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-12
  *
  */
 
@@ -92,7 +92,7 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 			foreach ( $p['taxonomy'] as $tax_slug => $terms ) {
 				$a = [];
 				foreach ( $terms as $term ) $a[ $term['slug'] ] = true;
-				$p['taxonomy'][ '$' . $tax_slug ] = $a;
+				$p['taxonomy'][ "$tax_slug@has" ] = $a;
 			}
 		}
 		$p['url'] = $base_url . '?' . urlencode( $p['id'] );

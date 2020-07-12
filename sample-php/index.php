@@ -24,9 +24,9 @@ header('Content-Type: text/html;charset=utf-8');
 							{{#taxonomy.category}}
 							<span class="category">{{label}}</span>
 							{{/taxonomy.category}}
-							{{#taxonomy.$category.event}}
+							{{#taxonomy.category@has.event}}
 							<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
-							{{/taxonomy.$category.event}}
+							{{/taxonomy.category@has.event}}
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{excerpt}}</div>
 							<div class="date">{{date}}</div>
