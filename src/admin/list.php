@@ -27,12 +27,15 @@ header('Content-Type: text/html;charset=utf-8');
 </head>
 <body class='list'>
 <header class="header">
-	<h1>Newtrino</h1>
-	<a href="login.php" class="button"><?= _ht( 'Log Out' ) ?></a>
+	<div class="inner">
+		<h1>Newtrino</h1>
+		<span class="spacer"></span>
+		<a href="login.php" class="button"><?= _ht( 'Log Out' ) ?></a>
+	</div>
 </header>
 
 <div class="container">
-	<nav class="frame frame-filter">
+	<nav class="container-sub frame frame-sub frame-filter">
 <?php \nt\begin(); ?>
 		<div>
 			<h3><?= _ht( 'Post Type' ) ?></h3>
@@ -62,7 +65,7 @@ header('Content-Type: text/html;charset=utf-8');
 {{/filter.per_page}}
 			</select>
 		</div>
-		<div class="button-row">
+		<div class="button-row right">
 			<select class="accent" onchange="document.location.href = this.value;">
 				<option value="#"><?= _ht( "New Post" ) ?></option>
 {{#filter.new}}
@@ -73,7 +76,7 @@ header('Content-Type: text/html;charset=utf-8');
 <?php \nt\end( $view ); ?>
 	</nav>
 
-	<div class="frame frame-main">
+	<div class="container-main frame">
 <?php \nt\begin(); ?>
 		<ul class="list-taxonomy-cancel">
 {{#taxonomy@cancels}}
@@ -129,7 +132,7 @@ header('Content-Type: text/html;charset=utf-8');
 <?php \nt\end( $view ); ?>
 	</div>
 
-	<input id="del-msg" type="hidden" value="<?= _ht( 'Do you want to delete the post?' ) ?>">
+	<input id="deleting-messsage" type="hidden" value="<?= _ht( 'Do you want to delete the post?' ) ?>">
 
 </div>
 </body>

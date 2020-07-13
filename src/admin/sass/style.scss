@@ -8,13 +8,11 @@
  */
 
 
-@charset 'utf-8';
-
 @import '../lib/stile/sass/all';
 
 @import 'login';
 @import 'list';
-@import 'edit';
+@import 'post';
 @import 'media';
 @import 'preview';
 
@@ -51,14 +49,20 @@ a {
 }
 
 .header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	> * { padding-bottom: 0.75rem; }
 
-	padding-bottom: 0.75rem;
+	.inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 
-	h1 { flex-grow: 1; }
-	a:last-of-type { margin-left: 1rem; }
+		.spacer { flex-grow: 1; }
+		a:last-of-type { margin-left: 1rem; }
+	}
+	#update-msg {
+		margin-left: 1rem;
+		padding-top: 0.25rem;
+	}
 }
 
 .container {
@@ -70,17 +74,72 @@ a {
 	}
 }
 
+.container-main {
+	flex-grow: 1;
+
+	margin-top: 1rem;
+	@include for-tl {
+		margin-top: 0;
+		margin-left: 1rem;
+	}
+}
+
+.container-sub {
+	> .frame + .frame {
+		margin-top: 1rem;
+	}
+}
+
 .frame {
 	border: 1px solid #ddd;
 	border-radius: 0.5rem;
 	background-color: rgba(#fff, 0.95);
 	box-shadow: 0 2px 5px rgba(#000, 0.25);
-
-	padding: 1.5rem;
 	font-size: 0.9rem;
+
+	padding: 1rem;
+	@include for-tl { padding: 1.25rem; }
 }
 
+.frame-sub {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 
+	@include for-tl {
+		align-self: flex-start;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 16rem;
+	}
+
+	> * + * { margin-left: 1rem; }
+	@include for-tl {
+		> * + * {
+			margin-left: 0;
+			margin-top: 1rem;
+		}
+	}
+
+	h3 {
+		padding: 0.5rem 0;
+	}
+
+	.frame-title {
+		white-space: nowrap;
+	}
+
+	.button-row {
+		display: flex;
+		width: 100%;
+
+		&.right {
+			margin-left: auto;
+			justify-content: flex-end;
+		}
+		.right { margin-left: auto; }
+	}
+}
 
 
 
@@ -119,6 +178,10 @@ a {
 		max-width: calc(100% - 2rem);
 	}
 }
+
+
+// -----------------------------------------------------------------------------
+
 
 h1 {
 	margin: 0;
@@ -238,10 +301,10 @@ input[type=button],
 		&::after {
 			content : '';
 			position: absolute;
-			top     : calc(50% - 0.85rem / 2);
+			top     : calc(50% - 0.5rem / 2);
 			left    : calc(50% - 1px / 2);
 			width   : 0;
-			height  : 0.85rem;
+			height  : 0.5rem;
 
 			border-left: 1px solid #333;
 			transform-origin: center center;
@@ -254,8 +317,8 @@ input[type=button],
 			&::after {
 				border-left-color: red;
 			}
-			width: 1.5rem;
-			height: 2rem;
+			min-width: 1.25rem;
+			width: 1.25rem;
 			vertical-align: middle;
 		}
 	}
@@ -274,5 +337,15 @@ input[type=button],
 				height  : 0.5rem;
 			}
 		}
+	}
+}
+
+input[type='text'],
+input[type='password'] {
+	& + button,
+	& + input[type=button],
+	& + .button {
+		max-height: 2.5rem;
+		height: 2.5rem;
 	}
 }

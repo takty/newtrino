@@ -9,48 +9,14 @@
 
 
 .frame-filter {
-
-	display: flex;
-	flex-direction: row;
-	@include for-tl {
-		align-self: flex-start;
-		flex-direction: column;
-		width: fit-content;
-	}
-
 	> * {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		max-width: 12rem;
-
-		h3 {
-			margin: 0 0.5rem 0 0;
-			padding: 0.5rem 0;
-		}
 	}
-	> * + * { margin-left: 1rem; }
-	@include for-tl {
-		> * + * {
-			margin-left: 0;
-			margin-top: 1rem;
-		}
-	}
-
-	.button-row {
-		margin-left: auto;
-		justify-content: flex-end;
-	}
-}
-
-.frame-main {
-	padding: 1.5rem;
-	flex-grow: 1;
-
-	margin-top: 1rem;
-	@include for-tl {
-		margin-top: 0;
-		margin-left: 1rem;
+	h3 {
+		margin: 0 0.5rem 0 0;
 	}
 }
 
@@ -94,7 +60,10 @@
 			white-space: nowrap;
 			> span {
 				display: block;
-				@include for-tl { display: inline-block; }
+				@include for-tl {
+					display: inline-block;
+					padding: 0 0.15rem;
+				}
 			}
 		}
 	}

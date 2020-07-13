@@ -3,14 +3,14 @@
  * List (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-13
  *
  */
 
 
 document.addEventListener('DOMContentLoaded', () => {
 	const delBtns = document.getElementsByClassName('delete-post');
-	const delMsg = document.getElementById('del-msg').value;
+	const delMsg = document.getElementById('deleting-messsage').value;
 
 	for (let delBtn of delBtns) {
 		delBtn.addEventListener('click', (e) => {

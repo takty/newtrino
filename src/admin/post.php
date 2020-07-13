@@ -11,7 +11,10 @@ namespace nt;
 
 
 require_once( __DIR__ . '/index.php' );
+require_once( __DIR__ . '/metabox.php' );
 
+
+$lang = $nt_config['lang_admin'];
 
 $t_msg = '';
 
@@ -39,83 +42,11 @@ switch ( $nt_q['mode'] ) {
 function echo_state_select( $post ) {
 	$s = $post->getStatus();
 ?>
-	<select form="form-post" name="post_status" id="post_status">
+	<select form="form-post" name="post_status" id="post-status">
 		<option id="post-status-published" value="published"<?php if ( $s === 'published' ) _eh( ' selected' ); ?>><?= _ht( 'Published' ) ?></option>
 		<option id="post-status-reserved" value="reserved"<?php if ( $s === 'reserved' ) _eh( ' selected' ); ?>><?= _ht( 'Reserved' ) ?></option>
 		<option id="post-status-draft" value="draft"<?php if ( $s === 'draft' ) _eh( ' selected' ); ?>><?= _ht( 'Draft' ) ?></option>
 	</select>
-<?php
-}
-
-function echo_taxonomy_metaboxes( $post ) {
-	global $nt_store;
-	$type = $post->getType();
-	$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
-	foreach ( $taxes as $tax ) {
-		echo_taxonomy_metabox( $tax, $post );
-	}
-}
-
-function echo_taxonomy_metabox( $tax_slug, $post ) {
-	global $nt_store;
-	$tax = $nt_store->taxonomy()->getTaxonomy( $tax_slug );
-	$is_exclusive = isset( $tax['is_exclusive'] ) && $tax['is_exclusive'] === true;
-	$tss = $post->getTermSlugs( $tax_slug );
-	$ts  = $nt_store->taxonomy()->getTermAll( $tax_slug, $tss );
-?>
-	<div class="frame">
-		<h3><?= _h( $tax['label'] ) ?></h3>
-<?php if ( $is_exclusive ) : ?>
-		<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
-<?php foreach( $ts as $t ): ?>
-			<option value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' selected' ); ?>><?= _h( $t['label'] ) ?></option>
-<?php endforeach; ?>
-		</select>
-<?php else : ?>
-<?php foreach( $ts as $t ): ?>
-		<label>
-			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' checked' ); ?>>
-			<?= _h( $t['label'] ) ?>
-		</label>
-<?php endforeach; ?>
-<?php endif; ?>
-	</div>
-<?php
-}
-
-function echo_meta_metaboxes( $post ) {
-	global $nt_store;
-	$type = $post->getType();
-	$ms = $nt_store->type()->getMetaAll( $type );
-	foreach ( $ms as $m ) {
-		$label = isset( $m['label'] ) ? $m['label'] : '';
-		if ( empty( $label ) ) continue;
-		switch ( $m['type'] ) {
-			case 'date-range':
-				echo_meta_duration_metabox( $post, $m['key'], $label );
-				break;
-		}
-	}
-}
-
-function echo_meta_duration_metabox( $post, $key, $label ) {
-	$val = $post->getMetaValue( $key );
-	if ( $val === null ) return;
-	$bgn = Post::parseDate( $val[0] );
-	$end = Post::parseDate( $val[1] );
-?>
-	<div class="frame" id="frame-duration">
-		<h3><?= _ht( $label ) ?></h3>
-		<p class="flatpickr" id="event_date_bgn_wrap">
-			<input form="form-post" type="text" name="meta:<?= _h( $key ) ?>[]" id="event_date_bgn" value="<?= _h( $bgn ) ?>" data-input>
-			<a class="input-button" data-clear></a>
-		</p>
-		<div class="to"> - </div>
-		<p class="flatpickr" id="event_date_end_wrap">
-			<input form="form-post" type="text" name="meta:<?= _h( $key ) ?>[]" id="event_date_end" value="<?= _h( $end ) ?>" data-input>
-			<a class="input-button" data-clear></a>
-		</p>
-	</div>
 <?php
 }
 
@@ -133,51 +64,57 @@ header('Content-Type: text/html;charset=utf-8');
 <title><?= _ht('Post Edit') ?> - Newtrino</title>
 <link rel="stylesheet" href="css/style.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/post.min.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function () {initEdit();});</script>
 </head>
 <body class="edit">
 <div id="dialog-placeholder"></div>
-<div class="container container-edit">
-	<div class="header-row">
-		<h1>Newtrino</h1>
-		<a class="btn" href="#" id="show-list"><?= _ht('Post List') ?></a>
-		<a class="btn" href="#" id="show-post"><?= _ht('Show Post') ?></a>
-	</div>
-	<h2><?= _ht('Post Edit') ?>  <span id="update-msg"><?= _h($t_msg) ?></span></h2>
-	<form name="form-post" id="form-post" action="post.php" method="post">
-		<div class="column">
-			<div class="column-main">
-				<div class="form-post">
-					<input type="hidden" name="mode" id="mode" value="update">
-					<input type="hidden" name="id" id="id" value="<?= _h( $t_p->getId() ) ?>">
 
-					<input placeholder="<?= _ht('Enter Title Here') ?>" type="text" name="post_title" id="post_title" value="<?= _h($t_p->getTitle()) ?>">
-					<div class="btn-row"><button class="btn" id="show-media-chooser" type="button"><?= _ht('Insert Media') ?></button></div>
-					<textarea name="post_content" id="post_content"><?= _h($t_p->getContent()) ?></textarea>
+<header class="header">
+	<div class="inner">
+		<h1>Newtrino</h1>
+		<span id="update-msg"><?= _h($t_msg) ?></span>
+		<span class="spacer"></span>
+		<a class="button" href="#" id="show-list"><?= _ht( 'Post List' ) ?></a>
+		<a class="button" href="#" id="show-post"><?= _ht( 'Show Post' ) ?></a>
+	</div>
+</header>
+
+<form name="form-post" id="form-post" action="post.php" method="post">
+	<input type="hidden" name="mode" id="mode" value="update">
+	<input type="hidden" name="id" id="id" value="<?= _h( $t_p->getId() ) ?>">
+
+	<div class="container">
+		<div class="container-sub">
+			<div class="frame frame-sub">
+				<h3 class="frame-title"><?= _ht( 'Publish' ) ?></h3>
+				<input form="form-post" type="text" name="post_date" id="post-date" value="<?= _h( $t_p->getDate() ) ?>">
+				<div class="btn-row">
+					<?php echo_state_select( $t_p ); ?>
 				</div>
-			</div>
-			<div class="column-sub">
-				<div class="frame">
-					<h3><?= _ht('Publish') ?></h3>
-					<input form="form-post" type="text" name="post_date" id="post_date" value="<?= _h($t_p->getDate()) ?>">
-					<div class="btn-row">
-						<?php echo_state_select( $t_p ); ?>
-					</div>
-					<div>
-						<button class="btn" id="show-preview" type="button"><?= _ht('Preview') ?></button>
-						<button class="btn btn-update" id="update" type="button"><?= _ht('Update') ?></button>
-					</div>
-					<p class="message" id="message_enter_title"><?= _ht('The title is blank.') ?></p>
+				<div class="button-row">
+					<button id="show-preview"><?= _ht( 'Preview' ) ?></button>
+					<button class="accent right" id="update"><?= _ht( 'Update' ) ?></button>
 				</div>
-				<?php echo_taxonomy_metaboxes( $t_p ); ?>
-				<?php echo_meta_metaboxes( $t_p ); ?>
+				<p class="message" id="message_enter_title"><?= _ht( 'The title is blank.' ) ?></p>
 			</div>
+			<?php echo_taxonomy_metaboxes( $t_p ); ?>
+			<?php echo_meta_metaboxes( $t_p ); ?>
 		</div>
-	</form>
-</div>
+
+		<div class="container-main frame frame-post">
+			<input placeholder="<?= _ht( 'Enter Title Here' ) ?>" type="text" name="post_title" id="post-title" value="<?= _h( $t_p->getTitle() ) ?>">
+			<div class="button-row"><button id="show-media-chooser"><?= _ht( 'Insert Media' ) ?></button></div>
+			<textarea name="post_content" id="post-content"><?= _h( $t_p->getContent() ) ?></textarea>
+		</div>
+	</div>
+</form>
+
+<input id="confirmation-message" type="hidden" value="<?= _ht( 'Do you want to move from the page you are inputting?' ) ?>">
+<input id="lang" type="hidden" value="<?= $lang ?>">
+
 </body>
 </html>

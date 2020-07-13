@@ -1,47 +1,12 @@
 /**
  *
- * Edit (SCSS)
+ * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-03
+ * @version 2020-07-13
  *
  */
 
-
-@charset 'utf-8';
-
-
-body.edit {
-	display: flex;
-	flex-direction: column;
-}
-
-.container-edit {
-	min-height: calc(100vh - 3.5rem);
-	flex-grow: 1;
-
-	display: flex;
-	flex-direction: column;
-}
-
-.column {
-	margin-top: 1rem;
-	display: flex;
-	flex-grow: 1;
-
-	.column-main {
-		width: 75%;
-	}
-	.column-sub {
-		width: 25%;
-		margin-left: 2rem;
-		min-width: 14rem;
-
-		> .frame:not(:first-child) {
-			margin-top: 2rem;
-		}
-	}
-}
 
 #form-post {
 	display: flex;
@@ -49,14 +14,13 @@ body.edit {
 	flex-grow: 1;
 }
 
-.form-post {
+.frame-post {
 	display: flex;
 	flex-direction: column;
-	height: 100%;
 
-	#post_title {
-		width: 100%;
-		padding: 0.5rem 0.75rem;
+	> * + *,
+	> .mce-container {
+		margin-top: 1rem;
 	}
 }
 
@@ -80,7 +44,6 @@ body.edit {
 	& > iframe {
 		border: 1px solid #ccc;
 		border-radius: 4px;
-		// box-shadow: 0 2px 6px #aaa;
 		font-size: 0.9rem;
 
 		background-color: #fff;
@@ -96,28 +59,34 @@ body.edit {
 	}
 }
 
-#post_date {
-	max-width: 12rem;
-}
 
-#frame-duration {
+// -----------------------------------------------------------------------------
+
+
+.metabox-date-range {
 	.flatpickr {
 		display: flex;
-		input {
-			max-width: 9rem;
-		}
-		.input-button {
-			max-width: 2.5rem;
-		}
+		flex-direction: column;
+		align-items: flex-end;
+		width: 100%;
 	}
-	.to {
-		margin-top: -1rem;
-		margin-bottom: -1rem;
-		text-align: center;
-		transform: rotate(90deg);
-		pointer-events: none;
+	.flatpickr-input {
+		font-size: 0.75rem;
+		width: 100%;
+		padding: { left: 0.45rem; right: 0.45rem; }
+	}
+	.button.cross.delete {
+		width: 2.5rem;
+		min-width: 2.5rem;
+		height: 1rem;
+		min-height: 1rem;
+		padding: 0;
 	}
 }
+
+
+// -----------------------------------------------------------------------------
+
 
 .mce-tinymce {
 	div[aria-label="Bullet list"], div[aria-label="Numbered list"] {
