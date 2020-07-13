@@ -58,11 +58,30 @@ function echo_meta_metaboxes( $post ) {
 		$label = isset( $m['label'] ) ? $m['label'] : '';
 		if ( empty( $label ) ) continue;
 		switch ( $m['type'] ) {
+			case 'date':
+				echo_metabox_date( $post, $m['key'], $label );
+				break;
 			case 'date-range':
 				echo_metabox_date_range( $post, $m['key'], $label );
 				break;
 		}
 	}
+}
+
+function echo_metabox_date( $post, $key, $label ) {
+	$val = $post->getMetaValue( $key );
+	if ( $val === null ) return;
+	$date = Post::parseDate( $val );
+?>
+	<div class="frame frame-sub metabox-date">
+		<h3 class="frame-title"><?= _ht( $label ) ?></h3>
+		<div class="flatpickr date" data-key="<?= _h( $key ) ?>">
+			<input type="text" readonly="readonly" data-input>
+			<a class="button delete cross" title="clear" data-clear></a>
+		</div>
+		<input type="hidden" name="meta:<?= _h( $key ) ?>[]" value="<?= _h( $date ) ?>">
+	</div>
+<?php
 }
 
 function echo_metabox_date_range( $post, $key, $label ) {

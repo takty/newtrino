@@ -12,11 +12,7 @@
 
 
 body.media {
-	display: flex;
-	flex-direction: column;
-	background-color: #fff;
 	height: 100vh;
-
 	> * + * { margin-top: 1rem; }
 
 	nav {

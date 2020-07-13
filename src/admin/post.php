@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-13
  *
  */
 
@@ -76,10 +76,9 @@ header('Content-Type: text/html;charset=utf-8');
 <header class="header">
 	<div class="inner">
 		<h1>Newtrino</h1>
-		<span id="update-msg"><?= _h($t_msg) ?></span>
+		<span id="update-msg"><?= _h( $t_msg ) ?></span>
 		<span class="spacer"></span>
 		<a class="button" href="#" id="show-list"><?= _ht( 'Post List' ) ?></a>
-		<a class="button" href="#" id="show-post"><?= _ht( 'Show Post' ) ?></a>
 	</div>
 </header>
 
@@ -96,10 +95,10 @@ header('Content-Type: text/html;charset=utf-8');
 					<?php echo_state_select( $t_p ); ?>
 				</div>
 				<div class="button-row">
-					<button id="show-preview"><?= _ht( 'Preview' ) ?></button>
+					<button id="show-preview" type="button"><?= _ht( 'Preview' ) ?></button>
 					<button class="accent right" id="update"><?= _ht( 'Update' ) ?></button>
 				</div>
-				<p class="message" id="message_enter_title"><?= _ht( 'The title is blank.' ) ?></p>
+				<p class="message" id="message-enter-title"><?= _ht( 'The title is blank.' ) ?></p>
 			</div>
 			<?php echo_taxonomy_metaboxes( $t_p ); ?>
 			<?php echo_meta_metaboxes( $t_p ); ?>
@@ -107,13 +106,13 @@ header('Content-Type: text/html;charset=utf-8');
 
 		<div class="container-main frame frame-post">
 			<input placeholder="<?= _ht( 'Enter Title Here' ) ?>" type="text" name="post_title" id="post-title" value="<?= _h( $t_p->getTitle() ) ?>">
-			<div class="button-row"><button id="show-media-chooser"><?= _ht( 'Insert Media' ) ?></button></div>
+			<div class="button-row"><button id="show-media-chooser" type="button"><?= _ht( 'Insert Media' ) ?></button></div>
 			<textarea name="post_content" id="post-content"><?= _h( $t_p->getContent() ) ?></textarea>
 		</div>
 	</div>
 </form>
 
-<input id="confirmation-message" type="hidden" value="<?= _ht( 'Do you want to move from the page you are inputting?' ) ?>">
+<input id="message-confirmation" type="hidden" value="<?= _ht( 'Do you want to move from the page you are inputting?' ) ?>">
 <input id="lang" type="hidden" value="<?= $lang ?>">
 
 </body>

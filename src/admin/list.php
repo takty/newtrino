@@ -132,7 +132,7 @@ header('Content-Type: text/html;charset=utf-8');
 <?php \nt\end( $view ); ?>
 	</div>
 
-	<input id="deleting-messsage" type="hidden" value="<?= _ht( 'Do you want to delete the post?' ) ?>">
+	<input id="message-deleting" type="hidden" value="<?= _ht( 'Do you want to delete the post?' ) ?>">
 
 </div>
 </body>

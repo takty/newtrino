@@ -10,7 +10,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 	const delBtns = document.getElementsByClassName('delete-post');
-	const delMsg = document.getElementById('deleting-messsage').value;
+	const delMsg = document.getElementById('message-deleting').value;
 
 	for (let delBtn of delBtns) {
 		delBtn.addEventListener('click', (e) => {

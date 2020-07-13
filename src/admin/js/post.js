@@ -14,11 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const lang = document.getElementById('lang').value;
 
-	const conMsg = document.getElementById('confirmation-message').value;
+	const conMsg = document.getElementById('message-confirmation').value;
 	window.addEventListener('beforeunload', (e) => { if (isModified) return (e.returnValue = conMsg); });
 
 	initPublishingMetabox();
+
+	initDateMetabox();
 	initDateRangeMetabox();
+
 	initEditorPane();
 	adjustEditorHeight();
 
@@ -72,6 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 		postDate.addEventListener('change', onModified);
 		postStatus.addEventListener('change', onModified);
+	}
+
+	function initDateMetabox() {
+		const es = document.querySelectorAll('.flatpickr.date');
+		if (es.length === 0) return;
+		flatpickr('.flatpickr.date', { wrap: true, locale: lang });
+		for (let e of es) {
+			e.addEventListener('change', () => {
+				const d = e._flatpickr.selectedDate;
+				const f = document.getElementsByName('meta:' + e.dataset.key)[0];
+				f.value = moment(d).format('YYYY-MM-DD');
+			});
+			const f = document.getElementsByName('meta:' + e.dataset.key)[0];
+			const d = moment(f.value).toDate();
+			e._flatpickr.setDate(d);
+		}
 	}
 
 	function initDateRangeMetabox() {
@@ -133,18 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	// -------------------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
 	function setButtonEvents() {
 		addBtnEvent('show-list', showList, 'list.php');
-		addBtnEvent('show-post', showPost, '../view.php?id=' + document.getElementById('id').value);
 		addBtnEvent('show-media-chooser', showMediaChooser);
 		addBtnEvent('show-preview', showPreview);
 		addBtnEvent('update', update);
@@ -175,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function update() {
-		if (document.getElementById('post_title').value === '') {
-			const elm = document.getElementById('message_enter_title');
+		if (document.getElementById('post-title').value === '') {
+			const elm = document.getElementById('message-enter-title');
 			elm.style.display = 'block';
 			return false;
 		}
@@ -194,86 +203,80 @@ document.addEventListener('DOMContentLoaded', () => {
 		fp.action = 'list.php';
 		fp.submit();
 	}
-
-	function showPost() {
-		const id = document.getElementById('id').value;
-		window.open('../view.php?id=' + id, 'post', '');
-	}
-
-	function showMediaChooser() {
-		const pid = document.getElementById('id').value;
-		const dialogPlaceholder = document.getElementById('dialog-placeholder');
-
-		const win = document.createElement('iframe');
-		win.id = 'mediaChooser';
-		win.src = 'media.php?id=' + pid;
-		win.style.width     = '960px';
-		win.style.height    = '720px';
-		win.style.maxWidth  = '90vw';
-		win.style.maxHeight = '90vh';
-
-		dialogPlaceholder.appendChild(win);
-		dialogPlaceholder.style.display = 'flex';
-	}
-
-	function closeMediaChooser() {
-		const dialogPlaceholder = document.getElementById('dialog-placeholder');
-		const win = document.getElementById('mediaChooser');
-		dialogPlaceholder.removeChild(win);
-		dialogPlaceholder.style.display = 'none';
-	}
-
-	const wh_min = 220;
-
-	function insertMedia(name, src, w, h, align, size, isImage) {
-		closeMediaChooser();
-		const cs = [];
-		if (align === 'l') cs.push('alignleft');
-		if (align === 'c') cs.push('aligncenter');
-		if (align === 'r') cs.push('alignright');
-		if (align === 'n') cs.push('alignnone');
-
-		if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
-		if (isImage) {
-			if (size === 's') cs.push('size-small');
-			if (size === 'm') cs.push('size-medium');
-			if (size === 'l') cs.push('size-large');
-			if (size === 'f') cs.push('size-full');
-
-			let imgstr = '<a href="' + src + '" class="' + cs.join(' ') + '"><img src="' + src + '"';
-			if (size !== 'f') {  // Not Full Size
-				let r = wh_min
-				if (size === "l") r *= 3;
-				if (size === "m") r *= 2;
-				const vw = Math.round(getSizeW(r, w, h));
-				const vh = Math.round(getSizeH(r, w, h));
-				const is = ' width="' + vw + '" height="' + vh + '" ';
-				imgstr = imgstr + is;
-			}
-			imgstr += "></a>";
-			tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
-		} else {
-			const linkStr = '<a href="' + src + '" class="' + cs.join(' ') + '">' + name + '</a>';
-			tinymce.activeEditor.execCommand('mceInsertContent', false, linkStr);
-		}
-	}
-
-	function getSizeW(wh, w, h) {
-		if (w > h) {
-			const p = parseFloat(w) / parseFloat(h);
-			return parseFloat(wh) * parseFloat(p);
-		} else {
-			return wh;
-		}
-	}
-
-	function getSizeH(wh, w, h) {
-		if (w > h) {
-			return wh;
-		} else {
-			const p = parseFloat(h) / parseFloat(w);
-			return parseFloat(wh) * parseFloat(p);
-		}
-	}
 });
 
+function showMediaChooser() {
+	const pid = document.getElementById('id').value;
+	const dialogPlaceholder = document.getElementById('dialog-placeholder');
+
+	const win = document.createElement('iframe');
+	win.id = 'mediaChooser';
+	win.src = 'media.php?id=' + pid;
+	win.style.width     = '960px';
+	win.style.height    = '720px';
+	win.style.maxWidth  = '90vw';
+	win.style.maxHeight = '90vh';
+
+	dialogPlaceholder.appendChild(win);
+	dialogPlaceholder.style.display = 'flex';
+}
+
+function closeMediaChooser() {
+	const dialogPlaceholder = document.getElementById('dialog-placeholder');
+	const win = document.getElementById('mediaChooser');
+	dialogPlaceholder.removeChild(win);
+	dialogPlaceholder.style.display = 'none';
+}
+
+const wh_min = 220;
+
+function insertMedia(name, src, w, h, align, size, isImage) {
+	closeMediaChooser();
+	const cs = [];
+	if (align === 'l') cs.push('alignleft');
+	if (align === 'c') cs.push('aligncenter');
+	if (align === 'r') cs.push('alignright');
+	if (align === 'n') cs.push('alignnone');
+
+	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
+	if (isImage) {
+		if (size === 's') cs.push('size-small');
+		if (size === 'm') cs.push('size-medium');
+		if (size === 'l') cs.push('size-large');
+		if (size === 'f') cs.push('size-full');
+
+		let imgstr = '<a href="' + src + '" class="' + cs.join(' ') + '"><img src="' + src + '"';
+		if (size !== 'f') {  // Not Full Size
+			let r = wh_min
+			if (size === "l") r *= 3;
+			if (size === "m") r *= 2;
+			const vw = Math.round(getSizeW(r, w, h));
+			const vh = Math.round(getSizeH(r, w, h));
+			const is = ' width="' + vw + '" height="' + vh + '" ';
+			imgstr = imgstr + is;
+		}
+		imgstr += "></a>";
+		tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
+	} else {
+		const linkStr = '<a href="' + src + '" class="' + cs.join(' ') + '">' + name + '</a>';
+		tinymce.activeEditor.execCommand('mceInsertContent', false, linkStr);
+	}
+}
+
+function getSizeW(wh, w, h) {
+	if (w > h) {
+		const p = parseFloat(w) / parseFloat(h);
+		return parseFloat(wh) * parseFloat(p);
+	} else {
+		return wh;
+	}
+}
+
+function getSizeH(wh, w, h) {
+	if (w > h) {
+		return wh;
+	} else {
+		const p = parseFloat(h) / parseFloat(w);
+		return parseFloat(wh) * parseFloat(p);
+	}
+}
