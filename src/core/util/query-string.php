@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Query Strings
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-14
  *
  */
 
@@ -13,7 +13,7 @@ namespace nt;
 function parse_query_string( ?string $default_key = null ): array {
 	$ps = [];
 	$default_val = '';
-	foreach ( $_GET as $key => $val ) {
+	foreach ( $_REQUEST as $key => $val ) {
 		if ( $default_key !== null && empty( $val ) ) {
 			$default_val = $key;
 		} else {
