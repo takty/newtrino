@@ -131,7 +131,8 @@ a {
 	}
 
 	.flatpickr-input {
-		width: 12.5rem;
+		width: 14rem;
+		@include for-tl { width: 100%; }
 	}
 
 	.button-row {

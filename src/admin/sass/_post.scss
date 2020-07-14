@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-13
+ * @version 2020-07-14
  *
  */
 
@@ -68,21 +68,24 @@
 .metabox-date-range {
 	.flatpickr {
 		display: flex;
-		flex-direction: column;
+		@include for-tl { flex-direction: column; }
 		align-items: flex-end;
 		width: 100%;
 	}
 	.flatpickr-input {
 		font-size: 0.75rem;
-		width: 100%;
-		padding: { left: 0.45rem; right: 0.45rem; }
+		@include for-tl {
+			padding: { left: 0.45rem; right: 0.45rem; }
+		}
 	}
 	.button.cross.delete {
-		width: 2.5rem;
-		min-width: 2.5rem;
-		height: 1rem;
-		min-height: 1rem;
-		padding: 0;
+		@include for-tl {
+			width: 2.5rem;
+			min-width: 2.5rem;
+			height: 1rem;
+			min-height: 1rem;
+			padding: 0;
+		}
 	}
 }
 
