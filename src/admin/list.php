@@ -5,16 +5,16 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-13
+ * @version 2020-07-14
  *
  */
 
 
-require_once(__DIR__ . '/view-admin.php');
+require_once( __DIR__ . '/view-admin.php' );
 $view = query();
 
 
-header('Content-Type: text/html;charset=utf-8');
+header( 'Content-Type: text/html;charset=utf-8' );
 ?>
 <!DOCTYPE html>
 <html>
