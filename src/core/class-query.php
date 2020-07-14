@@ -5,15 +5,15 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-14
  *
  */
 
 
-require_once(__DIR__ . '/class-logger.php');
-require_once(__DIR__ . '/class-indexer.php');
-require_once(__DIR__ . '/class-post.php');
-require_once(__DIR__ . '/class-taxonomy.php');
+require_once( __DIR__ . '/class-logger.php' );
+require_once( __DIR__ . '/class-indexer.php' );
+require_once( __DIR__ . '/class-post.php' );
+require_once( __DIR__ . '/class-taxonomy.php' );
 
 
 class Query {

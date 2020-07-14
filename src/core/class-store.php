@@ -5,17 +5,17 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-14
  *
  */
 
 
-require_once(__DIR__ . '/class-logger.php');
-require_once(__DIR__ . '/class-indexer.php');
-require_once(__DIR__ . '/class-post.php');
-require_once(__DIR__ . '/class-type.php');
-require_once(__DIR__ . '/class-taxonomy.php');
-require_once(__DIR__ . '/class-query.php');
+require_once( __DIR__ . '/class-logger.php' );
+require_once( __DIR__ . '/class-indexer.php' );
+require_once( __DIR__ . '/class-post.php' );
+require_once( __DIR__ . '/class-type.php' );
+require_once( __DIR__ . '/class-taxonomy.php' );
+require_once( __DIR__ . '/class-query.php' );
 
 
 class Store {
