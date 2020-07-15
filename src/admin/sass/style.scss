@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-15
  *
  */
 
@@ -14,7 +14,6 @@
 @import 'list';
 @import 'post';
 @import 'media';
-@import 'preview';
 
 
 html, body {
@@ -45,12 +44,12 @@ a {
 .container,
 .footer {
 	width: min(96rem, calc(100% - 2rem));
+	.dialog & { width: 100%; }
 	margin: { left: auto; right: auto; }
 }
 
-.header {
-	> * { padding-bottom: 0.75rem; }
-
+.header,
+.footer {
 	.inner {
 		display: flex;
 		align-items: center;
@@ -59,23 +58,31 @@ a {
 		.spacer { flex-grow: 1; }
 		a:last-of-type { margin-left: 1rem; }
 	}
+}
+
+.header {
+	> * { padding-bottom: 0.75rem; }
+
 	#message-updated {
 		margin-left: 1rem;
 		padding-top: 0.25rem;
 	}
 }
 
+.footer {
+	> * { padding-top: 0.75rem; }
+}
+
 .container {
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
-	@include for-tl {
-		flex-direction: row;
-	}
+	@include for-tl { flex-direction: row; }
 }
 
 .container-main {
 	flex-grow: 1;
+	position: relative;
 
 	margin-top: 1rem;
 	@include for-tl {
@@ -95,8 +102,12 @@ a {
 	border: 1px solid #ddd;
 	border-radius: 0.5rem;
 	background-color: rgba(#fff, 0.95);
-	box-shadow: 0 2px 5px rgba(#000, 0.15);
-	font-size: 0.9rem;
+	font-size: 0.85rem;
+
+	box-shadow: 0 2px 6px rgba(#000, 0.15);
+	.dialog & {
+		box-shadow: 0 1px 2px rgba(#000, 0.1);
+	}
 
 	padding: 1rem;
 	@include for-tl { padding: 1.25rem; }
@@ -122,17 +133,21 @@ a {
 		}
 	}
 
-	h3 {
-		padding: 0.5rem 0;
+	.title {
+		white-space: nowrap;
+		font-weight: bold;
 	}
 
-	.frame-title {
-		white-space: nowrap;
+	.heading {
+		font-weight: bold;
+		padding: 0.5rem 0;
 	}
 
 	.flatpickr-input {
 		width: 14rem;
 		@include for-tl { width: 100%; }
+
+		font-size: 0.75rem;
 	}
 
 	.button-row {
@@ -147,42 +162,15 @@ a {
 	}
 }
 
+.frame-compact {
+	> * {
+		display    : flex;
+		flex-wrap  : wrap;
+		align-items: center;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@mixin frame-inside {
-	> *:not(form):not(.message):not(nav) {
-		display: block;
-		margin: 1rem;
+		max-width: 12rem;
 	}
-	> div:last-of-type {
-		text-align: right;
-		> *:not(:first-child) {
-			margin-left: 0.75rem;
-		}
-	}
-}
-
-.frame-inside {
-	@include frame-inside;
-	> form {
-		@include frame-inside;
-	}
-	select {
-		max-width: calc(100% - 2rem);
-	}
+	.heading { margin: 0 0.5rem 0 0; }
 }
 
 
@@ -191,24 +179,9 @@ a {
 
 h1 {
 	margin: 0;
-	font-size: 1.5rem;
+	font-size: 1.25rem;
 	font-weight: bold;
 	color: #333;
-	line-height: 1.5;
-}
-
-h2 {
-	font-size: 1.15rem;
-	font-weight: bold;
-}
-
-.preview h2 {
-	margin-top: 1rem;
-}
-
-h3 {
-	font-size: 0.85rem;
-	font-weight: bold;
 }
 
 
@@ -238,8 +211,7 @@ input[type=button],
 
 	&:disabled {
 		pointer-events: none;
-		border-color: #ccc;
-		color: #aaa;
+		opacity: 0.5;
 	}
 }
 
@@ -256,7 +228,8 @@ input[type='month'],
 select:not(.flatpickr-monthDropdown-months) {
 	max-height: 2rem;
 	height: 2rem;
-	padding: 0.25rem 0.15rem;
+	padding: 0.25rem 0.25rem;
+	@include for-tp { padding: { left: 0.5rem; right: 0.5rem; } }
 }
 
 select:not(.flatpickr-monthDropdown-months) {

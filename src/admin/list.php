@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-15
  *
  */
 
@@ -35,10 +35,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 </header>
 
 <div class="container">
-	<nav class="container-sub frame frame-sub frame-filter">
+	<nav class="container-sub frame frame-sub frame-compact">
 <?php \nt\begin(); ?>
 		<div>
-			<h3><?= _ht( 'Post Type' ) ?></h3>
+			<div class="heading"><?= _ht( 'Post Type' ) ?></div>
 			<select onchange="document.location.href = this.value;">
 {{#filter.type}}
 				<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
@@ -48,7 +48,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\end( $view, ! empty( $view['filter']['type'] ) ); ?>
 <?php \nt\begin(); ?>
 		<div>
-			<h3><?= _ht( 'Display Month' ) ?></h3>
+			<div class="heading"><?= _ht( 'Display Month' ) ?></div>
 {{#filter.date}}
 			<select onchange="document.location.href = this.value;">
 {{#month}}
@@ -58,7 +58,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{/filter.date}}
 		</div>
 		<div>
-			<h3><?= _ht( 'View Count' ) ?></h3>
+			<div class="heading"><?= _ht( 'View Count' ) ?></div>
 			<select onchange="document.location.href = this.value;">
 {{#filter.per_page}}
 				<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>

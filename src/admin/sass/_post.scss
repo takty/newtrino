@@ -3,25 +3,23 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-15
  *
  */
 
 
 #form-post {
-	display: flex;
+	display       : flex;
 	flex-direction: column;
-	flex-grow: 1;
+	flex-grow     : 1;
 }
 
 .frame-post {
-	display: flex;
+	display       : flex;
 	flex-direction: column;
 
 	> * + *,
-	> .mce-container {
-		margin-top: 1rem;
-	}
+	> .mce-container { margin-top: 1rem; }
 }
 
 .message {
@@ -30,12 +28,12 @@
 }
 
 #dialog-placeholder {
-	position        : fixed;
-	left            : 0;
-	top             : 0;
-	width           : 100%;
-	height          : 100%;
-	z-index         : 999;
+	position: fixed;
+	left    : 0;
+	top     : 0;
+	width   : 100%;
+	height  : 100%;
+	z-index : 999;
 
 	display        : none;
 	align-items    : center;
@@ -43,49 +41,29 @@
 
 	background-color: rgba(#000, 0.5);
 
-	& > iframe {
-		// border: 1px solid #ccc;
-		// border-radius: 4px;
-		// font-size: 0.9rem;
-
-		// background-color: #fff;
-		// color: #333;
-		// white-space: nowrap;
-
-		// &:hover { border-color: #88f; }
-		&:disabled {
-			pointer-events: none;
-			// border-color: #ccc;
-			// color: #aaa;
-		}
-	}
 	&.visible { display: flex; }
 }
 
 #dialog-media {  // iframe
-	width     : 960px;
-	height    : 720px;
-	max-width : 90vw;
-	max-height: 90vh;
+	width     : 95vw;
+	max-width : 96rem;
+	height    : 95vh;
+	max-height: 96rem;
 
 	display: none;
 	&.visible { display: block; }
 }
 
 #dialog-preview {
-	width     : 100%;
-	height    : 100%;
-	max-width : 95vw;
-	max-height: 95vh;
+	width     : 95vw;
+	max-width : 96rem;
+	height    : 95vh;
+	max-height: 96rem;
 
 	flex-direction: column;
 
 	display: none;
 	&.visible { display: flex; }
-
-	header {
-		width: 100%;
-	}
 
 	iframe {
 		width: 100%;
@@ -105,7 +83,6 @@
 		width: 100%;
 	}
 	.flatpickr-input {
-		font-size: 0.75rem;
 		@include for-tl {
 			padding: { left: 0.45rem; right: 0.45rem; }
 		}
@@ -131,4 +108,5 @@
 			display: none;
 		}
 	}
+	button { display: inline-block; }
 }

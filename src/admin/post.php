@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-15
  *
  */
 
@@ -87,7 +87,7 @@ header('Content-Type: text/html;charset=utf-8');
 	<div class="container">
 		<div class="container-sub">
 			<div class="frame frame-sub">
-				<h3 class="frame-title"><?= _ht( 'Publish' ) ?></h3>
+				<div class="title"><?= _ht( 'Publish' ) ?></div>
 				<input form="form-post" type="text" name="post_date" id="post-date" value="<?= _h( $t_p->getDate() ) ?>">
 				<div class="btn-row">
 					<?php echo_state_select( $t_p ); ?>
@@ -115,12 +115,12 @@ header('Content-Type: text/html;charset=utf-8');
 
 <div id="dialog-placeholder">
 	<iframe id="dialog-media"></iframe>
-	<div id="dialog-preview" class="frame">
+	<div id="dialog-preview" class="frame dialog">
 		<header class="header">
 			<div class="inner">
 				<h1><?= _ht( 'Preview' ) ?></h1>
 				<span class="spacer"></span>
-				<button id="btn-close"><?= _ht( 'Close' ) ?></button>
+				<button class="accent" id="btn-close"><?= _ht( 'Close' ) ?></button>
 			</div>
 		</header>
 		<iframe name="iframe-preview"></iframe>

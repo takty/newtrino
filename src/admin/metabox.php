@@ -5,7 +5,7 @@ namespace nt;
  * Metabox
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-13
+ * @version 2020-07-15
  *
  */
 
@@ -27,7 +27,7 @@ function echo_metabox_taxonomy( $tax_slug, $post ) {
 	$ts  = $nt_store->taxonomy()->getTermAll( $tax_slug, $tss );
 ?>
 	<div class="frame frame-sub">
-		<h3 class="frame-title"><?= _h( $tax['label'] ) ?></h3>
+		<div class="title"><?= _h( $tax['label'] ) ?></div>
 <?php if ( $is_exclusive ) : ?>
 		<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
 <?php foreach( $ts as $t ): ?>
@@ -74,7 +74,7 @@ function echo_metabox_date( $post, $key, $label ) {
 	$date = Post::parseDate( $val );
 ?>
 	<div class="frame frame-sub metabox-date">
-		<h3 class="frame-title"><?= _ht( $label ) ?></h3>
+		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="flatpickr date" data-key="<?= _h( $key ) ?>">
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>
@@ -91,7 +91,7 @@ function echo_metabox_date_range( $post, $key, $label ) {
 	$end = Post::parseDate( $val[1] );
 ?>
 	<div class="frame frame-sub metabox-date-range">
-		<h3 class="frame-title"><?= _ht( $label ) ?></h3>
+		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="flatpickr date-range" data-key="<?= _h( $key ) ?>">
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>

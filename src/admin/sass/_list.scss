@@ -3,22 +3,10 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-13
+ * @version 2020-07-15
  *
  */
 
-
-.frame-filter {
-	> * {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		max-width: 12rem;
-	}
-	h3 {
-		margin: 0 0.5rem 0 0;
-	}
-}
 
 .list-taxonomy-cancel {
 	display: flex;
@@ -56,11 +44,12 @@
 			a { white-space: nowrap; }
 		}
 		&.date {
-			font-size: 0.7rem;
+			font-size: 0.65rem;
 			white-space: nowrap;
 			> span {
 				display: block;
-				@include for-tl {
+				text-align: right;
+				@include for-de {
 					display: inline-block;
 					padding: 0 0.15rem;
 				}
