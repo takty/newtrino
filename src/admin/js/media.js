@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2020-07-14
  *
  */
 
@@ -32,8 +32,8 @@ function setFile(fileName, url, width, height, isImage) {
 
 function deleteFile() {
 	if (!confirm('Do you want to delete it?')) return;
-	document.getElementById('deleted_file').value = file_name;
-	document.getElementById('deleteForm').submit();
+	document.getElementById('deleted-file').value = file_name;
+	document.getElementById('form-delete').submit();
 }
 
 function insert() {
@@ -51,5 +51,5 @@ function checkRadio(tag) {
 }
 
 function cancel() {
-	window.parent.closeMediaChooser();
+	window.parent.closeDialog();
 }

@@ -5,8 +5,7 @@ namespace nt;
  * Media Chooser
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-15
  *
  */
 
@@ -14,22 +13,46 @@ namespace nt;
 require_once( __DIR__ . '/index.php' );
 
 
-$media = new Media(NT_DIR_POST, NT_URL_POST, Post::MEDIA_DIR_NAME, $nt_q['id']);
+$media = new Media( NT_DIR_POST, NT_URL_POST, Post::MEDIA_DIR_NAME, $nt_q['id'] );
 
-if ($nt_q['mode'] === 'delete') {
+if ( $nt_q['mode'] === 'delete' ) {
 	$file = $nt_q['deleted_file'];
-	if (!empty($file)) {
-		$media->remove($file);
+	if ( ! empty( $file ) ) {
+		$media->remove( $file );
 	}
-} else if ($nt_q['mode'] === 'upload') {
-	if (!isset($_FILES['uploadFile']['error']) || !is_int($_FILES['uploadFile']['error'])) {
+} else if ( $nt_q['mode'] === 'upload' ) {
+	if ( ! isset( $_FILES['uploadFile']['error'] ) || ! is_int( $_FILES['uploadFile']['error'] ) ) {
 		// error
-	} else if (isset($_FILES['uploadFile'])) {
-		$media->upload($_FILES['uploadFile']);
+	} else if ( isset( $_FILES['uploadFile'] ) ) {
+		$media->upload( $_FILES['uploadFile'] );
 	}
 }
 $t_pid   = $nt_q['id'];
 $t_items = $media->getItemList();
+
+function echo_item_file( $it, $i ) {
+	$_file = addslashes( $it['file'] );
+	$_url  = addslashes( $it['url'] );
+	$ps = [
+		"'$_file'", "'$_url'",
+		$it['width'], $it['height'],
+		empty( $it['img'] ) ? 'false' : 'true',
+	];
+	$on_click = 'setFile(' . implode( ', ', $ps ) . ')';
+?>
+	<div class="item-media">
+		<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h( $it['caption'] ) ?>" onclick="<?= _h( $on_click ) ?>">
+		<label for="item<?= $i ?>">
+<?php if ( empty( $it['img'] ) ) : ?>
+			<div class="thumbnail"><span><?= _h( $it['ext'] ) ?></span></div>
+<?php else : ?>
+			<div class="thumbnail"><img src="<?= _h( $it['url'] ) ?>"></div>
+<?php endif ?>
+			<div class="caption"><?= _h( $it['caption'] ) ?></div>
+		</label>
+	</div>
+<?php
+}
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -44,69 +67,69 @@ header('Content-Type: text/html;charset=utf-8');
 <script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
 <body class="media dialog">
-<h1><?= _ht('Insert Media') ?></h1>
-<div class="header-row">
-	<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
-		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
-		<input type="hidden" name="mode" value="upload">
-		<div style="display: none">
-			<input type="file" name="uploadFile" id="uploadFile" onchange="if (this.value !== '') document.getElementById('uploadForm').submit();">
+
+<header class="header">
+	<div class="inner">
+		<h1><?= _ht('Insert Media') ?></h1>
+		<div class="spacer"></div>
+		<button type="button" onClick="cancel();"><?= _ht( 'Close' ) ?></button>
+	</div>
+</header>
+
+<div class="container">
+	<div class="container-sub">
+		<div class="frame frame-sub">
+			<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
+				<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
+				<input type="hidden" name="mode" value="upload">
+				<div style="display: none">
+					<input type="file" name="uploadFile" id="uploadFile" onchange="if (this.value !== '') document.getElementById('uploadForm').submit();">
+				</div>
+				<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New') ?></button>
+			</form>
 		</div>
-		<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New') ?></button>
-	</form>
-	<form action="media.php" method="post" id="deleteForm">
-		<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
-		<input type="hidden" name="mode" value="delete">
-		<input type="hidden" name="deleted_file" id="deleted_file">
-		<button class="btn-delete" type="button" id="delete" onClick="deleteFile();"><?= _ht('Permanently Delete') ?></button>
-	</form>
-</div>
-<div class="frame frame-inside media-list">
-	<div class="filechooser">
-<?php for ($i = 0; $i < count($t_items); $i += 1): $item = $t_items[$i]; ?>
-		<div class="item">
-			<label for="item<?= $i ?>">
-<?php
-$is_img = !empty($item['img']);
-$params = [
-	"'" . addslashes($item['file']) . "'",
-	"'" . addslashes($item['url']) . "'",
-	$item['width'], $item['height'],
-	$is_img ? 'true' : 'false',
-];
-$on_click = "setFile(" . implode(', ', $params) . ")";
-if ($is_img):
-?>
-				<div class="icon" style="background-image: url(<?= _h($item['url']) ?>)"></div>
-<?php else: ?>
-				<div class="icon"><?= _h($item['ext']) ?></div>
-<?php endif ?>
-			</label><br>
-			<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h($item['caption']) ?>" onclick="<?= _h($on_click) ?>">
-			<label for="item<?= $i ?>"><?= _h($item['caption']) ?></label>
+		<div class="frame frame-sub frame-compact">
+			<div>
+				<div class="heading"><?= _ht( 'Image Alignment' ) ?></div>
+				<select name="align">
+					<option value="l"><?= _ht( 'Left' ) ?></option>
+					<option value="c" selected><?= _ht( 'Center' ) ?></option>
+					<option value="r"><?= _ht( 'Right' ) ?></option>
+					<option value="n"><?= _ht( 'None' ) ?></option>
+				</select>
+			</div>
+			<div>
+				<div class="heading"><?= _ht( 'Image Size' ) ?></div>
+				<select name="size">
+					<option value="s"><?= _ht( 'Small' ) ?></option>
+					<option value="m" selected><?= _ht( 'Medium' ) ?></option>
+					<option value="l"><?= _ht( 'Large' ) ?></option>
+					<option value="f"><?= _ht( 'Full Size' ) ?></option>
+				</select>
+			</div>
 		</div>
-<?php endfor ?>
+	</div>
+	<div class="container-main frame">
+		<div class="scroller">
+			<ul class="list-item-media">
+				<?php foreach ( $t_items as $i => $item ) echo_item_file( $item, $i ); ?>
+			</ul>
+		</div>
 	</div>
 </div>
-<div class="frame frame-inside image-option">
-	<div>
-		<h2><?= _ht('Image Alignment') ?></h2>
-		<input type="radio" name="align" id="align_l" value="l"><label for="align_l"> <?= _ht('Left') ?></label>
-		<input type="radio" name="align" id="align_c" value="c" checked><label for="align_c"> <?= _ht('Center') ?></label>
-		<input type="radio" name="align" id="align_r" value="r"><label for="align_r"> <?= _ht('Right') ?></label>
-		<input type="radio" name="align" id="align_n" value="n"><label for="align_n"> <?= _ht('None') ?></label>
+
+<footer class="footer">
+	<div class="inner">
+		<form action="media.php" method="post" id="form-delete">
+			<input type="hidden" name="mode" value="delete">
+			<input type="hidden" name="id" value="<?= _h( $t_pid ) ?>">
+			<input type="hidden" name="deleted_file" id="deleted-file">
+			<button class="delete" type="button" id="delete" onClick="deleteFile();"><?= _ht( 'Permanently Delete' ) ?></button>
+		</form>
+		<div class="spacer"></div>
+		<button type="button" class="accent" id="insert" onClick="insert();"><?= _ht( 'Insert Into Post' ) ?></button>
 	</div>
-	<div>
-		<h2><?= _ht('Image Size') ?></h2>
-		<input type="radio" name="size" id="size_s" value="s"><label for="size_s"> <?= _ht('Small') ?></label>
-		<input type="radio" name="size" id="size_m" value="m" checked><label for="size_m"> <?= _ht('Medium') ?></label>
-		<input type="radio" name="size" id="size_l" value="l"><label for="size_l"> <?= _ht('Large') ?></label>
-		<input type="radio" name="size" id="size_f" value="f"><label for="size_f"> <?= _ht('Full Size') ?></label>
-	</div>
-</div>
-<nav>
-	<button type="button" onClick="cancel();"><?= _ht('Close') ?></button>
-	<button type="button" id="insert" onClick="insert();"><?= _ht('Insert Into Post') ?></button>
-</nav>
+</footer>
+
 </body>
 </html>

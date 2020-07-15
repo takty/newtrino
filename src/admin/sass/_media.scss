@@ -1,80 +1,65 @@
 /**
  *
- * Media Chooser (SCSS)
+ * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2020-07-15
  *
  */
 
 
-@charset 'utf-8';
+.scroller {
+	position: absolute;
+	top     : 0;
+	left    : 0;
+	right   : 0;
+	bottom  : 0;
 
-
-body.media {
-	height: 100vh;
-	> * + * { margin-top: 1rem; }
-
-	nav {
-		margin-top: 2rem;
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		> * + * {
-			margin-left: 1.5rem;
-		}
-	}
-}
-
-.media-list {
-	// @include frame-design;
-	width: 100%;
 	overflow-y: scroll;
-	flex: 1 0 1px;
 }
 
-.image-option {
-	// @include frame-design;
-	padding: 1rem;
-	display: flex;
-	justify-content: space-around;
-
-	> div {
-		flex: 0 0 auto;
-		font-size: 0.9rem;
-
-		h2 {
-			margin: 0 0 0.5rem 0;
-		}
-		input[type=radio]:not(:first-of-type) {
-			margin-left: 1rem;
-		}
-	}
-}
-
-.filechooser {
+.list-item-media {
 	display: flex;
 	flex-wrap: wrap;
+}
 
-	.item {
-		margin: 1rem;
-		text-align: center;
+.item-media {
+	margin: 1rem;
+	text-align: center;
 
-		input {
-			margin-left: -0.25rem;
-		}
-	}
-	.icon {
-		@include layout-centering;
+	.thumbnail {
+		display        : flex;
+		align-items    : center;
+		justify-content: center;
+
 		margin: 0 auto;
-		width: 6rem;
+		width : 6rem;
 		height: 6rem;
 
 		border: 1px solid #ccc;
 		border-radius: 2px;
 
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: center;
+		img {
+			width : 6rem;
+			height: 6rem;
+			object-fit: contain;
+		}
+	}
+
+	.caption {
+		margin-top: 0.5rem;
+		max-width: 6rem;
+
+		font-size: 0.75rem;
+		line-height: 1.25;
+		overflow-wrap: break-word;
+	}
+
+	input { display: none; }
+
+	input:checked + label {
+		.thumbnail {
+			box-shadow: 0 0 4px 2px rgba(#88f, 0.75);
+		}
 	}
 }
