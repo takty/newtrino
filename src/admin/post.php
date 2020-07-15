@@ -5,14 +5,16 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-13
+ * @version 2020-07-14
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/metabox.php' );
-
+require_once( __DIR__ . '/view-admin.php' );
+$view = query();
+// var_dump( $view );
 
 $lang = $nt_config['lang_admin'];
 
@@ -71,21 +73,17 @@ header('Content-Type: text/html;charset=utf-8');
 <script src="js/post.min.js"></script>
 </head>
 <body class="edit">
-<div id="dialog-placeholder"></div>
 
 <header class="header">
 	<div class="inner">
 		<h1>Newtrino</h1>
-		<span id="update-msg"><?= _h( $t_msg ) ?></span>
+		<span id="message-updated"><?= _h( $t_msg ) ?></span>
 		<span class="spacer"></span>
-		<a class="button" href="#" id="show-list"><?= _ht( 'Post List' ) ?></a>
+		<a class="button" href="<?= _h( $view['list'] ) ?>" id="btn-list"><?= _ht( 'Post List' ) ?></a>
 	</div>
 </header>
 
 <form name="form-post" id="form-post" action="post.php" method="post">
-	<input type="hidden" name="mode" id="mode" value="update">
-	<input type="hidden" name="id" id="id" value="<?= _h( $t_p->getId() ) ?>">
-
 	<div class="container">
 		<div class="container-sub">
 			<div class="frame frame-sub">
@@ -95,8 +93,8 @@ header('Content-Type: text/html;charset=utf-8');
 					<?php echo_state_select( $t_p ); ?>
 				</div>
 				<div class="button-row">
-					<button id="show-preview" type="button"><?= _ht( 'Preview' ) ?></button>
-					<button class="accent right" id="update"><?= _ht( 'Update' ) ?></button>
+					<button id="btn-dialog-preview" type="button" data-action="<?= _h( $view['preview'] ) ?>"><?= _ht( 'Preview' ) ?></button>
+					<button class="accent right" id="btn-update" type="button" data-action="<?= _h( $view['update'] ) ?>"><?= _ht( 'Update' ) ?></button>
 				</div>
 				<p class="message" id="message-enter-title"><?= _ht( 'The title is blank.' ) ?></p>
 			</div>
@@ -106,7 +104,7 @@ header('Content-Type: text/html;charset=utf-8');
 
 		<div class="container-main frame frame-post">
 			<input placeholder="<?= _ht( 'Enter Title Here' ) ?>" type="text" name="post_title" id="post-title" value="<?= _h( $t_p->getTitle() ) ?>">
-			<div class="button-row"><button id="show-media-chooser" type="button"><?= _ht( 'Insert Media' ) ?></button></div>
+			<div class="button-row"><button id="btn-dialog-media" type="button" data-src="<?= _h( $view['media'] ) ?>"><?= _ht( 'Insert Media' ) ?></button></div>
 			<textarea name="post_content" id="post-content"><?= _h( $t_p->getContent() ) ?></textarea>
 		</div>
 	</div>
@@ -114,6 +112,20 @@ header('Content-Type: text/html;charset=utf-8');
 
 <input id="message-confirmation" type="hidden" value="<?= _ht( 'Do you want to move from the page you are inputting?' ) ?>">
 <input id="lang" type="hidden" value="<?= $lang ?>">
+
+<div id="dialog-placeholder">
+	<iframe id="dialog-media"></iframe>
+	<div id="dialog-preview" class="frame">
+		<header class="header">
+			<div class="inner">
+				<h1><?= _ht( 'Preview' ) ?></h1>
+				<span class="spacer"></span>
+				<button id="btn-close"><?= _ht( 'Close' ) ?></button>
+			</div>
+		</header>
+		<iframe name="iframe-preview"></iframe>
+	</div>
+</div>
 
 </body>
 </html>

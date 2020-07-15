@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-07-13
+ * @version 2020-07-14
  *
  */
 
@@ -14,27 +14,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const lang = document.getElementById('lang').value;
 
-	const conMsg = document.getElementById('message-confirmation').value;
-	window.addEventListener('beforeunload', (e) => { if (isModified) return (e.returnValue = conMsg); });
+	const msgCon = document.getElementById('message-confirmation').value;
+	window.addEventListener('beforeunload', (e) => { if (isModified) return (e.returnValue = msgCon); });
 
 	initPublishingMetabox();
-
 	initDateMetabox();
 	initDateRangeMetabox();
-
 	initEditorPane();
 	adjustEditorHeight();
 
 	let isModified = false;
 
 	function onModified() {
-		if (isModified === false) {
-			isModified = true;
-			const es = document.getElementsByClassName('message');
-			for (let e of es) e.style.display = '';
-			const um = document.getElementById('update-msg');
-			um.innerText = '';
-		}
+		if (isModified) return;
+		isModified = true;
+		const es = document.getElementsByClassName('message');
+		for (let e of es) e.style.display = '';
+		const um = document.getElementById('message-updated');
+		um.innerText = '';
 	}
 
 
@@ -119,13 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
 				'link lists media paste preview print searchreplace table visualblocks',
 			],
 			toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-			content_css: '../data/editor-style.css',
+			content_css: '../data/editor.css',
 			language: lang,
 			setup: (ed) => { ed.on('change', (ed) => { isModified = true; }); },
 			code_dialog_width: 800,
 		});
-		document.getElementById('post-title').addEventListener('change', () => {
-			if (this.value !== '') {
+		document.getElementById('post-title').addEventListener('change', (e) => {
+			if (e.target.value !== '') {
 				const es = document.getElementsByClassName('message');
 				for (let e of es) e.style.display = '';
 			}
@@ -153,92 +150,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	function setButtonEvents() {
-		addBtnEvent('show-list', showList, 'list.php');
-		addBtnEvent('show-media-chooser', showMediaChooser);
-		addBtnEvent('show-preview', showPreview);
-		addBtnEvent('update', update);
+		const btnPreviewClose = document.querySelector('#btn-close');
+		btnPreviewClose.addEventListener('click', closeDialog);
 
-		function addBtnEvent(id, fn, url = false) {
+		addBtnEvent('btn-list');
+		addBtnEvent('btn-update', update);
+		addBtnEvent('btn-dialog-media', openMediaDialog);
+		addBtnEvent('btn-dialog-preview', openPreviewDialog);
+
+		function addBtnEvent(id, fn = null) {
 			const btn = document.getElementById(id);
-			btn.addEventListener('mouseup', function (e) {
+			btn.addEventListener('mouseup', (e) => {
 				if (e.button === 0) {
 					e.preventDefault();
-					fn();
+					if (fn) fn(e);
+					else window.location.href = btn.href;
 				} else if (e.button === 1) {
 					e.preventDefault();
 				}
 			});
-			btn.addEventListener('mousedown', function (e) {
+			btn.addEventListener('mousedown', (e) => {
 				if (e.button === 1) e.preventDefault();
 			});
-			if (url) btn.href = url;
 		}
 	}
 
-	function showPreview() {
-		window.open('about:blank', 'preview');
-		const fp = document.getElementById('form-post');
-		fp.target = 'preview';
-		fp.action = 'preview.php';
-		fp.submit();
-	}
-
-	function update() {
+	function update(e) {
 		if (document.getElementById('post-title').value === '') {
 			const elm = document.getElementById('message-enter-title');
 			elm.style.display = 'block';
 			return false;
 		}
-		document.getElementById('mode').value = 'update';
+		isModified = false;
 		const fp = document.getElementById('form-post');
 		fp.target = '';
-		fp.action = 'post.php';
-		isModified = false;
+		fp.action = e.target.dataset.action;
 		fp.submit();
 	}
 
-	function showList() {
+	function openPreviewDialog(e) {
 		const fp = document.getElementById('form-post');
-		fp.target = '';
-		fp.action = 'list.php';
+		fp.target = 'iframe-preview';
+		fp.action = e.target.dataset.action;
 		fp.submit();
+
+		const dlg = document.getElementById('dialog-preview');
+		dlg.classList.add('visible');
+
+		const ph = document.getElementById('dialog-placeholder');
+		ph.classList.add('visible');
+	}
+
+	function openMediaDialog(e) {
+		const dlg = document.getElementById('dialog-media');
+		dlg.src = e.target.dataset.src;
+		dlg.classList.add('visible');
+
+		const ph = document.getElementById('dialog-placeholder');
+		ph.classList.add('visible');
 	}
 });
 
-function showMediaChooser() {
-	const pid = document.getElementById('id').value;
-	const dialogPlaceholder = document.getElementById('dialog-placeholder');
-
-	const win = document.createElement('iframe');
-	win.id = 'mediaChooser';
-	win.src = 'media.php?id=' + pid;
-	win.style.width     = '960px';
-	win.style.height    = '720px';
-	win.style.maxWidth  = '90vw';
-	win.style.maxHeight = '90vh';
-
-	dialogPlaceholder.appendChild(win);
-	dialogPlaceholder.style.display = 'flex';
+function closeDialog() {
+	const ph = document.getElementById('dialog-placeholder');
+	ph.classList.remove('visible');
+	for (let c of ph.children) c.classList.remove('visible');
 }
 
-function closeMediaChooser() {
-	const dialogPlaceholder = document.getElementById('dialog-placeholder');
-	const win = document.getElementById('mediaChooser');
-	dialogPlaceholder.removeChild(win);
-	dialogPlaceholder.style.display = 'none';
-}
+
+// -----------------------------------------------------------------------------
+
 
 const wh_min = 220;
 
 function insertMedia(name, src, w, h, align, size, isImage) {
-	closeMediaChooser();
+	closeDialog();
 	const cs = [];
 	if (align === 'l') cs.push('alignleft');
 	if (align === 'c') cs.push('aligncenter');
 	if (align === 'r') cs.push('alignright');
 	if (align === 'n') cs.push('alignnone');
 
-	if (src.match(/[zip|pdf]\.jpg$/ig)) size = "";
+	if (src.match(/[zip|pdf]\.jpg$/ig)) size = '';
 	if (isImage) {
 		if (size === 's') cs.push('size-small');
 		if (size === 'm') cs.push('size-medium');
@@ -250,8 +243,7 @@ function insertMedia(name, src, w, h, align, size, isImage) {
 			let r = wh_min
 			if (size === "l") r *= 3;
 			if (size === "m") r *= 2;
-			const vw = Math.round(getSizeW(r, w, h));
-			const vh = Math.round(getSizeH(r, w, h));
+			const [vw, vh] = getSize(w, h, r);
 			const is = ' width="' + vw + '" height="' + vh + '" ';
 			imgstr = imgstr + is;
 		}
@@ -263,20 +255,15 @@ function insertMedia(name, src, w, h, align, size, isImage) {
 	}
 }
 
-function getSizeW(wh, w, h) {
+function getSize(w, h, max) {
+	let nw = max, nh = max;
 	if (w > h) {
 		const p = parseFloat(w) / parseFloat(h);
-		return parseFloat(wh) * parseFloat(p);
-	} else {
-		return wh;
+		nw = parseFloat(max) * parseFloat(p);
 	}
-}
-
-function getSizeH(wh, w, h) {
-	if (w > h) {
-		return wh;
-	} else {
+	if (w < h) {
 		const p = parseFloat(h) / parseFloat(w);
-		return parseFloat(wh) * parseFloat(p);
+		nh = parseFloat(max) * parseFloat(p);
 	}
+	return [Math.round(nw), Math.round(nh)];
 }

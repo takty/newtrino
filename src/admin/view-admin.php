@@ -5,38 +5,49 @@ namespace nt;
  * View
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-14
  *
  */
 
 
-require_once(__DIR__ . '/index.php');
+require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 require_once( __DIR__ . '/../core/util/query-string.php' );
 require_once( __DIR__ . '/../core/util/param.php' );
 
 
 function query() {
-	$base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-	$edit_url = str_replace( 'list.php', 'post.php', $base_url );
-
+	$url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+	if ( strpos( $url, 'list.php' ) !== false ) {
+		$list_url = $url;
+		$post_url = str_replace( 'list.php', 'post.php', $url );
+	} else {
+		$list_url = str_replace( 'post.php', 'list.php', $url );
+		$post_url = $url;
+	}
 	$query = parse_query_string();
 	if ( isset( $query['del_id'] ) ) {
 		global $nt_store;
 		$nt_store->delete( $query['del_id'] );
 	}
-	if ( isset( $msg['query']['id'] ) ) {
-		return _create_view_edit( $query, $base_url );
+	if ( $url === $post_url ) {
+		return _create_view_edit( $query, $list_url, $post_url );
 	} else {
-		return _create_view_list( $query, $base_url, $edit_url );
+		return _create_view_list( $query, $list_url, $post_url );
 	}
 }
 
-function _create_view_edit( $query, $base_url ) {
-	return [];
+function _create_view_edit( $query, $list_url, $post_url ) {
+	$query = _rearrange_query( $query );
+	return [
+		'list'    => create_canonical_url( $list_url, $query ),
+		'update'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update' ] ),
+		'preview' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview' ] ),
+		'media'   => create_canonical_url( 'media.php', [ 'id' => $query['id'] ] ),
+	];
 }
 
-function _create_view_list( $query, $base_url, $edit_url ) {
+function _create_view_list( $query, $list_url, $post_url ) {
 	global $nt_store, $nt_config;
 
 	$query    = _rearrange_query( $query );
@@ -56,20 +67,20 @@ function _create_view_list( $query, $base_url, $edit_url ) {
 		createTaxQueryFromTaxonomyToTerms( $query['taxonomy'], $args );
 	}
 	$ret = $nt_store->getPosts( $args );
-	$ps = array_map( function ( $p ) use ( $query, $base_url, $edit_url ) {
-		return _process_post_for_view( $p, $query, $base_url, $edit_url );
+	$ps = array_map( function ( $p ) use ( $query, $list_url, $post_url ) {
+		return _process_post_for_view( $p, $query, $list_url, $post_url );
 	}, $ret['posts'] );
 
 	return [
 		'posts'            => $ps,
-		'pagination'       => _create_pagination_view( $query, $ret['page_count'], $base_url ),
+		'pagination'       => _create_pagination_view( $query, $ret['page_count'], $list_url ),
 		'taxonomy@cols'    => _create_header_taxonomy_cols( $type ),
-		'taxonomy@cancels' => _create_header_taxonomy_cancels( $query, $base_url ),
+		'taxonomy@cancels' => _create_header_taxonomy_cancels( $query, $list_url ),
 		'filter'           => [
-			'type'     => _create_type_filter_view( $query, $types, $base_url ),
-			'date'     => _create_date_filter_view( $query, $type, 'month', $base_url ),
-			'per_page' => _create_per_page_filter_view( $query, [10, 20, 50, 100], $base_url ),
-			'new'      => _create_new_filter_view( $query, $types, $edit_url ),
+			'type'     => _create_type_filter_view( $query, $types, $list_url ),
+			'date'     => _create_date_filter_view( $query, $type, 'month', $list_url ),
+			'per_page' => _create_per_page_filter_view( $query, [10, 20, 50, 100], $list_url ),
+			'new'      => _create_new_filter_view( $query, $types, $post_url ),
 		],
 	];
 }
@@ -80,6 +91,7 @@ function _create_view_list( $query, $base_url, $edit_url ) {
 
 function _rearrange_query( array $query ): array {
 	return get_query_vars( $query, [
+		'id'       => 'int',
 		'page'     => 'int',
 		'per_page' => 'int',
 		'date'     => 'slug',
@@ -91,11 +103,11 @@ function _rearrange_query( array $query ): array {
 // -----------------------------------------------------------------------------
 
 
-function _create_type_filter_view( array $query, array $types, string $base_url ): array {
+function _create_type_filter_view( array $query, array $types, string $list_url ): array {
 	$cur = isset( $query['type'] ) ? $query['type'] : '';
 	$as = [];
 	foreach ( $types as $slug => $d ) {
-		$url = create_canonical_url( $base_url, $query, [ 'type' => $slug ] );
+		$url = create_canonical_url( $list_url, $query, [ 'type' => $slug ] );
 		$p = [ 'label' => $d['label'], 'url' => $url ];
 		if ( $slug === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
@@ -103,7 +115,7 @@ function _create_type_filter_view( array $query, array $types, string $base_url 
 	return $as;
 }
 
-function _create_date_filter_view( array $query, string $type, string $dateType, string $base_url ): array {
+function _create_date_filter_view( array $query, string $type, string $dateType, string $list_url ): array {
 	global $nt_store;
 	$dates = $nt_store->getCountByDate( $dateType, [ 'type' => $type ] );
 
@@ -115,13 +127,13 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 	}
 	$as = [];
 
-	$url = create_canonical_url( $base_url, $query, [ 'date' => null ] );
+	$url = create_canonical_url( $list_url, $query, [ 'date' => null ] );
 	$p = [ 'label' => translate( 'All' ), 'url' => $url ];
 	if ( $cur === '' ) $p['is_selected'] = true;
 	$as[] = $p;
 
 	foreach ( $dates as $date ) {
-		$url = create_canonical_url( $base_url, $query, [ 'date' => $date['slug'] ] );
+		$url = create_canonical_url( $list_url, $query, [ 'date' => $date['slug'] ] );
 		$label = _format_date_label( $date['slug'], $df );
 		$p = [ 'label' => $label, 'url' => $url ];
 		if ( strval( $date['slug'] ) === $cur ) $p['is_selected'] = true;
@@ -139,11 +151,11 @@ function _format_date_label( string $slug, string $df ): string {
 	return $date->format( $df );
 }
 
-function _create_per_page_filter_view( array $query, array $pers, string $base_url ): array {
+function _create_per_page_filter_view( array $query, array $pers, string $list_url ): array {
 	$cur = isset( $query['per_page'] ) ? $query['per_page'] : '';
 	$as = [];
 	foreach ( $pers as $per ) {
-		$url = create_canonical_url( $base_url, $query, [ 'per_page' => $per ] );
+		$url = create_canonical_url( $list_url, $query, [ 'per_page' => $per ] );
 		$p = [ 'label' => $per, 'url' => $url ];
 		if ( $per == $cur ) $p['is_selected'] = true;
 		$as[] = $p;
@@ -151,10 +163,10 @@ function _create_per_page_filter_view( array $query, array $pers, string $base_u
 	return $as;
 }
 
-function _create_new_filter_view( array $query, array $types, string $edit_url ): array {
+function _create_new_filter_view( array $query, array $types, string $post_url ): array {
 	$as = [];
 	foreach ( $types as $slug => $d ) {
-		$url = create_canonical_url( $edit_url, $query, [ 'type' => $slug, 'mode' => 'new' ] );
+		$url = create_canonical_url( $post_url, $query, [ 'type' => $slug, 'mode' => 'new' ] );
 		$p = [ 'label' => $d['label'], 'url' => $url ];
 		$as[] = $p;
 	}
@@ -165,11 +177,11 @@ function _create_new_filter_view( array $query, array $types, string $edit_url )
 // -----------------------------------------------------------------------------
 
 
-function _create_pagination_view( $query, $page_count, $base_url ) {
+function _create_pagination_view( $query, $page_count, $list_url ) {
 	$cur = isset( $query['page'] ) ? max( 1, min( $query['page'], $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
-		$url = create_canonical_url( $base_url, $query, [ 'page' => $i ] );
+		$url = create_canonical_url( $list_url, $query, [ 'page' => $i ] );
 		$p = [ 'label' => $i, 'url' => $url ];
 		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
@@ -192,7 +204,7 @@ function _create_header_taxonomy_cols( $type ) {
 	return $labs;
 }
 
-function _create_header_taxonomy_cancels( $query, $base_url ) {
+function _create_header_taxonomy_cancels( $query, $list_url ) {
 	if ( ! isset( $query['taxonomy'] ) ) return null;
 
 	global $nt_store;
@@ -200,7 +212,7 @@ function _create_header_taxonomy_cancels( $query, $base_url ) {
 	foreach ( $query['taxonomy'] as $tax => $ts ) {
 		foreach ( $ts as $slug ) {
 			$lab = $nt_store->taxonomy()->getTermLabel( $tax, $slug );
-			$url = create_canonical_url( $base_url, $query, [ $tax => null ] );
+			$url = create_canonical_url( $list_url, $query, [ $tax => null ] );
 			$tts[] = [ 'label' => $lab, 'url' => $url ];
 		}
 	}
@@ -211,7 +223,7 @@ function _create_header_taxonomy_cancels( $query, $base_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _process_post_for_view( ?Post $p, array $query, string $base_url, string $edit_url ): array {
+function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url ): array {
 	if ( $p === null ) return null;
 	return [
 		'id'       => $p->getId(),
@@ -221,11 +233,11 @@ function _process_post_for_view( ?Post $p, array $query, string $base_url, strin
 		'date'     => $p->getDate(),
 		'date@sep' => explode( ' ', $p->getDate() ),
 		'modified' => $p->getModified(),
-		'url'      => $edit_url . '?id=' . urlencode( $p->getId() ),
+		'url'      => create_canonical_url( $post_url, $query, [ 'id' => $p->getId() ] ),
 
-		'delete'        => create_canonical_url( $base_url, $query, [ 'del_id' => $p->getId() ] ),
+		'delete'        => create_canonical_url( $list_url, $query, [ 'del_id' => $p->getId() ] ),
 		'status@select' => _create_status_select( $p ),
-		'taxonomy@cols' => _create_taxonomy_cols( $p, $query, $base_url ),
+		'taxonomy@cols' => _create_taxonomy_cols( $p, $query, $list_url ),
 		'meta@cols'     => _create_meta_cols( $p ),
 	];
 }
@@ -247,7 +259,7 @@ function _create_status_select( Post $p ): array {
 	return $ss;
 }
 
-function _create_taxonomy_cols( Post $p, array $query, string $base_url ): array {
+function _create_taxonomy_cols( Post $p, array $query, string $list_url ): array {
 	global $nt_store;
 	$taxes = $nt_store->type()->getTaxonomySlugAll( $p->getType() );
 
@@ -259,7 +271,7 @@ function _create_taxonomy_cols( Post $p, array $query, string $base_url ): array
 		$tts = [];
 		foreach ( $ts as $slug ) {
 			$lab = $nt_store->taxonomy()->getTermLabel( $tax, $slug );
-			$url = create_canonical_url( $base_url, $query, [ $tax => $slug ] );
+			$url = create_canonical_url( $list_url, $query, [ $tax => $slug ] );
 			$tts[] = [ 'label' => $lab, 'url' => $url ];
 		}
 		$cols[] = [ 'taxonomy' => $tax, 'terms' => $tts ];
