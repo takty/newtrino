@@ -3,53 +3,59 @@
  * Media (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-16
  *
  */
 
 
-let file_name   = '';
-let file_url    = '';
-let file_is_img = false;
-let image_cx    = '';
-let image_cy    = '';
+document.addEventListener('DOMContentLoaded', () => {
+	const btnClose  = document.getElementById('btn-close');
+	const btnDelete = document.getElementById('btn-delete');
+	const btnInsert = document.getElementById('btn-insert');
 
-function initMedia() {
-	document.getElementById('delete').disabled = true;
-	document.getElementById('insert').disabled = true;
-}
+	btnClose.addEventListener('click', closeDialog);
+	btnInsert.addEventListener('click', insertMedia);
+	btnDelete.addEventListener('click', deleteMedia);
+	btnDelete.disabled = true;
+	btnInsert.disabled = true;
 
-function setFile(fileName, url, width, height, isImage) {
-	file_name   = fileName;
-	file_url    = url;
-	file_is_img = isImage;
-	image_cx    = width;
-	image_cy    = height;
-	document.getElementById('delete').disabled = false;
-	document.getElementById('insert').disabled = false;
-}
-
-function deleteFile() {
-	if (!confirm('Do you want to delete it?')) return;
-	document.getElementById('deleted-file').value = file_name;
-	document.getElementById('form-delete').submit();
-}
-
-function insert() {
-	const align = checkRadio('align');
-	const size = checkRadio('size');
-	window.parent.insertMedia(file_name, file_url, image_cx, image_cy, align, size, file_is_img);
-}
-
-function checkRadio(tag) {
-	const radioList = document.getElementsByName(tag);
-	for (let i = 0; i < radioList.length; i += 1) {
-		if (radioList[i].checked) return radioList[i].value;
+	const rs = document.querySelectorAll('.item-media input[type="radio"]');
+	for (let r of rs) {
+		r.addEventListener('change', enableButtons);
 	}
-	return '';
-}
 
-function cancel() {
-	window.parent.closeDialog();
-}
+	function enableButtons() {
+		btnDelete.disabled = false;
+		btnInsert.disabled = false;
+	}
+
+	function closeDialog() {
+		window.parent.closeDialog();
+	}
+
+	function insertMedia() {
+		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
+		const file_name = p.querySelector('.file-name').value;
+		const file_url  = p.querySelector('.file-url').value;
+		const width     = p.querySelector('.width').value;
+		const height    = p.querySelector('.height').value;
+		const is_img    = p.querySelector('.is-img').value;
+
+		const align = document.getElementsByName('align')[0].value;
+		const size  = document.getElementsByName('size')[0].value;
+
+		console.log(file_name, file_url, width, height, align, size, is_img);
+		window.parent.insertMedia(file_name, file_url, width, height, align, size, is_img);
+	}
+
+	function deleteMedia() {
+		const msg = document.getElementById('msg-delete').value;
+		if (!confirm(msg)) return;
+
+		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
+		const file_name = p.querySelector('.file-name').value;
+
+		document.getElementById('deleted-file').value = file_name;
+		document.getElementById('form-delete').submit();
+	}
+});

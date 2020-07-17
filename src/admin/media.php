@@ -2,10 +2,10 @@
 namespace nt;
 /**
  *
- * Media Chooser
+ * Media Dialog
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-16
  *
  */
 
@@ -31,17 +31,9 @@ $t_pid   = $nt_q['id'];
 $t_items = $media->getItemList();
 
 function echo_item_file( $it, $i ) {
-	$_file = addslashes( $it['file'] );
-	$_url  = addslashes( $it['url'] );
-	$ps = [
-		"'$_file'", "'$_url'",
-		$it['width'], $it['height'],
-		empty( $it['img'] ) ? 'false' : 'true',
-	];
-	$on_click = 'setFile(' . implode( ', ', $ps ) . ')';
 ?>
 	<div class="item-media">
-		<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h( $it['caption'] ) ?>" onclick="<?= _h( $on_click ) ?>">
+		<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h( $it['caption'] ) ?>">
 		<label for="item<?= $i ?>">
 <?php if ( empty( $it['img'] ) ) : ?>
 			<div class="thumbnail"><span><?= _h( $it['ext'] ) ?></span></div>
@@ -50,6 +42,11 @@ function echo_item_file( $it, $i ) {
 <?php endif ?>
 			<div class="caption"><?= _h( $it['caption'] ) ?></div>
 		</label>
+		<input type="hidden" class="file-name" value="<?= _h( $it['file'] ) ?>">
+		<input type="hidden" class="file-url" value="<?= _h( $it['url'] ) ?>">
+		<input type="hidden" class="is-img" value="<?= ( empty( $it['img'] ) ? 0 : 1 ) ?>">
+		<input type="hidden" class="width" value="<?= _h( $it['width'] ) ?>">
+		<input type="hidden" class="height" value="<?= _h( $it['height'] ) ?>">
 	</div>
 <?php
 }
@@ -64,7 +61,6 @@ header('Content-Type: text/html;charset=utf-8');
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/media.min.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function () {initMedia();});</script>
 </head>
 <body class="media dialog">
 
@@ -72,7 +68,7 @@ header('Content-Type: text/html;charset=utf-8');
 	<div class="inner">
 		<h1><?= _ht('Insert Media') ?></h1>
 		<div class="spacer"></div>
-		<button type="button" onClick="cancel();"><?= _ht( 'Close' ) ?></button>
+		<button type="button" id="btn-close"><?= _ht( 'Close' ) ?></button>
 	</div>
 </header>
 
@@ -92,19 +88,19 @@ header('Content-Type: text/html;charset=utf-8');
 			<div>
 				<div class="heading"><?= _ht( 'Image Alignment' ) ?></div>
 				<select name="align">
-					<option value="l"><?= _ht( 'Left' ) ?></option>
-					<option value="c" selected><?= _ht( 'Center' ) ?></option>
-					<option value="r"><?= _ht( 'Right' ) ?></option>
-					<option value="n"><?= _ht( 'None' ) ?></option>
+					<option value="alignleft"><?= _ht( 'Left' ) ?></option>
+					<option value="aligncenter" selected><?= _ht( 'Center' ) ?></option>
+					<option value="alignright"><?= _ht( 'Right' ) ?></option>
+					<option value="alignnone"><?= _ht( 'None' ) ?></option>
 				</select>
 			</div>
 			<div>
 				<div class="heading"><?= _ht( 'Image Size' ) ?></div>
 				<select name="size">
-					<option value="s"><?= _ht( 'Small' ) ?></option>
-					<option value="m" selected><?= _ht( 'Medium' ) ?></option>
-					<option value="l"><?= _ht( 'Large' ) ?></option>
-					<option value="f"><?= _ht( 'Full Size' ) ?></option>
+					<option value="size-small"><?= _ht( 'Small' ) ?></option>
+					<option value="size-medium" selected><?= _ht( 'Medium' ) ?></option>
+					<option value="size-large"><?= _ht( 'Large' ) ?></option>
+					<option value="size-full"><?= _ht( 'Full Size' ) ?></option>
 				</select>
 			</div>
 		</div>
@@ -124,12 +120,14 @@ header('Content-Type: text/html;charset=utf-8');
 			<input type="hidden" name="mode" value="delete">
 			<input type="hidden" name="id" value="<?= _h( $t_pid ) ?>">
 			<input type="hidden" name="deleted_file" id="deleted-file">
-			<button class="delete" type="button" id="delete" onClick="deleteFile();"><?= _ht( 'Permanently Delete' ) ?></button>
+			<button class="delete" type="button" id="btn-delete"><?= _ht( 'Permanently Delete' ) ?></button>
 		</form>
 		<div class="spacer"></div>
-		<button type="button" class="accent" id="insert" onClick="insert();"><?= _ht( 'Insert Into Post' ) ?></button>
+		<button type="button" class="accent" id="btn-insert"><?= _ht( 'Insert Into Post' ) ?></button>
 	</div>
 </footer>
+
+<input type="hidden" id="msg-delete" value="<?= _ht( 'Do you want to delete the selected media file?' ) ?>">
 
 </body>
 </html>

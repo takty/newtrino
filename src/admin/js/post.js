@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-16
  *
  */
 
@@ -225,32 +225,23 @@ const wh_min = 220;
 
 function insertMedia(name, src, w, h, align, size, isImage) {
 	closeDialog();
-	const cs = [];
-	if (align === 'l') cs.push('alignleft');
-	if (align === 'c') cs.push('aligncenter');
-	if (align === 'r') cs.push('alignright');
-	if (align === 'n') cs.push('alignnone');
+	const cs = [align];
 
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = '';
 	if (isImage) {
-		if (size === 's') cs.push('size-small');
-		if (size === 'm') cs.push('size-medium');
-		if (size === 'l') cs.push('size-large');
-		if (size === 'f') cs.push('size-full');
-
-		let imgstr = '<a href="' + src + '" class="' + cs.join(' ') + '"><img src="' + src + '"';
-		if (size !== 'f') {  // Not Full Size
+		cs.push(size);
+		let imgstr = `<a href="${src}" class="${cs.join(' ')}"><img src="${src}"`;
+		if (size !== 'size-full') {
 			let r = wh_min
-			if (size === "l") r *= 3;
-			if (size === "m") r *= 2;
+			if (size === 'size-medium') r *= 2;
+			if (size === 'size-large')  r *= 3;
 			const [vw, vh] = getSize(w, h, r);
-			const is = ' width="' + vw + '" height="' + vh + '" ';
-			imgstr = imgstr + is;
+			imgstr += ` width="${vw}" height="${vh}"`;
 		}
-		imgstr += "></a>";
+		imgstr += '></a>';
 		tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
 	} else {
-		const linkStr = '<a href="' + src + '" class="' + cs.join(' ') + '">' + name + '</a>';
+		const linkStr = `<a href="${src}" class="${cs.join(' ')}">${name}</a>`;
 		tinymce.activeEditor.execCommand('mceInsertContent', false, linkStr);
 	}
 }

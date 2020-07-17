@@ -52,6 +52,7 @@
 		"The title is blank.": "タイトルが空です。",
 
 		"Do you want to delete the post?": "この投稿を削除してもよろしいですか？",
-		"Do you want to move from the page you are inputting?": "入力中のページから移動してもよろしいですか？"
+		"Do you want to move from the page you are inputting?": "入力中のページから移動してもよろしいですか？",
+		"Do you want to delete the selected media file?": "選択したメディア・ファイルを削除してもよろしいですか？"
 	}
 }
