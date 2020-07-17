@@ -1,11 +1,13 @@
+<?php
+require_once( __DIR__ . '/../nt/core/view.php' );
+$view = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'option' => [ 'date_format' => 'Y-m-d' ] ] );
+header('Content-Type: text/html;charset=utf-8');
+?>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
-<script src="nt/core/view.min.js"></script>
 <title>Newtrino Sample</title>
 </head>
 <body>
@@ -14,7 +16,7 @@
 	</header>
 	<main>
 		<div class="section section-recent-posts">
-			<script type="text/html">
+			<?php \nt\begin(); ?>
 				<ul id="list-item-post">
 {{#posts}}
 					<li class="{{class@joined}}">
@@ -32,18 +34,11 @@
 					</li>
 {{/posts}}
 				</ul>
-			</script>
+			<?php \nt\end( $view ); ?>
 		</div>
 		<nav>
 			<a href="topic/">Show More...</a>
 		</nav>
 	</main>
-	<script>
-		document.addEventListener('DOMContentLoaded', () => {
-			NT.queryRecentPosts('nt/', (view) => {
-				NT.renderTemplate('[type="text/html"]', view);
-			}, { count: 2, base_url: './topic/', option: { date_format: 'Y-MM-DD'} } );
-		});
-	</script>
 </body>
 </html>

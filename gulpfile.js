@@ -130,23 +130,13 @@ gulp.task('sass', () => {
 		.pipe(gulp.dest(DIST_ADMIN + 'css/'));
 });
 
-gulp.task('sample-html', () => {
+gulp.task('sample', () => {
 	return gulp.src(['dist/**/*'])
 		.pipe($.plumber())
 		.pipe($.ignore.include({ isFile: true }))
-		.pipe($.changed('sample-html/nt', { hasChanged: $.changed.compareContents }))
-		.pipe(gulp.dest('sample-html/nt'));
+		.pipe($.changed('sample/nt', { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest('sample/nt'));
 });
-
-gulp.task('sample-php', () => {
-	return gulp.src(['dist/**/*'])
-		.pipe($.plumber())
-		.pipe($.ignore.include({ isFile: true }))
-		.pipe($.changed('sample-php/nt', { hasChanged: $.changed.compareContents }))
-		.pipe(gulp.dest('sample-php/nt'));
-});
-
-gulp.task('sample', gulp.series('sample-html', 'sample-php'));
 
 gulp.task('watch', () => {
 	gulp.watch('src/**/*.js', gulp.series('js'));

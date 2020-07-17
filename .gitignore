@@ -2,8 +2,6 @@
 /vendor/
 /dist/
 npm-debug.log
-/sample-html/nt/
-!/sample-html/nt/post
-/sample-php/nt/
-!/sample-php/nt/post
+/sample/nt/
+!/sample/nt/post
 /_removed/

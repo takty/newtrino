@@ -1,5 +1,5 @@
 <?php
-require_once( __DIR__ . '/../nt/core/view.php' );
+require_once( __DIR__ . '/../../nt/core/view.php' );
 $view = \nt\query( [
 	'filter' => [ 'taxonomy' => [ 'category' ], 'date_format' => 'Y' ],
 	'option' => [ 'lang' => 'ja', 'date_format' => 'Y-m-d' ]
