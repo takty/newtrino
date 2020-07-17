@@ -1,41 +1,41 @@
 {
-  "name": "newtrino",
-  "version": "1.5.0",
-  "description": "A Simple Flat-File Content Managing System",
-  "keywords": [
-    "cms",
-    "flat-file"
-  ],
-  "author": "Space-Time Inc.",
-  "license": "MIT",
-  "scripts": {
-    "postinstall": "gulp",
-    "start": "gulp"
-  },
-  "browserslist": [
-    "ie >= 11"
-  ],
-  "dependencies": {
-    "flatpickr": "^4.6.3",
-    "jssha": "^3.1.0",
-    "tinymce": "^4.9.10",
-    "tinymce-i18n": "^20.4.4"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "fs-extra": "^9.0.0",
-    "glob": "^7.1.6",
-    "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^7.0.1",
-    "gulp-babel": "^8.0.0",
-    "gulp-changed": "^4.0.2",
-    "gulp-concat": "^2.6.1",
-    "gulp-load-plugins": "^2.0.3",
-    "gulp-plumber": "^1.2.1",
-    "gulp-rename": "^2.0.0",
-    "gulp-sass": "^4.1.0",
-    "gulp-uglify": "^3.0.2",
-    "stile": "git+https://github.com/takty/stile.git#v3.x"
-  }
+	"name": "newtrino",
+	"version": "1.5.0",
+	"description": "A Simple Flat-File Content Managing System",
+	"keywords": [
+		"cms",
+		"flat-file"
+	],
+	"author": "Space-Time Inc.",
+	"license": "MIT",
+	"scripts": {
+		"postinstall": "gulp",
+		"start": "gulp"
+	},
+	"browserslist": [
+		"ie >= 11"
+	],
+	"dependencies": {
+		"flatpickr": "^4.6.3",
+		"jssha": "^3.1.0",
+		"tinymce": "^4.9.10",
+		"tinymce-i18n": "^20.4.4"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.10.5",
+		"@babel/preset-env": "^7.10.4",
+		"fs-extra": "^9.0.1",
+		"glob": "^7.1.6",
+		"gulp": "^4.0.2",
+		"gulp-autoprefixer": "^7.0.1",
+		"gulp-babel": "^8.0.0",
+		"gulp-changed": "^4.0.2",
+		"gulp-concat": "^2.6.1",
+		"gulp-load-plugins": "^2.0.3",
+		"gulp-plumber": "^1.2.1",
+		"gulp-rename": "^2.0.0",
+		"gulp-sass": "^4.1.0",
+		"gulp-uglify": "^3.0.2",
+		"stile": "git+https://github.com/takty/stile.git#v3.x"
+	}
 }
