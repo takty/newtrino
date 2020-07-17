@@ -25,7 +25,7 @@
 		"tinymce-i18n": "^20.4.4"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.10.4",
+		"@babel/core": "^7.10.5",
 		"@babel/preset-env": "^7.10.4",
 		"fs-extra": "^9.0.1",
 		"glob": "^7.1.6",
