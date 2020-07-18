@@ -5,16 +5,16 @@ namespace nt;
  * Ajax API
  *
  * @author Takuto Yanagida
- * @version 2020-07-07
+ * @version 2020-07-18
  *
  */
 
 
 require_once( __DIR__ . '/response.php' );
 
-$query  = ( isset( $_POST['query' ] ) ) ? json_decode( $_POST['query' ], true ) : [];
-$filter = ( isset( $_POST['filter'] ) ) ? json_decode( $_POST['filter'], true ) : [];
-$option = ( isset( $_POST['option'] ) ) ? json_decode( $_POST['option'], true ) : [];
+$query  = isset( $_POST['query' ] ) ? json_decode( $_POST['query' ], true ) : [];
+$filter = isset( $_POST['filter'] ) ? json_decode( $_POST['filter'], true ) : [];
+$option = isset( $_POST['option'] ) ? json_decode( $_POST['option'], true ) : [];
 
 if ( isset( $query['id'] ) ) {
 	$d = create_response_single( $query, $filter, $option );

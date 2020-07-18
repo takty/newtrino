@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-18
  *
  */
 
@@ -111,13 +111,13 @@ class Store {
 	}
 
 	public function getPosts( array $cond = [] ): array {
-		$page = isset( $cond['page'] ) ? $cond['page'] : 1;
+		$page = $cond['page'] ?? 1;
 
 		$posts = $this->_getPosts( $cond );
 
 		$size    = count( $posts );
 		$pageIdx = intval( $page ) - 1;
-		$perPage = intval( isset( $cond['per_page'] ) ? $cond['per_page'] : $this->_conf['per_page'] );
+		$perPage = intval( $cond['per_page'] ?? $this->_conf['per_page'] );
 		$offset  = $perPage * $pageIdx;
 
 		if ( $size < $offset ) {

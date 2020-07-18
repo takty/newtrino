@@ -5,7 +5,7 @@ namespace nt;
  * View (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-18
  *
  */
 
@@ -19,8 +19,8 @@ function query( array $args = [] ): array {
 	$filter = [ 'date' => 'year' ];
 	if ( isset( $args['filter'] ) ) $filter = array_merge( $filter, $args['filter'] );
 
-	$option   = isset( $args['option'] )   ? $args['option']   : [];
-	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : null;
+	$option   = $args['option']   ?? [];
+	$base_url = $args['base_url'] ?? null;
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
@@ -37,9 +37,9 @@ function query( array $args = [] ): array {
 }
 
 function query_recent_posts( array $args = [] ): array {
-	$option   = isset( $args['option'] )   ? $args['option']   : [];
-	$count    = isset( $args['count'] )    ? $args['count']    : 10;
-	$base_url = isset( $args['base_url'] ) ? $args['base_url'] : null;
+	$option   = $args['option']   ?? [];
+	$count    = $args['count']    ?? 10;
+	$base_url = $args['base_url'] ?? null;
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
@@ -166,13 +166,13 @@ function _create_filter_view( array $msg, array $res, string $base_url ): array 
 		}
 	}
 	$v['search'] = [
-		'keyword' => isset( $msg['query']['search'] ) ? $msg['query']['search'] : ''
+		'keyword' => $msg['query']['search'] ?? ''
 	];
 	return $v;
 }
 
 function _create_date_filter_view( array $msg, string $type, array $dates, string $base_url ): array {
-	$cur = isset( $msg['query']['date'] ) ? $msg['query']['date'] : '';
+	$cur = $msg['query']['date'] ?? '';
 	if ( isset( $msg['filter']['date_format'] ) ) {
 		$df = $msg['filter']['date_format'];
 	} else {
@@ -203,7 +203,7 @@ function _format_date_label( string $slug, string $df ): string {
 }
 
 function _create_taxonomy_filter_view( array $msg, string $tax, array $terms, string $base_url ): array {
-	$cur = isset( $msg['query'][ $tax ] ) ? $msg['query'][ $tax ] : '';
+	$cur = $msg['query'][ $tax ] ?? '';
 	$as = [];
 	foreach ( $terms as $term ) {
 		$url = create_canonical_url( $base_url, [ $tax => $term['slug'] ] );

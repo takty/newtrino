@@ -5,7 +5,7 @@ namespace nt;
  * View
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-18
  *
  */
 
@@ -104,7 +104,7 @@ function _rearrange_query( array $query ): array {
 
 
 function _create_type_filter_view( array $query, array $types, string $list_url ): array {
-	$cur = isset( $query['type'] ) ? $query['type'] : '';
+	$cur = $query['type'] ?? '';
 	$as = [];
 	foreach ( $types as $slug => $d ) {
 		$url = create_canonical_url( $list_url, $query, [ 'type' => $slug ] );
@@ -119,7 +119,7 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 	global $nt_store;
 	$dates = $nt_store->getCountByDate( $dateType, [ 'type' => $type ] );
 
-	$cur = isset( $query['date'] ) ? $query['date'] : '';
+	$cur = $query['date'] ?? '';
 	switch ( $dateType ) {
 		case 'year':  $df = 'Y';     break;
 		case 'month': $df = 'Y-m';   break;
@@ -152,7 +152,7 @@ function _format_date_label( string $slug, string $df ): string {
 }
 
 function _create_per_page_filter_view( array $query, array $pers, string $list_url ): array {
-	$cur = isset( $query['per_page'] ) ? $query['per_page'] : '';
+	$cur = $query['per_page'] ?? '';
 	$as = [];
 	foreach ( $pers as $per ) {
 		$url = create_canonical_url( $list_url, $query, [ 'per_page' => $per ] );

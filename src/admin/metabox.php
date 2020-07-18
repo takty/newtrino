@@ -5,7 +5,7 @@ namespace nt;
  * Metabox
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-18
  *
  */
 
@@ -55,7 +55,7 @@ function echo_meta_metaboxes( $post ) {
 	$type = $post->getType();
 	$ms = $nt_store->type()->getMetaAll( $type );
 	foreach ( $ms as $m ) {
-		$label = isset( $m['label'] ) ? $m['label'] : '';
+		$label = $m['label'] ?? '';
 		if ( empty( $label ) ) continue;
 		switch ( $m['type'] ) {
 			case 'date':
