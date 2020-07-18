@@ -144,7 +144,7 @@ a {
 	}
 
 	.flatpickr-input {
-		width: 14rem;
+		min-width: 12rem;
 		@include for-tl { width: 100%; }
 
 		font-size: 0.75rem;
