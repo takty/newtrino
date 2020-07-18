@@ -3,12 +3,12 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-18
  *
  */
 
 
-@import '../lib/stile/sass/all';
+@import 'mixin';
 
 @import 'login';
 @import 'list';
@@ -51,8 +51,8 @@ a {
 .header,
 .footer {
 	.inner {
-		display: flex;
-		align-items: center;
+		display        : flex;
+		align-items    : center;
 		justify-content: space-between;
 
 		.spacer { flex-grow: 1; }

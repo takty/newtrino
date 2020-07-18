@@ -3,7 +3,7 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-18
  *
  */
 
@@ -28,9 +28,8 @@
 	text-align: center;
 
 	.thumbnail {
-		display        : flex;
-		align-items    : center;
-		justify-content: center;
+		display    : grid;
+		place-items: center;
 
 		margin: 0 auto;
 		width : 6rem;

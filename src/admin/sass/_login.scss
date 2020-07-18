@@ -3,13 +3,14 @@
  * Login (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2020-07-18
  *
  */
 
 
 body.login {
-	@include layout-centering;
+    display    : grid;
+    place-items: center;
 
 	#key {
 		position: absolute;
@@ -40,8 +41,8 @@ body.login {
 	}
 
 	nav {
-		display: flex;
-		align-items: center;
+		display        : flex;
+		align-items    : center;
 		justify-content: flex-end;
 	}
 

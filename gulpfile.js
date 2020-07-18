@@ -70,8 +70,8 @@ gulp.task('copy-tinymce', (done) => {
 	done();
 });
 
-gulp.task('copy-stile-sass', (done) => {
-	copySync('./node_modules/stile/dist/sass/*', SRC_ADMIN + 'lib/stile/sass/');
+gulp.task('copy-nacss-reset', (done) => {
+	copySync('./node_modules/nacss-reset/dist/reset.min.css', DIST_ADMIN + 'css/');
 	done();
 });
 
@@ -84,7 +84,7 @@ gulp.task('copy-lib', gulp.parallel(
 	'copy-jssha',
 	'copy-flatpickr',
 	'copy-tinymce',
-	'copy-stile-sass',
+	'copy-nacss-reset',
 	'copy-mustache',
 ));
 

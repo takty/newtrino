@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-18
  *
  */
 
@@ -41,11 +41,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht( 'User Authentication' ) ?> - Newtrino</title>
+<link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.min.js"></script>
 <script>console.log('<?= $error ?>');</script>
+<title><?= _ht( 'User Authentication' ) ?> - Newtrino</title>
 </head>
 <body class="login">
 <div class="frame frame-login">

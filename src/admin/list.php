@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-18
  *
  */
 
@@ -21,9 +21,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('Post List') ?> - Newtrino</title>
+<link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/list.min.js"></script>
+<title><?= _ht('Post List') ?> - Newtrino</title>
 </head>
 <body class='list'>
 <header class="header">

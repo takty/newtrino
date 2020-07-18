@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-18
  *
  */
 
@@ -59,9 +59,8 @@
 }
 
 .pagination {
-	display        : flex;
-	align-items    : center;
-	justify-content: center;
+    display    : grid;
+    place-items: center;
 
 	margin-top: 1.5rem;
 	> * + * { margin-left: 0.5rem; }

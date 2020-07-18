@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-18
  *
  */
 
@@ -63,14 +63,15 @@ header('Content-Type: text/html;charset=utf-8');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= _ht('Post Edit') ?> - Newtrino</title>
-<link rel="stylesheet" href="css/style.min.css">
+<link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
+<link rel="stylesheet" href="css/style.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/post.min.js"></script>
+<title><?= _ht('Post Edit') ?> - Newtrino</title>
 </head>
 <body class="edit">
 
