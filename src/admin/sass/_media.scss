@@ -3,7 +3,7 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-19
  *
  */
 
@@ -35,7 +35,7 @@
 		width : 6rem;
 		height: 6rem;
 
-		border: 1px solid #ccc;
+		box-shadow: 0 0 4px #ccc inset;
 		border-radius: 2px;
 
 		img {
@@ -61,4 +61,15 @@
 			box-shadow: 0 0 4px 2px rgba(#88f, 0.75);
 		}
 	}
+}
+
+select[name="size"] {
+	option { display: none; }
+	&.small        { option[value="small"]        { display: block; } }
+	&.medium-small { option[value="medium-small"] { display: block; } }
+	&.medium       { option[value="medium"]       { display: block; } }
+	&.medium-large { option[value="medium-large"] { display: block; } }
+	&.large        { option[value="large"]        { display: block; } }
+	&.extra-large  { option[value="extra-large"]  { display: block; } }
+	&.full         { option[value="full"]         { display: block; } }
 }

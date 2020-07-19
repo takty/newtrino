@@ -4,7 +4,7 @@
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-07-16
+ * @version 2020-07-19
  *
  */
 
@@ -229,12 +229,12 @@ function insertMedia(name, src, w, h, align, size, isImage) {
 
 	if (src.match(/[zip|pdf]\.jpg$/ig)) size = '';
 	if (isImage) {
-		cs.push(size);
+		cs.push('size-' + size);
 		let imgstr = `<a href="${src}" class="${cs.join(' ')}"><img src="${src}"`;
-		if (size !== 'size-full') {
+		if (size !== 'full') {
 			let r = wh_min
-			if (size === 'size-medium') r *= 2;
-			if (size === 'size-large')  r *= 3;
+			if (size === 'medium') r *= 2;
+			if (size === 'large')  r *= 3;
 			const [vw, vh] = getSize(w, h, r);
 			imgstr += ` width="${vw}" height="${vh}"`;
 		}

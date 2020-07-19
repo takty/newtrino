@@ -21,12 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
 	for (let r of rs) {
-		r.addEventListener('change', enableButtons);
+		r.addEventListener('change', onItemSelected);
 	}
 
-	function enableButtons() {
+	const selSize = document.getElementsByName('size')[0];
+	selSize.disabled = true;
+
+	function onItemSelected(e) {
 		btnDelete.disabled = false;
 		btnInsert.disabled = false;
+
+		const s = e.target.parentElement.querySelector('.sizes');
+		if (s) {
+			selSize.disabled = false;
+			const sizes = JSON.parse(s.value);
+			selSize.className = '';
+			for (const key of Object.keys(sizes)) {
+				selSize.classList.add(key);
+			}
+		} else {
+			selSize.disabled = true;
+		}
 	}
 
 	function closeDialog() {
@@ -37,14 +52,27 @@ document.addEventListener('DOMContentLoaded', () => {
 		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
 		const file_name = p.querySelector('.file-name').value;
 		const file_url  = p.querySelector('.file-url').value;
-		const width     = p.querySelector('.width').value;
-		const height    = p.querySelector('.height').value;
+		// const width     = p.querySelector('.width').value;
+		// const height    = p.querySelector('.height').value;
 		const is_img    = p.querySelector('.is-img').value;
 
 		const align = document.getElementsByName('align')[0].value;
 		const size  = document.getElementsByName('size')[0].value;
 
-		console.log(file_name, file_url, width, height, align, size, is_img);
+		let width = 0;
+		let height = 0;
+
+		const s = p.querySelector('.sizes');
+		if (s) {
+			const sizes = JSON.parse(s.value);
+			const d = sizes[size];
+			if (d) {
+				width = d.width;
+				height = d.height;
+			}
+		}
+
+		// console.log(file_name, file_url, width, height, align, size, is_img);
 		window.parent.insertMedia(file_name, file_url, width, height, align, size, is_img);
 	}
 

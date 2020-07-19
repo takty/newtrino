@@ -13,7 +13,7 @@ namespace nt;
 require_once( __DIR__ . '/index.php' );
 
 
-$media = new Media( NT_DIR_POST, NT_URL_POST, Post::MEDIA_DIR_NAME, $nt_q['id'] );
+$media = new Media( $nt_q['id'], Post::MEDIA_DIR_NAME );
 
 if ( $nt_q['mode'] === 'delete' ) {
 	$file = $nt_q['deleted_file'];
@@ -33,20 +33,21 @@ $t_items = $media->getItemList();
 function echo_item_file( $it, $i ) {
 ?>
 	<div class="item-media">
-		<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h( $it['caption'] ) ?>">
+		<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h( $it['file_name'] ) ?>">
 		<label for="item<?= $i ?>">
-<?php if ( empty( $it['img'] ) ) : ?>
+<?php if ( empty( $it['is_image'] ) ) : ?>
 			<div class="thumbnail"><span><?= _h( $it['ext'] ) ?></span></div>
 <?php else : ?>
-			<div class="thumbnail"><img src="<?= _h( $it['url'] ) ?>"></div>
+			<div class="thumbnail"><img src="<?= _h( $it['min_size_url'] ) ?>"></div>
 <?php endif ?>
-			<div class="caption"><?= _h( $it['caption'] ) ?></div>
+			<div class="caption"><?= _h( $it['file_name'] ) ?></div>
 		</label>
-		<input type="hidden" class="file-name" value="<?= _h( $it['file'] ) ?>">
+		<input type="hidden" class="file-name" value="<?= _h( $it['file_name'] ) ?>">
 		<input type="hidden" class="file-url" value="<?= _h( $it['url'] ) ?>">
-		<input type="hidden" class="is-img" value="<?= ( empty( $it['img'] ) ? 0 : 1 ) ?>">
-		<input type="hidden" class="width" value="<?= _h( $it['width'] ) ?>">
-		<input type="hidden" class="height" value="<?= _h( $it['height'] ) ?>">
+		<input type="hidden" class="is-img" value="<?= ( empty( $it['is_image'] ) ? 0 : 1 ) ?>">
+<?php if ( isset( $it['sizes_json'] ) ) : ?>
+		<input type="hidden" class="sizes" value="<?= _h( $it['sizes_json'] ) ?>">
+<?php endif; ?>
 	</div>
 <?php
 }
@@ -98,10 +99,13 @@ header('Content-Type: text/html;charset=utf-8');
 			<div>
 				<div class="heading"><?= _ht( 'Image Size' ) ?></div>
 				<select name="size">
-					<option value="size-small"><?= _ht( 'Small' ) ?></option>
-					<option value="size-medium" selected><?= _ht( 'Medium' ) ?></option>
-					<option value="size-large"><?= _ht( 'Large' ) ?></option>
-					<option value="size-full"><?= _ht( 'Full Size' ) ?></option>
+					<option value="small"><?= _ht( 'Small' ) ?></option>
+					<option value="medium-small"><?= _ht( 'Medium Small' ) ?></option>
+					<option value="medium" selected><?= _ht( 'Medium' ) ?></option>
+					<option value="medium-large"><?= _ht( 'Medium Large' ) ?></option>
+					<option value="large"><?= _ht( 'Large' ) ?></option>
+					<option value="extra-large"><?= _ht( 'Extra Large' ) ?></option>
+					<option value="full"><?= _ht( 'Full Size' ) ?></option>
 				</select>
 			</div>
 		</div>

@@ -43,13 +43,18 @@
 		"Center": "中央",
 		"Right": "右",
 		"None": "なし",
-		"Full Size": "フルサイズ",
-		"Large": "大",
-		"Medium": "中",
-		"Small": "小",
+
 		"Update Complete": "更新完了",
 		"Enter Title Here": "ここにタイトルを入力",
 		"The title is blank.": "タイトルが空です。",
+
+		"Small": "小",
+		"Medium Small": "やや小",
+		"Medium": "中",
+		"Medium Large": "やや大",
+		"Large": "大",
+		"Extra Large": "特大",
+		"Full Size": "フルサイズ",
 
 		"Do you want to delete the post?": "この投稿を削除してもよろしいですか？",
 		"Do you want to move from the page you are inputting?": "入力中のページから移動してもよろしいですか？",
