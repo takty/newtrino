@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-22
  *
  */
 
@@ -25,9 +25,9 @@ class Post {
 	const WORD_FILE_NAME = 'word.txt';
 	const MEDIA_DIR_NAME = 'media';
 
-	const STATUS_PUBLISHED = 'published';
-	const STATUS_RESERVED  = 'reserved';
-	const STATUS_DRAFT     = 'draft';
+	const STATUS_PUBLISH = 'publish';
+	const STATUS_FUTURE  = 'future';
+	const STATUS_DRAFT   = 'draft';
 
 	const DATE_STATUS_UPCOMING = 'upcoming';
 	const DATE_STATUS_ONGOING  = 'ongoing';
@@ -100,7 +100,7 @@ class Post {
 
 	private function _updateStatus( string $postDir ) {
 		if ( $this->_status === self::STATUS_DRAFT ) return;
-		$s = $this->canPublished() ? self::STATUS_PUBLISHED : self::STATUS_RESERVED;
+		$s = $this->canPublished() ? self::STATUS_PUBLISH : self::STATUS_FUTURE;
 		if ( $s !== $this->_status ) {
 			$this->_status = $s;
 			$this->_writeInfo( $postDir );
@@ -164,7 +164,7 @@ class Post {
 
 	private $_type     = '';
 	private $_title    = '';
-	private $_status   = self::STATUS_PUBLISHED;
+	private $_status   = self::STATUS_PUBLISH;
 	private $_date     = '';
 	private $_modified = '';
 	private $_taxonomy = [];
@@ -180,7 +180,7 @@ class Post {
 		$info += [
 			'type'     => 'post',
 			'title'    => '',
-			'status'   => self::STATUS_PUBLISHED,
+			'status'   => self::STATUS_PUBLISH,
 			'taxonomy' => [],
 			'meta'     => [],
 		];
@@ -262,7 +262,7 @@ class Post {
 	}
 
 	function setStatus( string $val ) {
-		if ( ! in_array( $val, [ self::STATUS_PUBLISHED, self::STATUS_RESERVED, self::STATUS_DRAFT ], true ) ) return;
+		if ( ! in_array( $val, [ self::STATUS_PUBLISH, self::STATUS_FUTURE, self::STATUS_DRAFT ], true ) ) return;
 		$this->_status = $val;
 	}
 

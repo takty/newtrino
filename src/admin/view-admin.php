@@ -5,7 +5,7 @@ namespace nt;
  * View
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-22
  *
  */
 
@@ -245,12 +245,12 @@ function _process_post_for_view( ?Post $p, array $query, string $list_url, strin
 function _create_status_select( Post $p ): array {
 	$ss = [];
 	if ( $p->canPublished() ) {
-		$s = [ 'slug' => 'published', 'label' => translate( 'Published' ) ];
-		if ( $p->isStatus( 'published' ) ) $s['is_selected'] = true;
+		$s = [ 'slug' => 'publish', 'label' => translate( 'Published' ) ];
+		if ( $p->isStatus( 'publish' ) ) $s['is_selected'] = true;
 		$ss[] = $s;
 	} else {
-		$s = [ 'slug' => 'reserved', 'label' => translate( 'Reserved' ) ];
-		if ( $p->isStatus( 'reserved' ) ) $s['is_selected'] = true;
+		$s = [ 'slug' => 'future', 'label' => translate( 'Scheduled' ) ];
+		if ( $p->isStatus( 'future' ) ) $s['is_selected'] = true;
 		$ss[] = $s;
 	}
 	$s = [ 'slug' => 'draft', 'label' => translate( 'Draft' ) ];

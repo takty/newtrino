@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-22
  *
  */
 
@@ -14,7 +14,6 @@ require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/metabox.php' );
 require_once( __DIR__ . '/view-admin.php' );
 $view = query();
-// var_dump( $view );
 
 $lang = $nt_config['lang_admin'];
 
@@ -45,8 +44,8 @@ function echo_state_select( $post ) {
 	$s = $post->getStatus();
 ?>
 	<select form="form-post" name="post_status" id="post-status">
-		<option id="post-status-published" value="published"<?php if ( $s === 'published' ) _eh( ' selected' ); ?>><?= _ht( 'Published' ) ?></option>
-		<option id="post-status-reserved" value="reserved"<?php if ( $s === 'reserved' ) _eh( ' selected' ); ?>><?= _ht( 'Reserved' ) ?></option>
+		<option id="post-status-publish" value="publish"<?php if ( $s === 'publish' ) _eh( ' selected' ); ?>><?= _ht( 'Published' ) ?></option>
+		<option id="post-status-future" value="future"<?php if ( $s === 'future' ) _eh( ' selected' ); ?>><?= _ht( 'Scheduled' ) ?></option>
 		<option id="post-status-draft" value="draft"<?php if ( $s === 'draft' ) _eh( ' selected' ); ?>><?= _ht( 'Draft' ) ?></option>
 	</select>
 <?php

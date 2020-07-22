@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-22
  *
  */
 
@@ -158,9 +158,7 @@ class Store {
 
 
 	private function _getPosts( array $args ): array {
-		$args += [
-			'status' => Post::STATUS_PUBLISHED,
-		];
+		$args += [ 'status' => Post::STATUS_PUBLISH ];
 		$posts = [];
 		$this->_loadMatchedPostAll( $this->_dirRoot, $args, $posts );
 
