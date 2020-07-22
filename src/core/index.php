@@ -49,12 +49,13 @@ function load_config( string $dirData ): array {
 		'archive_by_year'    => false,
 		'archive_by_type'    => false,
 		'image_sizes' => [
-			'small'        => 256,
-			'medium_small' => 512,
-			'medium'       => 768,
-			'medium_large' => 1024,
-			'large'        => 1280,
-			'extra_large'  => 1536,
+			'small'        =>  128,
+			'medium_small' =>  256,
+			'medium'       =>  384,
+			'medium_large' =>  512,
+			'large'        =>  768,
+			'extra_large'  => 1024,
+			'huge'         => 1536,
 		]
 	];
 	date_default_timezone_set( $conf['timezone'] );

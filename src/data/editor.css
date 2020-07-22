@@ -1,31 +1,51 @@
+/*
+ * Editor Styles
+ */
+
+
+/* Alignments --------------------------------------------------------------- */
+
+
 .alignleft {
 	float: left;
-	margin: 0 1% 2rem 0;
+	margin: 0 1rem 2rem 0;
 }
 
 .alignright {
 	float: right;
-	margin: 0 0 2rem 1%;
+	margin: 0 0 2rem 1rem;
 }
 
 .aligncenter {
-	text-align: center;
-	width: 100%;
 	display: block;
+	width: 100%;
 	margin-bottom: 2rem;
+	text-align: center;
 }
 
-.size-small {
-	max-width: 10rem;
+
+/* Image Sizes -------------------------------------------------------------- */
+
+
+.size-small,
+.size-medium-small,
+.size-medium,
+.size-medium-large,
+.size-large,
+.size-extra-large,
+.size-full {
 	width: 100%;
+	height: auto;
 }
 
-.size-medium {
-	max-width: 20rem;
-	width: 100%;
-}
+.size-small        { max-width:  8rem; }
+.size-medium-small { max-width: 16rem; }
+.size-medium       { max-width: 24rem; }
+.size-medium-large { max-width: 32rem; }
+.size-large        { max-width: 48rem; }
+.size-extra-large  { max-width: 64rem; }
+.size-huge         { max-width: 96rem; }
 
-.size-large {
-	max-width: 40rem;
-	width: 100%;
+.size-full {
+	max-width: 100%;
 }
