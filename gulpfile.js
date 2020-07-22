@@ -95,6 +95,7 @@ gulp.task('copy-src', (done) => {
 	fs.removeSync(DIST_ADMIN + 'lib');
 	for (let f of glob.sync(DIST_ADMIN + 'js/*.js')) fs.removeSync(f);
 	for (let f of glob.sync(DIST_BASE + 'core/*.js')) fs.removeSync(f);
+	for (let f of glob.sync(DIST_BASE + '*.js')) fs.removeSync(f);
 	done();
 });
 

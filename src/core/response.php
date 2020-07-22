@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-22
  *
  */
 
@@ -13,8 +13,6 @@ namespace nt;
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-store.php' );
 require_once( __DIR__ . '/util/param.php' );
-
-set_locale_setting();
 
 $nt_config = load_config( NT_DIR_DATA );
 

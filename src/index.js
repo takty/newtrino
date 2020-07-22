@@ -1,9 +1,9 @@
 /**
  *
- * View (JS)
+ * Index (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-22
  *
  */
 
@@ -13,7 +13,7 @@ window.NT = window['NT'] || {};
 
 (function (NS) {
 
-	const AJAX_API = 'core/view-ajax.php';
+	const AJAX_API = 'index.php';
 
 	function query(url, callback, args = {}) {
 		let filter = { date: 'year' };

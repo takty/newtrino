@@ -5,14 +5,14 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-22
  *
  */
 
 
-require_once( __DIR__ . '/../index.php' );
 require_once( __DIR__ . '/util/url.php' );
 
+define( 'NT_DIR', pathinfo( __DIR__, PATHINFO_DIRNAME ) . '/' );
 define( 'NT_DIR_DATA', NT_DIR . '/data/' );
 define( 'NT_DIR_POST', NT_DIR . '/post/' );
 
@@ -32,24 +32,16 @@ if ( defined( 'NT_ADMIN' ) ) {
 // Functions Used in Initial Process -------------------------------------------
 
 
-function set_locale_setting() {
-	date_default_timezone_set( 'Asia/Tokyo' );
-	mb_language( 'Japanese' );
-	mb_internal_encoding( 'utf-8' );
-	mb_http_output( 'utf-8' );
-	mb_http_input( 'utf-8' );
-	mb_regex_encoding( 'utf-8' );
-}
-
 function load_config( string $dirData ): array {
 	$conf = [];
 	$path = $dirData . 'config.json';
-	if ( file_exists( $path ) ) {
+	if ( is_file( $path ) ) {
 		$json = file_get_contents( $path );
 		$conf = json_decode( $json, true );
 	}
 	// Default Config
 	$conf += [
+		'timezone'           => 'Asia/Tokyo',
 		'lang'               => 'en',
 		'lang_admin'         => 'en',
 		'per_page'           => 10,
@@ -65,46 +57,7 @@ function load_config( string $dirData ): array {
 			'extra_large'  => 1536,
 		]
 	];
+	date_default_timezone_set( $conf['timezone'] );
+	mb_internal_encoding( 'utf-8' );
 	return $conf;
-}
-
-function load_resource( string $dirData, string $lang ): array {
-	$path = $dirData . $lang . '.json';
-	if ( file_exists( $path ) ) {
-		$json = file_get_contents( $path );
-		return json_decode( $json, true );
-	}
-	return [];
-}
-
-
-// Output Functions ------------------------------------------------------------
-
-
-function _h( string $str ): string {
-	return htmlspecialchars( $str, ENT_QUOTES, 'UTF-8' );
-}
-
-function _eh( string $str ) {
-	echo htmlspecialchars( $str, ENT_QUOTES, 'UTF-8' );
-}
-
-function _ht( string $str, string $context = 'default' ): string {
-	return htmlspecialchars( translate( $str, $context ), ENT_QUOTES, 'UTF-8' );
-}
-
-function translate( string $str, string $context = 'default' ): string {
-	if ( defined( 'NT_ADMIN' ) && $context === 'default' ) {
-		$context = 'admin';
-	}
-	global $nt_res;
-	if ( isset( $nt_res[ $context ][ $str ] ) ) {
-		return $nt_res[ $context ][ $str ];
-	}
-	if ( $context !== 'default' ) {
-		if ( isset( $nt_res['default'][ $str ] ) ) {
-			return $nt_res['default'][ $str ];
-		}
-	}
-	return $str;
 }
