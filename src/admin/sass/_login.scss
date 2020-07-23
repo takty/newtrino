@@ -3,7 +3,7 @@
  * Login (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-23
  *
  */
 
@@ -44,10 +44,5 @@ body.login {
 		display        : flex;
 		align-items    : center;
 		justify-content: flex-end;
-	}
-
-	button[type='submit'] {
-		user-select: none;
-		&:not(:hover) { border-color: orange; }
 	}
 }
