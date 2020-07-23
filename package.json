@@ -20,7 +20,7 @@
 	],
 	"dependencies": {
 		"flatpickr": "^4.6.3",
-		"jssha": "^3.1.0",
+		"jssha": "^3.1.1",
 		"tinymce": "^4.9.11",
 		"tinymce-i18n": "^20.4.4"
 	},
