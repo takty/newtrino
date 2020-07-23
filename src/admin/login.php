@@ -5,32 +5,23 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-24
  *
  */
 
 
-define( 'NT_ADMIN', true );
+require_once( __DIR__ . '/index.php' );
 
-require_once( __DIR__ . '/../core/index.php' );
-require_once( __DIR__ . '/class-session.php' );
 
-set_locale_setting();
-
-$nt_config  = load_config( NT_DIR_DATA );
-$nt_res     = load_resource( NT_DIR_ADMIN_RES, $nt_config['lang_admin'] );
-$nt_session = new Session( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_SESSION );
-$success    = true;
-$error      = '';
-
-if ( ! empty( $_POST['digest'] ) ) {
-	$success = $nt_session->login( $_POST, $error );
-	if ( $success ) {
-		header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
-		exit();
-	}
-} else {
+$res = true;
+if ( empty( $_POST['digest'] ) ) {
 	$nt_session->logout();
+} else {
+	$res = $nt_session->login( $_POST );
+	if ( $res ) {
+		header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
+		exit;
+	}
 }
 
 
@@ -45,7 +36,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.min.js"></script>
-<script>console.log('<?= $error ?>');</script>
+<script>console.log('<?= $nt_session->getErrorMessage() ?>');</script>
 <title><?= _ht( 'User Authentication' ) ?> - Newtrino</title>
 </head>
 <body class="login">
@@ -56,16 +47,16 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<dt><?= _ht( 'Username:' ) ?></dt><dd><input type="text" name="user" id="user"></dd>
 			<dt><?= _ht( 'Password:' ) ?></dt><dd><input type="password" id="pw"></dd>
 		</dl>
-		<input type="hidden" name="realm" id="realm" value="<?= _h( 'newtrino' ) ?>">
-		<input type="hidden" name="nonce" id="nonce" value="<?= _h( Session::getNonce() ) ?>">
-		<input type="hidden" name="url" id="url" value="<?= _h( NT_URL_ADMIN ) ?>">
+		<input type="hidden" name="realm" id="realm" value="<?= _h( $nt_session->getRealm() ) ?>">
+		<input type="hidden" name="nonce" id="nonce" value="<?= _h( $nt_session->getNonce() ) ?>">
+		<input type="hidden" name="url" id="url" value="<?= _h( $nt_session->getUrl() ) ?>">
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
-<?php if ( ! $success ) : ?>
+<?php if ( ! $res ) : ?>
 		<p><?= _ht( 'User name or password is wrong.' ) ?></p>
 <?php endif; ?>
 		<nav>
-			<button type="submit" id="btn-login" class="accent"><?= _ht( 'Login' ) ?></button>
+			<button type="submit" id="btn-login" class="accent"><?= _ht( 'Log In' ) ?></button>
 		</nav>
 	</form>
 	<div id="key"></div>

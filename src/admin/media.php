@@ -5,30 +5,37 @@ namespace nt;
  * Media Dialog
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-07-24
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
+require_once( __DIR__ . '/class-media.php' );
+require_once( __DIR__ . '/../core/class-store.php' );
 
+start_session( true );
 
-$media = new Media( $nt_q['id'], Post::MEDIA_DIR_NAME, NT_URL );
+$q = $_REQUEST;
+$q_mode     = $q['mode']     ?? '';
+$q_id       = $q['id']       ?? 0;
+$q_del_file = $q['del_file'] ?? '';
 
-if ( $nt_q['mode'] === 'delete' ) {
-	$file = $nt_q['deleted_file'];
-	if ( ! empty( $file ) ) {
-		$media->remove( $file );
+$media = new Media( $q_id, Post::MEDIA_DIR_NAME, NT_URL );
+
+if ( $q_mode === 'delete' ) {
+	if ( ! empty( $q_del_file ) ) {
+		$media->remove( $q_del_file );
 	}
-} else if ( $nt_q['mode'] === 'upload' ) {
-	if ( ! isset( $_FILES['uploadFile']['error'] ) || ! is_int( $_FILES['uploadFile']['error'] ) ) {
+} else if ( $q_mode === 'upload' ) {
+	if ( ! isset( $_FILES['upload_file']['error'] ) || ! is_int( $_FILES['upload_file']['error'] ) ) {
 		// error
-	} else if ( isset( $_FILES['uploadFile'] ) ) {
-		$media->upload( $_FILES['uploadFile'] );
+	} else if ( isset( $_FILES['upload_file'] ) ) {
+		$media->upload( $_FILES['upload_file'] );
 	}
 }
-$t_pid   = $nt_q['id'];
 $t_items = $media->getItemList();
+
 
 function echo_item_file( $it, $i ) {
 ?>
@@ -69,13 +76,11 @@ header('Content-Type: text/html;charset=utf-8');
 <header class="header">
 	<div class="inner">
 		<h1><?= _ht('Insert Media') ?></h1>
-		<form action="media.php" method="post" enctype="multipart/form-data" id="uploadForm">
-			<input type="hidden" name="id" value="<?= _h($t_pid) ?>">
+		<form action="media.php" method="post" enctype="multipart/form-data" id="form-upload">
+			<input type="hidden" name="id" value="<?= _h( $q_id ) ?>">
 			<input type="hidden" name="mode" value="upload">
-			<div style="display: none">
-				<input type="file" name="uploadFile" id="uploadFile" onchange="if (this.value !== '') document.getElementById('uploadForm').submit();">
-			</div>
-			<button type="button" onclick="document.getElementById('uploadFile').click();"><?= _ht('Add New') ?></button>
+			<div style="display:none"><input type="file" name="upload_file" id="upload-file"></div>
+			<button id="btn-add" type="button"><?= _ht('Add New') ?></button>
 		</form>
 		<div class="spacer"></div>
 		<button type="button" id="btn-close"><?= _ht( 'Close' ) ?></button>
@@ -131,8 +136,8 @@ header('Content-Type: text/html;charset=utf-8');
 	<div class="inner">
 		<form action="media.php" method="post" id="form-delete">
 			<input type="hidden" name="mode" value="delete">
-			<input type="hidden" name="id" value="<?= _h( $t_pid ) ?>">
-			<input type="hidden" name="deleted_file" id="deleted-file">
+			<input type="hidden" name="id" value="<?= _h( $q_id ) ?>">
+			<input type="hidden" name="del_file" id="del-file">
 			<button class="delete" type="button" id="btn-delete"><?= _ht( 'Permanently Delete' ) ?></button>
 		</form>
 		<div class="spacer"></div>

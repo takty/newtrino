@@ -5,30 +5,31 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-24
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
+require_once( __DIR__ . '/../core/class-store.php' );
 
+start_session( true );
 
-$t_title   = $nt_q['post_title'];
-$t_date    = $nt_q['post_date'];
-$t_content = $nt_q['post_content'];
+$q = $_REQUEST;
+$q_title   = $q['post_title']   ?? '';
+$q_date    = $q['post_date']    ?? '';
+$q_content = $q['post_content'] ?? '';
 
-global $nt_store;
-$taxes = $nt_store->taxonomy()->getTaxonomyAll();
-$tax_labels = [];
-foreach ( $taxes as $tax => $data ) {
-	if ( ! isset( $nt_q["taxonomy:$tax"] ) ) continue;
-	$ts = is_array( $nt_q["taxonomy:$tax"] ) ? $nt_q["taxonomy:$tax"] : [ $nt_q["taxonomy:$tax"] ];
+$taxes = array_keys( $nt_store->taxonomy()->getTaxonomyAll() );
+$tax_lis = [];
+foreach ( $taxes as $tax ) {
+	if ( ! isset( $q["taxonomy:$tax"] ) ) continue;
+	$ts = is_array( $q["taxonomy:$tax"] ) ? $q["taxonomy:$tax"] : [ $q["taxonomy:$tax"] ];
 	$ls = [];
 	foreach ( $ts as $t ) {
-		$l = $nt_store->taxonomy()->getTermLabel( $tax, $t );
-		if ( ! empty( $l ) ) $ls[] = _h( $l );
+		$ls[] = _h( $nt_store->taxonomy()->getTermLabel( $tax, $t ) );
 	}
-	if ( ! empty( $ls ) ) $tax_labels[ $tax ] = '<li>' . implode( '</li><li>', $ls ) . '</li>';
+	if ( ! empty( $ls ) ) $tax_lis[ $tax ] = '<li>' . implode( '</li><li>', $ls ) . '</li>';
 }
 
 
@@ -45,14 +46,14 @@ header('Content-Type: text/html;charset=utf-8');
 <body class="preview">
 <div class="container">
 	<header class="entry-header">
-		<h1><?= _h( $t_title ) ?></h1>
-		<div class="date"><?= _h( $t_date ) ?></div>
-<?php foreach ( $tax_labels as $tax => $lis ) : ?>
+		<h1><?= _h( $q_title ) ?></h1>
+		<div class="date"><?= _h( $q_date ) ?></div>
+<?php foreach ( $tax_lis as $tax => $lis ) : ?>
 		<ul class="taxonomy-<?= _h( $tax ) ?>"><?= $lis ?></ul>
 <?php endforeach; ?>
 	</header>
 	<main class="entry-content">
-		<?= $t_content ?>
+		<?= $q_content ?>
 	</main>
 </div>
 </body>

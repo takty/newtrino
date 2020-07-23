@@ -5,15 +5,18 @@ namespace nt;
  * View
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-24
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
+require_once( __DIR__ . '/../core/class-store.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 require_once( __DIR__ . '/../core/util/query-string.php' );
 require_once( __DIR__ . '/../core/util/param.php' );
+
+start_session( true );
 
 
 function query() {

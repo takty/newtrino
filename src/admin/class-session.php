@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2020-07-24
  *
  */
 
@@ -15,23 +15,22 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Session {
 
-	static public function getNonce() {
-		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
-	}
-
-	const MODE_DIR           = 0777;
-	const SESSION_ALIVE_TIME = 7200;  // 7200 = 120 minutes * 60 seconds
-	const ACCOUNT_FILE_NAME  = 'account';
-	const HASH_ALGORITHM     = 'sha256';
+	const MODE_DIR       = 0777;
+	const TIMEOUT        = 7200;  // 7200 = 120 minutes * 60 seconds
+	const ACCT_FILE_NAME = 'account';
+	const HASH_ALGO      = 'sha256';
 
 	private $_urlAdmin;
-	private $_dirAccount;
+	private $_dirAcct;
 	private $_dirSession;
-	private $_adminLang = null;
 
-	function __construct( string $urlAdmin, string $dirAccount, string $dirSession ) {
+	private $_adminLang = '';
+	private $_errMsg    = '';
+	private $_sessionId = '';
+
+	function __construct( string $urlAdmin, string $dirAcct, string $dirSession ) {
 		$this->_urlAdmin   = $urlAdmin;
-		$this->_dirAccount = $dirAccount;
+		$this->_dirAcct    = $dirAcct;
 		$this->_dirSession = $dirSession;
 
 		ini_set( 'session.use_strict_mode', 1 );
@@ -39,7 +38,7 @@ class Session {
 		Logger::output( 'Info (Session)' );
 	}
 
-	public function getLangAdmin(): ?string {
+	public function getLangAdmin(): string {
 		return $this->_adminLang;
 	}
 
@@ -47,26 +46,46 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	public function login( array $params, string &$error ): bool {
+	public function getRealm(): string {
+		return 'newtrino';
+	}
+
+	public function getNonce(): string {
+		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
+	}
+
+	public function getUrl(): string {
+		return $this->_urlAdmin;
+	}
+
+	public function getErrorMessage(): string {
+		return $this->_errMsg;
+	}
+
+
+	// ------------------------------------------------------------------------
+
+
+	public function login( array $params ): bool {
 		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['nonce'] ) || empty( $params['cnonce'] ) ) {
-			$error = 'Parameters are wrong.';
+			$this->_errMsg = 'Parameters are wrong.';
 			return false;
 		}
 		$this->_cleanUp();
 
 		$url = $this->_urlAdmin;
-		$a2 = hash( self::HASH_ALGORITHM, 'post:' . $url );
+		$a2 = hash( self::HASH_ALGO, 'post:' . $url );
 
-		$accountPath = $this->_dirAccount . self::ACCOUNT_FILE_NAME;
+		$accountPath = $this->_dirAcct . self::ACCT_FILE_NAME;
 		if ( is_file( $accountPath ) === false ) {
 			Logger::output( "Error (Session::login is_file) [$accountPath]" );
-			$error = 'Account file does not exist.';
+			$this->_errMsg = 'Account file does not exist.';
 			return false;
 		}
 		$as = file( $accountPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 		if ( $as === false ) {
 			Logger::output( "Error (Session::login file) [$accountPath]" );
-			$error = 'Account file cannot be opened.';
+			$this->_errMsg = 'Account file cannot be opened.';
 			return false;
 		}
 		foreach ( $as as $a ) {
@@ -76,14 +95,14 @@ class Session {
 			if ( $cs[0] !== $params['user'] ) continue;
 			$a1 = strtolower( $cs[1] );
 			$code = implode( ':', [ $a1, $params['nonce'], $params['cnonce'], $a2 ] );
-			$dgst = hash( self::HASH_ALGORITHM, $code );
+			$dgst = hash( self::HASH_ALGO, $code );
 			$lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
-			if ( $dgst === $params['digest'] ) return $this->_startNew( $lang, $error );
+			if ( $dgst === $params['digest'] ) return $this->_startNew( $lang );
 		}
 		return false;
 	}
 
-	public function logout() {
+	public function logout(): void {
 		session_start();
 		$_SESSION = [];
 		if ( isset( $_COOKIE[ session_name() ] ) ) {
@@ -102,16 +121,16 @@ class Session {
 		if ( isset( $_SESSION['lang_admin'] ) ) {
 			$this->_adminLang = $_SESSION['lang_admin'];
 		}
-		$this->sessionId = $sid;
+		$this->_sessionId = $sid;
 		return $this->_checkTime( $sid, true );
 	}
 
 	public function addTempDir( string $dir ): bool {
-		$data = $this->_loadSessionFile( $this->sessionId );
+		$data = $this->_loadSessionFile( $this->_sessionId );
 		if ( $data === null ) return false;
 		if ( ! isset( $data['temp_dir'] ) || ! is_array( $data['temp_dir'] ) ) $data['temp_dir'] = [];
 		$data['temp_dir'][] = $dir;
-		$this->_saveSessionFile( $this->sessionId, $data );
+		$this->_saveSessionFile( $this->_sessionId, $data );
 		return true;
 	}
 
@@ -130,15 +149,15 @@ class Session {
 		}
 	}
 
-	private function _startNew( ?string $lang, string &$error ): bool {
+	private function _startNew( ?string $lang ): bool {
 		session_start();
-		$this->sessionId = session_id();
+		$this->_sessionId = session_id();
 		$_SESSION['fingerprint'] = self::_getFingerprint();
 		if ( $lang ) $_SESSION['lang_admin'] = $lang;
 
-		$res = $this->_saveSessionFile( $this->sessionId, [ 'timestamp' => time() ] );
+		$res = $this->_saveSessionFile( $this->_sessionId, [ 'timestamp' => time() ] );
 		if ( $res === false ) {
-			$error = 'Session file cannot be written.';
+			$this->_errMsg = 'Session file cannot be written.';
 			return false;
 		}
 		return true;
@@ -150,7 +169,7 @@ class Session {
 
 		$curTime = time();
 		$sessionTime = isset( $data['timestamp'] ) ? intval( $data['timestamp'] ) : 0;
-		if ( self::SESSION_ALIVE_TIME < $curTime - $sessionTime ) {
+		if ( self::TIMEOUT < $curTime - $sessionTime ) {
 			if ( isset( $data['temp_dir'] ) && is_array( $data['temp_dir'] ) ) {
 				foreach ( $data['temp_dir'] as $dir ) {
 					if ( is_dir( $dir ) ) Store::deleteAll( $dir );

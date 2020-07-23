@@ -3,21 +3,28 @@
  * Media (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-07-24
  *
  */
 
 
 document.addEventListener('DOMContentLoaded', () => {
+	const btnAdd    = document.getElementById('btn-add');
 	const btnClose  = document.getElementById('btn-close');
 	const btnDelete = document.getElementById('btn-delete');
 	const btnInsert = document.getElementById('btn-insert');
 
+	btnAdd.addEventListener('click', addMedia);
 	btnClose.addEventListener('click', closeDialog);
 	btnInsert.addEventListener('click', insertMedia);
 	btnDelete.addEventListener('click', deleteMedia);
 	btnDelete.disabled = true;
 	btnInsert.disabled = true;
+
+	const uploadFile = document.getElementById('upload-file');
+	uploadFile.addEventListener('change', () => {
+		if (uploadFile.value !== '') document.getElementById('form-upload').submit();
+	});
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
 	for (let r of rs) r.addEventListener('change', onItemSelected);
@@ -50,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			selSize.disabled  = true;
 			chkLink.disabled  = true;
 		}
+	}
+
+	function addMedia() {
+		document.getElementById('upload-file').click();
 	}
 
 	function closeDialog() {
@@ -105,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
 		const file_name = p.querySelector('.file-name').value;
 
-		document.getElementById('deleted-file').value = file_name;
+		document.getElementById('del-file').value = file_name;
 		document.getElementById('form-delete').submit();
 	}
 });

@@ -10,6 +10,9 @@ namespace nt;
  */
 
 
+require_once( __DIR__ . '/../core/class-store.php' );
+
+
 class Media {
 
 	const MODE_DIR  = 0755;

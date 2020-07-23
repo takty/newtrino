@@ -13,26 +13,29 @@ namespace nt;
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/metabox.php' );
 require_once( __DIR__ . '/view-admin.php' );
+$q = $_REQUEST;
+$q_mode = $q['mode'] ?? '';
+$q_id   = $q['id']   ?? 0;
+
+
 $view = query();
-
 $lang = $nt_config['lang_admin'];
-
 $t_msg = '';
 
-switch ( $nt_q['mode'] ) {
+switch ( $q_mode ) {
 	case 'new':
 		$t_p = $nt_store->createNewPost();
 		$nt_session->addTempDir( $nt_store->getPostDir( $t_p->getId() ) );
 		$t_p->setDate();
 		break;
 	case 'update':
-		$p = $nt_store->getPost( $nt_q['id'] );
-		$p->assign( $nt_q, NT_URL_ADMIN );
+		$p = $nt_store->getPost( $q_id );
+		$p->assign( $q, NT_URL_ADMIN );
 		$t_p = $nt_store->writePost( $p );
 		$t_msg = _ht( 'Update Complete' );
 		break;
 	default:
-		$t_p = $nt_store->getPost( $nt_q['id'] );
+		$t_p = $nt_store->getPost( $q_id );
 		break;
 }
 
