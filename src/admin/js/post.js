@@ -1,10 +1,9 @@
 /**
  *
- * Edit (JS)
+ * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @author Yusuke Manabe @ Space-Time Inc.
- * @version 2020-07-19
+ * @version 2020-07-23
  *
  */
 
@@ -52,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				const dn = parseInt(moment(dateStr).format('YYYYMMDDhhmmss'));
 				const cn = parseInt(moment().format('YYYYMMDDhhmmss'));
 				if (dn <= cn) {
-					document.getElementById('post-status-published').selected = true;
+					document.getElementById('post-status-publish').selected = true;
 				} else {
-					document.getElementById('post-status-reserved').selected = true;
+					document.getElementById('post-status-future').selected = true;
 				}
 			}
 		});
@@ -63,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (s === 'draft') return;
 			const dn = parseInt(moment(postDate.value).format('YYYYMMDDhhmmss'));
 			const cn = parseInt(moment().format('YYYYMMDDhhmmss'));
-			if (s === 'published' && dn > cn) {
+			if (s === 'publish' && dn > cn) {
 				postDate.value = moment().format('YYYY-MM-DD hh:mm:ss');
 			}
-			if (s === 'reserved' && dn <= cn) {
+			if (s === 'future' && dn <= cn) {
 				setTimeout(() => { fp.open(); }, 100);
 			}
 		});
@@ -221,40 +220,23 @@ function closeDialog() {
 // -----------------------------------------------------------------------------
 
 
-const wh_min = 220;
-
-function insertMedia(name, src, w, h, align, size, isImage) {
+function insertImage(name, src, w, h, align, size, srcset, linkFull) {
 	closeDialog();
-	const cs = [align];
+	const sss = srcset ? ` srcset="${srcset}"` : '';
+	const imgCls = linkFull ? `size-${size}` : `size-${size} ${align}`;
+	const img = `<img class="${imgCls}" src="${src}"${sss} alt="${name}" width="${w}" height="${h}">`;
 
-	if (src.match(/[zip|pdf]\.jpg$/ig)) size = '';
-	if (isImage) {
-		cs.push('size-' + size);
-		let imgstr = `<a href="${src}" class="${cs.join(' ')}"><img src="${src}"`;
-		if (size !== 'full') {
-			let r = wh_min
-			if (size === 'medium') r *= 2;
-			if (size === 'large')  r *= 3;
-			const [vw, vh] = getSize(w, h, r);
-			imgstr += ` width="${vw}" height="${vh}"`;
-		}
-		imgstr += '></a>';
-		tinymce.activeEditor.execCommand('mceInsertContent', false, imgstr);
+	if (linkFull) {
+		const a_bgn = `<a href="${linkFull}" class="${align}">`;
+		const a_end = '</a>';
+		tinymce.activeEditor.execCommand('mceInsertContent', false, a_bgn + img + a_end);
 	} else {
-		const linkStr = `<a href="${src}" class="${cs.join(' ')}">${name}</a>`;
-		tinymce.activeEditor.execCommand('mceInsertContent', false, linkStr);
+		tinymce.activeEditor.execCommand('mceInsertContent', false, img);
 	}
 }
 
-function getSize(w, h, max) {
-	let nw = max, nh = max;
-	if (w > h) {
-		const p = parseFloat(w) / parseFloat(h);
-		nw = parseFloat(max) * parseFloat(p);
-	}
-	if (w < h) {
-		const p = parseFloat(h) / parseFloat(w);
-		nh = parseFloat(max) * parseFloat(p);
-	}
-	return [Math.round(nw), Math.round(nh)];
+function insertFile(name, src) {
+	closeDialog();
+	const a = `<a href="${src}">${name}</a>`;
+	tinymce.activeEditor.execCommand('mceInsertContent', false, a);
 }

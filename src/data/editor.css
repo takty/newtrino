@@ -19,7 +19,7 @@
 .aligncenter {
 	display: block;
 	width: 100%;
-	margin-bottom: 2rem;
+	margin: 0 auto 2rem auto;
 	text-align: center;
 }
 

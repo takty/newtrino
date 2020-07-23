@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-15
+ * @version 2020-07-22
  *
  */
 
@@ -108,5 +108,9 @@
 			display: none;
 		}
 	}
+	button { display: inline-block; }
+}
+
+.mce-widget {
 	button { display: inline-block; }
 }

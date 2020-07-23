@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-19
+ * @version 2020-07-23
  *
  */
 
@@ -56,7 +56,7 @@ a {
 		justify-content: space-between;
 
 		.spacer { flex-grow: 1; }
-		a:last-of-type { margin-left: 1rem; }
+		> * + * { margin-left: 1rem; }
 	}
 }
 
@@ -64,7 +64,6 @@ a {
 	> * { padding-bottom: 0.75rem; }
 
 	#message-updated {
-		margin-left: 1rem;
 		padding-top: 0.25rem;
 	}
 }
@@ -83,7 +82,15 @@ a {
 .container-main {
 	flex-grow: 1;
 	position: relative;
+}
 
+.container-sub {
+	> .frame + .frame {
+		margin-top: 1rem;
+	}
+}
+
+.container-sub + .container-main {
 	margin-top: 1rem;
 	@include for-tl {
 		margin-top: 0;
@@ -91,9 +98,11 @@ a {
 	}
 }
 
-.container-sub {
-	> .frame + .frame {
-		margin-top: 1rem;
+.container-main + .container-sub {
+	margin-top: 1rem;
+	@include for-tl {
+		margin-top: 0;
+		margin-left: 1rem;
 	}
 }
 
@@ -168,7 +177,7 @@ a {
 		flex-wrap  : wrap;
 		align-items: center;
 
-		// max-width: 12rem;
+		max-width: 100%;
 	}
 	.heading { margin: 0 0.5rem 0 0; }
 }
@@ -327,4 +336,9 @@ input[type='password'] {
 		max-height: 2.5rem;
 		height: 2.5rem;
 	}
+}
+
+label.checkbox {
+	display: flex;
+	input { margin-right: 0.25rem; }
 }

@@ -3,7 +3,7 @@
  * Media (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-16
+ * @version 2020-07-23
  *
  */
 
@@ -20,27 +20,35 @@ document.addEventListener('DOMContentLoaded', () => {
 	btnInsert.disabled = true;
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
-	for (let r of rs) {
-		r.addEventListener('change', onItemSelected);
-	}
+	for (let r of rs) r.addEventListener('change', onItemSelected);
 
-	const selSize = document.getElementsByName('size')[0];
-	selSize.disabled = true;
+	const selAlign = document.getElementById('image-align');
+	const selSize  = document.getElementById('image-size');
+	const chkLink  = document.getElementById('image-link');
+	const mediaUrl = document.getElementById('media-url');
+	selAlign.disabled = true;
+	selSize.disabled  = true;
+	chkLink.disabled  = true;
 
 	function onItemSelected(e) {
 		btnDelete.disabled = false;
 		btnInsert.disabled = false;
 
+		const url = e.target.parentElement.querySelector('.file-url').value;
+		mediaUrl.value = url;
+
 		const s = e.target.parentElement.querySelector('.sizes');
 		if (s) {
-			selSize.disabled = false;
+			selAlign.disabled = false;
+			selSize.disabled  = false;
+			chkLink.disabled  = false;
+
 			const sizes = JSON.parse(s.value);
-			selSize.className = '';
-			for (const key of Object.keys(sizes)) {
-				selSize.classList.add(key);
-			}
+			selSize.className = Object.keys(sizes).join(' ');
 		} else {
-			selSize.disabled = true;
+			selAlign.disabled = true;
+			selSize.disabled  = true;
+			chkLink.disabled  = true;
 		}
 	}
 
@@ -50,30 +58,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function insertMedia() {
 		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
-		const file_name = p.querySelector('.file-name').value;
-		const file_url  = p.querySelector('.file-url').value;
-		// const width     = p.querySelector('.width').value;
-		// const height    = p.querySelector('.height').value;
-		const is_img    = p.querySelector('.is-img').value;
+		const isImg = p.querySelector('.is-image').value;
+		const fn    = p.querySelector('.file-name').value;
 
-		const align = document.getElementsByName('align')[0].value;
-		const size  = document.getElementsByName('size')[0].value;
+		if (isImg) {
+			const align = selAlign.value;
+			const size  = selSize.value;
+			const link  = chkLink.checked;
 
-		let width = 0;
-		let height = 0;
+			const sizesJson = p.querySelector('.sizes').value;
+			const sizes = JSON.parse(sizesJson);
+			const s = sizes[size];
 
-		const s = p.querySelector('.sizes');
-		if (s) {
-			const sizes = JSON.parse(s.value);
-			const d = sizes[size];
-			if (d) {
-				width = d.width;
-				height = d.height;
+			const w   = s.width;
+			const h   = s.height;
+			const url = s.url;
+
+			const url2x   = w ? get2xUrl(sizes, w) : null;
+			const srcset  = (url2x) ? `${url}, ${url2x} 2x` : null;
+			const linkUrl = (link) ? sizes['full'].url : null;
+			window.parent.insertImage(fn, url, w, h, align, size, srcset, linkUrl);
+		} else {
+			const url = p.querySelector('.file-url').value;
+			window.parent.insertFile(fn, url);
+		}
+	}
+
+	function get2xUrl(sizes, width) {
+		let ret = null;
+		for (const vals of Object.values(sizes)) {
+			if (width * 2 === vals.width) {
+				ret = vals.url;
+				break;
 			}
 		}
-
-		// console.log(file_name, file_url, width, height, align, size, is_img);
-		window.parent.insertMedia(file_name, file_url, width, height, align, size, is_img);
+		if (ret === null && sizes.full.width !== width) {
+			ret = sizes.full.url;
+		}
+		return ret;
 	}
 
 	function deleteMedia() {

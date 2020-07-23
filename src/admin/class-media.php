@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-19
+ * @version 2020-07-22
  *
  */
 
@@ -20,13 +20,16 @@ class Media {
 	private $_url;
 	private $_meta;
 	private $_data;
+	private $_ntUrl;
 
-	public function __construct( $id, $mediaDirName ) {
+	public function __construct( $id, $mediaDirName, $ntUrl ) {
 		global $nt_store;
 		$this->_id   = $id;
 		$this->_dir  = $nt_store->getPostDir( $id, null ) . $mediaDirName . '/';
 		$this->_url  = $nt_store->getPostUrl( $id, null ) . $mediaDirName . '/';
 		$this->_meta = $nt_store->getPostDir( $id, null ) . 'media.json';
+
+		$this->_ntUrl = $ntUrl;
 	}
 
 
@@ -42,20 +45,35 @@ class Media {
 			$ext = $m['extension'];
 			if ( in_array( $ext, [ 'png', 'jpeg', 'jpg' ], true ) ) {
 				$item['is_image']   = true;
-				$item['sizes_json'] = json_encode( $m['sizes'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+				$item['sizes_json'] = json_encode( $this->_createSizesWithUrl( $m['sizes'] ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 
 				if ( isset( $m['sizes']['small'] ) ) {
-					$item['min_size_url'] = $this->_url . rawurlencode( $m['sizes']['small']['file_name'] );
+					$item['url@min'] = $this->_url . rawurlencode( $m['sizes']['small']['file_name'] );
 				} else {
-					$item['min_size_url'] = $this->_url . rawurlencode( $m['sizes']['full']['file_name'] );
+					$item['url@min'] = $this->_url . rawurlencode( $m['sizes']['full']['file_name'] );
 				}
 			}
 			$item['file_name'] = $m['file_name'];
-			$item['url']  = $this->_url . rawurlencode( $m['file_name'] );
-			$item['ext']  = $ext;
+			$item['url']       = $this->_mediaUrl( $m['file_name'] );
+			$item['ext']       = $ext;
 			$list[] = $item;
 		}
 		return $list;
+	}
+
+	private function _createSizesWithUrl( array $sizes ): array {
+		$ret = [];
+		foreach ( $sizes as $key => $vals ) {
+			$fn = $vals['file_name'];
+			$url = $this->_mediaUrl( $fn );
+			$vals['url'] = $url;
+			$ret[ $key ] = $vals;
+		}
+		return $ret;
+	}
+
+	private function _mediaUrl( $fileName ) {
+		return $this->_ntUrl . '?' . rawurlencode( $this->_id ) . '=' . rawurlencode( $fileName );
 	}
 
 	public function upload( $file ) {
