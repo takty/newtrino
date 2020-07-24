@@ -33,7 +33,7 @@
 .size-medium-large,
 .size-large,
 .size-extra-large,
-.size-full {
+.size-huge {
 	width: 100%;
 	height: auto;
 }
@@ -47,5 +47,7 @@
 .size-huge         { max-width: 96rem; }
 
 .size-full {
+	width: auto;
+	height: auto;
 	max-width: 100%;
 }
