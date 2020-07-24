@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
@@ -25,7 +25,7 @@ class Media {
 	private $_data;
 	private $_ntUrl;
 
-	public function __construct( $id, $mediaDirName, $ntUrl ) {
+	public function __construct( string $id, string $mediaDirName, string $ntUrl ) {
 		global $nt_store;
 		$this->_id   = $id;
 		$this->_dir  = $nt_store->getPostDir( $id, null ) . $mediaDirName . '/';
@@ -39,7 +39,7 @@ class Media {
 	// -------------------------------------------------------------------------
 
 
-	public function getItemList() {
+	public function getItemList(): array {
 		$meta = $this->_loadMeta();
 
 		$list = [];
@@ -76,11 +76,11 @@ class Media {
 		return $ret;
 	}
 
-	private function _mediaUrl( $fileName ) {
+	private function _mediaUrl( string $fileName ): string {
 		return $this->_ntUrl . '?' . rawurlencode( $this->_id ) . '=' . rawurlencode( $fileName );
 	}
 
-	public function upload( $file ) {
+	public function upload( array $file ): bool {
 		$tmpFile      = $file['tmp_name'];
 		$origFileName = $file['name'];
 
@@ -101,13 +101,13 @@ class Media {
 		return false;
 	}
 
-	public function remove( $fileName ) {
+	public function remove( string $fileName ): void {
 		$path = $this->_dir . $fileName;
 		@unlink( $path );
 		$this->_removeMeta( $fileName );
 	}
 
-	private function getUniqueFileName( $fileName, $postFix = '' ) {
+	private function getUniqueFileName( string $fileName, string $postFix = '' ): string {
 		$pi   = pathinfo( $fileName );
 		$ext  = '.' . $pi['extension'];
 		$name = $pi['filename'] . $postFix;
@@ -122,7 +122,7 @@ class Media {
 		return '';
 	}
 
-	private function _isFileExist( $fileName ) {
+	private function _isFileExist( string $fileName ): bool {
 		return is_dir( $this->_dir ) && is_file( $this->_dir . $fileName );
 	}
 
@@ -158,7 +158,7 @@ class Media {
 		}
 	}
 
-	private function _addMeta( string $fileName ) {
+	private function _addMeta( string $fileName ): void {
 		$meta = $this->_loadMeta();
 
 		$ext = mb_strtolower( pathinfo( $fileName, PATHINFO_EXTENSION ) );
@@ -178,7 +178,7 @@ class Media {
 		$this->_saveMeta( $meta );
 	}
 
-	private function _removeMeta( $fileName ) {
+	private function _removeMeta( $fileName ): void {
 		$meta = $this->_loadMeta();
 		$idx = -1;
 		$sizes = null;
@@ -206,7 +206,7 @@ class Media {
 	// -------------------------------------------------------------------------
 
 
-	private function _resizeImage( $fileName, $ext ) {
+	private function _resizeImage( string $fileName, string $ext ): array {
 		list( $width, $height ) = getimagesize( $this->_dir . $fileName );
 		$mime = mime_content_type( $this->_dir . $fileName );
 
@@ -229,7 +229,7 @@ class Media {
 		return $sizes;
 	}
 
-	private function _saveScaledImage( $img, $fn, $mime, $size ) {
+	private function _saveScaledImage( $img, string $fn, string $mime, int $size ): array {
 		$newImg = $this->_scaleImage( $img, $size, $mime );
 
 		$mat = [ [ 0, -1, 0 ], [ -1, 12, -1 ], [ 0, -1, 0 ] ];
@@ -241,7 +241,7 @@ class Media {
 		return [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
 	}
 
-	private function _scaleImage( $img, $newW, $mime ) {
+	private function _scaleImage( $img, int $newW, string $mime ) {
 		$w = imagesx( $img );
 		$h = imagesy( $img );
 		$newH = $h * $newW / $w;
@@ -264,7 +264,7 @@ class Media {
 		return $newImg;
 	}
 
-	private function _loadImage( $fn, $mime ) {
+	private function _loadImage( string $fn, string $mime ) {
 		$path = $this->_dir . $fn;
 		switch ( $mime ) {
 			case 'image/jpeg':
@@ -280,7 +280,7 @@ class Media {
 		return null;
 	}
 
-	private function _saveImage( $fn, $mime, $img ) {
+	private function _saveImage( string $fn, string $mime, $img ): void {
 		$path = $this->_dir . $fn;
 		switch ( $mime ) {
 			case 'image/jpeg':

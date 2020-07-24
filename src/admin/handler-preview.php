@@ -17,7 +17,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 start_session( true, true );
 
 
-function handle_query( array $q ) {
+function handle_query( array $q ): array {
 	$q_title   = $q['post_title']   ?? '';
 	$q_date    = $q['post_date']    ?? '';
 	$q_content = $q['post_content'] ?? '';

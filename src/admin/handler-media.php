@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Media
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
@@ -18,7 +18,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 start_session( true, true );
 
 
-function handle_query( array $q ) {
+function handle_query( array $q ): array {
 	$q_id   = $q['id']   ?? 0;
 	$q_mode = $q['mode'] ?? '';
 	$msg	= '';
@@ -65,7 +65,7 @@ function handle_query( array $q ) {
 	];
 }
 
-function _create_align_options() {
+function _create_align_options(): array {
 	return [
 		[ 'value' => 'alignleft',   'label' => _ht( 'Left' ) ],
 		[ 'value' => 'aligncenter', 'label' => _ht( 'Center' ), 'selected' => ' selected' ],
@@ -74,7 +74,7 @@ function _create_align_options() {
 	];
 }
 
-function _create_size_options() {
+function _create_size_options(): array {
 	global $nt_config;
 	$ret = [];
 	foreach ( $nt_config['image_sizes'] as $key => $d ) {
@@ -87,13 +87,13 @@ function _create_size_options() {
 	return $ret;
 }
 
-function _get_max_file_size() {
+function _get_max_file_size(): int {
 	$a = _return_bytes( ini_get( 'post_max_size' ) );
 	$b = _return_bytes( ini_get( 'upload_max_filesize' ) );
 	return min( $a, $b );
 }
 
-function _return_bytes( $val ) {
+function _return_bytes( string $val ): int {
 	$val = trim( $val );
 	$unit = strtolower( $val[ strlen( $val ) - 1 ] );
 	$v = intval( $val );
