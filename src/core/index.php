@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-24
  *
  */
 
@@ -49,13 +49,13 @@ function load_config( string $dirData ): array {
 		'archive_by_year'    => false,
 		'archive_by_type'    => false,
 		'image_sizes' => [
-			'small'        =>  128,
-			'medium_small' =>  256,
-			'medium'       =>  384,
-			'medium_large' =>  512,
-			'large'        =>  768,
-			'extra_large'  => 1024,
-			'huge'         => 1536,
+			'small'        => [ 'width' =>  128, 'label' => 'Small' ],
+			'medium_small' => [ 'width' =>  256, 'label' => 'Medium Small' ],
+			'medium'       => [ 'width' =>  384, 'label' => 'Medium' ],
+			'medium_large' => [ 'width' =>  512, 'label' => 'Medium Large' ],
+			'large'        => [ 'width' =>  768, 'label' => 'Large' ],
+			'extra_large'  => [ 'width' => 1024, 'label' => 'Extra Large' ],
+			'huge'         => [ 'width' => 1536, 'label' => 'Huge' ],
 		]
 	];
 	date_default_timezone_set( $conf['timezone'] );
