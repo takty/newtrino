@@ -10,54 +10,8 @@ namespace nt;
  */
 
 
-require_once( __DIR__ . '/index.php' );
-require_once( __DIR__ . '/class-media.php' );
-require_once( __DIR__ . '/../core/class-store.php' );
-
-start_session( true );
-
-$q = $_REQUEST;
-$q_mode     = $q['mode']     ?? '';
-$q_id       = $q['id']       ?? 0;
-$q_del_file = $q['del_file'] ?? '';
-
-$media = new Media( $q_id, Post::MEDIA_DIR_NAME, NT_URL );
-
-if ( $q_mode === 'delete' ) {
-	if ( ! empty( $q_del_file ) ) {
-		$media->remove( $q_del_file );
-	}
-} else if ( $q_mode === 'upload' ) {
-	if ( ! isset( $_FILES['upload_file']['error'] ) || ! is_int( $_FILES['upload_file']['error'] ) ) {
-		// error
-	} else if ( isset( $_FILES['upload_file'] ) ) {
-		$media->upload( $_FILES['upload_file'] );
-	}
-}
-$t_items = $media->getItemList();
-
-
-function echo_item_file( $it, $i ) {
-?>
-	<div class="item-media">
-		<input type="radio" name="file" id="item<?= $i ?>" value="<?= _h( $it['file_name'] ) ?>">
-		<label for="item<?= $i ?>">
-<?php if ( empty( $it['is_image'] ) ) : ?>
-			<div class="thumbnail"><span><?= _h( $it['ext'] ) ?></span></div>
-<?php else : ?>
-			<div class="thumbnail"><img src="<?= _h( $it['url@min'] ) ?>"></div>
-<?php endif ?>
-			<div class="caption"><?= _h( $it['file_name'] ) ?></div>
-		</label>
-		<input type="hidden" class="file-name" value="<?= _h( $it['file_name'] ) ?>">
-		<input type="hidden" class="file-url" value="<?= _h( $it['url'] ) ?>">
-		<input type="hidden" class="is-image" value="<?= ( empty( $it['is_image'] ) ? 0 : 1 ) ?>">
-<?php if ( isset( $it['sizes_json'] ) ) : ?>
-		<input type="hidden" class="sizes" value="<?= _h( $it['sizes_json'] ) ?>">
-<?php endif; ?>
-	</div>
-<?php
-}
+require_once( __DIR__ . '/handler-media.php' );
+$v = handle_query( $_REQUEST );
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -73,50 +27,62 @@ header('Content-Type: text/html;charset=utf-8');
 </head>
 <body class="media dialog">
 
+<?php \nt\begin(); ?>
 <header class="header">
 	<div class="inner">
-		<h1><?= _ht('Insert Media') ?></h1>
-		<form action="media.php" method="post" enctype="multipart/form-data" id="form-upload">
-			<input type="hidden" name="id" value="<?= _h( $q_id ) ?>">
+		<h1><?= _ht( 'Insert Media' ) ?></h1>
+		<form action="media.php?id={{id}}" method="post" enctype="multipart/form-data" id="form-upload">
 			<input type="hidden" name="mode" value="upload">
-			<div style="display:none"><input type="file" name="upload_file" id="upload-file"></div>
-			<button id="btn-add" type="button"><?= _ht('Add New') ?></button>
+			<div hidden><input type="file" name="upload_file" id="upload-file"></div>
+			<button id="btn-add" type="button"><?= _ht( 'Add New' ) ?></button>
 		</form>
+		<input type="hidden" id="max-file-size" value="{{max_file_size}}">
 		<div class="spacer"></div>
 		<button type="button" id="btn-close"><?= _ht( 'Close' ) ?></button>
 	</div>
+	<div class="message">{{message}}</div>
+	<div class="message" id="message-max-file-size" hidden><?= _ht( 'The uploaded file exceeds the max file size.' ) ?></div>
 </header>
 
 <div class="container">
 	<div class="container-main frame">
 		<div class="scroller">
 			<ul class="list-item-media">
-				<?php foreach ( $t_items as $i => $item ) echo_item_file( $item, $i ); ?>
+{{#items}}
+				<li class="item-media">
+					<input type="hidden" class="file-name" value="{{file_name}}">
+					<input type="hidden" class="file-url" value="{{url}}">
+					<input type="radio" name="item" id="item{{index}}">
+{{#is_image}}
+					<label for="item{{index}}">
+						<div class="thumbnail"><img src="{{url@min}}"></div>
+						<div class="caption">{{file_name}}</div>
+					</label>
+					<input type="hidden" class="sizes" value="{{sizes_json}}">
+{{/is_image}}
+{{^is_image}}
+					<label for="item{{index}}">
+						<div class="thumbnail"><span>{{ext}}</span></div>
+						<div class="caption">{{file_name}}</div>
+					</label>
+{{/is_image}}
+				</li>
+{{/items}}
 			</ul>
 		</div>
 	</div>
 	<div class="container-sub">
-		<div class="frame frame-sub frame-compact">
+		<div class="frame frame-compact">
 			<div>
 				<div class="heading"><?= _ht( 'Image Alignment' ) ?></div>
 				<select id="image-align">
-					<option value="alignleft"><?= _ht( 'Left' ) ?></option>
-					<option value="aligncenter" selected><?= _ht( 'Center' ) ?></option>
-					<option value="alignright"><?= _ht( 'Right' ) ?></option>
-					<option value="alignnone"><?= _ht( 'None' ) ?></option>
+					{{#aligns}}<option value="{{value}}"{{selected}}>{{label}}</option>{{/aligns}}
 				</select>
 			</div>
 			<div>
 				<div class="heading"><?= _ht( 'Image Size' ) ?></div>
 				<select id="image-size">
-					<option value="small"><?= _ht( 'Small' ) ?></option>
-					<option value="medium-small"><?= _ht( 'Medium Small' ) ?></option>
-					<option value="medium" selected><?= _ht( 'Medium' ) ?></option>
-					<option value="medium-large"><?= _ht( 'Medium Large' ) ?></option>
-					<option value="large"><?= _ht( 'Large' ) ?></option>
-					<option value="extra-large"><?= _ht( 'Extra Large' ) ?></option>
-					<option value="huge"><?= _ht( 'Huge' ) ?></option>
-					<option value="full"><?= _ht( 'Full Size' ) ?></option>
+					{{#sizes}}<option value="{{value}}"{{selected}}>{{label}}</option>{{/sizes}}
 				</select>
 			</div>
 			<div>
@@ -134,10 +100,9 @@ header('Content-Type: text/html;charset=utf-8');
 
 <footer class="footer">
 	<div class="inner">
-		<form action="media.php" method="post" id="form-delete">
+		<form action="media.php?id={{id}}" method="post" id="form-delete">
 			<input type="hidden" name="mode" value="delete">
-			<input type="hidden" name="id" value="<?= _h( $q_id ) ?>">
-			<input type="hidden" name="del_file" id="del-file">
+			<input type="hidden" name="delete_file" id="delete-file">
 			<button class="delete" type="button" id="btn-delete"><?= _ht( 'Permanently Delete' ) ?></button>
 		</form>
 		<div class="spacer"></div>
@@ -146,6 +111,7 @@ header('Content-Type: text/html;charset=utf-8');
 </footer>
 
 <input type="hidden" id="msg-delete" value="<?= _ht( 'Do you want to delete the selected media file?' ) ?>">
+<?php \nt\end( $v ); ?>
 
 </body>
 </html>
