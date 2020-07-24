@@ -1,6 +1,6 @@
 /**
  *
- * Media (JS)
+ * Media Dialog (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @version 2020-07-24
@@ -14,20 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
 	const btnDelete = document.getElementById('btn-delete');
 	const btnInsert = document.getElementById('btn-insert');
 
-	btnAdd.addEventListener('click', addMedia);
-	btnClose.addEventListener('click', closeDialog);
-	btnInsert.addEventListener('click', insertMedia);
-	btnDelete.addEventListener('click', deleteMedia);
+	const maxFileSize = parseInt(document.getElementById('max-file-size').value);
+	const msgMaxFileSize = document.getElementById('message-max-file-size');
+
+	btnAdd.addEventListener('click', doAdd);
+	btnClose.addEventListener('click', doClose);
+	btnInsert.addEventListener('click', doInsert);
+	btnDelete.addEventListener('click', doDelete);
 	btnDelete.disabled = true;
 	btnInsert.disabled = true;
 
-	const uploadFile = document.getElementById('upload-file');
-	uploadFile.addEventListener('change', () => {
-		if (uploadFile.value !== '') document.getElementById('form-upload').submit();
+	const upfile = document.getElementById('upload-file');
+	upfile.addEventListener('change', () => {
+		const f = upfile.files ? upfile.files[0] : null;
+		if (f && maxFileSize < f.size) {
+			msgMaxFileSize.hidden = false;
+		} else {
+			msgMaxFileSize.hidden = true;
+		}
+		// if (upfile.value !== '') document.getElementById('form-upload').submit();
 	});
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
-	for (let r of rs) r.addEventListener('change', onItemSelected);
+	for (let r of rs) r.addEventListener('change', onSelected);
 
 	const selAlign = document.getElementById('image-align');
 	const selSize  = document.getElementById('image-size');
@@ -37,21 +46,38 @@ document.addEventListener('DOMContentLoaded', () => {
 	selSize.disabled  = true;
 	chkLink.disabled  = true;
 
-	function onItemSelected(e) {
+
+	// -------------------------------------------------------------------------
+
+
+	function doAdd() {
+		upfile.click();
+	}
+
+	function doClose() {
+		window.parent.closeDialog();
+	}
+
+	function onSelected(e) {
 		btnDelete.disabled = false;
 		btnInsert.disabled = false;
 
 		const url = e.target.parentElement.querySelector('.file-url').value;
 		mediaUrl.value = url;
 
-		const s = e.target.parentElement.querySelector('.sizes');
-		if (s) {
+		const ss = e.target.parentElement.querySelector('.sizes');
+		if (ss) {
 			selAlign.disabled = false;
 			selSize.disabled  = false;
 			chkLink.disabled  = false;
 
-			const sizes = JSON.parse(s.value);
-			selSize.className = Object.keys(sizes).join(' ');
+			const sizes = JSON.parse(ss.value);
+			const sizeCls = Object.keys(sizes);
+			selSize.className = sizeCls.join(' ');
+			if (sizeCls.indexOf(selSize.value) === -1) {
+				if (sizeCls.length === 1) selSize.value = sizeCls[sizeCls.length - 1];
+				else selSize.value = sizeCls[sizeCls.length - 2];
+			}
 		} else {
 			selAlign.disabled = true;
 			selSize.disabled  = true;
@@ -59,35 +85,36 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	function addMedia() {
-		document.getElementById('upload-file').click();
-	}
+	function doDelete() {
+		const msg = document.getElementById('msg-delete').value;
+		if (!confirm(msg)) return;
 
-	function closeDialog() {
-		window.parent.closeDialog();
-	}
-
-	function insertMedia() {
 		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
-		const isImg = p.querySelector('.is-image').value;
-		const fn    = p.querySelector('.file-name').value;
+		const file_name = p.querySelector('.file-name').value;
 
-		if (isImg) {
+		document.getElementById('delete-file').value = file_name;
+		document.getElementById('form-delete').submit();
+	}
+
+	function doInsert() {
+		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
+		const fn = p.querySelector('.file-name').value;
+		const ss = p.querySelector('.sizes');
+
+		if (ss) {
+			const metas = JSON.parse(ss.value);
 			const align = selAlign.value;
 			const size  = selSize.value;
 			const link  = chkLink.checked;
 
-			const sizesJson = p.querySelector('.sizes').value;
-			const sizes = JSON.parse(sizesJson);
-			const s = sizes[size];
+			const m   = metas[size];
+			const w   = m.width;
+			const h   = m.height;
+			const url = m.url;
 
-			const w   = s.width;
-			const h   = s.height;
-			const url = s.url;
-
-			const url2x   = w ? get2xUrl(sizes, w) : null;
+			const url2x   = w ? get2xUrl(metas, w) : null;
 			const srcset  = (url2x) ? `${url}, ${url2x} 2x` : null;
-			const linkUrl = (link) ? sizes['full'].url : null;
+			const linkUrl = (link) ? metas['full'].url : null;
 			window.parent.insertImage(fn, url, w, h, align, size, srcset, linkUrl);
 		} else {
 			const url = p.querySelector('.file-url').value;
@@ -96,27 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function get2xUrl(sizes, width) {
-		let ret = null;
 		for (const vals of Object.values(sizes)) {
-			if (width * 2 === vals.width) {
-				ret = vals.url;
-				break;
-			}
+			if (width * 2 === vals.width) return vals.url;
 		}
-		if (ret === null && sizes.full.width !== width) {
-			ret = sizes.full.url;
+		if (sizes.full.width !== width) {
+			return sizes.full.url;
 		}
-		return ret;
-	}
-
-	function deleteMedia() {
-		const msg = document.getElementById('msg-delete').value;
-		if (!confirm(msg)) return;
-
-		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
-		const file_name = p.querySelector('.file-name').value;
-
-		document.getElementById('del-file').value = file_name;
-		document.getElementById('form-delete').submit();
+		return null;
 	}
 });

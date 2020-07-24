@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-24
  *
  */
 
@@ -72,6 +72,7 @@ class Media {
 			$vals['url'] = $url;
 			$ret[ $key ] = $vals;
 		}
+		uasort( $ret, function ( $a, $b ) { return $a['width'] <=> $b['width']; } );
 		return $ret;
 	}
 
@@ -206,18 +207,21 @@ class Media {
 
 
 	private function _resizeImage( $fileName, $ext ) {
+		list( $width, $height ) = getimagesize( $this->_dir . $fileName );
+		$mime = mime_content_type( $this->_dir . $fileName );
+
 		global $nt_config;
 		$sizes = [];
-		list( $width, $height ) = getimagesize( $this->_dir . $fileName );
 		$sizes['full'] = [ 'file_name' => $fileName, 'width' => $width, 'height' => $height ];
 
-		$min = intval( $nt_config['image_sizes']['small'] );
+		$min = intval( $nt_config['image_sizes']['small']['width'] );
 		if ( $min < $width ) {
-			$img = $this->_loadImage( $fileName, $ext );
-			foreach ( $nt_config['image_sizes'] as $key => $px ) {
+			$img = $this->_loadImage( $fileName, $mime );
+			foreach ( $nt_config['image_sizes'] as $key => $d ) {
 				$key = str_replace( '_', '-', $key );
-				if ( intval( $px ) < $width ) {
-					list( $fn, $w, $h ) = $this->_scaleImage( $img, $fileName, $ext, intval( $px ) );
+				$px = intval( $d['width'] );
+				if ( $px < $width ) {
+					list( $fn, $w, $h ) = $this->_saveScaledImage( $img, $fileName, $mime, $px );
 					$sizes[ $key ] = [ 'file_name' => $fn, 'width' => $w, 'height' => $h ];
 				}
 			}
@@ -225,37 +229,71 @@ class Media {
 		return $sizes;
 	}
 
-	private function _scaleImage( $img, $fn, $ext, $size ) {
-		$newImg = imagescale( $img, $size, -1, IMG_BICUBIC );
+	private function _saveScaledImage( $img, $fn, $mime, $size ) {
+		$newImg = $this->_scaleImage( $img, $size, $mime );
 
-		$mat = [ [ -1.2, -1, -1.2 ], [ -1.0, 20, -1.0 ], [ -1.2, -1, -1.2 ] ];
-		$div = 11.2;
+		$mat = [ [ 0, -1, 0 ], [ -1, 12, -1 ], [ 0, -1, 0 ] ];
+		$div = 8;
 		imageconvolution( $newImg, $mat, $div, 0 );
 
 		$newFn = $this->getUniqueFileName( $fn, "@$size" );
-		$this->_saveImage( $newFn, $ext, $newImg );
+		$this->_saveImage( $newFn, $mime, $newImg );
 		return [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
 	}
 
-	private function _loadImage( $fn, $ext ) {
-		switch ( $ext ) {
-			case 'jpg':
-			case 'jpeg':
-				return imagecreatefromjpeg( $this->_dir . $fn );
-			case 'png':
-				return imagecreatefrompng( $this->_dir . $fn );
+	private function _scaleImage( $img, $newW, $mime ) {
+		$w = imagesx( $img );
+		$h = imagesy( $img );
+		$newH = $h * $newW / $w;
+		$newImg = imagecreatetruecolor( $newW, $newH );
+
+		if ( $mime === 'image/png' || $mime === 'image/x-png' ) {
+			imagealphablending( $newImg, false );
+			imagefill( $newImg, 0, 0, imagecolorallocatealpha( $newImg, 0, 0, 0, 127 ) );
+			imagesavealpha( $newImg, true );
+		} else if ( $mime === 'image/gif' ) {
+			$idx = imagecolortransparent( $img );
+			if ( 0 <= $idx ) {
+				$c = imagecolorsforindex( $img, $idx );
+				$newIdx = imagecolorallocate( $newImg, $c['red'], $c['green'], $c['blue'] );
+				imagefill( $newImg, 0, 0, $newIdx );
+				imagecolortransparent( $newImg, $newIdx );
+			}
+		}
+		imagecopyresampled( $newImg, $img, 0, 0, 0, 0, $newW, $newH, $w, $h );
+		return $newImg;
+	}
+
+	private function _loadImage( $fn, $mime ) {
+		$path = $this->_dir . $fn;
+		switch ( $mime ) {
+			case 'image/jpeg':
+			case 'image/jpg':
+			case 'image/pjpeg':
+				return imagecreatefromjpeg( $path );
+			case 'image/png':
+			case 'image/x-png':
+				return imagecreatefrompng( $path );
+			case 'image/gif':
+				return imagecreatefromgif( $path );
 		}
 		return null;
 	}
 
-	private function _saveImage( $fn, $ext, $img ) {
-		switch ( $ext ) {
-			case 'jpg':
-			case 'jpeg':
-				imagejpeg( $img, $this->_dir . $fn, 80 );
+	private function _saveImage( $fn, $mime, $img ) {
+		$path = $this->_dir . $fn;
+		switch ( $mime ) {
+			case 'image/jpeg':
+			case 'image/jpg':
+			case 'image/pjpeg':
+				imagejpeg( $img, $path, 80 );
 				break;
-			case 'png':
-				imagepng( $img, $this->_dir . $fn );
+			case 'image/png':
+			case 'image/x-png':
+				imagepng( $img, $path );
+				break;
+			case 'image/gif':
+				imagegif( $img, $path );
 				break;
 		}
 	}

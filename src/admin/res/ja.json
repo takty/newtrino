@@ -1,16 +1,18 @@
 {
-	"admin": {
+	"common": {
+		"Post List": "投稿一覧",
+		"Post Edit": "投稿編集",
+		"Close": "閉じる"
+	},
+	"login": {
 		"User Authentication": "ユーザー認証",
 		"Username:": "ユーザー名:",
 		"Password:": "パスワード:",
 		"Log In": "ログイン",
 		"Log Out": "ログアウト",
-		"User name or password is wrong.": "ユーザー名かパスワードが異なります。",
-
-		"Post List": "投稿一覧",
-		"Post Edit": "投稿編集",
-		"Close": "閉じる",
-
+		"User name or password is wrong.": "ユーザー名かパスワードが異なります。"
+	},
+	"list": {
 		"Post Type": "投稿タイプ",
 		"Display Month": "表示月",
 		"View Count": "表示数",
@@ -22,6 +24,9 @@
 		"New": "新しい",
 		"Old": "古い",
 
+		"Do you want to delete the post?": "この投稿を削除してもよろしいですか？"
+	},
+	"post": {
 		"Publish": "公開",
 		"Published": "公開",
 		"Scheduled": "予約",
@@ -33,6 +38,9 @@
 		"Enter Title Here": "ここにタイトルを入力",
 		"The title is blank.": "タイトルが空です。",
 
+		"Do you want to move from the page you are inputting?": "入力中のページから移動してもよろしいですか？"
+	},
+	"media": {
 		"Add New": "新規追加",
 		"Image Alignment": "画像の配置",
 		"Left": "左",
@@ -52,8 +60,10 @@
 		"Permanently Delete": "永久に削除",
 		"Insert Into Post": "投稿に挿入",
 
-		"Do you want to delete the post?": "この投稿を削除してもよろしいですか？",
-		"Do you want to move from the page you are inputting?": "入力中のページから移動してもよろしいですか？",
+		"No file was uploaded.": "ファイルをアップロードできませんでした。",
+		"The uploaded file exceeds the max file size.": "アップロードしたファイルは最大ファイルサイズを超過しています。",
+		"An unknown error occurred.": "不明なエラーが発生しました。",
+
 		"Do you want to delete the selected media file?": "選択したメディア・ファイルを削除してもよろしいですか？"
 	}
 }
