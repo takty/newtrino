@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-07-24
  *
  */
 
@@ -54,20 +54,18 @@ a {
 		justify-content: space-between;
 
 		.spacer { flex-grow: 1; }
-		> * + * { margin-left: 1rem; }
+		> * + *:not(:empty) { margin-left: 1rem; }
 	}
 }
 
 .header {
-	> * { padding-bottom: 0.75rem; }
+	> *:not(:empty) { padding-bottom: 0.75rem; }
 
-	#message-updated {
-		padding-top: 0.25rem;
-	}
+	.message:not(:empty) { padding-top: 0.25rem; }
 }
 
 .footer {
-	> * { padding-top: 0.75rem; }
+	> *:not(:empty) { padding-top: 0.75rem; }
 }
 
 .container {
@@ -120,9 +118,11 @@ a {
 	@include for-tl { padding: 1.25rem; }
 }
 
-.frame-sub {
+.frame-sub,
+.frame-compact {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	align-items: center;
 
 	@include for-tl {
@@ -132,40 +132,43 @@ a {
 		width: 16rem;
 	}
 
-	> * + * { margin-left: 1rem; }
+	padding: 0.5rem 1rem;
+	@include for-tl { padding: 0.75rem 1.25rem; }
+	> * {
+		padding: { top: 0.5rem; bottom: 0.5rem; }
+		max-width: 100%;
+	}
+	> *:not(:last-child) { margin-right: 1rem; }
 	@include for-tl {
-		> * + * {
-			margin-left: 0;
-			margin-top: 1rem;
-		}
-	}
-
-	.title {
-		white-space: nowrap;
-		font-weight: bold;
-	}
-
-	.heading {
-		font-weight: bold;
-		padding: 0.5rem 0;
+		> *:not(:last-child) { margin-right: 0; }
 	}
 
 	.flatpickr-input {
 		min-width: 12rem;
 		@include for-tl { width: 100%; }
+		max-height: 2rem;
 
 		font-size: 0.75rem;
 	}
 
 	.button-row {
 		display: flex;
-		width: 100%;
+		justify-content: space-between;
+		flex-grow: 1;
+		@include for-tl { width: 100%; }
 
 		&.right {
 			margin-left: auto;
 			justify-content: flex-end;
 		}
-		.right { margin-left: auto; }
+		> * + * { margin-left: 1rem; }
+	}
+}
+
+.frame-sub {
+	.title {
+		white-space: nowrap;
+		font-weight: bold;
 	}
 }
 
@@ -174,10 +177,12 @@ a {
 		display    : flex;
 		flex-wrap  : wrap;
 		align-items: center;
-
-		max-width: 100%;
 	}
-	.heading { margin: 0 0.5rem 0 0; }
+
+	.heading {
+		font-weight: bold;
+		margin: 0 0.5rem 0 0;
+	}
 }
 
 
@@ -328,11 +333,13 @@ input[type=button],
 
 input[type='text'],
 input[type='password'] {
-	& + button,
-	& + input[type=button],
-	& + .button {
-		max-height: 2.5rem;
-		height: 2.5rem;
+	&:not(.flatpickr-input) {
+		& + button,
+		& + input[type=button],
+		& + .button {
+			max-height: 2.5rem;
+			height: 2.5rem;
+		}
 	}
 }
 

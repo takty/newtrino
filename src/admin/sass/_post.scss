@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-24
  *
  */
 
@@ -22,7 +22,7 @@
 	> .mce-container { margin-top: 1rem; }
 }
 
-.message {
+.frame .message {
 	display: none;
 	margin: 1rem;
 }
@@ -48,7 +48,7 @@
 	width     : 95vw;
 	max-width : 96rem;
 	height    : 95vh;
-	max-height: 96rem;
+	max-height: 48rem;
 
 	display: none;
 	&.visible { display: block; }
