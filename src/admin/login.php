@@ -5,13 +5,13 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
 
 require_once( __DIR__ . '/handler-login.php' );
-$v = handle_query( $_POST );
+$view = handle_query( $_POST );
 
 
 header( 'Content-Type: text/html;charset=utf-8' );
@@ -52,7 +52,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<div id="key"></div>
 </div>
 <script>console.log('{{error_message}}');</script>
-<?php \nt\end( $v ); ?>
+<?php \nt\end( $view ); ?>
 
 </body>
 </html>

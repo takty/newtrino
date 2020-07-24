@@ -5,13 +5,13 @@ namespace nt;
  * Media Dialog
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
 
 require_once( __DIR__ . '/handler-media.php' );
-$v = handle_query( $_REQUEST );
+$view = handle_query( $_REQUEST );
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -111,7 +111,7 @@ header('Content-Type: text/html;charset=utf-8');
 </footer>
 
 <input type="hidden" id="msg-delete" value="<?= _ht( 'Do you want to delete the selected media file?' ) ?>">
-<?php \nt\end( $v ); ?>
+<?php \nt\end( $view ); ?>
 
 </body>
 </html>

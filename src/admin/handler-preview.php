@@ -24,7 +24,7 @@ function handle_query( array $q ): array {
 
 	global $nt_store;
 	$taxes = array_keys( $nt_store->taxonomy()->getTaxonomyAll() );
-	$taxes = [];
+	$tax2tls = [];
 	foreach ( $taxes as $tax ) {
 		if ( ! isset( $q["taxonomy:$tax"] ) ) continue;
 		$ts = is_array( $q["taxonomy:$tax"] ) ? $q["taxonomy:$tax"] : [ $q["taxonomy:$tax"] ];
@@ -32,13 +32,13 @@ function handle_query( array $q ): array {
 		foreach ( $ts as $t ) {
 			$ls[] = _h( $nt_store->taxonomy()->getTermLabel( $tax, $t ) );
 		}
-		if ( ! empty( $ls ) ) $taxes[] = [ 'taxonomy' => $tax, 'term_labels' => $ls ];
+		if ( ! empty( $ls ) ) $tax2tls[] = [ 'taxonomy' => $tax, 'term_labels' => $ls ];
 	}
 
 	return [
 		'title'      => $q_title,
 		'date'       => $q_date,
 		'content'    => $q_content,
-		'taxonomies' => $taxes,
+		'taxonomies' => $tax2tls,
 	];
 }

@@ -11,7 +11,7 @@ namespace nt;
 
 
 require_once( __DIR__ . '/handler-preview.php' );
-$v = handle_query( $_REQUEST );
+$view = handle_query( $_REQUEST );
 
 
 header('Content-Type: text/html;charset=utf-8');
@@ -30,7 +30,7 @@ header('Content-Type: text/html;charset=utf-8');
 <div class="container">
 	<header class="entry-header">
 		<h1>{{title}}</h1>
-		<div class="date">{{title}}</div>
+		<div class="date">{{date}}</div>
 {{#taxonomies}}
 		<ul class="taxonomy-{{taxonomy}}">
 			{{#term_labels}}<li>{{.}}</li>{{/term_labels}}
@@ -41,7 +41,7 @@ header('Content-Type: text/html;charset=utf-8');
 		{{{content}}}
 	</main>
 </div>
-<?php \nt\end( $v ); ?>
+<?php \nt\end( $view ); ?>
 
 </body>
 </html>
