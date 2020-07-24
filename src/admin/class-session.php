@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
@@ -19,6 +19,14 @@ class Session {
 	const TIMEOUT        = 7200;  // 7200 = 120 minutes * 60 seconds
 	const ACCT_FILE_NAME = 'account';
 	const HASH_ALGO      = 'sha256';
+
+	static public function getRealm(): string {
+		return 'newtrino';
+	}
+
+	static public function getNonce(): string {
+		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
+	}
 
 	private $_urlAdmin;
 	private $_dirAcct;
@@ -45,14 +53,6 @@ class Session {
 
 	// ------------------------------------------------------------------------
 
-
-	public function getRealm(): string {
-		return 'newtrino';
-	}
-
-	public function getNonce(): string {
-		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
-	}
 
 	public function getUrl(): string {
 		return $this->_urlAdmin;
@@ -138,7 +138,7 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private function _cleanUp() {
+	private function _cleanUp(): void {
 		if ( ! is_dir( $this->_dirSession ) ) return;
 		$fns = [];
 		$sids = scandir( $this->_dirSession );
@@ -200,7 +200,7 @@ class Session {
 		return json_decode( $json, true );
 	}
 
-	private function _removeSessionFile( string $sid ) {
+	private function _removeSessionFile( string $sid ): void {
 		if ( ! is_dir( $this->_dirSession ) ) return;
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) ) return;

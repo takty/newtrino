@@ -10,7 +10,7 @@
 		"Password:": "パスワード:",
 		"Log In": "ログイン",
 		"Log Out": "ログアウト",
-		"User name or password is wrong.": "ユーザー名かパスワードが異なります。"
+		"Username or password is wrong.": "ユーザー名かパスワードが異なります。"
 	},
 	"list": {
 		"Post Type": "投稿タイプ",
