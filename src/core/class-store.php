@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-24
  *
  */
 
@@ -53,7 +53,8 @@ class Store {
 			$ret .= "$year/";
 		}
 		if ( $ensureExistence ) {
-			mkdir( $this->_dirRoot . rtrim( $ret, '/' ), 0777, true );
+			$path = $this->_dirRoot . rtrim( $ret, '/' );
+			if ( ! is_dir( $path ) ) mkdir( $path, 0777, true );
 		}
 		return [ $this->_dirRoot . $ret, $ret ];
 	}
