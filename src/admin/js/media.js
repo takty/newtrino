@@ -29,10 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		const f = upfile.files ? upfile.files[0] : null;
 		if (f && maxFileSize < f.size) {
 			msgMaxFileSize.hidden = false;
-		} else {
-			msgMaxFileSize.hidden = true;
+			return;
 		}
-		// if (upfile.value !== '') document.getElementById('form-upload').submit();
+		msgMaxFileSize.hidden = true;
+		if (upfile.value !== '') document.getElementById('form-upload').submit();
 	});
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');

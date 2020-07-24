@@ -33,7 +33,7 @@ function load_resource( string $dirData, string $lang ): array {
 	return [];
 }
 
-function start_session( bool $create_store ) {
+function start_session( bool $create_store, bool $close_dialog = false ) {
 	global $nt_session, $nt_config, $nt_res;
 
 	if ( $nt_session->start() ) {
@@ -46,6 +46,9 @@ function start_session( bool $create_store ) {
 			global $nt_store;
 			$nt_store = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 		}
+	} else if ( $close_dialog ) {
+		header('Content-Type: text/html;charset=utf-8');
+		echo "<!DOCTYPE html><html><head><script>window.parent.closeDialog();</script></head><body></body></html>";
 	} else {
 		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 		exit();

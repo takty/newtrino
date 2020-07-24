@@ -15,7 +15,7 @@ require_once( __DIR__ . '/class-media.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
-start_session( true );
+start_session( true, true );
 
 
 function handle_query( array $q ) {
