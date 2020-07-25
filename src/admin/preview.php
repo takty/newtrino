@@ -14,7 +14,7 @@ require_once( __DIR__ . '/handler-preview.php' );
 $view = handle_query( $_REQUEST );
 
 
-header('Content-Type: text/html;charset=utf-8');
+header( 'Content-Type: text/html;charset=utf-8' );
 ?>
 <!DOCTYPE html>
 <html>

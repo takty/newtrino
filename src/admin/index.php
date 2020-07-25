@@ -5,7 +5,7 @@ namespace nt;
  * Init for Admin
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-07-25
  *
  */
 
@@ -47,8 +47,8 @@ function start_session( bool $create_store, bool $close_dialog = false ) {
 			$nt_store = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 		}
 	} else if ( $close_dialog ) {
-		header('Content-Type: text/html;charset=utf-8');
-		echo "<!DOCTYPE html><html><head><script>window.parent.closeDialog();</script></head><body></body></html>";
+		header( 'Content-Type: text/html;charset=utf-8' );
+		echo '<!DOCTYPE html><html><head><script>window.parent.closeDialog();</script></head><body></body></html>';
 	} else {
 		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 		exit();

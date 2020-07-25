@@ -5,13 +5,13 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-25
  *
  */
 
 
-require_once( __DIR__ . '/view-admin.php' );
-$view = query();
+require_once( __DIR__ . '/handler-list.php' );
+$view = handle_query();
 
 
 header( 'Content-Type: text/html;charset=utf-8' );
@@ -36,7 +36,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 </header>
 
 <div class="container">
-	<nav class="container-sub frame frame-sub frame-compact">
+	<nav class="container-sub frame frame-compact">
 <?php \nt\begin(); ?>
 		<div>
 			<div class="heading"><?= _ht( 'Post Type' ) ?></div>

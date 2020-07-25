@@ -2,12 +2,101 @@
 namespace nt;
 /**
  *
- * Metabox
+ * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-18
+ * @version 2020-07-25
  *
  */
+
+
+require_once( __DIR__ . '/index.php' );
+require_once( __DIR__ . '/../core/class-store.php' );
+require_once( __DIR__ . '/../core/util/template.php' );
+require_once( __DIR__ . '/../core/util/query-string.php' );
+require_once( __DIR__ . '/../core/util/param.php' );
+
+start_session( true );
+
+
+function handle_query( $q ) {
+	global $nt_config, $nt_store;
+	$list_url = NT_URL_ADMIN . 'list.php';
+	$post_url = NT_URL_ADMIN . 'post.php';
+
+	$q_id   = $q['id']   ?? 0;
+	$q_mode = $q['mode'] ?? '';
+	$msg    = '';
+
+	$lang = $nt_config['lang_admin'];
+
+	switch ( $q_mode ) {
+		case 'new':
+			$t_p = $nt_store->createNewPost();
+			$nt_session->addTempDir( $nt_store->getPostDir( $t_p->getId(), null ) );
+			$t_p->setDate();
+			break;
+		case 'update':
+			$p = $nt_store->getPost( $q_id );
+			$p->assign( $q, NT_URL_ADMIN );
+			$t_p = $nt_store->writePost( $p );
+			$msg = _ht( 'Update Complete' );
+			break;
+		default:
+			$t_p = $nt_store->getPost( $q_id );
+			break;
+	}
+
+	$query = parse_query_string();
+	$query = _rearrange_query( $query );
+	return [
+		'list_url'    => create_canonical_url( $list_url, $query ),
+		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update' ] ),
+		'preview_url' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview' ] ),
+		'media_url'   => create_canonical_url( 'media.php', [ 'id' => $query['id'] ] ),
+
+		'message' => $msg,
+		'lang'    => $lang,
+
+		'post_title'   => $t_p->getTitle(),
+		'post_date'    => $t_p->getDate(),
+		'post_content' => $t_p->getContent(),
+
+		't_p' => $t_p,
+	];
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+function _rearrange_query( array $query ): array {
+	return get_query_vars( $query, [
+		'id'       => 'int',
+		'page'     => 'int',
+		'per_page' => 'int',
+		'date'     => 'slug',
+		'type'     => 'slug',
+	], 'taxonomy' );
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+function echo_status_select( $post ) {
+	$s = $post->getStatus();
+?>
+	<select form="form-post" name="post_status" id="post-status">
+		<option id="post-status-publish" value="publish"<?php if ( $s === 'publish' ) _eh( ' selected' ); ?>><?= _ht( 'Published' ) ?></option>
+		<option id="post-status-future" value="future"<?php if ( $s === 'future' ) _eh( ' selected' ); ?>><?= _ht( 'Scheduled' ) ?></option>
+		<option id="post-status-draft" value="draft"<?php if ( $s === 'draft' ) _eh( ' selected' ); ?>><?= _ht( 'Draft' ) ?></option>
+	</select>
+<?php
+}
+
+
+// -----------------------------------------------------------------------------
 
 
 function echo_taxonomy_metaboxes( $post ) {
@@ -29,11 +118,11 @@ function echo_metabox_taxonomy( $tax_slug, $post ) {
 	<div class="frame frame-sub">
 		<div class="title"><?= _h( $tax['label'] ) ?></div>
 <?php if ( $is_exclusive ) : ?>
-		<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
+		<div><select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
 <?php foreach( $ts as $t ): ?>
 			<option value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' selected' ); ?>><?= _h( $t['label'] ) ?></option>
 <?php endforeach; ?>
-		</select>
+		</select></div>
 <?php else : ?>
 <?php foreach( $ts as $t ): ?>
 		<label>

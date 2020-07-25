@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-07-24
  *
  */
 
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (div) {
 				const r = div.getBoundingClientRect();
 				const h = clm.clientHeight - (0 | r.top);
-				tinymce.activeEditor.theme.resizeTo(null, h - 32);
+				tinymce.activeEditor.theme.resizeTo(null, h - 64);
 			} else {
 				setTimeout(onResize, 100);
 			}
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function update(e) {
 		if (document.getElementById('post-title').value === '') {
 			const elm = document.getElementById('message-enter-title');
-			elm.style.display = 'block';
+			elm.hidden = false;
 			return false;
 		}
 		isModified = false;

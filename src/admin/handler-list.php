@@ -2,10 +2,10 @@
 namespace nt;
 /**
  *
- * View
+ * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
@@ -19,35 +19,16 @@ require_once( __DIR__ . '/../core/util/param.php' );
 start_session( true );
 
 
-function query() {
-	$url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-	if ( strpos( $url, 'list.php' ) !== false ) {
-		$list_url = $url;
-		$post_url = str_replace( 'list.php', 'post.php', $url );
-	} else {
-		$list_url = str_replace( 'post.php', 'list.php', $url );
-		$post_url = $url;
-	}
+function handle_query() {
+	global $nt_config, $nt_store;
+	$list_url = NT_URL_ADMIN . 'list.php';
+	$post_url = NT_URL_ADMIN . 'post.php';
+
 	$query = parse_query_string();
 	if ( isset( $query['del_id'] ) ) {
-		global $nt_store;
 		$nt_store->delete( $query['del_id'] );
 	}
-	if ( $url === $post_url ) {
-		return _create_view_edit( $query, $list_url, $post_url );
-	} else {
-		return _create_view_list( $query, $list_url, $post_url );
-	}
-}
-
-function _create_view_edit( $query, $list_url, $post_url ) {
-	$query = _rearrange_query( $query );
-	return [
-		'list'    => create_canonical_url( $list_url, $query ),
-		'update'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update' ] ),
-		'preview' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview' ] ),
-		'media'   => create_canonical_url( 'media.php', [ 'id' => $query['id'] ] ),
-	];
+	return _create_view_list( $query, $list_url, $post_url );
 }
 
 function _create_view_list( $query, $list_url, $post_url ) {
