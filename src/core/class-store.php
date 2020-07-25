@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-26
  *
  */
 
@@ -84,12 +84,24 @@ class Store {
 		return $ret;
 	}
 
+	private function _createSubPath( string $type, string $rawDate ): string {
+		$sp = 'post/';
+		if ( $this->_conf['archive_by_type'] ) {
+			$sp = "$type/";
+		}
+		if ( $this->_conf['archive_by_year'] ) {
+			$year = substr( $rawDate, 0, 4 );
+			$sp .= "$year/";
+		}
+		return $sp;
+	}
+
 
 	// ------------------------------------------------------------------------
 
 
 	public function getPost( string $id ): ?Post {
-		$p = new Post( $id, $this->getSubPath( $id ) );
+		$p = new Post( $id, $this->getSubPath( $id, null ) );
 		if ( ! $p->load() ) return null;
 		return $p;
 	}
@@ -239,7 +251,7 @@ class Store {
 			flock( $dir, LOCK_EX );
 			$id = $this->_ensureUniquePostId( $archPath, $dateRaw );
 			if ( $id === null ) return null;
-			$p = new Post( $id, $subPath );
+			$p = new Post( '.' . $id, $subPath );  // Temporary ID
 			$p->setType( $type );
 			$p->setDate();
 			$p->save();
@@ -271,7 +283,7 @@ class Store {
 		$post->save();
 		if ( strpos( $post->getId(), '.' ) === 0 ) {
 			$newId = substr( $post->getId(), 1 );
-			$subPath = $post->getSubPath();
+			$subPath = $this->_createSubPath( $post->getType(), $post->getDateRaw() );
 			rename( $this->getPostDir( $post->getId(), $subPath ), $this->getPostDir( $newId, $subPath ) );
 			$post->setId( $newId );
 			$post->save();
