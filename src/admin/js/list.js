@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function setPostStatus(id, status) {
 		const req = new XMLHttpRequest();
 		req.addEventListener('load', (e) => {});  // For debug
-		req.open('post', 'responder.php', true);
+		req.open('post', 'ajax.php', true);
 		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		req.send('mode=status' + '&id=' + id + '&val=' + status + '&cache=' + Date.now());
 	}

@@ -2,10 +2,10 @@
 namespace nt;
 /**
  *
- * Responder
+ * Ajax
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-25
  *
  */
 
