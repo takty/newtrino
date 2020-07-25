@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-25
  *
  */
 
@@ -258,7 +258,7 @@ class Post {
 	}
 
 	function canPublished(): bool {
-		return intval( substr( $this->_date, 0, 8 ) ) < intval( date( 'Ymd' ) );
+		return intval( $this->_date ) < intval( date( 'YmdHis' ) );
 	}
 
 	function setStatus( string $val ) {
