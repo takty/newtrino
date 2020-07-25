@@ -4,7 +4,7 @@ $view = \nt\query( [
 	'filter' => [ 'taxonomy' => [ 'category' ], 'date_format' => 'Y' ],
 	'option' => [ 'lang' => 'ja', 'date_format' => 'Y-m-d' ]
 ] );
-header('Content-Type: text/html;charset=utf-8');
+header( 'Content-Type: text/html;charset=utf-8' );
 ?>
 <!DOCTYPE html>
 <html>
