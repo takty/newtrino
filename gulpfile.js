@@ -112,7 +112,7 @@ gulp.task('delete-var', (done) => {
 	done();
 });
 
-gulp.task('js', () => gulp.src(['src/**/*.js', '!src/**/*.min.js'])
+gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js'])
 	.pipe($.plumber())
 	.pipe($.babel({
 		presets: [['@babel/preset-env']],
