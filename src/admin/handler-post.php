@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-26
  *
  */
 
@@ -20,7 +20,7 @@ start_session( true );
 
 
 function handle_query( $q ) {
-	global $nt_config, $nt_store;
+	global $nt_config, $nt_store, $nt_session;
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
 
@@ -29,10 +29,12 @@ function handle_query( $q ) {
 	$msg    = '';
 
 	$lang = $nt_config['lang_admin'];
+	$query = parse_query_string();
+	$query = _rearrange_query( $query );
 
 	switch ( $q_mode ) {
 		case 'new':
-			$t_p = $nt_store->createNewPost();
+			$t_p = $nt_store->createNewPost( $query['type'] );
 			$nt_session->addTempDir( $nt_store->getPostDir( $t_p->getId(), null ) );
 			$t_p->setDate();
 			break;
@@ -47,13 +49,11 @@ function handle_query( $q ) {
 			break;
 	}
 
-	$query = parse_query_string();
-	$query = _rearrange_query( $query );
 	return [
-		'list_url'    => create_canonical_url( $list_url, $query ),
-		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update' ] ),
-		'preview_url' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview' ] ),
-		'media_url'   => create_canonical_url( 'media.php', [ 'id' => $query['id'] ] ),
+		'list_url'    => create_canonical_url( $list_url, $query, [ 'id' => null ] ),
+		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update', 'id' => $t_p->getId() ] ),
+		'preview_url' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview', 'id' => $t_p->getId() ] ),
+		'media_url'   => create_canonical_url( 'media.php', [ 'id' => $t_p->getId() ] ),
 
 		'message' => $msg,
 		'lang'    => $lang,
@@ -159,8 +159,8 @@ function echo_meta_metaboxes( $post ) {
 
 function echo_metabox_date( $post, $key, $label ) {
 	$val = $post->getMetaValue( $key );
-	if ( $val === null ) return;
-	$date = Post::parseDate( $val );
+	if ( $val === null ) $date = '';
+	else $date = Post::parseDate( $val );
 ?>
 	<div class="frame frame-sub metabox-date">
 		<div class="title"><?= _ht( $label ) ?></div>
@@ -175,9 +175,13 @@ function echo_metabox_date( $post, $key, $label ) {
 
 function echo_metabox_date_range( $post, $key, $label ) {
 	$val = $post->getMetaValue( $key );
-	if ( $val === null ) return;
-	$bgn = Post::parseDate( $val[0] );
-	$end = Post::parseDate( $val[1] );
+	if ( $val === null ) {
+		$bgn = '';
+		$end = '';
+	} else {
+		$bgn = Post::parseDate( $val[0] );
+		$end = Post::parseDate( $val[1] );
+	}
 ?>
 	<div class="frame frame-sub metabox-date-range">
 		<div class="title"><?= _ht( $label ) ?></div>
