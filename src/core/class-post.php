@@ -365,26 +365,18 @@ class Post {
 	}
 
 	private function _convertToActualUrl( string $postUrl, string $url ): string {
-		$sp = strpos( $url, '/' );
+		$sp = strpos( $url, '//' );
 		if ( $sp === 0 ) {
-			$sub = substr( $url, 1 );
-			return $postUrl . $sub;
-		} else {
-			if ( strpos( $url, self::MEDIA_DIR_NAME . '/' ) === 0 ) {
-				return $postUrl . $this->_id . '/' . $url;
-			}
+			$sub = substr( $url, 2 );
+			return NT_URL . $sub;
 		}
 		return $url;
 	}
 
-	private function _convertToPortableUrl( string $postUrl, string $url, string $urlPrivate ): string {
-		$url = resolve_url( $url, $urlPrivate );
-		if ( strpos( $url, $postUrl ) === 0 ) {
-			$url = substr( $url, strlen( $postUrl ) - 1 );
-			$pu = '/' . $this->_id . '/' . self::MEDIA_DIR_NAME . '/';
-			if ( strpos( $url, $pu ) === 0 ) {
-				$url = substr( $url, strlen( $pu ) - strlen( self::MEDIA_DIR_NAME . '/' ) );
-			}
+	private function _convertToPortableUrl( string $postUrl, string $url, string $urlAdmin ): string {
+		$url = resolve_url( $url, $urlAdmin );
+		if ( strpos( $url, NT_URL ) === 0 ) {
+			$url = '/' . substr( $url, strlen( NT_URL ) - 1 );
 		}
 		return $url;
 	}
@@ -403,6 +395,12 @@ class Post {
 		$dom = str_get_html( $this->_content );
 		foreach ( $dom->find( 'img' ) as &$elm ) {
 			$elm->src = $this->_convertToActualUrl( $url, $elm->src );
+			if ( $elm->srcset ) {
+				$ss = explode( ',', $elm->srcset );
+				$ss = array_map( 'trim', $ss );
+				foreach ( $ss as &$s ) $s = $this->_convertToActualUrl( $url, $s );
+				$elm->srcset = implode( ', ', $ss );
+			}
 		}
 		foreach ( $dom->find( 'a' ) as &$elm ) {
 			$elm->href = $this->_convertToActualUrl( $url, $elm->href );
@@ -424,6 +422,12 @@ class Post {
 		$dom = str_get_html($val);
 		foreach ( $dom->find( 'img' ) as &$elm ) {
 			$elm->src = $this->_convertToPortableUrl( $url, $elm->src, $urlPrivate );
+			if ( $elm->srcset ) {
+				$ss = explode( ',', $elm->srcset );
+				$ss = array_map( 'trim', $ss );
+				foreach ( $ss as &$s ) $s = $this->_convertToPortableUrl( $url, $s, $urlPrivate );
+				$elm->srcset = implode( ', ', $ss );
+			}
 		}
 		foreach ( $dom->find( 'a' ) as &$elm ) {
 			$elm->href = $this->_convertToPortableUrl( $url, $elm->href, $urlPrivate );
