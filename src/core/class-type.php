@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-26
  *
  */
 
@@ -95,6 +95,7 @@ class Type {
 				$ms = [];
 				foreach ( $d['meta'] as $m ) {
 					if ( empty( $m['key'] ) || empty( $m['type'] ) ) continue;
+					normalize_label( $m, $this->_lang );
 					$ms[] = $m;
 				}
 				$d['meta'] = $ms;
