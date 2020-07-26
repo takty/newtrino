@@ -92,7 +92,7 @@ class Type {
 			if ( isset( $d['meta'] ) ) {
 				$ms = [];
 				foreach ( $d['meta'] as $m ) {
-					if ( empty( $m['key'] ) || empty( $m['type'] ) ) continue;
+					if ( empty( $m['type'] || ( empty( $m['key'] ) && $m['type'] !== 'gruop' ) ) ) continue;
 					normalize_label( $m, $this->_lang );
 					$ms[] = $m;
 				}

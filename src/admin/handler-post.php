@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -143,37 +143,76 @@ function echo_meta_metaboxes( $post ) {
 	global $nt_store;
 	$type = $post->getType();
 	$ms = $nt_store->type()->getMetaAll( $type );
+	echo_meta_metaboxes_internal( $post, $ms );
+}
+
+function echo_meta_metaboxes_internal( $post, $ms, $internal = false ) {
 	foreach ( $ms as $m ) {
 		$label = $m['label'] ?? '';
 		if ( empty( $label ) ) continue;
 		switch ( $m['type'] ) {
+			case 'group':
+				echo_metabox_group( $post, $label, $m['children'] );
+				break;
+			case 'text':
+				echo_metabox_text( $post, $m['key'], $label, $internal );
+				break;
 			case 'date':
-				echo_metabox_date( $post, $m['key'], $label );
+				echo_metabox_date( $post, $m['key'], $label, $internal );
 				break;
 			case 'date-range':
-				echo_metabox_date_range( $post, $m['key'], $label );
+				echo_metabox_date_range( $post, $m['key'], $label, $internal );
 				break;
 		}
 	}
 }
 
-function echo_metabox_date( $post, $key, $label ) {
+function echo_metabox_group( $post, $label, $children ) {
+?>
+	<div class="frame frame-sub metabox-group">
+		<div class="title"><?= _ht( $label ) ?></div>
+		<div class="group-inner">
+<?php
+	echo_meta_metaboxes_internal( $post, $children, true );
+?>
+		</div>
+	</div>
+<?php
+}
+
+function echo_metabox_text( $post, $key, $label, $internal ) {
+	$val = $post->getMetaValue( $key );
+	if ( $val === null ) $text = '';
+	else $text = $val;
+
+	$cls = $internal ? 'metabox-text' : 'frame frame-sub metabox-text';
+?>
+	<div class="<?= $cls ?>">
+		<div class="title"><?= _ht( $label ) ?></div>
+		<div><input type="text" name="meta:<?= _h( $key ) ?>" value="<?= _h( $text ) ?>"></div>
+	</div>
+<?php
+}
+
+function echo_metabox_date( $post, $key, $label, $internal ) {
 	$val = $post->getMetaValue( $key );
 	if ( $val === null ) $date = '';
 	else $date = Post::parseDate( $val );
+
+	$cls = $internal ? 'metabox-date' : 'frame frame-sub metabox-date';
 ?>
-	<div class="frame frame-sub metabox-date">
+	<div class="<?= $cls ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="flatpickr date" data-key="<?= _h( $key ) ?>">
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>
 		</div>
-		<input type="hidden" name="meta:<?= _h( $key ) ?>[]" value="<?= _h( $date ) ?>">
+		<input type="hidden" name="meta:<?= _h( $key ) ?>" value="<?= _h( $date ) ?>">
 	</div>
 <?php
 }
 
-function echo_metabox_date_range( $post, $key, $label ) {
+function echo_metabox_date_range( $post, $key, $label, $internal ) {
 	$val = $post->getMetaValue( $key );
 	if ( $val === null ) {
 		$bgn = '';
@@ -182,8 +221,9 @@ function echo_metabox_date_range( $post, $key, $label ) {
 		$bgn = Post::parseDate( $val[0] );
 		$end = Post::parseDate( $val[1] );
 	}
+	$cls = $internal ? 'metabox-date-range' : 'frame frame-sub metabox-date-range';
 ?>
-	<div class="frame frame-sub metabox-date-range">
+	<div class="<?= $cls ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="flatpickr date-range" data-key="<?= _h( $key ) ?>">
 			<input type="text" readonly="readonly" data-input>

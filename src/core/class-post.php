@@ -144,8 +144,15 @@ class Post {
 	private function _assignMeta( string $type, array $vals ) {
 		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
+		$this->_assignMetaInternal( $ms, $vals );
+	}
 
+	private function _assignMetaInternal( array $ms, array $vals ) {
 		foreach ( $ms as $m ) {
+			if ( $m['type'] === 'group' ) {
+				$this->_assignMetaInternal( $m['children'], $vals );
+				continue;
+			}
 			$key = $m['key'];
 			if ( ! isset( $vals["meta:$key"] ) ) continue;
 			if ( $m['type'] === 'date' ) {
