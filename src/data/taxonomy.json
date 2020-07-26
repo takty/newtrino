@@ -12,9 +12,9 @@
                 "label@ja": "ニュース"
             },
             {
-                "slug": "event",
-                "label@en": "Events",
-                "label@ja": "イベント"
+                "slug": "column",
+                "label@en": "Columns",
+                "label@ja": "コラム"
             }
         ]
     },

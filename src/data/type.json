@@ -3,24 +3,6 @@
         "slug": "post",
 		"label": "投稿",
 		"taxonomy": [ "category", "lang" ],
-		"meta": [
-			{
-				"label": "Group",
-				"type": "group",
-				"children": [
-					{
-						"label": "Text Field",
-						"type": "text",
-						"key": "text"
-					}
-				]
-			},
-			{
-				"key": "duration",
-				"type": "date-range",
-				"label": "Event Duration"
-			}
-		]
     },
 	{
 		"slug": "event",
@@ -30,7 +12,9 @@
 			{
 				"key": "duration",
 				"type": "date-range",
-				"label": "Event Duration"
+				"label": "Event Duration",
+				"label@ja": "開催期間",
+				"is_column_shown": true
 			}
 		]
 	}
