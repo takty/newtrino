@@ -90,7 +90,7 @@ class Post {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
-		if ( ! file_exists( $path ) ) {
+		if ( ! is_dir( $path ) ) {
 			mkdir( $path, self::MODE_DIR );
 		}
 		$this->_writeInfo( $path, true );

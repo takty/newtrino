@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-26
  *
  */
 
@@ -32,7 +32,7 @@ class Logger {
 	}
 
 	static private function ensureFile( string $path ) {
-		if ( file_exists( $path ) ) {
+		if ( is_file( $path ) ) {
 			$fsize = filesize( $path );
 			if ( self::MAX_SIZE < $fsize ) {
 				$pi  = pathinfo( $path );
@@ -43,22 +43,22 @@ class Logger {
 			}
 		} else {
 			$dir = dirname( $path );
-			if ( ! file_exists( $dir ) ) {
+			if ( ! is_dir( $dir ) ) {
 				if ( mkdir( $dir, 0755, true ) ) chmod( $dir, 0755 );
 			}
 		}
 	}
 
 	static private function rotateFile( string $dir, string $fn, string $ext ) {
-		if ( file_exists( "$dir{$fn}[5]$ext" ) ) {
+		if ( is_file( "$dir{$fn}[5]$ext" ) ) {
 			unlink( "$dir{$fn}[5]$ext" );
 		}
 		for ( $i = 4; $i > 0; $i -= 1 ) {
-			if ( ! file_exists( "$dir{$fn}[$i]$ext" ) ) continue;
+			if ( ! is_file( "$dir{$fn}[$i]$ext" ) ) continue;
 			$j = $i + 1;
 			rename( "$dir{$fn}[$i]$ext", "$dir{$fn}[$j]$ext" );
 		}
-		if ( file_exists( "$dir$fn$ext" ) ) {
+		if ( is_file( "$dir$fn$ext" ) ) {
 			rename( "$dir$fn$ext", "$dir{$fn}[1]$ext" );
 		}
 	}

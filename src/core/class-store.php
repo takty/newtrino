@@ -298,8 +298,8 @@ class Store {
 	}
 
 	static public function deleteAll( string $dir ) {
-		if ( ! file_exists( $dir ) ) {
-			Logger::output( "File Does Not Exist (Store::deleteAll file_exists) [$dir]" );
+		if ( ! is_dir( $dir ) ) {
+			Logger::output( "File Does Not Exist (Store::deleteAll is_dir) [$dir]" );
 			return false;
 		}
 		foreach ( scandir( $dir ) as $fn ) {

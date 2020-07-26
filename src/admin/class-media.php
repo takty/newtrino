@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-26
  *
  */
 
@@ -89,7 +89,7 @@ class Media {
 
 		$path = $this->_dir . $fileName;
 		if ( is_uploaded_file( $tmpFile ) ) {
-			if ( ! file_exists( $this->_dir ) ) {
+			if ( ! is_dir( $this->_dir ) ) {
 				mkdir( $this->_dir, self::MODE_DIR );
 			}
 			if ( move_uploaded_file( $tmpFile, $path ) ) {
