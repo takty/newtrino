@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-27
  *
  */
 
@@ -46,8 +46,9 @@ function load_config( string $dirData ): array {
 		'lang_admin'         => 'en',
 		'per_page'           => 10,
 		'new_arrival_period' => 7,
-		'archive_by_year'    => false,
-		'archive_by_type'    => false,
+		'date_format'        => 'Y-m-d',
+		'archive_by_year'    => true,
+		'archive_by_type'    => true,
 		'image_sizes' => [
 			'small'        => [ 'width' =>  128, 'label' => 'Small' ],
 			'medium_small' => [ 'width' =>  256, 'label' => 'Medium Small' ],
