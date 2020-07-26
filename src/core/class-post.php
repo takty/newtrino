@@ -340,7 +340,9 @@ class Post {
 
 	private function _readContent( string $postDir ): bool {
 		$path = $postDir . self::CONT_FILE_NAME;
-		$cont = @file_get_contents( $path );
+		if ( ! is_file( $path ) ) return false;
+
+		$cont = file_get_contents( $path );
 		if ( $cont === false ) {
 			Logger::output( 'error', "(Post::_readContent file_get_contents) [$path]" );
 			return false;

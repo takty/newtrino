@@ -49,7 +49,7 @@ class Store {
 	public function createArchAndSubPath( string $type, string $dateRaw, bool $ensureExistence = false ): array {
 		$ret = $this->_conf['archive_by_type'] ? "$type/" : 'post/';
 		if ( $this->_conf['archive_by_year'] ) {
-			$year = substr( $dateRow, 0, 4 );
+			$year = substr( $dateRaw, 0, 4 );
 			$ret .= "$year/";
 		}
 		if ( $ensureExistence ) {
@@ -77,10 +77,12 @@ class Store {
 			foreach ( $ds as $d ) {
 				if ( $d[0] === '.' ) continue;
 				if ( preg_match( '/[^0-9]/', $d ) ) continue;
+				if ( strlen( $d ) !== 4 ) continue;
 				if ( is_file( $t . $d ) ) continue;
 				$ret[] = $t . $d . '/';
 			}
 		}
+		$ret = array_merge( $ret, $typeDirs );  // For compatibility
 		return $ret;
 	}
 
