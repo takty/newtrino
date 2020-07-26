@@ -82,7 +82,7 @@ class Store {
 				$ret[] = $t . $d . '/';
 			}
 		}
-		$ret = array_merge( $ret, $typeDirs );  // For compatibility
+		$ret = array_merge( $ret, $typeDirs );  // For option compatibility
 		return $ret;
 	}
 
@@ -201,6 +201,7 @@ class Store {
 				return $this->_type->getTypeDirAll();
 			} else {
 				$ats = is_array( $args['type'] ) ? $args['type'] : [ $args['type'] ];
+				if ( ! in_array( 'post', $ats, true ) ) $ats[] = 'post';  // For option compatibility
 				return array_map( function ( $e ) { return "$e/"; }, $ats );
 			}
 		}
@@ -211,6 +212,7 @@ class Store {
 		$query = new Query( $args );
 
 		foreach ( $paths as $path ) {
+			if ( ! is_dir( $root . $path ) ) continue;
 			$dir = dir( $root . $path );
 			while ( false !== ( $fn = $dir->read() ) ) {
 				if ( strpos( $fn, '.' ) === 0 || is_file( $root . $path . $fn ) ) continue;
