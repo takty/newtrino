@@ -93,9 +93,6 @@ gulp.task('copy-src', (done) => {
 	copySync(SRC_ADMIN + 'sass/*.css', DIST_ADMIN + 'css/');
 	fs.removeSync(DIST_ADMIN + 'sass');
 	fs.removeSync(DIST_ADMIN + 'lib');
-	for (let f of glob.sync(DIST_ADMIN + 'js/*.js')) fs.removeSync(f);
-	for (let f of glob.sync(DIST_BASE + 'core/*.js')) fs.removeSync(f);
-	for (let f of glob.sync(DIST_BASE + '*.js')) fs.removeSync(f);
 	done();
 });
 
@@ -112,13 +109,22 @@ gulp.task('delete-var', (done) => {
 	done();
 });
 
+gulp.task('clean-js', (done) => {
+	for (let f of glob.sync(DIST_ADMIN + 'js/*.js')) fs.removeSync(f);
+	for (let f of glob.sync(DIST_BASE + 'core/*.js')) fs.removeSync(f);
+	for (let f of glob.sync(DIST_BASE + '*.js')) fs.removeSync(f);
+	done();
+});
+
 gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js'])
 	.pipe($.plumber())
+	.pipe($.sourcemaps.init())
 	.pipe($.babel({
 		presets: [['@babel/preset-env']],
 	}))
 	.pipe($.terser())
 	.pipe($.rename({ extname: '.min.js' }))
+	.pipe($.sourcemaps.write('.'))
 	.pipe(gulp.dest('./dist'))
 );
 
@@ -140,10 +146,10 @@ gulp.task('sample', () => {
 });
 
 gulp.task('watch', () => {
-	gulp.watch('src/**/*.js', gulp.series('js'));
+	gulp.watch('src/**/*.js', gulp.series('clean-js', 'js'));
 	gulp.watch('src/**/*.scss', gulp.series('sass'));
 	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy'));
 	gulp.watch('src/**/*', gulp.series('sample'));
 });
 
-gulp.task('default', gulp.series('copy', 'delete-var', 'js', 'sass', 'sample', 'watch'));
+gulp.task('default', gulp.series('copy', 'delete-var', 'clean-js', 'js', 'sass', 'sample', 'watch'));
