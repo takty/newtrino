@@ -1,9 +1,9 @@
 [
-    {
-        "slug": "post",
+	{
+		"slug": "post",
 		"label": "投稿",
-		"taxonomy": [ "category", "lang" ],
-    },
+		"taxonomy": [ "category", "lang" ]
+	},
 	{
 		"slug": "event",
 		"label": "イベント",
