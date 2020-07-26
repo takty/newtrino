@@ -33,11 +33,11 @@ class Post {
 	const DATE_STATUS_ONGOING  = 'ongoing';
 	const DATE_STATUS_FINISHED = 'finished';
 
-	static function compareDate( Post $a, Post $b ): bool {
+	static function compareDate( Post $a, Post $b ): int {
 		return $b->_date <=> $a->_date;
 	}
 
-	static function compareIndexScore( Post $a, Post $b ): bool {
+	static function compareIndexScore( Post $a, Post $b ): int {
 		return $b->_indexScore <=> $a->_indexScore;
 	}
 
