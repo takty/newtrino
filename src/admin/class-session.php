@@ -5,12 +5,13 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-26
  *
  */
 
 
 require_once( __DIR__ . '/../core/class-logger.php' );
+require_once( __DIR__ . '/../core/class-store.php' );
 
 
 class Session {
