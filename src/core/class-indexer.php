@@ -5,37 +5,28 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-09
+ * @version 2020-07-26
  *
  */
 
 
-require_once( __DIR__ . '/lib/class-tiny-segmenter.php' );
 require_once( __DIR__ . '/class-logger.php' );
 
 
 class Indexer {
 
 	static function segmentSearchQuery( string $searchQuery ): array {
-		$ts = new \TinySegmenter();
-		$ws = $ts->segment( $searchQuery );
-		foreach ( $ws as &$w ) {
-			$w = mb_convert_kana( $w, 'acHV' );
-			$w = mb_strtolower( $w );
-		}
-		return $ws;
+		return self::_create_bigram( $searchQuery );
 	}
 
 	static function updateSearchIndex( string $text, string $fdPath, int $mode ): bool {
-		$ts = new \TinySegmenter();
-		$ws = $ts->segment( $text );
+		$ws = self::_create_bigram( $text );
 		$sum = [];
 		foreach ( $ws as $w ) {
-			$nw = mb_convert_kana( $w, 'acHV' );
-			$nw = mb_strtolower( $nw );
-			if ( isset( $sum[ $nw ] ) ) $sum[ $nw ] += 1;
-			else $sum[ $nw ] = 1;
+			if ( isset( $sum[ $w ] ) ) $sum[ $w ] += 1;
+			else $sum[ $w ] = 1;
 		}
+		arsort( $sum );
 		$index = count( $ws ) . "\n";
 		foreach ( $sum as $key => $val ) {
 			$index .= $key . "\t" . $val . "\n";
@@ -81,5 +72,41 @@ class Indexer {
 		if ( $ms !== count( $matchCount ) ) return 0;
 		return $score;
 	}
+
+
+	// -------------------------------------------------------------------------
+
+
+	static private function _create_bigram( string $text ): array {
+		$ret = [];
+
+		$text = mb_convert_kana( $text, 'acHV' );
+		$text = mb_strtolower( $text );
+
+		$sts = mb_split( "[\s｢｣\(\)\[\]{}<>\"\'\`\\/~､,｡.?!:;･　「」『』（）［］｛｝〈〉《》【】〔〕〖〗〘〙〚〛＜＞“”‘’＼／～、，。．？！：；・]+", $text );
+		$sts = array_map( function ( $e ) { return preg_replace( '/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $e ); }, $sts );
+
+		foreach ( $sts as $st ) {
+			if ( empty( $st ) ) continue;
+			self::_split_term( $st, $ret );
+		}
+		return $ret;
+	}
+
+	static private function _split_term( string $term, array &$bis ): void {
+		$chs = preg_split( "//u", $term, -1, PREG_SPLIT_NO_EMPTY );
+
+		$temp = '';
+		foreach ( $chs as $i => $ch ) {
+			if ( $temp !== '' ) {
+				$bis[] = $temp;
+				$temp = '';
+			}
+			if ( isset( $chs[ $i + 1 ] ) ) {
+				$bis[] = $ch . $chs[ $i + 1 ];
+			}
+		}
+		if ( $temp !== '' ) $bis[] = $temp;
+    }
 
 }
