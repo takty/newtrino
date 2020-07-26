@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -44,7 +44,7 @@ class Session {
 
 		ini_set( 'session.use_strict_mode', 1 );
 		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
-		Logger::output( 'Info (Session)' );
+		Logger::output( 'info', '(Session)' );
 	}
 
 	public function getLangAdmin(): string {
@@ -79,13 +79,13 @@ class Session {
 
 		$accountPath = $this->_dirAcct . self::ACCT_FILE_NAME;
 		if ( is_file( $accountPath ) === false ) {
-			Logger::output( "Error (Session::login is_file) [$accountPath]" );
+			Logger::output( 'error', "(Session::login is_file) [$accountPath]" );
 			$this->_errMsg = 'Account file does not exist.';
 			return false;
 		}
 		$as = file( $accountPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 		if ( $as === false ) {
-			Logger::output( "Error (Session::login file) [$accountPath]" );
+			Logger::output( 'error', "(Session::login file) [$accountPath]" );
 			$this->_errMsg = 'Account file cannot be opened.';
 			return false;
 		}
@@ -195,7 +195,7 @@ class Session {
 		if ( ! is_file( $path ) ) return null;
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output("Error (Session::_loadSessionFile file_get_contents) [$path]");
+			Logger::output( 'error', "(Session::_loadSessionFile file_get_contents) [$path]" );
 			return null;
 		}
 		return json_decode( $json, true );
@@ -207,7 +207,7 @@ class Session {
 		if ( ! is_file( $path ) ) return;
 		$res = unlink( $path );
 		if ( $res === false ) {
-			Logger::output("Error (Session::_removeSessionFile unlink) [$path]");
+			Logger::output( 'error', "(Session::_removeSessionFile unlink) [$path]" );
 		}
 	}
 
@@ -217,7 +217,7 @@ class Session {
 		$json = json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output("Error (Session::_saveSessionFile file_put_contents) [$path]");
+			Logger::output( 'error', "(Session::_saveSessionFile file_put_contents) [$path]" );
 			return false;
 		}
 		return true;
@@ -251,7 +251,7 @@ class Session {
 			chmod( $path, self::MODE_DIR );
 			return true;
 		}
-		Logger::output("Error (Session::_ensureDir) [$path]");
+		Logger::output( 'error', "(Session::_ensureDir) [$path]" );
 		return false;
 	}
 

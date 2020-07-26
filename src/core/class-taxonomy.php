@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-27
  *
  */
 
@@ -85,7 +85,7 @@ class Taxonomy {
 		$path = $this->_dir . 'taxonomy.json';
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( "Error (Taxonomy::_loadData file_get_contents) [$path]" );
+			Logger::output( 'error', "(Taxonomy::_loadData file_get_contents) [$path]" );
 			return [];
 		}
 		$data = json_decode( $json, true );

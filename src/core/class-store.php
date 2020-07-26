@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -233,7 +233,7 @@ class Store {
 			$json = false;
 		}
 		if ( $json === false ) {
-			Logger::output( "Error (Post::_loadInfo file_get_contents) [$infoPath]" );
+			Logger::output( 'error', "(Post::_loadInfo file_get_contents) [$infoPath]" );
 			return null;
 		}
 		return json_decode( $json, true );
@@ -299,7 +299,7 @@ class Store {
 
 	static public function deleteAll( string $dir ) {
 		if ( ! is_dir( $dir ) ) {
-			Logger::output( "File Does Not Exist (Store::deleteAll is_dir) [$dir]" );
+			Logger::output( 'error', "(Store::deleteAll is_dir) File Does Not Exist [$dir]" );
 			return false;
 		}
 		foreach ( scandir( $dir ) as $fn ) {

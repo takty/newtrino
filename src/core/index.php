@@ -11,6 +11,10 @@ namespace nt;
 
 
 require_once( __DIR__ . '/util/url.php' );
+require_once( __DIR__ . '/class-logger.php' );
+
+Logger::$debug = true;
+
 
 define( 'NT_DIR', pathinfo( __DIR__, PATHINFO_DIRNAME ) . '/' );
 define( 'NT_DIR_DATA', NT_DIR . '/data/' );

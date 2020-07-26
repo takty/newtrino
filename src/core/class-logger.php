@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -13,10 +13,11 @@ namespace nt;
 class Logger {
 
 	const MAX_SIZE   = 4000;
-	const DEBUG_VIEW = false;
 	const LOG_FILE   = __DIR__ . '/var/log/log.txt';
 
-	static function output( string $msg ) {
+	static public $debug = false;
+
+	static function output( string $type, string $msg ) {
 		$path = self::LOG_FILE;
 		self::ensureFile( $path );
 		$fp = fopen( $path, 'ab+' );
@@ -24,8 +25,8 @@ class Logger {
 
 		flock( $fp, LOCK_EX );
 		set_file_buffer( $fp, 0 );
-		$line = join( ' ', [ date( 'Y-m-d H:i:s' ), getenv( 'REMOTE_USER' ), $msg ] );
-		if ( self::DEBUG_VIEW ) print( "$line\n" );
+		$line = join( ' ', [ date( 'Y-m-d H:i:s' ), getenv( 'REMOTE_USER' ), ucfirst( strtolower( $type ) ), $msg ] );
+		if ( self::$debug && $type !== 'info' ) print( "$line\n" );
 		fputs( $fp, "$line\n" );
 		flock( $fp, LOCK_UN );
 		fclose( $fp );

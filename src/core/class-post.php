@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -220,7 +220,7 @@ class Post {
 		$path = $postDir . self::INFO_FILE_NAME;
 		$json = @file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( "Error (Post::_readInfoFile file_get_contents) [$path]" );
+			Logger::output( 'error', "(Post::_readInfoFile file_get_contents) [$path]" );
 			return null;
 		}
 		return json_decode( $json, true );
@@ -231,7 +231,7 @@ class Post {
 		$json = json_encode( $info, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( "Error (Post::_writeInfoFile file_put_contents) [$path]" );
+			Logger::output( 'error', "(Post::_writeInfoFile file_put_contents) [$path]" );
 			return false;
 		}
 		chmod( $path, self::MODE_FILE );
@@ -342,7 +342,7 @@ class Post {
 		$path = $postDir . self::CONT_FILE_NAME;
 		$cont = @file_get_contents( $path );
 		if ( $cont === false ) {
-			Logger::output( "Error (Post::_readContent file_get_contents) [$path]" );
+			Logger::output( 'error', "(Post::_readContent file_get_contents) [$path]" );
 			return false;
 		}
 		$this->_content = $cont;
@@ -355,7 +355,7 @@ class Post {
 		$path = $postDir . self::CONT_FILE_NAME;
 		$res = file_put_contents( $path, $this->_content, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( "Error (Post::_writeContent file_put_contents) [$path]" );
+			Logger::output( 'error', "(Post::_writeContent file_put_contents) [$path]" );
 			return false;
 		}
 		chmod( $path, self::MODE_FILE );

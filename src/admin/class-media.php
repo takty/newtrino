@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -137,7 +137,7 @@ class Media {
 		if ( is_file( $path ) ) {
 			$json = file_get_contents( $path );
 			if ( $json === false ) {
-				Logger::output( "Error (Media::_loadMeta file_get_contents) [$path]" );
+				Logger::output( 'error', "(Media::_loadMeta file_get_contents) [$path]" );
 				return [];
 			}
 			return $this->_data = json_decode( $json, true );
@@ -153,7 +153,7 @@ class Media {
 		$path = $this->_meta;
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( "Error (Media::_loadMeta file_put_contents) [$out_path]" );
+			Logger::output( 'error', "(Media::_loadMeta file_put_contents) [$out_path]" );
 			return;
 		}
 	}

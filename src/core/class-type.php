@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -81,10 +81,14 @@ class Type {
 		$path = $this->_dir . 'type.json';
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( "Error (Type::_loadData file_get_contents) [$path]" );
-			return [];
+			Logger::output( 'error', "(Type::_loadData file_get_contents) [$path]" );
+			die;
 		}
 		$data = json_decode( $json, true );
+		if ( $data === null ) {
+			Logger::output( 'error', "(Type::_loadData json_decode) [$path]" );
+			die;
+		}
 		$ret = [];
 
 		foreach ( $data as $d ) {

@@ -5,7 +5,7 @@ namespace nt;
  * Compatibility Utilities
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -22,7 +22,7 @@ function convert_category_file( $dir_data ) {
 
 	$lines = file( $in_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 	if ( $lines === false ) {
-		Logger::output( 'Error (convert_category_file) [' . $in_path . ']' );
+		Logger::output( 'error', "(convert_category_file) [$in_path]" );
 		return false;
 	}
 	$terms = [];
@@ -48,7 +48,7 @@ function convert_category_file( $dir_data ) {
 	$res = file_put_contents( $out_path, $json, LOCK_EX );
 
 	if ( $res === false ) {
-		Logger::output( 'Error (convert_category_file) [' . $out_path . ']' );
+		Logger::output( 'error', "(convert_category_file) [$out_path]" );
 		return false;
 	}
 	echo "<p>convert_category_file: ok</p>";
@@ -78,7 +78,7 @@ function convert_post_info( $dirPost, $fn ) {
 
 	$json = file_get_contents( $path );
 	if ( $json === false ) {
-		Logger::output( 'Error (convert_post_file file_get_contents) [' . $path . ']' );
+		Logger::output( 'error', "(convert_post_file file_get_contents) [$path]" );
 		return false;
 	}
 	$d = json_decode( $json, true );
@@ -139,7 +139,7 @@ function convert_post_info( $dirPost, $fn ) {
 	$res = file_put_contents( $path, $json, LOCK_EX );
 
 	if ( $res === false ) {
-		Logger::output( 'Error (convert_post_file file_put_contents) [' . $out_path . ']' );
+		Logger::output( 'error', "(convert_post_file file_put_contents) [$out_path]" );
 		return false;
 	}
 }

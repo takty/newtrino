@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Media
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-27
  *
  */
 
@@ -28,20 +28,20 @@ function handle_query( array $q ): array {
 	switch ( $q_mode ) {
 		case 'upload':
 			if ( ! isset( $_FILES['upload_file']['error'] ) || ! is_int( $_FILES['upload_file']['error'] ) ) {
-				Logger::output( 'Error (handler-media: $_FILES) Invalid Parameters' );
+				Logger::output( 'error', '(handler-media: $_FILES) Invalid Parameters' );
 				break;
 			}
 			$err = $_FILES['upload_file']['error'];
 			if ( $err === UPLOAD_ERR_OK ) {
 				$media->upload( $_FILES['upload_file'] );
 			} else if ( $err === UPLOAD_ERR_NO_FILE ) {
-				Logger::output( 'Error (handler-media: $_FILES) UPLOAD_ERR_NO_FILE' );
+				Logger::output( 'error', '(handler-media: $_FILES) UPLOAD_ERR_NO_FILE' );
 				$msg = _ht( 'No file was uploaded.' );
 			} else if ( $err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE ) {
-				Logger::output( 'Error (handler-media: $_FILES) UPLOAD_ERR_INI_SIZE or UPLOAD_ERR_FORM_SIZE' );
+				Logger::output( 'error', '(handler-media: $_FILES) UPLOAD_ERR_INI_SIZE or UPLOAD_ERR_FORM_SIZE' );
 				$msg = _ht( 'The uploaded file exceeds the max file size.' );
 			} else {
-				Logger::output( 'Error (handler-media: $_FILES)' );
+				Logger::output( 'error', '(handler-media: $_FILES)' );
 				$msg = _ht( 'An unknown error occurred.' );
 			}
 			break;

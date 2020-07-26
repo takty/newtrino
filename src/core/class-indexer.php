@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -33,7 +33,7 @@ class Indexer {
 		}
 		$suc = file_put_contents( $fdPath, $index, LOCK_EX );
 		if ( $suc === false ) {
-			Logger::output( "Error (Indexer::updateSearchIndex file_put_contents) [$fdPath]" );
+			Logger::output( 'error', "(Indexer::updateSearchIndex file_put_contents) [$fdPath]" );
 			return false;
 		}
 		chmod( $fdPath, $mode );
@@ -43,7 +43,7 @@ class Indexer {
 	static function calcIndexScore( array $words, string $fdPath ): float {
 		$fp = @fopen( $fdPath, 'r' );
 		if ( ! $fp ) {
-			Logger::output( "Error (Indexer::calcIndexScore fopen) [$fdPath]" );
+			Logger::output( 'error', "(Indexer::calcIndexScore fopen) [$fdPath]" );
 			return 0;
 		}
 		$score = 0;
