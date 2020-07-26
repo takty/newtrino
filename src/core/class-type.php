@@ -67,10 +67,8 @@ class Type {
 
 	public function getMetaAll( string $type_slug ): array {
 		$type = $this->getType( $type_slug );
-		if ( isset( $type['meta'] ) ) {
-			return $type['meta'];
-		}
-		return [];
+		if ( ! isset( $type['meta'] ) ) return [];
+		return $type['meta'];
 	}
 
 

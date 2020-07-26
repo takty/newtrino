@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-26
  *
  */
 
@@ -90,6 +90,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<tr>
 				<th><?= _ht( 'Status' ) ?></th>
 				<th><?= _ht( 'Title' ) ?></th>
+{{#meta@cols}}
+				<th>{{label}}</th>
+{{/meta@cols}}
 {{#taxonomy@cols}}
 				<th>{{label}}</th>
 {{/taxonomy@cols}}
@@ -106,6 +109,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 					</select>
 				</td>
 				<td class="title"><a href="{{url}}" class="title">{{title}}</a></td>
+{{#meta@cols}}
+				<td class="meta meta-type-{{type}}"><div>{{{_label}}}</div></td>
+{{/meta@cols}}
 {{#taxonomy@cols}}
 				<td class="taxonomy {{taxonomy}}"><div>
 {{#terms}}

@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-26
  *
  */
 
@@ -58,6 +58,7 @@ function _create_view_list( $query, $list_url, $post_url ) {
 	return [
 		'posts'            => $ps,
 		'pagination'       => _create_pagination_view( $query, $ret['page_count'], $list_url ),
+		'meta@cols'        => _create_header_meta_cols( $type ),
 		'taxonomy@cols'    => _create_header_taxonomy_cols( $type ),
 		'taxonomy@cancels' => _create_header_taxonomy_cancels( $query, $list_url ),
 		'filter'           => [
@@ -178,12 +179,23 @@ function _create_pagination_view( $query, $page_count, $list_url ) {
 	];
 }
 
-function _create_header_taxonomy_cols( $type ) {
+function _create_header_taxonomy_cols( string $type ): array {
 	global $nt_store;
 	$labs = [];
 	$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
 	foreach ( $taxes as $tax ) {
 		$labs[] = [ 'label' => $nt_store->taxonomy()->getTaxonomy( $tax )['label'] ];
+	}
+	return $labs;
+}
+
+function _create_header_meta_cols( string $type ): array {
+	global $nt_store;
+	$labs = [];
+	$ms = $nt_store->type()->getMetaAll( $type );
+	foreach ( $ms as $m ) {
+		if ( ! isset( $m['is_column_shown'] ) || ! $m['is_column_shown'] ) continue;
+		$labs[] = [ 'label' => $m['label'] ];
 	}
 	return $labs;
 }
@@ -221,6 +233,7 @@ function _process_post_for_view( ?Post $p, array $query, string $list_url, strin
 
 		'delete'        => create_canonical_url( $list_url, $query, [ 'del_id' => $p->getId() ] ),
 		'status@select' => _create_status_select( $p ),
+		'meta@cols'     => _create_meta_cols( $p ),
 		'taxonomy@cols' => _create_taxonomy_cols( $p, $query, $list_url ),
 		'meta@cols'     => _create_meta_cols( $p ),
 	];
@@ -249,9 +262,7 @@ function _create_taxonomy_cols( Post $p, array $query, string $list_url ): array
 
 	$cols = [];
 	foreach ( $taxes as $tax ) {
-		if ( strpos( $tax, '@' ) !== false ) continue;
 		$ts = $p->getTermSlugs( $tax );
-
 		$tts = [];
 		foreach ( $ts as $slug ) {
 			$lab = $nt_store->taxonomy()->getTermLabel( $tax, $slug );
@@ -264,17 +275,34 @@ function _create_taxonomy_cols( Post $p, array $query, string $list_url ): array
 }
 
 function _create_meta_cols( Post $p ): array {
-	// if ( isset( $p['meta'] ) ) {
-	// 	foreach ( $p['meta'] as $key => &$val ) {
-	// 		if ( strpos( $key, '@' ) !== false ) continue;
-	// 		if ( ! isset( $p['meta']["$key@type"] ) ) continue;
-	// 		if ( $p['meta']["$key@type"] === 'date-range' ) {
-	// 			$val[0] = date_create( $val[0] )->format( $date_format );
-	// 			$val[1] = date_create( $val[1] )->format( $date_format );
-	// 		}
-	// 	}
-	// }
-	return [];
+	global $nt_store;
+	$cols = [];
+	$ms = $nt_store->type()->getMetaAll( $p->getType() );
+	foreach ( $ms as $m ) {
+		if ( ! isset( $m['is_column_shown'] ) || ! $m['is_column_shown'] ) continue;
+		$key  = $m['key'];
+		$type = $m['type'];
+		$val  = $p->getMetaValue( $key );
+		if ( $val === null ) {
+			$_lab = '';
+		} else {
+			if ( $type === 'date' ) {
+				$_lab = _h( Post::parseDate( $val ) );
+			} else if ( $type === 'date-range' ) {
+				$_bgn = _h( Post::parseDate( $val[0] ) );
+				$_end = _h( Post::parseDate( $val[1] ) );
+				if ( $_bgn === $_end ) {
+					$_lab = "<span>$_bgn</span>";
+				} else {
+					$_lab = "<span>$_bgn</span><span>- $_end</span>";
+				}
+			} else {
+				$_lab = _h( $val );
+			}
+		}
+		$cols[] = [ '_label' => $_lab, 'type' => $type ];
+	}
+	return $cols;
 }
 
 function _get_meta( Post $p, array &$cls ): array {
@@ -291,6 +319,9 @@ function _get_meta( Post $p, array &$cls ): array {
 		if ( $type !== 'group' && $val === null ) continue;
 
 		switch ( $type ) {
+			case 'date-range':
+				$ret[ $key ] = Post::parseDate( $val );
+				break;
 			case 'date-range':
 				$es = Post::DATE_STATUS_ONGOING;
 				$now = date( 'Ymd' );
