@@ -217,7 +217,7 @@ class Store {
 					continue;
 				}
 				$info = $this->_loadInfo( $root . $path . $fn );
-				if ( $query->match( $info, "$root$path$fn/" . Post::WORD_FILE_NAME ) ) {
+				if ( $query->match( $info, "$root$path$fn/" . Post::BIGM_FILE_NAME ) ) {
 					$ret[] = [ 'id' => $fn, 'subPath' => $path, 'info' => $info ];
 				}
 			}

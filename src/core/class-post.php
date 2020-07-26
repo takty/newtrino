@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-26
  *
  */
 
@@ -22,7 +22,7 @@ class Post {
 
 	const INFO_FILE_NAME = 'info.json';
 	const CONT_FILE_NAME = 'content.html';
-	const WORD_FILE_NAME = 'word.txt';
+	const BIGM_FILE_NAME = 'bigm.txt';
 	const MEDIA_DIR_NAME = 'media';
 
 	const STATUS_PUBLISH = 'publish';
@@ -108,8 +108,8 @@ class Post {
 	}
 
 	private function _updateSearchIndex( string $postDir ): bool {
-		$text = $this->_title . strip_tags( $this->_content );
-		$path = $postDir . self::WORD_FILE_NAME;
+		$text = strip_tags( $this->_title ) . ' ' . strip_tags( $this->_content );
+		$path = $postDir . self::BIGM_FILE_NAME;
 		return Indexer::updateSearchIndex( $text, $path, self::MODE_FILE );
 	}
 
