@@ -237,7 +237,7 @@ class Media {
 		$div = 8;
 		imageconvolution( $newImg, $mat, $div, 0 );
 
-		$newFn = $this->getUniqueFileName( $fn, "@$size" );
+		$newFn = $this->getUniqueFileName( $fn, "-$size" );
 		$this->_saveImage( $newFn, $mime, $newImg );
 		$ret = [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
 		imagedestroy( $newImg );
