@@ -73,6 +73,7 @@ class Store {
 
 		$ret = [];
 		foreach ( $typeDirs as $t ) {
+			if ( ! is_dir( $this->_dirRoot . $t ) ) continue;
 			$ds = scandir( $this->_dirRoot . $t );
 			foreach ( $ds as $d ) {
 				if ( $d[0] === '.' ) continue;
@@ -195,7 +196,7 @@ class Store {
 		}
 	}
 
-	private function _getPostTypeSubDirs( array $args ) {
+	private function _getPostTypeSubDirs( array $args ): array {
 		if ( $this->_conf['archive_by_type'] ) {
 			if ( empty( $args['type'] ) ) {
 				return $this->_type->getTypeDirAll();
@@ -221,6 +222,7 @@ class Store {
 					continue;
 				}
 				$info = $this->_loadInfo( $root . $path . $fn );
+				if ( $info === null ) continue;
 				if ( $query->match( $info, "$root$path$fn/" . Post::BIGM_FILE_NAME ) ) {
 					$ret[] = [ 'id' => $fn, 'subPath' => $path, 'info' => $info ];
 				}
@@ -229,7 +231,7 @@ class Store {
 		}
 	}
 
-	private function _loadInfo( string $postDir ): array {
+	private function _loadInfo( string $postDir ): ?array {
 		$infoPath = $postDir . '/' . Post::INFO_FILE_NAME;
 		try {
 			$json = file_get_contents( $infoPath );
