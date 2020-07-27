@@ -19,6 +19,24 @@
         ]
     },
     {
+        "slug": "target",
+        "label": "Targets",
+        "label@ja": "対象者",
+        "sg_label": "Target",
+        "terms": [
+            {
+                "slug": "public",
+                "label@en": "For Public",
+                "label@ja": "一般公開"
+            },
+            {
+                "slug": "researcher",
+                "label@en": "For Researchers",
+                "label@ja": "研究者向け"
+            }
+        ]
+    },
+    {
         "slug": "lang",
         "label": "Languages",
         "label@ja": "言語",

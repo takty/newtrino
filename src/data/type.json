@@ -7,7 +7,7 @@
 	{
 		"slug": "event",
 		"label": "イベント",
-		"taxonomy": [ "category", "lang" ],
+		"taxonomy": [ "target", "lang" ],
 		"meta": [
 			{
 				"key": "duration",
