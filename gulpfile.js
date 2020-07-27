@@ -1,3 +1,13 @@
+/**
+ *
+ * Gulpfile
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-07-27
+ *
+ */
+
+
 'use strict';
 
 const fs   = require('fs-extra');
@@ -23,6 +33,10 @@ const SRC_ADMIN = './src/admin/';
 const DIST_BASE = './dist/';
 const DIST_ADMIN = DIST_BASE + 'admin/';
 
+
+// -----------------------------------------------------------------------------
+
+
 gulp.task('copy-jssha', (done) => {
 	copySync('./node_modules/jssha/dist/sha256.js', DIST_ADMIN + 'js/jssha/');
 	done();
@@ -46,25 +60,11 @@ gulp.task('copy-tinymce', (done) => {
 	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/inlite');
 	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/mobile');
 	const ups = [
-		'autoresize',
-		'autosave',
-		'bbcode',
-		'codesample',
-		'colorpicker',
-		'directionality',
-		'emoticons',
-		'fullpage',
-		'help',
-		'imagetools',
-		'importcss',
-		'legacyoutput',
-		'noneditable',
-		'pagebreak',
-		'save',
-		'tabfocus',
-		'template',
-		'textpattern',
-		'wordcount',
+		'autoresize',	'autosave',			'bbcode',		'codesample',
+		'colorpicker',	'directionality',	'emoticons',	'fullpage',
+		'help',			'imagetools',		'importcss',	'legacyoutput',
+		'noneditable',	'pagebreak',		'save',			'tabfocus',
+		'template',		'textpattern',		'wordcount',
 	];
 	for (let up of ups) fs.removeSync(DIST_ADMIN + 'js/tinymce/plugins/' + up);
 	done();
@@ -88,33 +88,22 @@ gulp.task('copy-lib', gulp.parallel(
 	'copy-mustache',
 ));
 
-gulp.task('copy-src', (done) => {
-	copySync('./src', './dist');
+
+// -----------------------------------------------------------------------------
+
+
+gulp.task('copy-src', () => gulp.src(['src/*', 'src/**/*', '!src/admin/sass/*', '!src/admin/lib/*', '!src/*.js', '!src/**/*.js'])
+	.pipe(gulp.dest('./dist'))
+);
+
+gulp.task('copy-css', (done) => {
 	copySync(SRC_ADMIN + 'sass/*.css', DIST_ADMIN + 'css/');
+	copySync(SRC_ADMIN + 'sass/*.svg', DIST_ADMIN + 'css/');
 	fs.removeSync(DIST_ADMIN + 'sass');
-	fs.removeSync(DIST_ADMIN + 'lib');
 	done();
 });
 
-gulp.task('copy-res', (done) => {
-	copySync(SRC_ADMIN + 'sass/*.svg', DIST_ADMIN + 'css');
-	done();
-});
-
-gulp.task('copy', gulp.series('copy-src', 'copy-lib', 'copy-res'));
-
-gulp.task('delete-var', (done) => {
-	fs.removeSync(DIST_BASE + 'core/var/log');
-	fs.removeSync(DIST_ADMIN + 'var/session');
-	done();
-});
-
-gulp.task('clean-js', (done) => {
-	for (let f of glob.sync(DIST_ADMIN + 'js/*.js')) fs.removeSync(f);
-	for (let f of glob.sync(DIST_BASE + 'core/*.js')) fs.removeSync(f);
-	for (let f of glob.sync(DIST_BASE + '*.js')) fs.removeSync(f);
-	done();
-});
+gulp.task('copy', gulp.series('copy-src', 'copy-css', 'copy-lib'));
 
 gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js'])
 	.pipe($.plumber())
@@ -148,10 +137,10 @@ gulp.task('sample', () => {
 });
 
 gulp.task('watch', () => {
-	gulp.watch('src/**/*.js', gulp.series('clean-js', 'js'));
+	gulp.watch('src/**/*.js', gulp.series('js'));
 	gulp.watch('src/**/*.scss', gulp.series('sass'));
 	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy'));
-	gulp.watch('src/**/*', gulp.series('sample'));
+	gulp.watch('dist/**/*', gulp.series('sample'));
 });
 
-gulp.task('default', gulp.series('copy', 'delete-var', 'clean-js', 'js', 'sass', 'sample', 'watch'));
+gulp.task('default', gulp.series('copy', 'js', 'sass', 'sample', 'watch'));
