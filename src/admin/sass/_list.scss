@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -23,6 +23,8 @@
 		border-bottom: 1px solid #ccc;
 		text-align: center;
 		white-space: nowrap;
+
+		&:not(:last-child) { min-width: 5rem; }
 	}
 	th, td {
 		padding: 0.75rem 0.5rem;
@@ -30,15 +32,18 @@
 
 		&:first-child { padding-left: 2px; }
 		&:last-child { padding-right: 2px; }
+
+		&.title {
+			width: 100%;
+			white-space: normal;
+			line-height: 1.25;
+		}
 	}
 	td {
 		line-height: 1.25;
 
 		&.title {
-			width: 100%;
-			white-space: normal;
 			text-decoration: underline;
-			line-height: 1.25;
 		}
 		&.taxonomy {
 			a { white-space: nowrap; }
@@ -62,10 +67,6 @@
 			span {
 				display: block;
 				text-align: right;
-				// @include for-de {
-				// 	display: inline-block;
-				// 	padding: 0 0.15rem;
-				// }
 			}
 		}
 	}

@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -89,7 +89,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<table class="list-item">
 			<tr>
 				<th><?= _ht( 'Status' ) ?></th>
-				<th><?= _ht( 'Title' ) ?></th>
+				<th class="title"><?= _ht( 'Title' ) ?></th>
 {{#meta@cols}}
 				<th>{{label}}</th>
 {{/meta@cols}}
