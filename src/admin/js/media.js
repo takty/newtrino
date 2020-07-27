@@ -3,7 +3,7 @@
  * Media Dialog (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-27
  *
  */
 
@@ -63,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		btnInsert.disabled = false;
 
 		const url = e.target.parentElement.querySelector('.file-url').value;
-		mediaUrl.value = url;
+		if (url.indexOf('/?.') === -1) {
+			mediaUrl.value = url;
+		} else {
+			mediaUrl.value = '';
+		}
 
 		const ss = e.target.parentElement.querySelector('.sizes');
 		if (ss) {

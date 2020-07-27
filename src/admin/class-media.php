@@ -225,6 +225,7 @@ class Media {
 					$sizes[ $key ] = [ 'file_name' => $fn, 'width' => $w, 'height' => $h ];
 				}
 			}
+			imagedestroy( $img );
 		}
 		return $sizes;
 	}
@@ -238,7 +239,9 @@ class Media {
 
 		$newFn = $this->getUniqueFileName( $fn, "@$size" );
 		$this->_saveImage( $newFn, $mime, $newImg );
-		return [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
+		$ret = [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
+		imagedestroy( $newImg );
+		return $ret;
 	}
 
 	private function _scaleImage( $img, int $newW, string $mime ) {

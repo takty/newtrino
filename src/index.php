@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-27
  *
  */
 
@@ -60,6 +60,9 @@ function query_media( $req ): void {
 	$nt_config = load_config( NT_DIR_DATA );
 	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 
+	if ( strpos( $id, '_' ) === 0 ) {  // Temporary ID
+		$id[0] = '.';
+	}
 	$postDir = $nt_store->getPostDir( $id, null );
 	if ( ! is_dir( $postDir ) ) {
 		header( 'HTTP/1.1 404 Not Found' );

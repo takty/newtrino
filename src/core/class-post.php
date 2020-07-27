@@ -377,6 +377,7 @@ class Post {
 		$url = resolve_url( $url, $urlAdmin );
 		if ( strpos( $url, NT_URL ) === 0 ) {
 			$url = '/' . substr( $url, strlen( NT_URL ) - 1 );
+			$url = str_replace( '//?.', '//?', $url );
 		}
 		return $url;
 	}
