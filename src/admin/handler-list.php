@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-26
+ * @version 2020-07-27
  *
  */
 
@@ -25,8 +25,8 @@ function handle_query() {
 	$post_url = NT_URL_ADMIN . 'post.php';
 
 	$query = parse_query_string();
-	if ( isset( $query['del_id'] ) ) {
-		$nt_store->delete( $query['del_id'] );
+	if ( isset( $query['delete_id'] ) ) {
+		$nt_store->delete( $query['delete_id'] );
 	}
 	return _create_view_list( $query, $list_url, $post_url );
 }
@@ -171,7 +171,7 @@ function _create_pagination_view( $query, $page_count, $list_url ) {
 		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
 	}
-	if ( count( $pages ) === 1 ) return null;
+	if ( count( $pages ) <= 1 ) return null;
 	return [
 		'previous' => ( ( 1 < $cur ) ? $pages[ $cur - 2 ]['url'] : '' ),
 		'next'     => ( ( $cur < $page_count ) ? $pages[ $cur ]['url'] : '' ),
@@ -231,7 +231,7 @@ function _process_post_for_view( ?Post $p, array $query, string $list_url, strin
 		'modified' => $p->getModified(),
 		'url'      => create_canonical_url( $post_url, $query, [ 'id' => $p->getId() ] ),
 
-		'delete'        => create_canonical_url( $list_url, $query, [ 'del_id' => $p->getId() ] ),
+		'delete'        => create_canonical_url( $list_url, $query, [ 'delete_id' => $p->getId() ] ),
 		'status@select' => _create_status_select( $p ),
 		'meta@cols'     => _create_meta_cols( $p ),
 		'taxonomy@cols' => _create_taxonomy_cols( $p, $query, $list_url ),
