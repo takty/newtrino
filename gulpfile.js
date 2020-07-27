@@ -131,9 +131,11 @@ gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js'])
 gulp.task('sass', () => {
 	return gulp.src([SRC_ADMIN + 'sass/style.scss'])
 		.pipe($.plumber())
+		.pipe($.sourcemaps.init())
 		.pipe($.dartSass({ outputStyle: 'compressed' }))
 		.pipe($.autoprefixer({ remove: false }))
 		.pipe($.rename({ extname: '.min.css' }))
+		.pipe($.sourcemaps.write('.'))
 		.pipe(gulp.dest(DIST_ADMIN + 'css/'));
 });
 
