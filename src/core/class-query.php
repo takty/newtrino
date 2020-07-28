@@ -5,7 +5,7 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-07-28
  *
  */
 
@@ -46,7 +46,7 @@ class Query {
 		}
 	}
 
-	private function _initializeTaxQuery( array $query ) {
+	private function _initializeTaxQuery( array $query ): void {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
@@ -61,7 +61,7 @@ class Query {
 		}
 	}
 
-	private function _initializeDateQuery( array $query ) {
+	private function _initializeDateQuery( array $query ): void {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
@@ -86,7 +86,7 @@ class Query {
 		}
 	}
 
-	private function _initializeMetaQuery( array $query ) {
+	private function _initializeMetaQuery( array $query ): void {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
@@ -105,7 +105,7 @@ class Query {
 		}
 	}
 
-	public function match( array &$info, string $word_file_path ): bool {
+	public function match( array &$info, string $bigmFilePath ): bool {
 		if ( $this->_type ) {
 			if ( ! empty( $info['type'] ) && ! in_array( $info['type'], $this->_type, true ) ) return false;
 			if ( empty( $info['type'] ) && ! in_array( 'post', $this->_type, true ) ) return false;
@@ -114,7 +114,7 @@ class Query {
 			if ( ! in_array( $info['status'], $this->_status, true ) ) return false;
 		}
 		if ( $this->_search ) {
-			$info['_index_score'] = Indexer::calcIndexScore( $this->_search, $word_file_path );
+			$info['_index_score'] = Indexer::calcIndexScore( $this->_search, $bigmFilePath );
 			if ( $info['_index_score'] === 0.0 ) return false;
 		}
 		if ( $this->_tax ) {

@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-28
  *
  */
 
@@ -19,7 +19,7 @@ class Indexer {
 		return self::_create_bigram( $searchQuery );
 	}
 
-	static function updateSearchIndex( string $text, string $fdPath, int $mode ): bool {
+	static function updateSearchIndex( string $text, string $bfPath, int $mode ): bool {
 		$ws = self::_create_bigram( $text );
 		$sum = [];
 		foreach ( $ws as $w ) {
@@ -31,19 +31,23 @@ class Indexer {
 		foreach ( $sum as $key => $val ) {
 			$index .= $key . "\t" . $val . "\n";
 		}
-		$suc = file_put_contents( $fdPath, $index, LOCK_EX );
+		$suc = file_put_contents( $bfPath, $index, LOCK_EX );
 		if ( $suc === false ) {
-			Logger::output( 'error', "(Indexer::updateSearchIndex file_put_contents) [$fdPath]" );
+			Logger::output( 'error', "(Indexer::updateSearchIndex file_put_contents) [$bfPath]" );
 			return false;
 		}
-		chmod( $fdPath, $mode );
+		chmod( $bfPath, $mode );
 		return true;
 	}
 
-	static function calcIndexScore( array $words, string $fdPath ): float {
-		$fp = @fopen( $fdPath, 'r' );
+	static function calcIndexScore( array $words, string $bfPath ): float {
+		if ( ! is_readable( $bfPath ) ) {
+			Logger::output( 'error', "(Indexer::calcIndexScore is_readable) [$bfPath]" );
+			return 0;
+		}
+		$fp = fopen( $bfPath, 'r' );
 		if ( ! $fp ) {
-			Logger::output( 'error', "(Indexer::calcIndexScore fopen) [$fdPath]" );
+			Logger::output( 'error', "(Indexer::calcIndexScore fopen) [$bfPath]" );
 			return 0;
 		}
 		$score = 0;
