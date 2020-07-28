@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-28
  *
  */
 
@@ -92,7 +92,7 @@ gulp.task('copy-lib', gulp.parallel(
 // -----------------------------------------------------------------------------
 
 
-gulp.task('copy-src', () => gulp.src(['src/*', 'src/**/*', '!src/admin/sass/*', '!src/admin/lib/*', '!src/*.js', '!src/**/*.js'])
+gulp.task('copy-src', () => gulp.src(['src/*', 'src/**/*', 'src/**/.htaccess', '!src/admin/sass/*', '!src/admin/lib/*', '!src/*.js', '!src/**/*.js'])
 	.pipe(gulp.dest('./dist'))
 );
 
@@ -129,7 +129,7 @@ gulp.task('sass', () => {
 });
 
 gulp.task('sample', () => {
-	return gulp.src(['dist/**/*'])
+	return gulp.src(['dist/**/*', 'dist/**/.htaccess'])
 		.pipe($.plumber())
 		.pipe($.ignore.include({ isFile: true }))
 		.pipe($.changed('sample/nt', { hasChanged: $.changed.compareContents }))
