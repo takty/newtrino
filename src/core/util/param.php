@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Parameters
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-12
+ * @version 2020-07-28
  *
  */
 
@@ -27,7 +27,7 @@ function get_query_vars( array $query, array $filters, ?string $collection = nul
 		$cs = [];
 		foreach( $tcs as $tc ) {
 			if ( in_array( $tc, $existing_taxes, true ) ) {
-				$ts = array_map( 'trim', explode( ',', $query[ $key ] ) );
+				$ts = array_map( 'trim', explode( ',', $query[ $tc ] ) );
 				$cs[ $tc ] = $ts;
 			}
 		}
