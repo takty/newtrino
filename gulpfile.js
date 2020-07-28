@@ -76,7 +76,8 @@ gulp.task('copy-nacss-reset', (done) => {
 });
 
 gulp.task('copy-mustache', (done) => {
-	copySync('./vendor/mustache/mustache/src/Mustache/*', DIST_BASE + 'core/lib/mustache/');
+	// Dest directory must be capitalized
+	copySync('./vendor/mustache/mustache/src/Mustache/*', DIST_BASE + 'core/lib/Mustache/');
 	done();
 });
 

@@ -5,12 +5,12 @@ namespace nt;
  * Functions for Template Engine
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-28
  *
  */
 
 
-require_once( __DIR__ . '/../lib/mustache/Autoloader.php' );
+require_once( __DIR__ . '/../lib/Mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
 
 
