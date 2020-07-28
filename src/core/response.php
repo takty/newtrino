@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-28
  *
  */
 
@@ -178,8 +178,8 @@ function _flatten_meta_structure( array $ms, array &$ret ) {
 	foreach ( $ms as $m ) {
 		$type = $m['type'];
 		if ( $type === 'group' ) {
-			$children = $m['children'];
-			_flatten_meta_structure( $children, $ret );
+			$items = $m['items'];
+			_flatten_meta_structure( $items, $ret );
 		} else {
 			$ret[] = $m;
 		}

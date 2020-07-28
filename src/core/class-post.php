@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-28
  *
  */
 
@@ -150,7 +150,7 @@ class Post {
 	private function _assignMetaInternal( array $ms, array $vals ) {
 		foreach ( $ms as $m ) {
 			if ( $m['type'] === 'group' ) {
-				$this->_assignMetaInternal( $m['children'], $vals );
+				$this->_assignMetaInternal( $m['items'], $vals );
 				continue;
 			}
 			$key = $m['key'];

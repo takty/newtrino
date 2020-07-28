@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-28
  *
  */
 
@@ -152,7 +152,7 @@ function echo_meta_metaboxes_internal( $post, $ms, $internal = false ) {
 		if ( empty( $label ) ) continue;
 		switch ( $m['type'] ) {
 			case 'group':
-				echo_metabox_group( $post, $label, $m['children'] );
+				echo_metabox_group( $post, $label, $m['items'] );
 				break;
 			case 'text':
 				echo_metabox_text( $post, $m['key'], $label, $internal );
@@ -167,13 +167,13 @@ function echo_meta_metaboxes_internal( $post, $ms, $internal = false ) {
 	}
 }
 
-function echo_metabox_group( $post, $label, $children ) {
+function echo_metabox_group( $post, $label, $items ) {
 ?>
 	<div class="frame frame-sub metabox-group">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="group-inner">
 <?php
-	echo_meta_metaboxes_internal( $post, $children, true );
+	echo_meta_metaboxes_internal( $post, $items, true );
 ?>
 		</div>
 	</div>
