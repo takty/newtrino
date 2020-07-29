@@ -64,7 +64,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 						<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
 {{/taxonomy.category@has.event}}
 						<div class="title">{{title}}</div>
-						<div class="excerpt">{{excerpt}}</div>
+						<div class="excerpt">{{{excerpt}}}</div>
 						<div class="date">{{date}}</div>
 					</a>
 				</li>

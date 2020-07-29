@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	NT.query('../../nt/', (view) => {
 		NT.renderTemplate('[type="text/html"]', view);
 	}, {
-		filter: {taxonomy: ['category'], date_format: 'Y'},
-		option: {date_format: 'Y-MM-DD'}
+		filter: { taxonomy: ['category'], date_format: 'Y' },
+		option: { date_format: 'Y-MM-DD' }
 	});
 });
 </script>
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
 {{/taxonomy.category@has.event}}
 							<div class="title">{{title}}</div>
-							<div class="excerpt">{{excerpt}}</div>
+							<div class="excerpt">{{{excerpt}}}</div>
 							<div class="date">{{date}}</div>
 						</a>
 					</li>
