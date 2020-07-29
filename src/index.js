@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-22
+ * @version 2020-07-29
  *
  */
 
@@ -38,15 +38,17 @@ window.NT = window['NT'] || {};
 	}
 
 	function queryRecentPosts(url, callback, args = {}) {
-		const option  = args.option   ? args.option   : {};
 		const count   = args.count    ? args.count    : 10;
+		const query   = args.query    ? args.query    : {};
+		const option  = args.option   ? args.option   : {};
 		let   baseUrl = args.base_url ? args.base_url : false;
 
 		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
 
+		if (!query['per_page']) query['per_page'] = count;
 		const msg = {
-			query:  { per_page: count },
+			query : query,
 			filter: {},
 			option: option
 		};

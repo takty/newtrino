@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-29
  *
  */
 
@@ -97,14 +97,16 @@ function query( array $args = [] ): array {
 }
 
 function query_recent_posts( array $args = [] ): array {
-	$option   = $args['option']   ?? [];
 	$count    = $args['count']    ?? 10;
+	$query    = $args['query']    ?? [];
+	$option   = $args['option']   ?? [];
 	$base_url = $args['base_url'] ?? null;
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
+	if ( ! isset( $query['per_page'] ) ) $query['per_page'] = $count;
 	$msg = [
-		'query'  => [ 'per_page' => $count ],
+		'query'  => $query,
 		'filter' => [],
 		'option' => $option
 	];
