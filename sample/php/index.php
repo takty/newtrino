@@ -1,6 +1,7 @@
 <?php
 require_once( __DIR__ . '/../nt/index.php' );
-$view = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'option' => [ 'date_format' => 'Y-m-d' ] ] );
+$view_post  = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'query' => [ 'type' => 'post' ],  'option' => [ 'date_format' => 'Y-m-d' ] ] );
+$view_event = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'query' => [ 'type' => 'event' ], 'option' => [ 'date_format' => 'Y-m-d' ] ] );
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
 <!DOCTYPE html>
@@ -15,7 +16,8 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<h1>Newtrino Sample</h1>
 	</header>
 	<main>
-		<div class="section section-recent-posts">
+		<div>
+			<h2>Posts</h2>
 			<?php \nt\begin(); ?>
 				<ul id="list-item-post">
 {{#posts}}
@@ -24,17 +26,34 @@ header( 'Content-Type: text/html;charset=utf-8' );
 							{{#taxonomy.category}}
 							<span class="category">{{label}}</span>
 							{{/taxonomy.category}}
-							{{#taxonomy.category@has.event}}
-							<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
-							{{/taxonomy.category@has.event}}
 							<div class="title">{{title}}</div>
-							<div class="excerpt">{{excerpt}}</div>
+							<div class="excerpt">{{{excerpt}}}</div>
 							<div class="date">{{date}}</div>
 						</a>
 					</li>
 {{/posts}}
 				</ul>
-			<?php \nt\end( $view ); ?>
+			<?php \nt\end( $view_post ); ?>
+		</div>
+		<div>
+			<h2>Events</h2>
+			<?php \nt\begin(); ?>
+				<ul id="list-item-event">
+{{#posts}}
+					<li class="{{class@joined}}">
+						<a href="{{url}}">
+							{{#taxonomy.category}}
+							<span class="category">{{label}}</span>
+							{{/taxonomy.category}}
+							<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
+							<div class="title">{{title}}</div>
+							<div class="excerpt">{{{excerpt}}}</div>
+							<div class="date">{{date}}</div>
+						</a>
+					</li>
+{{/posts}}
+				</ul>
+			<?php \nt\end( $view_event ); ?>
 		</div>
 		<nav>
 			<a href="topic/">Show More...</a>
