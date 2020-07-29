@@ -76,16 +76,18 @@ function query_media( $req ): void {
 
 
 function query( array $args = [] ): array {
-	$filter = [ 'date' => 'year' ];
-	if ( isset( $args['filter'] ) ) $filter = array_merge( $filter, $args['filter'] );
-
+	$query    = $args['query']    ?? [];
+	$filter   = $args['filter']   ?? [];
 	$option   = $args['option']   ?? [];
 	$base_url = $args['base_url'] ?? null;
+
+	$query  += parse_query_string( 'id' );
+	$filter += [ 'date' => 'year' ];
 
 	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 
 	$msg = [
-		'query'  => parse_query_string( 'id' ),
+		'query'  => $query,
 		'filter' => $filter,
 		'option' => $option
 	];

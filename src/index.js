@@ -16,17 +16,19 @@ window.NT = window['NT'] || {};
 	const AJAX_API = 'index.php';
 
 	function query(url, callback, args = {}) {
-		let filter = { date: 'year' };
-		if (args.filter) filter = Object.assign(filter, args.filter);
-
+		let   query   = args.query    ? args.query    : {};
+		let   filter  = args.filter   ? args.filter   : {};
 		const option  = args.option   ? args.option   : {};
 		let   baseUrl = args.base_url ? args.base_url : false;
+
+		query  = Object.assign(parseQueryString('id'), query);
+		filter = Object.assign({ date: 'year' }, filter);
 
 		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
 		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
 
 		const msg = {
-			query : parseQueryString('id'),
+			query : query,
 			filter: filter,
 			option: option
 		};
