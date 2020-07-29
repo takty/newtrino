@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-07-29
  *
  */
 
@@ -28,12 +28,14 @@ function create_response_archive( array $query, array $filter, array $option = [
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
+	$type    = get_param( 'type',     null, $query );
 	$page    = get_param( 'page',     null, $query );
 	$perPage = get_param( 'per_page', null, $query );
 	$date    = get_param( 'date',     null, $query );
 	$search  = get_param( 'search',   null, $query );
 
 	$args = [];
+	if ( $type )    $args['type']       = $type;
 	if ( $page )    $args['page']       = $page;
 	if ( $search )  $args['search']     = $search;
 	if ( $perPage ) $args['per_page']   = $perPage;
@@ -62,9 +64,11 @@ function create_response_single( array $query, array $filter, array $option = []
 	$query  = _rearrange_query( $query );
 	$filter = _rearrange_filter( $filter );
 
-	$id = get_param( 'id', null, $query );
+	$id   = get_param( 'id',   null, $query );
+	$type = get_param( 'type', null, $query );
 
 	$args = [];
+	if ( $type ) $args['type'] = $type;
 	if ( ! empty( $query['taxonomy'] ) ) {
 		createTaxQueryFromTaxonomyToTerms( $query['taxonomy'], $args );
 	}
@@ -72,10 +76,10 @@ function create_response_single( array $query, array $filter, array $option = []
 
 	$res = [
 		'status' => 'success',
-		'post'   => _create_post_data( $ret ? $ret[1] : false, true ),
+		'post'   => _create_post_data( $ret ? $ret[1] : null, true ),
 		'adjacent_post' => [
-			'previous' => _create_post_data( $ret ? $ret[0] : false ),
-			'next'     => _create_post_data( $ret ? $ret[2] : false ),
+			'previous' => _create_post_data( $ret ? $ret[0] : null ),
+			'next'     => _create_post_data( $ret ? $ret[2] : null ),
 		]
 	];
 	$res += _create_archive_data( $filter );
@@ -89,6 +93,7 @@ function create_response_single( array $query, array $filter, array $option = []
 function _rearrange_query( array $query ): array {
 	return get_query_vars( $query, [
 		'id'       => 'int',
+		'type'     => 'slug',
 		'page'     => 'int',
 		'per_page' => 'int',
 		'date'     => 'slug',
