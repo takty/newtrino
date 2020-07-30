@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-07-30
  *
  */
 
@@ -59,12 +59,12 @@ gulp.task('copy-tinymce', (done) => {
 	copySync('./node_modules/tinymce-i18n/langs/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
 	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/inlite');
 	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/mobile');
-	const ups = [
-		'autoresize',	'autosave',			'bbcode',		'codesample',
-		'colorpicker',	'directionality',	'emoticons',	'fullpage',
-		'help',			'imagetools',		'importcss',	'legacyoutput',
-		'noneditable',	'pagebreak',		'save',			'tabfocus',
-		'template',		'textpattern',		'wordcount',
+	const ups = [  // Removed plugins
+		'autoresize',	'autosave',		'bbcode',	'codesample',
+		'emoticons',	'fullpage',		'help',		'importcss',
+		'legacyoutput',	'pagebreak',	'preview',	'print',
+		'save',			'tabfocus', 	'toc',		'template',
+		'wordcount'
 	];
 	for (let up of ups) fs.removeSync(DIST_ADMIN + 'js/tinymce/plugins/' + up);
 	done();

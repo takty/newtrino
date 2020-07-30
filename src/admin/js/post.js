@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2020-07-30
  *
  */
 
@@ -111,10 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		tinymce.init({
 			selector: '#post-content',
 			plugins: [
-				'advlist anchor autolink charmap code contextmenu image insertdatetime',
-				'link lists media paste preview print searchreplace table visualblocks',
+				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image imagetools insertdatetime',
+				'link lists media nonbreaking noneditable paste searchreplace table textcolor textpattern visualblocks visualchars',
 			],
-			toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+			toolbar1: 'formatselect | bold italic underline strikethrough | superscript subscript | bullist numlist | alignleft aligncenter alignright | link unlink',
+			toolbar2: 'undo redo | styleselect | removeformat | forecolor backcolor',
 			content_css: '../data/editor.css',
 			language: lang,
 			setup: (ed) => { ed.on('change', (ed) => { isModified = true; }); },
