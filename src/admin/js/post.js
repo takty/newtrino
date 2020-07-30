@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-30
+ * @version 2020-07-31
  *
  */
 
@@ -108,7 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function initEditorPane() {
-		tinymce.init({
+		const css  = document.getElementById('editor-css').value;
+		const json = document.getElementById('editor-option').value;
+		const opt = json ? JSON.parse(json) : {};
+
+		const args = Object.assign({
 			selector: '#post-content',
 			plugins: [
 				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image imagetools insertdatetime',
@@ -117,11 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			removed_menuitems: 'newdocument',
 			toolbar1: 'formatselect | bold italic underline strikethrough | superscript subscript | bullist numlist | alignleft aligncenter alignright | link unlink',
 			toolbar2: 'undo redo | styleselect | removeformat | forecolor backcolor',
-			content_css: '../data/editor.css',
+			content_css: css,
 			language: lang,
 			setup: (ed) => { ed.on('change', (ed) => { isModified = true; }); },
 			code_dialog_width: 800,
-		});
+		}, opt)
+		tinymce.init(args);
 		document.getElementById('post-title').addEventListener('change', (e) => {
 			if (e.target.value !== '') {
 				const es = document.getElementsByClassName('message');

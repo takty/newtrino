@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-31
  *
  */
 
@@ -71,6 +71,8 @@ header( 'Content-Type: text/html;charset=utf-8' );
 
 <input id="message-confirmation" type="hidden" value="<?= _ht( 'Do you want to move from the page you are inputting?' ) ?>">
 <input id="lang" type="hidden" value="{{lang}}">
+<input id="editor-css" type="hidden" value="{{editor_css}}">
+<input id="editor-option" type="hidden" value="{{editor_option}}">
 
 <div id="dialog-placeholder">
 	<iframe id="dialog-media"></iframe>

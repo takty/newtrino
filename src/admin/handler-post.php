@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-07-31
  *
  */
 
@@ -58,12 +58,38 @@ function handle_query( $q ) {
 		'message' => $msg,
 		'lang'    => $lang,
 
+		'editor_css'    => get_editor_css_url(),
+		'editor_option' => get_editor_option( $lang ),
+
 		'post_title'   => $t_p->getTitle(),
 		'post_date'    => $t_p->getDate(),
 		'post_content' => $t_p->getContent(),
 
 		't_p' => $t_p,
 	];
+}
+
+function get_editor_css_url() {
+	if ( is_file( NT_DIR_DATA . 'editor.min.css' ) ) {
+		return NT_URL . 'data/editor.min.css';
+	} else if ( is_file( NT_DIR_DATA . 'editor.css' ) ) {
+		return NT_URL . 'data/editor.css';
+	}
+	return '';
+}
+
+function get_editor_option( $lang ) {
+	$fn = '';
+	if ( is_file( NT_DIR_DATA . "editor.$lang.json" ) ) {
+		$fn = NT_DIR_DATA . "editor.$lang.json";
+	} else if ( is_file( NT_DIR_DATA . 'editor.json' ) ) {
+		$fn = NT_DIR_DATA . 'editor.json';
+	}
+	if ( empty( $fn ) ) return '';
+	$json = file_get_contents( $fn );
+	$opt = json_decode( $json, true );
+	if ( $opt === null ) return '';
+	return json_encode( $opt, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 }
 
 
