@@ -112,8 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			selector: '#post-content',
 			plugins: [
 				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image imagetools insertdatetime',
-				'link lists media nonbreaking noneditable paste searchreplace table textcolor textpattern visualblocks visualchars',
+				'link lists media nonbreaking noneditable paste print searchreplace table textcolor textpattern visualblocks visualchars',
 			],
+			removed_menuitems: 'newdocument',
 			toolbar1: 'formatselect | bold italic underline strikethrough | superscript subscript | bullist numlist | alignleft aligncenter alignright | link unlink',
 			toolbar2: 'undo redo | styleselect | removeformat | forecolor backcolor',
 			content_css: '../data/editor.css',

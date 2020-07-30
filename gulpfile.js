@@ -62,9 +62,8 @@ gulp.task('copy-tinymce', (done) => {
 	const ups = [  // Removed plugins
 		'autoresize',	'autosave',		'bbcode',	'codesample',
 		'emoticons',	'fullpage',		'help',		'importcss',
-		'legacyoutput',	'pagebreak',	'preview',	'print',
-		'save',			'tabfocus', 	'toc',		'template',
-		'wordcount'
+		'legacyoutput',	'pagebreak',	'preview',	'save',
+		'tabfocus', 	'toc',			'template',	'wordcount'
 	];
 	for (let up of ups) fs.removeSync(DIST_ADMIN + 'js/tinymce/plugins/' + up);
 	done();
