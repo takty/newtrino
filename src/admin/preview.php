@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-07-31
  *
  */
 
@@ -16,17 +16,18 @@ $view = handle_query( $_REQUEST );
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
+<?php \nt\begin(); ?>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" media="all" href="../data/preview.css" />
+{{#css}}<link rel="stylesheet" media="all" href="{{.}}" />{{/css}}
+{{#js}}<script src="{{.}}"></script>{{/js}}
 <title><?= _ht( 'Preview' ) ?> - Newtrino</title>
 </head>
 <body class="preview">
 
-<?php \nt\begin(); ?>
 <div class="container">
 	<header class="entry-header">
 		<h1>{{title}}</h1>
@@ -41,7 +42,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		{{{content}}}
 	</main>
 </div>
-<?php \nt\end( $view ); ?>
 
 </body>
 </html>
+<?php \nt\end( $view ); ?>
