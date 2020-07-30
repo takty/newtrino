@@ -1,4 +1,4 @@
-<Files ~ "editor.css">
+<Files ~ "^(editor|preview)(\.min)?\.(css|js)$">
 allow from all
 </Files>
 deny from all
