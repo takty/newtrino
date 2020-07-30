@@ -1,0 +1,9 @@
+{
+	"style_formats": [
+		{
+			"title": "リンク・ボタン",
+			"selector": "a",
+			"classes": "button"
+		}
+	]
+}

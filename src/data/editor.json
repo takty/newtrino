@@ -1,0 +1,9 @@
+{
+	"style_formats": [
+		{
+			"title": "Link Button",
+			"selector": "a",
+			"classes": "button"
+		}
+	]
+}
