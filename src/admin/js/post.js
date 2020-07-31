@@ -231,7 +231,7 @@ function insertImage(name, src, w, h, align, size, srcset, linkFull) {
 	closeDialog();
 	const sss = srcset ? ` srcset="${srcset}"` : '';
 	const imgCls = linkFull ? `size-${size}` : `size-${size} ${align}`;
-	const img = `<img class="${imgCls}" src="${src}"${sss} alt="${name}" width="${w}" height="${h}">`;
+	const img = `<img class="${imgCls}" src="${src}"${sss} alt="${name}" width="${w}" height="${h}" loading="lazy">`;
 
 	if (linkFull) {
 		const a_bgn = `<a href="${linkFull}" class="${align}">`;
