@@ -109,6 +109,7 @@ gulp.task('copy-src', () => gulp.src([
 gulp.task('copy-css', (done) => {
 	copySync(SRC_ADMIN + 'sass/*.css', DIST_ADMIN + 'css/');
 	copySync(SRC_ADMIN + 'sass/*.svg', DIST_ADMIN + 'css/');
+	copySync(SRC_ADMIN + 'sass/*.png', DIST_ADMIN + 'css/');
 	fs.removeSync(DIST_ADMIN + 'sass');
 	done();
 });
