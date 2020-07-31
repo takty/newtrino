@@ -1,9 +1,26 @@
 {
 	"style_formats": [
 		{
-			"title": "Link Button",
+			"title"   : "Link Button",
 			"selector": "a",
-			"classes": "button"
+			"classes" : "button"
+		},
+		{
+			"title"  : "Frame",
+			"block"  : "div",
+			"classes": "frame",
+			"wrapper": true
+		},
+		{
+			"title"  : "Frame (alt.)",
+			"block"  : "div",
+			"classes": "frame-alt",
+			"wrapper": true
+		},
+		{
+			"title"  : "Clear Float",
+			"block"  : "div",
+			"classes": "clear"
 		}
 	]
 }

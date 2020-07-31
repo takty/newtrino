@@ -4,6 +4,23 @@
 			"title": "リンク・ボタン",
 			"selector": "a",
 			"classes": "button"
+		},
+		{
+			"title"  : "囲み",
+			"block"  : "div",
+			"classes": "frame",
+			"wrapper": true
+		},
+		{
+			"title"  : "囲み・他",
+			"block"  : "div",
+			"classes": "frame-alt",
+			"wrapper": true
+		},
+		{
+			"title"  : "フロート解除",
+			"block"  : "div",
+			"classes": "clear"
 		}
 	]
 }

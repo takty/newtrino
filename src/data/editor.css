@@ -1,5 +1,10 @@
-/*
- * Editor Styles
+/**
+ *
+ * Editor Styles (Sample)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-07-31
+ *
  */
 
 
@@ -38,16 +43,59 @@
 	height: auto;
 }
 
-.size-small        { max-width:  8rem; }
-.size-medium-small { max-width: 16rem; }
-.size-medium       { max-width: 24rem; }
-.size-medium-large { max-width: 32rem; }
-.size-large        { max-width: 48rem; }
-.size-extra-large  { max-width: 64rem; }
-.size-huge         { max-width: 96rem; }
+.size-small        { max-width:  128px; }
+.size-medium-small { max-width:  256px; }
+.size-medium       { max-width:  384px; }
+.size-medium-large { max-width:  512px; }
+.size-large        { max-width:  768px; }
+.size-extra-large  { max-width: 1024px; }
+.size-huge         { max-width: 1536px; }
 
 .size-full {
 	width: auto;
 	height: auto;
 	max-width: 100%;
+}
+
+
+/* Custom Styles ------------------------------------------------------------ */
+
+
+a.button {
+	position   : relative;
+	display    : inline-grid;
+	place-items: center;
+
+	padding: 0.5rem 1rem;
+	border : 1px solid #ccc;
+}
+
+div.frame,
+div.frame-alt {
+	clear: both;
+	margin: 1rem 0;
+	padding: 1rem;
+}
+
+div.frame > *:first-child,
+div.frame-alt > *:first-child {
+	margin-top: 0;
+}
+
+div.frame > *:last-child,
+div.frame-alt > *:last-child {
+	margin-bottom: 0;
+}
+
+div.frame {
+	border: 1px solid #ccc;
+}
+
+div.frame-alt {
+	border: 3px double #ccc;
+}
+
+div.clear {
+	border: 1px dotted #bbf;
+	clear : both;
 }
