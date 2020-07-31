@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-08-01
  *
  */
 
@@ -19,7 +19,7 @@ class Indexer {
 		return self::_create_bigram( $searchQuery );
 	}
 
-	static function updateSearchIndex( string $text, string $bfPath, int $mode ): bool {
+	static function updateSearchIndex( string $text, string $bfPath ): bool {
 		$ws = self::_create_bigram( $text );
 		$sum = [];
 		foreach ( $ws as $w ) {
@@ -36,7 +36,7 @@ class Indexer {
 			Logger::output( 'error', "(Indexer::updateSearchIndex file_put_contents) [$bfPath]" );
 			return false;
 		}
-		chmod( $bfPath, $mode );
+		chmod( $bfPath, NT_MODE_FILE );
 		return true;
 	}
 

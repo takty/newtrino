@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-08-01
  *
  */
 
@@ -31,6 +31,9 @@ if ( defined( 'NT_ADMIN' ) ) {
 
 	define( 'NT_URL_ADMIN', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );
 }
+
+define( 'NT_MODE_DIR',  0770 );
+define( 'NT_MODE_FILE', 0660 );
 
 
 // Functions Used in Initial Process -------------------------------------------

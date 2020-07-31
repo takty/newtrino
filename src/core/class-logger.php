@@ -5,15 +5,15 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-01
  *
  */
 
 
 class Logger {
 
-	const MAX_SIZE   = 4000;
-	const LOG_FILE   = __DIR__ . '/var/log/log.txt';
+	const MAX_SIZE = 4000;
+	const LOG_FILE = __DIR__ . '/var/log/log.txt';
 
 	static public $debug = false;
 
@@ -34,6 +34,7 @@ class Logger {
 
 	static private function ensureFile( string $path ): void {
 		if ( is_file( $path ) ) {
+			chmod( $path, NT_MODE_FILE );
 			$fsize = filesize( $path );
 			if ( self::MAX_SIZE < $fsize ) {
 				$pi  = pathinfo( $path );
@@ -43,10 +44,9 @@ class Logger {
 				self::rotateFile( $dir, $fn, $ext );
 			}
 		} else {
-			$dir = dirname( $path );
-			if ( ! is_dir( $dir ) ) {
-				if ( mkdir( $dir, 0755, true ) ) chmod( $dir, 0755 );
-			}
+			$dirLog = dirname( $path );
+			if ( ! is_dir( $dirLog ) ) mkdir( $dirLog, NT_MODE_DIR, true );
+			if ( is_dir( $dirLog ) ) chmod( $dirLog, NT_MODE_DIR );
 		}
 	}
 

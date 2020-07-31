@@ -15,9 +15,6 @@ require_once( __DIR__ . '/../core/class-store.php' );
 
 class Media {
 
-	const MODE_DIR  = 0755;
-	const MODE_FILE = 0644;
-
 	private $_id;
 	private $_dir;
 	private $_url;
@@ -89,11 +86,11 @@ class Media {
 
 		$path = $this->_dir . $fileName;
 		if ( is_uploaded_file( $tmpFile ) ) {
-			if ( ! is_dir( $this->_dir ) ) {
-				mkdir( $this->_dir, self::MODE_DIR );
-			}
+			if ( ! is_dir( $this->_dir ) ) mkdir( $this->_dir, NT_MODE_DIR );
+			if ( is_dir( $this->_dir ) ) chmod( $this->_dir, NT_MODE_DIR );
+
 			if ( move_uploaded_file( $tmpFile, $path ) ) {
-				chmod( $path, self::MODE_FILE );
+				chmod( $path, NT_MODE_FILE );
 				$this->_addMeta( $fileName );
 				return true;
 			}

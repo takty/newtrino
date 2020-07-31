@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-08-01
  *
  */
 
@@ -16,7 +16,6 @@ require_once( __DIR__ . '/../core/class-store.php' );
 
 class Session {
 
-	const MODE_DIR       = 0777;
 	const TIMEOUT        = 7200;  // 7200 = 120 minutes * 60 seconds
 	const ACCT_FILE_NAME = 'account';
 	const HASH_ALGO      = 'sha256';
@@ -242,13 +241,13 @@ class Session {
 
 	static private function _ensureDir( string $path ): bool {
 		if ( is_dir( $path ) ) {
-			if ( self::MODE_DIR !== ( fileperms( $path ) & 0777 ) ) {
-				chmod( $path, self::MODE_DIR );
+			if ( NT_MODE_DIR !== ( fileperms( $path ) & 0777 ) ) {
+				chmod( $path, NT_MODE_DIR );
 			}
 			return true;
 		}
-		if ( mkdir($path, self::MODE_DIR, true ) ) {
-			chmod( $path, self::MODE_DIR );
+		if ( mkdir($path, NT_MODE_DIR, true ) ) {
+			chmod( $path, NT_MODE_DIR );
 			return true;
 		}
 		Logger::output( 'error', "(Session::_ensureDir) [$path]" );

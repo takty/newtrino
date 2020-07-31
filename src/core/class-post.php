@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-01
  *
  */
 
@@ -16,9 +16,6 @@ require_once( __DIR__ . '/class-logger.php' );
 
 
 class Post {
-
-	const MODE_DIR  = 0755;
-	const MODE_FILE = 0640;
 
 	const INFO_FILE_NAME = 'info.json';
 	const CONT_FILE_NAME = 'content.html';
@@ -91,7 +88,7 @@ class Post {
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
 		if ( ! is_dir( $path ) ) {
-			mkdir( $path, self::MODE_DIR );
+			mkdir( $path, NT_MODE_DIR );
 		}
 		$this->_writeInfo( $path, true );
 		$this->_writeContent( $path );
@@ -110,7 +107,7 @@ class Post {
 	private function _updateSearchIndex( string $postDir ): bool {
 		$text = strip_tags( $this->_title ) . ' ' . strip_tags( $this->_content );
 		$path = $postDir . self::BIGM_FILE_NAME;
-		return Indexer::updateSearchIndex( $text, $path, self::MODE_FILE );
+		return Indexer::updateSearchIndex( $text, $path );
 	}
 
 	// ----
@@ -234,7 +231,7 @@ class Post {
 			Logger::output( 'error', "(Post::_writeInfoFile file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $path, self::MODE_FILE );
+		chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
@@ -360,7 +357,7 @@ class Post {
 			Logger::output( 'error', "(Post::_writeContent file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $path, self::MODE_FILE );
+		chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
