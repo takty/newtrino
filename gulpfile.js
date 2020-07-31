@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-30
+ * @version 2020-07-31
  *
  */
 
@@ -92,8 +92,18 @@ gulp.task('copy-lib', gulp.parallel(
 // -----------------------------------------------------------------------------
 
 
-gulp.task('copy-src', () => gulp.src(['src/*', 'src/**/*', 'src/**/.htaccess', '!src/admin/sass/*', '!src/admin/lib/*', '!src/*.js', '!src/**/*.js'])
-	.pipe(gulp.dest('./dist'))
+gulp.task('copy-src', () => gulp.src([
+		'src/**/*',
+		'src/**/.htaccess',
+		'!src/*.js',
+		'!src/**/*.js',
+		'!src/data/*',
+		'!src/admin/sass/*',
+	], { base: 'src' })
+	.pipe($.plumber())
+	.pipe($.ignore.include({ isFile: true }))
+	.pipe($.changed('dist', { hasChanged: $.changed.compareContents }))
+	.pipe(gulp.dest('dist'))
 );
 
 gulp.task('copy-css', (done) => {
@@ -114,7 +124,7 @@ gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js'])
 	.pipe($.terser())
 	.pipe($.rename({ extname: '.min.js' }))
 	.pipe($.sourcemaps.write('.'))
-	.pipe(gulp.dest('./dist'))
+	.pipe(gulp.dest('dist'))
 );
 
 gulp.task('sass', () => {
@@ -128,7 +138,11 @@ gulp.task('sass', () => {
 		.pipe(gulp.dest(DIST_ADMIN + 'css/'));
 });
 
-gulp.task('sample', () => {
+
+// -----------------------------------------------------------------------------
+
+
+gulp.task('sample-system', () => {
 	return gulp.src(['dist/**/*', 'dist/**/.htaccess'])
 		.pipe($.plumber())
 		.pipe($.ignore.include({ isFile: true }))
@@ -136,11 +150,20 @@ gulp.task('sample', () => {
 		.pipe(gulp.dest('sample/nt'));
 });
 
+gulp.task('sample-data', () => {
+	return gulp.src(['src/data/*'], { base: 'src' })
+		.pipe($.plumber())
+		.pipe($.ignore.include({ isFile: true }))
+		.pipe($.changed('sample/nt', { hasChanged: $.changed.compareContents }))
+		.pipe(gulp.dest('sample/nt'));
+});
+
+gulp.task('sample', gulp.series('sample-system', 'sample-data'));
+
 gulp.task('watch', () => {
-	gulp.watch('src/**/*.js', gulp.series('js'));
-	gulp.watch('src/**/*.scss', gulp.series('sass'));
-	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy'));
-	gulp.watch('dist/**/*', gulp.series('sample'));
+	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy', 'sample'));
+	gulp.watch('src/**/*.js', gulp.series('js', 'sample'));
+	gulp.watch('src/**/*.scss', gulp.series('sass', 'sample'));
 });
 
 gulp.task('default', gulp.series('copy', 'js', 'sass', 'sample', 'watch'));
