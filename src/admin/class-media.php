@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-01
  *
  */
 
@@ -51,9 +51,9 @@ class Media {
 				$item['sizes_json'] = json_encode( $this->_createSizesWithUrl( $m['sizes'] ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 
 				if ( isset( $m['sizes']['small'] ) ) {
-					$item['url@min'] = $this->_url . rawurlencode( $m['sizes']['small']['file_name'] );
+					$item['url@min'] = $this->_mediaUrl( $m['sizes']['small']['file_name'] );
 				} else {
-					$item['url@min'] = $this->_url . rawurlencode( $m['sizes']['full']['file_name'] );
+					$item['url@min'] = $this->_mediaUrl( $m['sizes']['full']['file_name'] );
 				}
 			}
 			$item['file_name'] = $m['file_name'];
