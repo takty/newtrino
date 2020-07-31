@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-29
+ * @version 2020-07-31
  *
  */
 
@@ -28,7 +28,7 @@ if ( $is_direct ) {
 // -----------------------------------------------------------------------------
 
 
-function query_ajax( $req ): void {
+function query_ajax( array $req ): void {
 	$query  = isset( $req['query' ] ) ? json_decode( $req['query' ], true ) : [];
 	$filter = isset( $req['filter'] ) ? json_decode( $req['filter'], true ) : [];
 	$option = isset( $req['option'] ) ? json_decode( $req['option'], true ) : [];
@@ -43,7 +43,7 @@ function query_ajax( $req ): void {
 	echo json_encode( $d, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 }
 
-function query_media( $req ): void {
+function query_media( array $req ): void {
 	$id    = null;
 	$media = null;
 

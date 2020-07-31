@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-07-31
  *
  */
 
@@ -19,7 +19,7 @@ require_once( __DIR__ . '/../core/util/param.php' );
 start_session( true );
 
 
-function handle_query() {
+function handle_query(): array {
 	global $nt_config, $nt_store;
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
@@ -31,7 +31,7 @@ function handle_query() {
 	return _create_view_list( $query, $list_url, $post_url );
 }
 
-function _create_view_list( $query, $list_url, $post_url ) {
+function _create_view_list( array $query, string $list_url, string $post_url ): array {
 	global $nt_store, $nt_config;
 
 	$query    = _rearrange_query( $query );
@@ -162,7 +162,7 @@ function _create_new_filter_view( array $query, array $types, string $post_url )
 // -----------------------------------------------------------------------------
 
 
-function _create_pagination_view( $query, $page_count, $list_url ) {
+function _create_pagination_view( array $query, int $page_count, string $list_url ): ?array {
 	$cur = isset( $query['page'] ) ? max( 1, min( $query['page'], $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
@@ -200,7 +200,7 @@ function _create_header_meta_cols( string $type ): array {
 	return $labs;
 }
 
-function _create_header_taxonomy_cancels( $query, $list_url ) {
+function _create_header_taxonomy_cancels( array $query, string $list_url ): ?array {
 	if ( ! isset( $query['taxonomy'] ) ) return null;
 
 	global $nt_store;
@@ -219,7 +219,7 @@ function _create_header_taxonomy_cancels( $query, $list_url ) {
 // -----------------------------------------------------------------------------
 
 
-function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url ): array {
+function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url ): ?array {
 	if ( $p === null ) return null;
 	return [
 		'id'       => $p->getId(),
@@ -337,7 +337,7 @@ function _get_meta( Post $p, array &$cls ): array {
 	return $ret;
 }
 
-function _flatten_meta_structure( array $ms, array &$ret ) {
+function _flatten_meta_structure( array $ms, array &$ret ): void {
 	foreach ( $ms as $m ) {
 		$type = $m['type'];
 		if ( $type === 'group' ) {

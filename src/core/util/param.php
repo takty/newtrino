@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Parameters
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-07-31
  *
  */
 
@@ -75,7 +75,7 @@ function get_param( string $key, $default, array $assoc ) {
 	return $default;
 }
 
-function createTaxQueryFromTaxonomyToTerms( array $tt, array &$args ) {
+function createTaxQueryFromTaxonomyToTerms( array $tt, array &$args ): void {
 	$tq = [];
 	foreach ( $tt as $tax => $ts ) {
 		$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];

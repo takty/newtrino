@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-29
+ * @version 2020-07-31
  *
  */
 
@@ -179,7 +179,7 @@ function _get_meta( Post $p, array &$cls ): array {
 	return $ret;
 }
 
-function _flatten_meta_structure( array $ms, array &$ret ) {
+function _flatten_meta_structure( array $ms, array &$ret ): void {
 	foreach ( $ms as $m ) {
 		$type = $m['type'];
 		if ( $type === 'group' ) {

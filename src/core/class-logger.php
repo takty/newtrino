@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-31
  *
  */
 
@@ -17,7 +17,7 @@ class Logger {
 
 	static public $debug = false;
 
-	static function output( string $type, string $msg ) {
+	static function output( string $type, string $msg ): void {
 		$path = self::LOG_FILE;
 		self::ensureFile( $path );
 		$fp = fopen( $path, 'ab+' );
@@ -32,7 +32,7 @@ class Logger {
 		fclose( $fp );
 	}
 
-	static private function ensureFile( string $path ) {
+	static private function ensureFile( string $path ): void {
 		if ( is_file( $path ) ) {
 			$fsize = filesize( $path );
 			if ( self::MAX_SIZE < $fsize ) {
@@ -50,7 +50,7 @@ class Logger {
 		}
 	}
 
-	static private function rotateFile( string $dir, string $fn, string $ext ) {
+	static private function rotateFile( string $dir, string $fn, string $ext ): void {
 		if ( is_file( "$dir{$fn}[5]$ext" ) ) {
 			unlink( "$dir{$fn}[5]$ext" );
 		}

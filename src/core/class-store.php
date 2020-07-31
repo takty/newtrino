@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-31
  *
  */
 
@@ -29,8 +29,8 @@ class Store {
 		$this->_taxonomy = new Taxonomy( $dataDir, $conf );
 	}
 
-	public function type()     { return $this->_type; }
-	public function taxonomy() { return $this->_taxonomy; }
+	public function type()    : Type     { return $this->_type; }
+	public function taxonomy(): Taxonomy { return $this->_taxonomy; }
 
 
 	// ------------------------------------------------------------------------
@@ -185,7 +185,7 @@ class Store {
 		return $posts;
 	}
 
-	private function _loadMatchedPostAll( string $root, array $args, array &$posts = [] ) {
+	private function _loadMatchedPostAll( string $root, array $args, array &$posts = [] ): void {
 		$paths = $this->_getPostTypeSubDirs( $args );
 		$ret = [];
 		$this->_loadMatchedInfoAll( $root, $paths, $args, $ret );
@@ -209,7 +209,7 @@ class Store {
 		return ['post/'];
 	}
 
-	private function _loadMatchedInfoAll( string $root, array $paths, array $args, array &$ret = [] ) {
+	private function _loadMatchedInfoAll( string $root, array $paths, array $args, array &$ret = [] ): void {
 		$query = new Query( $args );
 
 		foreach ( $paths as $path ) {
@@ -297,16 +297,16 @@ class Store {
 		return $post;
 	}
 
-	public function delete( string $id ) {
+	public function delete( string $id ): void {
 		// TODO Planning to add Trash function
 		$pd = $this->getPostDir( $id, null );
 		self::deleteAll( rtrim( $pd, '/' ) );
 	}
 
-	static public function deleteAll( string $dir ) {
+	static public function deleteAll( string $dir ): void {
 		if ( ! is_dir( $dir ) ) {
 			Logger::output( 'error', "(Store::deleteAll is_dir) File Does Not Exist [$dir]" );
-			return false;
+			return;
 		}
 		foreach ( scandir( $dir ) as $fn ) {
 			if ( $fn !== '.' && $fn !== '..' ) {

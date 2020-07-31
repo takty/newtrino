@@ -32,7 +32,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <script src="js/post.min.js"></script>
 <title><?= _ht( 'Post Edit' ) ?> - Newtrino</title>
 </head>
-<body class="edit">
+<body class="post">
 
 <?php \nt\begin(); ?>
 <header class="header">
@@ -51,7 +51,13 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<div class="frame frame-sub">
 				<div class="title"><?= _ht( 'Publish' ) ?></div>
 				<div><input form="form-post" type="text" name="post_date" id="post-date" value="{{post_date}}"></div>
-				<div><?php echo_status_select( $t_p ); ?></div>
+				<div>
+					<select form="form-post" name="post_status" id="post-status">
+{{#status@select}}
+						<option id="post-status-{{slug}}" value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+{{/status@select}}
+					</select>
+				</div>
 				<div class="button-row">
 					<button id="btn-dialog-preview" type="button" data-action="{{preview_url}}"><?= _ht( 'Preview' ) ?></button>
 					<button class="accent right" id="btn-update" type="button" data-action="{{update_url}}"><?= _ht( 'Update' ) ?></button>

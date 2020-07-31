@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-31
  *
  */
 
@@ -178,7 +178,7 @@ class Media {
 		$this->_saveMeta( $meta );
 	}
 
-	private function _removeMeta( $fileName ): void {
+	private function _removeMeta( string $fileName ): void {
 		$meta = $this->_loadMeta();
 		$idx = -1;
 		$sizes = null;

@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-28
+ * @version 2020-07-31
  *
  */
 
@@ -73,7 +73,7 @@ class Post {
 		return $this->_id;
 	}
 
-	function setId( string $id ) {
+	function setId( string $id ): void {
 		$this->_id = $id;
 	}
 
@@ -86,7 +86,7 @@ class Post {
 		return $ret;
 	}
 
-	function save() {
+	function save(): void {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
@@ -98,7 +98,7 @@ class Post {
 		$this->_updateSearchIndex( $path );
 	}
 
-	private function _updateStatus( string $postDir ) {
+	private function _updateStatus( string $postDir ): void {
 		if ( $this->_status === self::STATUS_DRAFT ) return;
 		$s = $this->canPublished() ? self::STATUS_PUBLISH : self::STATUS_FUTURE;
 		if ( $s !== $this->_status ) {
@@ -115,7 +115,7 @@ class Post {
 
 	// ----
 
-	function assign( array $vals, string $urlPrivate ) {
+	function assign( array $vals, string $urlPrivate ): void {
 		$this->setTitle( $vals['post_title'] );
 		$this->setStatus( $vals['post_status'] );
 
@@ -130,7 +130,7 @@ class Post {
 		$this->setContent( $vals['post_content'], $urlPrivate );
 	}
 
-	private function _assignTaxonomy( string $type, array $vals ) {
+	private function _assignTaxonomy( string $type, array $vals ): void {
 		global $nt_store;
 		$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
 
@@ -141,13 +141,13 @@ class Post {
 		}
 	}
 
-	private function _assignMeta( string $type, array $vals ) {
+	private function _assignMeta( string $type, array $vals ): void {
 		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
 		$this->_assignMetaInternal( $ms, $vals );
 	}
 
-	private function _assignMetaInternal( array $ms, array $vals ) {
+	private function _assignMetaInternal( array $ms, array $vals ): void {
 		foreach ( $ms as $m ) {
 			if ( $m['type'] === 'group' ) {
 				$this->_assignMetaInternal( $m['items'], $vals );
@@ -244,7 +244,7 @@ class Post {
 		return $this->_type;
 	}
 
-	function setType( string $val ) {
+	function setType( string $val ): void {
 		$this->_type = $val;
 	}
 
@@ -252,7 +252,7 @@ class Post {
 		return $this->_title;
 	}
 
-	function setTitle( string $val ) {
+	function setTitle( string $val ): void {
 		$this->_title = $val;
 	}
 
@@ -268,7 +268,7 @@ class Post {
 		return intval( $this->_date ) < intval( date( 'YmdHis' ) );
 	}
 
-	function setStatus( string $val ) {
+	function setStatus( string $val ): void {
 		if ( ! in_array( $val, [ self::STATUS_PUBLISH, self::STATUS_FUTURE, self::STATUS_DRAFT ], true ) ) return;
 		$this->_status = $val;
 	}
@@ -289,12 +289,12 @@ class Post {
 		return $this->_modified;
 	}
 
-	function setDate( string $val = 'now' ) {
+	function setDate( string $val = 'now' ): void {
 		if ( $val === 'now' ) $val = date( 'YmdHis' );
 		$this->_date = $val;
 	}
 
-	function setModified( string $val = 'now' ) {
+	function setModified( string $val = 'now' ): void {
 		if ( $val === 'now' ) $val = date( 'YmdHis' );
 		$this->_modified = $val;
 	}
@@ -313,7 +313,7 @@ class Post {
 		return $this->_taxonomy;
 	}
 
-	function setTermSlugs( string $tax_slug, array $term_slugs ) {
+	function setTermSlugs( string $tax_slug, array $term_slugs ): void {
 		$this->_taxonomy[ $tax_slug ] = array_values( array_unique( $term_slugs ) );
 	}
 
@@ -328,7 +328,7 @@ class Post {
 		return null;
 	}
 
-	function setMetaValue( string $key, $val ) {
+	function setMetaValue( string $key, $val ): void {
 		$this->_meta[ $key ] = $val;
 	}
 
@@ -412,7 +412,7 @@ class Post {
 		return $content;
 	}
 
-	function setContent( string $val, string $urlPrivate ) {
+	function setContent( string $val, string $urlPrivate ): void {
 		if ( empty( $val ) ) {
 			$this->_content = '';
 			return;

@@ -5,12 +5,12 @@ namespace nt;
  * Functions for Labels
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-07-31
  *
  */
 
 
-function normalize_label( array &$d, string $l ) {
+function normalize_label( array &$d, string $l ): void {
 	if ( isset( $d[ "label@$l" ] ) )    $d['label']    = $d[ "label@$l" ];
 	if ( isset( $d[ "sg_label@$l" ] ) ) $d['sg_label'] = $d[ "sg_label@$l" ];
 

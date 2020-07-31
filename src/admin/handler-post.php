@@ -19,7 +19,7 @@ require_once( __DIR__ . '/../core/util/param.php' );
 start_session( true );
 
 
-function handle_query( $q ) {
+function handle_query( array $q ): array {
 	global $nt_config, $nt_store, $nt_session;
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
@@ -64,12 +64,13 @@ function handle_query( $q ) {
 		'post_title'   => $t_p->getTitle(),
 		'post_date'    => $t_p->getDate(),
 		'post_content' => $t_p->getContent(),
+		'status@select' => _create_status_select( $t_p ),
 
 		't_p' => $t_p,
 	];
 }
 
-function get_editor_css_url() {
+function get_editor_css_url(): string {
 	if ( is_file( NT_DIR_DATA . 'editor.min.css' ) ) {
 		return NT_URL . 'data/editor.min.css';
 	} else if ( is_file( NT_DIR_DATA . 'editor.css' ) ) {
@@ -78,7 +79,7 @@ function get_editor_css_url() {
 	return '';
 }
 
-function get_editor_option( $lang ) {
+function get_editor_option( string $lang ): string {
 	$fn = '';
 	if ( is_file( NT_DIR_DATA . "editor.$lang.json" ) ) {
 		$fn = NT_DIR_DATA . "editor.$lang.json";
@@ -106,26 +107,29 @@ function _rearrange_query( array $query ): array {
 	], 'taxonomy' );
 }
 
+function _create_status_select( Post $p ): array {
+	$ss = [];
 
-// -----------------------------------------------------------------------------
+	$s = [ 'slug' => 'publish', 'label' => translate( 'Published' ) ];
+	if ( $p->isStatus( 'publish' ) ) $s['is_selected'] = true;
+	$ss[] = $s;
 
+	$s = [ 'slug' => 'future', 'label' => translate( 'Scheduled' ) ];
+	if ( $p->isStatus( 'future' ) ) $s['is_selected'] = true;
+	$ss[] = $s;
 
-function echo_status_select( $post ) {
-	$s = $post->getStatus();
-?>
-	<select form="form-post" name="post_status" id="post-status">
-		<option id="post-status-publish" value="publish"<?php if ( $s === 'publish' ) _eh( ' selected' ); ?>><?= _ht( 'Published' ) ?></option>
-		<option id="post-status-future" value="future"<?php if ( $s === 'future' ) _eh( ' selected' ); ?>><?= _ht( 'Scheduled' ) ?></option>
-		<option id="post-status-draft" value="draft"<?php if ( $s === 'draft' ) _eh( ' selected' ); ?>><?= _ht( 'Draft' ) ?></option>
-	</select>
-<?php
+	$s = [ 'slug' => 'draft', 'label' => translate( 'Draft' ) ];
+	if ( $p->isStatus( 'draft' ) ) $s['is_selected'] = true;
+	$ss[] = $s;
+
+	return $ss;
 }
 
 
 // -----------------------------------------------------------------------------
 
 
-function echo_taxonomy_metaboxes( $post ) {
+function echo_taxonomy_metaboxes( Post $post ): void {
 	global $nt_store;
 	$type = $post->getType();
 	$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
@@ -134,7 +138,7 @@ function echo_taxonomy_metaboxes( $post ) {
 	}
 }
 
-function echo_metabox_taxonomy( $tax_slug, $post ) {
+function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 	global $nt_store;
 	$tax = $nt_store->taxonomy()->getTaxonomy( $tax_slug );
 	$is_exclusive = isset( $tax['is_exclusive'] ) && $tax['is_exclusive'] === true;
@@ -146,13 +150,13 @@ function echo_metabox_taxonomy( $tax_slug, $post ) {
 <?php if ( $is_exclusive ) : ?>
 		<div><select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
 <?php foreach( $ts as $t ): ?>
-			<option value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' selected' ); ?>><?= _h( $t['label'] ) ?></option>
+			<option value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' selected' : '' ?>><?= _h( $t['label'] ) ?></option>
 <?php endforeach; ?>
 		</select></div>
 <?php else : ?>
 <?php foreach( $ts as $t ): ?>
 		<label>
-			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ) ?>"<?php if ( $t['is_selected'] ) _eh( ' checked' ); ?>>
+			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' checked' : '' ?>>
 			<?= _h( $t['label'] ) ?>
 		</label>
 <?php endforeach; ?>
@@ -165,14 +169,14 @@ function echo_metabox_taxonomy( $tax_slug, $post ) {
 // -----------------------------------------------------------------------------
 
 
-function echo_meta_metaboxes( $post ) {
+function echo_meta_metaboxes( Post $post ): void {
 	global $nt_store;
 	$type = $post->getType();
 	$ms = $nt_store->type()->getMetaAll( $type );
 	echo_meta_metaboxes_internal( $post, $ms );
 }
 
-function echo_meta_metaboxes_internal( $post, $ms, $internal = false ) {
+function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = false ): void {
 	foreach ( $ms as $m ) {
 		$label = $m['label'] ?? '';
 		if ( empty( $label ) ) continue;
@@ -193,7 +197,7 @@ function echo_meta_metaboxes_internal( $post, $ms, $internal = false ) {
 	}
 }
 
-function echo_metabox_group( $post, $label, $items ) {
+function echo_metabox_group( Post $post, string $label, array $items ): void {
 ?>
 	<div class="frame frame-sub metabox-group">
 		<div class="title"><?= _ht( $label ) ?></div>
@@ -206,7 +210,7 @@ function echo_metabox_group( $post, $label, $items ) {
 <?php
 }
 
-function echo_metabox_text( $post, $key, $label, $internal ) {
+function echo_metabox_text( Post $post, string $key, string $label, bool $internal ): void {
 	$val = $post->getMetaValue( $key );
 	if ( $val === null ) $text = '';
 	else $text = $val;
@@ -220,7 +224,7 @@ function echo_metabox_text( $post, $key, $label, $internal ) {
 <?php
 }
 
-function echo_metabox_date( $post, $key, $label, $internal ) {
+function echo_metabox_date( Post $post, string $key, string $label, bool $internal ): void {
 	$val = $post->getMetaValue( $key );
 	if ( $val === null ) $date = '';
 	else $date = Post::parseDate( $val );
@@ -238,7 +242,7 @@ function echo_metabox_date( $post, $key, $label, $internal ) {
 <?php
 }
 
-function echo_metabox_date_range( $post, $key, $label, $internal ) {
+function echo_metabox_date_range( Post $post, string $key, string $label, bool $internal ): void {
 	$val = $post->getMetaValue( $key );
 	if ( $val === null ) {
 		$bgn = '';
