@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-31
  *
  */
 
@@ -83,12 +83,22 @@ class Taxonomy {
 		if ( $this->_data ) return $this->_data;
 
 		$path = $this->_dir . 'taxonomy.json';
+		if ( ! is_readable( $path ) ) return $this->_data = [];
+
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
 			Logger::output( 'error', "(Taxonomy::_loadData file_get_contents) [$path]" );
-			return [];
+			die;
 		}
 		$data = json_decode( $json, true );
+		if ( $data === null ) {
+			Logger::output( 'error', "(Taxonomy::_loadData json_decode) [$path]" );
+			die;
+		}
+		return $this->_data = $this->_processData( $data );;
+	}
+
+	private function _processData( array $data ): array {
 		$ret = [];
 
 		foreach ( $data as $d ) {
@@ -101,7 +111,7 @@ class Taxonomy {
 			$ret[ $d['slug'] ] = $d;
 			$ret[ $d['slug'] ]['#terms'] = $ti;
 		}
-		return $this->_data = $ret;
+		return $ret;
 	}
 
 }

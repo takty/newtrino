@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-07-31
  *
  */
 
@@ -79,6 +79,12 @@ class Type {
 		if ( $this->_data ) return $this->_data;
 
 		$path = $this->_dir . 'type.json';
+		if ( ! is_readable( $path ) ) {
+			return $this->_data = $this->_processData( [
+				[ 'slug' => 'post', 'label' => 'Post' ]
+			] );
+		}
+
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
 			Logger::output( 'error', "(Type::_loadData file_get_contents) [$path]" );
@@ -89,6 +95,10 @@ class Type {
 			Logger::output( 'error', "(Type::_loadData json_decode) [$path]" );
 			die;
 		}
+		return $this->_data = $this->_processData( $data );;
+	}
+
+	private function _processData( array $data ): array {
 		$ret = [];
 
 		foreach ( $data as $d ) {
@@ -104,7 +114,7 @@ class Type {
 			}
 			$ret[ $d['slug'] ] = $d;
 		}
-		return $this->_data = $ret;
+		return $ret;
 	}
 
 }
