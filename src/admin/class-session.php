@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-01
+ * @version 2020-08-02
  *
  */
 
@@ -26,6 +26,15 @@ class Session {
 
 	static public function getNonce(): string {
 		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
+	}
+
+	static public function startSimply(): bool {
+		session_start();
+		$sid = session_id();
+		if ( $sid === '' ) return false;
+		if ( ! isset( $_SESSION['fingerprint'] ) ) return false;
+		if ( self::_getFingerprint() !== $_SESSION['fingerprint'] ) return false;
+		return true;
 	}
 
 	private $_urlAdmin;
@@ -116,8 +125,7 @@ class Session {
 		$sid = session_id();
 		if ( $sid === '' ) return false;
 		if ( ! isset( $_SESSION['fingerprint'] ) ) return false;
-		$fp = self::_getFingerprint();
-		if ( $fp !== $_SESSION['fingerprint'] ) return false;
+		if ( self::_getFingerprint() !== $_SESSION['fingerprint'] ) return false;
 		if ( isset( $_SESSION['lang_admin'] ) ) {
 			$this->_adminLang = $_SESSION['lang_admin'];
 		}
