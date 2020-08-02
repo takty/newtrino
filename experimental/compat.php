@@ -5,7 +5,7 @@ namespace nt;
  * Compatibility Utilities
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-01
+ * @version 2020-08-02
  *
  */
 
@@ -58,10 +58,10 @@ function convert_category_file( $dir_data ) {
 function convert_post_file( $dirPost ) {
 	if ( $dir = opendir( $dirPost ) ) {
 		while ( ( $fn = readdir( $dir ) ) !== false ) {
-			if ( strpos( $fn, '.' ) !== 0 && is_dir( $dirPost . $fn ) ) {
-				convert_post_info( $dirPost, $fn );
-				convert_post_search_index( $dirPost, $fn );
-			}
+			if ( $fn[0] === '.' || $fn[0] === '_' || $fn[0] === '-' ) continue;
+			if ( is_file( $dirPost . $fn ) ) continue;
+			convert_post_info( $dirPost, $fn );
+			convert_post_search_index( $dirPost, $fn );
 		}
 		closedir($dir);
 	}
