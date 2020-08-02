@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-01
+ * @version 2020-08-02
  *
  */
 
@@ -374,7 +374,7 @@ class Post {
 		$url = resolve_url( $url, $urlAdmin );
 		if ( strpos( $url, NT_URL ) === 0 ) {
 			$url = '/' . substr( $url, strlen( NT_URL ) - 1 );
-			$url = str_replace( '//?.', '//?', $url );
+			$url = str_replace( '//?_', '//?', $url );
 		}
 		return $url;
 	}

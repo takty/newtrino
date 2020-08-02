@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-02
  *
  */
 
@@ -74,14 +74,15 @@ class Store {
 		$ret = [];
 		foreach ( $typeDirs as $t ) {
 			if ( ! is_dir( $this->_dirRoot . $t ) ) continue;
-			$ds = scandir( $this->_dirRoot . $t );
-			foreach ( $ds as $d ) {
-				if ( $d[0] === '.' ) continue;
-				if ( preg_match( '/[^0-9]/', $d ) ) continue;
-				if ( strlen( $d ) !== 4 ) continue;
-				if ( is_file( $t . $d ) ) continue;
-				$ret[] = $t . $d . '/';
+			$dir = dir( $this->_dirRoot . $t );
+			while ( false !== ( $fn = $dir->read() ) ) {
+				if ( $fn[0] === '.' || $fn[0] === '_' || $fn[0] === '-' ) continue;
+				if ( preg_match( '/[^0-9]/', $fn ) ) continue;
+				if ( strlen( $fn ) !== 4 ) continue;
+				if ( is_file( $t . $fn ) ) continue;
+				$ret[] = $t . $fn . '/';
 			}
+			$dir->close();
 		}
 		$ret = array_merge( $ret, $typeDirs );  // For option compatibility
 		return $ret;
@@ -216,7 +217,8 @@ class Store {
 			if ( ! is_dir( $root . $path ) ) continue;
 			$dir = dir( $root . $path );
 			while ( false !== ( $fn = $dir->read() ) ) {
-				if ( strpos( $fn, '.' ) === 0 || is_file( $root . $path . $fn ) ) continue;
+				if ( $fn[0] === '.' || $fn[0] === '_' || $fn[0] === '-' ) continue;
+				if ( is_file( $root . $path . $fn ) ) continue;
 				if ( strlen( $fn ) === 4 ) {
 					$this->_loadMatchedInfoAll( $root, ["$path$fn/"], $args, $ret );
 					continue;
@@ -257,7 +259,7 @@ class Store {
 			flock( $dir, LOCK_EX );
 			$id = $this->_ensureUniquePostId( $archPath, $dateRaw );
 			if ( $id === null ) return null;
-			$p = new Post( '.' . $id, $subPath );  // Temporary ID
+			$p = new Post( '_' . $id, $subPath );  // Temporary ID
 			$p->setType( $type );
 			$p->setDate();
 			$p->save();
@@ -278,7 +280,10 @@ class Store {
 	}
 
 	private function _checkIdExists( string $archPath, string $id ): bool {
-		return file_exists( $archPath . $id ) || file_exists( $archPath . '.' . $id );
+		return
+			file_exists( $archPath       . $id ) ||
+			file_exists( $archPath . '_' . $id ) ||
+			file_exists( $archPath . '-' . $id );
 	}
 
 
@@ -287,10 +292,11 @@ class Store {
 
 	public function writePost( Post $post ): Post {
 		$post->save();
-		if ( strpos( $post->getId(), '.' ) === 0 ) {
-			$newId = substr( $post->getId(), 1 );
+		$id = $post->getId();
+		if ( $id[0] === '_' ) {
+			$newId = substr( $id, 1 );
 			$subPath = $this->_createSubPath( $post->getType(), $post->getDateRaw() );
-			rename( $this->getPostDir( $post->getId(), $subPath ), $this->getPostDir( $newId, $subPath ) );
+			rename( $this->getPostDir( $id, $subPath ), $this->getPostDir( $newId, $subPath ) );
 			$post->setId( $newId );
 			$post->save();
 		}
