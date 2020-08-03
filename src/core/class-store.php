@@ -54,7 +54,7 @@ class Store {
 		}
 		if ( $ensureExistence ) {
 			$path = $this->_dirRoot . rtrim( $ret, '/' );
-			if ( ! is_dir( $path ) ) mkdir( $path, 0777, true );
+			if ( ! is_dir( $path ) ) mkdir( $path, NT_MODE_DIR, true );
 		}
 		return [ $this->_dirRoot . $ret, $ret ];
 	}
