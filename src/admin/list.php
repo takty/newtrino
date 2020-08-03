@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-08-03
  *
  */
 
@@ -102,11 +102,16 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#posts}}
 			<tr data-id="{{id}}">
 				<td>
+{{#trash}}
+					<button class="restore restore-post" data-href="{{restore}}"><?= _ht( 'Restore' ) ?></button>
+{{/trash}}
+{{^trash}}
 					<select class="post-status">
 {{#status@select}}
 						<option value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/status@select}}
 					</select>
+{{/trash}}
 				</td>
 				<td class="title"><a href="{{url}}" class="title">{{title}}</a></td>
 {{#meta@cols}}
@@ -120,7 +125,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 				</div></td>
 {{/taxonomy@cols}}
 				<td class="date"><span>{{date@sep.0}}</span><span>{{date@sep.1}}</span></td>
-				<td><button class="delete mini cross delete-post" data-href="{{delete}}"></button></td>
+{{#trash}}
+				<td><button class="delper mini cross remove-post" data-href="{{url_remove}}"></button></td>
+{{/trash}}
+{{^trash}}
+				<td><button class="trash mini cross remove-post" data-href="{{url_remove}}"></button></td>
+{{/trash}}
 			</tr>
 {{/posts}}
 		</table>
@@ -136,10 +146,17 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			{{#next}}<a class="button" href="{{.}}"><?= _ht( 'Old' ) ?></a>{{/next}}
 		</div>
 {{/pagination}}
+		<div class="button-row buttom">
+			<a href="{{list_all}}" class="button tag"><?= _ht( "All" ) ?></a>
+			<a href="{{list_trash}}" class="button tag"><?= _ht( "Trash" ) ?></a>
+			<a id="btn-empty-trash" data-href="{{empty_trash}}" class="button tag right delete"><?= _ht( "Empty Trash" ) ?></a>
+		</div>
 <?php \nt\end( $view ); ?>
 	</div>
 
-	<input id="message-deleting" type="hidden" value="<?= _ht( 'Do you want to delete the post?' ) ?>">
+	<input id="message-trash" type="hidden" value="<?= _ht( 'Do you want to move the post to trash?' ) ?>">
+	<input id="message-delete-permanently" type="hidden" value="<?= _ht( 'Do you want to delete the post permanently?' ) ?>">
+	<input id="message-empty-trash" type="hidden" value="<?= _ht( 'Do you want to empty trash?' ) ?>">
 
 </div>
 </body>

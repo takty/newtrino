@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-03
  *
  */
 
@@ -311,13 +311,14 @@ input[type=button],
 		border-color: hsl(60, 80%, 40%);
 		background-color: hsl(60, 75%, 90%);
 	}
-	&.delete:not(:hover) {
+	&.delete:not(:hover),
+	&.delper:not(:hover) {
 		border-color: hsl(0, 70%, 55%);
 		background-color: hsl(0, 75%, 92.5%);
 	}
 	&.mini {
+		min-width: 1.5rem;
 		padding: 0.5rem 0.25rem;
-		@include for-tp { padding: { left: 0.35rem; right: 0.35rem; } }
 	}
 	&.cross {
 		position: relative;
@@ -347,17 +348,18 @@ input[type=button],
 		}
 	}
 	&.tag {
-		padding: 0.25rem 1rem 0.25rem 0.25rem;
+		padding: 0.25rem 0.35rem;
 		height: 1.5rem;
 		font-size: 0.75rem;
 
 		&.cross {
+			padding-right: 1.15rem;
 			&::before,
 			&::after {
 				content : '';
 				position: absolute;
 				top     : calc(50% - 0.5rem / 2);
-				left    : calc(100% - 0.55rem - 1px / 2);
+				left    : calc(100% - 0.6rem - 1px / 2);
 				height  : 0.5rem;
 			}
 		}

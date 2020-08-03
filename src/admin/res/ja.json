@@ -24,7 +24,13 @@
 		"New": "新しい",
 		"Old": "古い",
 
-		"Do you want to delete the post?": "この投稿を削除してもよろしいですか？"
+		"Trash": "ゴミ箱",
+		"Restore": "復元",
+		"Empty Trash": "ゴミ箱を空にする",
+
+		"Do you want to move the post to trash?": "この投稿をゴミ箱に移動してもよろしいですか？",
+		"Do you want to delete the post permanently?": "この投稿を完全に削除してもよろしいですか？",
+		"Do you want to empty trash?": "ゴミ箱を空にしてもよろしいですか？"
 	},
 	"post": {
 		"Publish": "公開",

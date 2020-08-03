@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-08-03
  *
  */
 
@@ -42,9 +42,6 @@
 	td {
 		line-height: 1.25;
 
-		&.title {
-			text-decoration: underline;
-		}
 		&.taxonomy {
 			a { white-space: nowrap; }
 		}
@@ -69,6 +66,17 @@
 				text-align: right;
 			}
 		}
+
+		.restore-post {
+			min-width: 4.25rem;
+			justify-content: center;
+		}
+
+		a[href="#"] {
+			pointer-events: none;
+			text-decoration: none;
+			color: initial;
+		}
 	}
 }
 
@@ -78,4 +86,20 @@
 
 	margin-top: 1.5rem;
 	> * + * { margin-left: 0.5rem; }
+}
+
+.button-row.buttom {
+	margin-top: 1rem;
+
+	display: flex;
+	flex-wrap: wrap;
+
+	> a:not(:last-child) { margin-right: 0.5rem; }
+	> a {
+		&[href="#"],
+		&[data-href="#"] {
+			display: none;
+		}
+		&.right { margin-left: auto; }
+	}
 }

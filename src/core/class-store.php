@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-02
+ * @version 2020-08-03
  *
  */
 
@@ -211,18 +211,25 @@ class Store {
 	}
 
 	private function _loadMatchedInfoAll( string $root, array $paths, array $args, array &$ret = [] ): void {
+		$is_trash = ( isset( $args['status'] ) && $args['status'] === '_trash' );
+		if ( $is_trash ) unset( $args['status'] );
 		$query = new Query( $args );
+		$this->_loadMatchedInfoAllInternal( $root, $paths, $query, $is_trash, $ret );
+	}
 
+	private function _loadMatchedInfoAllInternal( string $root, array $paths, Query $query, bool $isTrash, array &$ret = [] ): void {
 		foreach ( $paths as $path ) {
 			if ( ! is_dir( $root . $path ) ) continue;
 			$dir = dir( $root . $path );
 			while ( false !== ( $fn = $dir->read() ) ) {
-				if ( $fn[0] === '.' || $fn[0] === '_' || $fn[0] === '-' ) continue;
+				if ( $fn[0] === '.' || $fn[0] === '_' ) continue;
+				if ( ! $isTrash && $fn[0] === '-' ) continue;
 				if ( is_file( $root . $path . $fn ) ) continue;
 				if ( strlen( $fn ) === 4 ) {
-					$this->_loadMatchedInfoAll( $root, ["$path$fn/"], $args, $ret );
+					$this->_loadMatchedInfoAllInternal( $root, ["$path$fn/"], $query, $isTrash, $ret );
 					continue;
 				}
+				if ( $isTrash && $fn[0] !== '-' ) continue;
 				$info = $this->_loadInfo( $root . $path . $fn );
 				if ( $info === null ) continue;
 				if ( $query->match( $info, "$root$path$fn/" . Post::BIGM_FILE_NAME ) ) {
@@ -303,15 +310,46 @@ class Store {
 		return $post;
 	}
 
-	public function delete( string $id ): void {
-		// TODO Planning to add Trash function
-		$pd = $this->getPostDir( $id, null );
-		self::deleteAll( rtrim( $pd, '/' ) );
+	public function removePost( string $id ): void {
+		if ( $id[0] === '-' ) {
+			$pd = $this->getPostDir( $id, null );
+			self::deleteAll( rtrim( $pd, '/' ) );
+			return;
+		}
+		$subPath = $this->getSubPath( $id );
+		$removed_id = "-$id";
+		$srcPath = $this->getPostDir( $id, $subPath );
+		if ( ! is_dir( $srcPath ) ) {
+			Logger::output( 'error', "(Store::removePost is_dir) Directory Does Not Exist [$srcPath]" );
+			return;
+		}
+		rename( $this->getPostDir( $id, $subPath ), $this->getPostDir( $removed_id, $subPath ) );
+	}
+
+	public function restorePost( string $removed_id ): void {
+		if ( $removed_id[0] !== '-' ) return;
+		$subPath = $this->getSubPath( $removed_id );
+		$id = substr( $removed_id, 1 );
+		$srcPath = $this->getPostDir( $removed_id, $subPath );
+		if ( ! is_dir( $srcPath ) ) {
+			Logger::output( 'error', "(Store::restorePost is_dir) Directory Does Not Exist [$srcPath]" );
+			return;
+		}
+		rename( $srcPath, $this->getPostDir( $id, $subPath ) );
+	}
+
+	public function emptyTrash( string $type ): void {
+		$ps = $this->_getPosts( [ 'type' => $type, 'status' => '_trash' ] );
+		foreach ( $ps as $p ) {
+			$pd = $this->getPostDir( $p->getId(), null );
+			self::deleteAll( rtrim( $pd, '/' ) );
+		}
 	}
 
 	static public function deleteAll( string $dir ): void {
+		$dir = rtrim( $dir, '/' );
 		if ( ! is_dir( $dir ) ) {
-			Logger::output( 'error', "(Store::deleteAll is_dir) File Does Not Exist [$dir]" );
+			Logger::output( 'error', "(Store::deleteAll is_dir) Directory Does Not Exist [$dir]" );
 			return;
 		}
 		foreach ( scandir( $dir ) as $fn ) {

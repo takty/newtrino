@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-03
  *
  */
 
@@ -24,17 +24,9 @@ function handle_query(): array {
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
 
-	$query = parse_query_string();
-	if ( isset( $query['delete_id'] ) ) {
-		$nt_store->delete( $query['delete_id'] );
-	}
-	return _create_view_list( $query, $list_url, $post_url );
-}
+	$orig_query = parse_query_string();
 
-function _create_view_list( array $query, string $list_url, string $post_url ): array {
-	global $nt_store, $nt_config;
-
-	$query    = _rearrange_query( $query );
+	$query    = _rearrange_query( $orig_query );
 	$types    = $nt_store->type()->getTypeAll();
 	$def_type = array_keys( $types )[0];
 
@@ -42,8 +34,17 @@ function _create_view_list( array $query, string $list_url, string $post_url ): 
 	$perPage = get_param( 'per_page', 10,        $query );
 	$date    = get_param( 'date',     null,      $query );
 	$page    = get_param( 'page',     null,      $query );
+	$status  = get_param( 'status',   null,      $query );
 
-	$args = [ 'status' => null, 'type' => $type, 'per_page' => $perPage ];
+	if ( isset( $orig_query['remove_id'] ) ) {
+		$nt_store->removePost( $orig_query['remove_id'] );
+	} else if ( isset( $orig_query['restore_id'] ) ) {
+		$nt_store->restorePost( $orig_query['restore_id'] );
+	} else if ( isset( $orig_query['empty_trash'] ) ) {
+		$nt_store->emptyTrash( $type );
+	}
+
+	$args = [ 'status' => $status, 'type' => $type, 'per_page' => $perPage ];
 	if ( $date ) $args += [ 'date_query' => [ [ 'date' => $date ] ] ];
 	if ( $page ) $args += [ 'page'       => $page ];
 
@@ -51,8 +52,9 @@ function _create_view_list( array $query, string $list_url, string $post_url ): 
 		createTaxQueryFromTaxonomyToTerms( $query['taxonomy'], $args );
 	}
 	$ret = $nt_store->getPosts( $args );
-	$ps = array_map( function ( $p ) use ( $query, $list_url, $post_url ) {
-		return _process_post_for_view( $p, $query, $list_url, $post_url );
+	$is_trash = $status === '_trash';
+	$ps = array_map( function ( $p ) use ( $query, $list_url, $post_url, $is_trash ) {
+		return _process_post_for_view( $p, $query, $list_url, $post_url, $is_trash );
 	}, $ret['posts'] );
 
 	return [
@@ -67,6 +69,9 @@ function _create_view_list( array $query, string $list_url, string $post_url ): 
 			'per_page' => _create_per_page_filter_view( $query, [10, 20, 50, 100], $list_url ),
 			'new'      => _create_new_filter_view( $query, $types, $post_url ),
 		],
+		'list_trash'  => $is_trash ? '#' : create_canonical_url( $list_url, $query, [ 'status' => '_trash' ] ),
+		'list_all'    => $is_trash ? create_canonical_url( $list_url, $query, [ 'status' => null ] ) : '#',
+		'empty_trash' => $is_trash ? create_canonical_url( $list_url, $query, [ 'empty_trash' => true, 'status' => null ] ) : '#'
 	];
 }
 
@@ -81,6 +86,7 @@ function _rearrange_query( array $query ): array {
 		'per_page' => 'int',
 		'date'     => 'slug',
 		'type'     => 'slug',
+		'status'   => 'slug',
 	], 'taxonomy' );
 }
 
@@ -102,7 +108,7 @@ function _create_type_filter_view( array $query, array $types, string $list_url 
 
 function _create_date_filter_view( array $query, string $type, string $dateType, string $list_url ): array {
 	global $nt_store;
-	$dates = $nt_store->getCountByDate( $dateType, [ 'type' => $type ] );
+	$dates = $nt_store->getCountByDate( $dateType, [ 'type' => $type, 'status' => $query['status'] ?? null ] );
 
 	$cur = $query['date'] ?? '';
 	switch ( $dateType ) {
@@ -219,9 +225,9 @@ function _create_header_taxonomy_cancels( array $query, string $list_url ): ?arr
 // -----------------------------------------------------------------------------
 
 
-function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url ): ?array {
+function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url, bool $is_trash ): ?array {
 	if ( $p === null ) return null;
-	return [
+	$ret = [
 		'id'       => $p->getId(),
 		'type'     => $p->getType(),
 		'title'    => $p->getTitle( true ),
@@ -229,14 +235,25 @@ function _process_post_for_view( ?Post $p, array $query, string $list_url, strin
 		'date'     => $p->getDate(),
 		'date@sep' => explode( ' ', $p->getDate() ),
 		'modified' => $p->getModified(),
-		'url'      => create_canonical_url( $post_url, $query, [ 'id' => $p->getId() ] ),
 
-		'delete'        => create_canonical_url( $list_url, $query, [ 'delete_id' => $p->getId() ] ),
-		'status@select' => _create_status_select( $p ),
+		'url_remove'        => create_canonical_url( $list_url, $query, [ 'remove_id' => $p->getId() ] ),
 		'meta@cols'     => _create_meta_cols( $p ),
 		'taxonomy@cols' => _create_taxonomy_cols( $p, $query, $list_url ),
-		'meta@cols'     => _create_meta_cols( $p ),
+
 	];
+	if ( $is_trash ) {
+		$ret += [
+			'url'     => '#',
+			'trash'   => $is_trash,
+			'restore' => create_canonical_url( $list_url, $query, [ 'restore_id' => $p->getId() ] ),
+		];
+	} else {
+		$ret += [
+			'url'           => create_canonical_url( $post_url, $query, [ 'id' => $p->getId() ] ),
+			'status@select' => _create_status_select( $p ),
+		];
+	}
+	return $ret;
 }
 
 function _create_status_select( Post $p ): array {
