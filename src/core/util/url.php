@@ -5,7 +5,7 @@ namespace nt;
  * Functions for URLs
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-10
+ * @version 2020-08-03
  *
  */
 
@@ -44,7 +44,7 @@ function resolve_url( string $target, string $base ): string {
 			$file = str_replace( '../', '', $target );
 			return $comp['scheme'] . '://' . $comp['host'] . $pathto . '/' . $file;
 	}
-	return $uri;
+	return $target;
 }
 
 function get_url_from_path( string $target ): string {
