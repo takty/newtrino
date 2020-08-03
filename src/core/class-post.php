@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-02
+ * @version 2020-08-03
  *
  */
 
@@ -107,7 +107,15 @@ class Post {
 	private function _updateSearchIndex( string $postDir ): bool {
 		$text = strip_tags( $this->_title ) . ' ' . strip_tags( $this->_content );
 		$path = $postDir . self::BIGM_FILE_NAME;
-		return Indexer::updateSearchIndex( $text, $path );
+
+		$idx = Indexer::createSearchIndex( $text );
+		$ret = file_put_contents( $path, $idx, LOCK_EX );
+		if ( $ret === false ) {
+			Logger::output( 'error', "(Post::_updateSearchIndex file_put_contents) [$path]" );
+			return false;
+		}
+		chmod( $path, NT_MODE_FILE );
+		return true;
 	}
 
 	// ----

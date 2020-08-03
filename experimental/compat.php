@@ -5,7 +5,7 @@ namespace nt;
  * Compatibility Utilities
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-02
+ * @version 2020-08-03
  *
  */
 
@@ -161,5 +161,13 @@ function convert_post_search_index( $dirPost, $fn ) {
 
 	$text = strip_tags( $title ) . ' ' . strip_tags( $cont );
 	$path = $dirPost . $fn . '/' . Post::BIGM_FILE_NAME;
-	return Indexer::updateSearchIndex( $text, $path );
+
+	$idx = Indexer::createSearchIndex( $text );
+	$ret = file_put_contents( $path, $idx, LOCK_EX );
+	if ( $ret === false ) {
+		Logger::output( 'error', "(convert_post_search_index file_put_contents) [$path]" );
+		return false;
+	}
+	chmod( $path, NT_MODE_FILE );
+	return true;
 }
