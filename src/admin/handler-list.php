@@ -5,16 +5,17 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
-require_once( __DIR__ . '/../core/util/template.php' );
-require_once( __DIR__ . '/../core/util/query-string.php' );
+require_once( __DIR__ . '/../core/util/date-format.php' );
 require_once( __DIR__ . '/../core/util/param.php' );
+require_once( __DIR__ . '/../core/util/query-string.php' );
+require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
 
@@ -304,10 +305,10 @@ function _create_meta_cols( Post $p ): array {
 			$_lab = '';
 		} else {
 			if ( $type === 'date' ) {
-				$_lab = _h( Post::parseDate( $val ) );
+				$_lab = _h( parseDate( $val ) );
 			} else if ( $type === 'date-range' ) {
-				$_bgn = _h( Post::parseDate( $val[0] ) );
-				$_end = _h( Post::parseDate( $val[1] ) );
+				$_bgn = _h( parseDate( $val[0] ) );
+				$_end = _h( parseDate( $val[1] ) );
 				if ( $_bgn === $_end ) {
 					$_lab = "<span>$_bgn</span>";
 				} else {
@@ -337,7 +338,7 @@ function _get_meta( Post $p, array &$cls ): array {
 
 		switch ( $type ) {
 			case 'date-range':
-				$ret[ $key ] = Post::parseDate( $val );
+				$ret[ $key ] = parseDate( $val );
 				break;
 			case 'date-range':
 				$es = Post::DATE_STATUS_ONGOING;
@@ -346,7 +347,7 @@ function _get_meta( Post $p, array &$cls ): array {
 				else if ( $val[1] < $now ) $es = Post::DATE_STATUS_FINISHED;
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
-				$ret[ $key ] = array_map( function ( $e ) { return Post::parseDate( $e ); }, $val );
+				$ret[ $key ] = array_map( function ( $e ) { return parseDate( $e ); }, $val );
 				break;
 		}
 		$ret[ "$key@type" ] = $type;

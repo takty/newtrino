@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
@@ -304,8 +304,7 @@ class Store {
 			$newId = substr( $id, 1 );
 			$subPath = $this->_createSubPath( $post->getType(), $post->getDateRaw() );
 			rename( $this->getPostDir( $id, $subPath ), $this->getPostDir( $newId, $subPath ) );
-			$post->setId( $newId );
-			$post->save();
+			$post->save( $newId );
 		}
 		return $post;
 	}

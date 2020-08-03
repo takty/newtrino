@@ -5,53 +5,38 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
 
-require_once( __DIR__ . '/lib/simple_html_dom.php' );
 require_once( __DIR__ . '/class-indexer.php' );
 require_once( __DIR__ . '/class-logger.php' );
+require_once( __DIR__ . '/util/date-format.php' );
+require_once( __DIR__ . '/lib/simple_html_dom.php' );
 
 
 class Post {
 
-	const INFO_FILE_NAME = 'info.json';
-	const CONT_FILE_NAME = 'content.html';
-	const BIGM_FILE_NAME = 'bigm.txt';
-	const MEDIA_DIR_NAME = 'media';
+	public const INFO_FILE_NAME = 'info.json';
+	public const CONT_FILE_NAME = 'content.html';
+	public const BIGM_FILE_NAME = 'bigm.txt';
+	public const MEDIA_DIR_NAME = 'media';
 
-	const STATUS_PUBLISH = 'publish';
-	const STATUS_FUTURE  = 'future';
-	const STATUS_DRAFT   = 'draft';
+	public const STATUS_PUBLISH = 'publish';
+	public const STATUS_FUTURE  = 'future';
+	public const STATUS_DRAFT   = 'draft';
 
-	const DATE_STATUS_UPCOMING = 'upcoming';
-	const DATE_STATUS_ONGOING  = 'ongoing';
-	const DATE_STATUS_FINISHED = 'finished';
+	public const DATE_STATUS_UPCOMING = 'upcoming';
+	public const DATE_STATUS_ONGOING  = 'ongoing';
+	public const DATE_STATUS_FINISHED = 'finished';
 
-	static function compareDate( Post $a, Post $b ): int {
+	static public function compareDate( Post $a, Post $b ): int {
 		return $b->_date <=> $a->_date;
 	}
 
-	static function compareIndexScore( Post $a, Post $b ): int {
+	static public function compareIndexScore( Post $a, Post $b ): int {
 		return $b->_indexScore <=> $a->_indexScore;
-	}
-
-	static function parseDate( string $date ): string {
-		return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );
-	}
-
-	static function packDate( string $date ): string {
-		return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $date );
-	}
-
-	static function parseDateTime( string $dateTime ): string {
-		return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dateTime );
-	}
-
-	static function packDateTime( string $dateTime ): string {
-		return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dateTime );
 	}
 
 
@@ -61,20 +46,26 @@ class Post {
 	private $_id;
 	private $_subPath;
 
-	function __construct( string $id, string $subPath = '' ) {
+	private $_type     = '';
+	private $_title    = '';
+	private $_status   = self::STATUS_PUBLISH;
+	private $_date     = '';
+	private $_modified = '';
+	private $_taxonomy = [];
+	private $_meta     = [];
+
+	private $_content = null;
+
+	public function __construct( string $id, string $subPath = '' ) {
 		$this->_id = $id;
 		$this->_subPath = $subPath;
 	}
 
-	function getId(): string {
+	public function getId(): string {
 		return $this->_id;
 	}
 
-	function setId( string $id ): void {
-		$this->_id = $id;
-	}
-
-	function load( array $info = null ): bool {
+	public function load( array $info = null ): bool {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
@@ -83,16 +74,18 @@ class Post {
 		return $ret;
 	}
 
-	function save(): void {
+	public function save( string $id = null ): void {
+		if ( ! defined( 'NT_ADMIN' ) ) die;
+		if ( ! empty( $id ) ) $this->_id = $id;
+
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
+		if ( ! is_dir( $path ) ) mkdir( $path, NT_MODE_DIR );
+		if ( is_dir( $path ) ) chmod( $path, NT_MODE_DIR );
 
-		if ( ! is_dir( $path ) ) {
-			mkdir( $path, NT_MODE_DIR );
-		}
 		$this->_writeInfo( $path, true );
 		$this->_writeContent( $path );
-		$this->_updateSearchIndex( $path );
+		$this->_writeSearchIndex( $path );
 	}
 
 	private function _updateStatus( string $postDir ): void {
@@ -104,27 +97,30 @@ class Post {
 		}
 	}
 
-	private function _updateSearchIndex( string $postDir ): bool {
+	private function _writeSearchIndex( string $postDir ): bool {
 		$text = strip_tags( $this->_title ) . ' ' . strip_tags( $this->_content );
 		$path = $postDir . self::BIGM_FILE_NAME;
 
 		$idx = Indexer::createSearchIndex( $text );
 		$ret = file_put_contents( $path, $idx, LOCK_EX );
 		if ( $ret === false ) {
-			Logger::output( 'error', "(Post::_updateSearchIndex file_put_contents) [$path]" );
+			Logger::output( 'error', "(Post::_writeSearchIndex file_put_contents) [$path]" );
 			return false;
 		}
 		chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
-	// ----
 
-	function assign( array $vals, string $urlPrivate ): void {
+	// -------------------------------------------------------------------------
+
+
+	public function assign( array $vals ): void {
+		if ( ! defined( 'NT_ADMIN' ) ) die;
 		$this->setTitle( $vals['post_title'] );
 		$this->setStatus( $vals['post_status'] );
 
-		$date = empty( $vals['post_date'] ) ? 'now' : Post::packDateTime( $vals['post_date'] );
+		$date = empty( $vals['post_date'] ) ? 'now' : packDateTime( $vals['post_date'] );
 		$this->setDate( $date );
 		$this->setModified( 'now' );
 
@@ -132,7 +128,7 @@ class Post {
 		$this->_assignTaxonomy( $type, $vals );
 		$this->_assignMeta( $type, $vals );
 
-		$this->setContent( $vals['post_content'], $urlPrivate );
+		$this->_setContent( $vals['post_content'] );
 	}
 
 	private function _assignTaxonomy( string $type, array $vals ): void {
@@ -161,10 +157,10 @@ class Post {
 			$key = $m['key'];
 			if ( ! isset( $vals["meta:$key"] ) ) continue;
 			if ( $m['type'] === 'date' ) {
-				$vals["meta:$key"] = self::packDate( $vals["meta:$key"] );
+				$vals["meta:$key"] = packDate( $vals["meta:$key"] );
 			}
 			if ( $m['type'] === 'date-range' ) {
-				$vals["meta:$key"] = array_map( function ( $e ) { return self::packDate( $e ); }, $vals["meta:$key"] );
+				$vals["meta:$key"] = array_map( function ( $e ) { return packDate( $e ); }, $vals["meta:$key"] );
 			}
 			$this->setMetaValue( $key, $vals["meta:$key"] );
 		}
@@ -173,14 +169,6 @@ class Post {
 
 	// Info Data --------------------------------------------------------------
 
-
-	private $_type     = '';
-	private $_title    = '';
-	private $_status   = self::STATUS_PUBLISH;
-	private $_date     = '';
-	private $_modified = '';
-	private $_taxonomy = [];
-	private $_meta     = [];
 
 	private function _readInfo( string $postDir, ?array $preloadedInfo = null ): bool {
 		if ( $preloadedInfo ) {
@@ -245,103 +233,101 @@ class Post {
 
 	// ----
 
-	function getType(): string {
+	public function getType(): string {
 		return $this->_type;
 	}
 
-	function setType( string $val ): void {
+	public function setType( string $val ): void {
 		$this->_type = $val;
 	}
 
-	function getTitle(): string {
+	public function getTitle(): string {
 		return $this->_title;
 	}
 
-	function setTitle( string $val ): void {
+	public function setTitle( string $val ): void {
 		$this->_title = $val;
 	}
 
-	function getStatus(): string {
+	public function getStatus(): string {
 		return $this->_status;
 	}
 
-	function isStatus( string $val ): bool {
+	public function isStatus( string $val ): bool {
 		return $this->_status === $val;
 	}
 
-	function canPublished(): bool {
+	public function canPublished(): bool {
 		return intval( $this->_date ) < intval( date( 'YmdHis' ) );
 	}
 
-	function setStatus( string $val ): void {
+	public function setStatus( string $val ): void {
 		if ( ! in_array( $val, [ self::STATUS_PUBLISH, self::STATUS_FUTURE, self::STATUS_DRAFT ], true ) ) return;
 		$this->_status = $val;
 	}
 
-	function getDate(): string {
-		return Post::parseDateTime( $this->_date );
+	public function getDate(): string {
+		return parseDateTime( $this->_date );
 	}
 
-	function getModified(): string {
-		return Post::parseDateTime( $this->_modified );
+	public function getModified(): string {
+		return parseDateTime( $this->_modified );
 	}
 
-	function getDateRaw(): string {
+	public function getDateRaw(): string {
 		return $this->_date;
 	}
 
-	function getModifiedRaw(): string {
+	public function getModifiedRaw(): string {
 		return $this->_modified;
 	}
 
-	function setDate( string $val = 'now' ): void {
+	public function setDate( string $val = 'now' ): void {
 		if ( $val === 'now' ) $val = date( 'YmdHis' );
 		$this->_date = $val;
 	}
 
-	function setModified( string $val = 'now' ): void {
+	public function setModified( string $val = 'now' ): void {
 		if ( $val === 'now' ) $val = date( 'YmdHis' );
 		$this->_modified = $val;
 	}
 
 	// ----
 
-	function hasTerm( string $tax_slug, string $term_slug ): bool {
+	public function hasTerm( string $tax_slug, string $term_slug ): bool {
 		return in_array( $term_slug, $this->getTermSlugs( $tax_slug ), true );
 	}
 
-	function getTermSlugs( string $tax_slug ): array {
+	public function getTermSlugs( string $tax_slug ): array {
 		return isset( $this->_taxonomy[ $tax_slug ] ) ? $this->_taxonomy[ $tax_slug ] : [];
 	}
 
-	function getTaxonomyToTermSlugs(): array {
+	public function getTaxonomyToTermSlugs(): array {
 		return $this->_taxonomy;
 	}
 
-	function setTermSlugs( string $tax_slug, array $term_slugs ): void {
+	public function setTermSlugs( string $tax_slug, array $term_slugs ): void {
 		$this->_taxonomy[ $tax_slug ] = array_values( array_unique( $term_slugs ) );
 	}
 
 	// ----
 
-	function getMeta(): array {
+	public function getMeta(): array {
 		return $this->_meta;
 	}
 
-	function getMetaValue( string $key ) {
+	public function getMetaValue( string $key ) {
 		if ( isset( $this->_meta[ $key ] ) ) return $this->_meta[ $key ];
 		return null;
 	}
 
-	function setMetaValue( string $key, $val ): void {
+	public function setMetaValue( string $key, $val ): void {
 		$this->_meta[ $key ] = $val;
 	}
 
 
 	// Content ----------------------------------------------------------------
 
-
-	private $_content = null;
 
 	private function _readContent( string $postDir ): bool {
 		$path = $postDir . self::CONT_FILE_NAME;
@@ -369,7 +355,7 @@ class Post {
 		return true;
 	}
 
-	private function _convertToActualUrl( string $postUrl, string $url ): string {
+	static private function _convertToActualUrl( string $postUrl, string $url ): string {
 		$sp = strpos( $url, '//' );
 		if ( $sp === 0 ) {
 			$sub = substr( $url, 2 );
@@ -378,8 +364,8 @@ class Post {
 		return $url;
 	}
 
-	private function _convertToPortableUrl( string $postUrl, string $url, string $urlAdmin ): string {
-		$url = resolve_url( $url, $urlAdmin );
+	static private function _convertToPortableUrl( string $postUrl, string $url ): string {
+		$url = resolve_url( $url, NT_URL_ADMIN );
 		if ( strpos( $url, NT_URL ) === 0 ) {
 			$url = '/' . substr( $url, strlen( NT_URL ) - 1 );
 			$url = str_replace( '//?_', '//?', $url );
@@ -387,63 +373,56 @@ class Post {
 		return $url;
 	}
 
-	function getContent(): string {
-		global $nt_store;
-		$dir = $nt_store->getPostDir( $this->_id, $this->_subPath );
-		$url = $nt_store->getPostUrl( $this->_id, $this->_subPath );
-
-		if ( $this->_content === null ) {
-			$res = $this->_readContent( $dir );
-			if ( $res === false ) $this->_content = '';
-		}
-		if ( empty( $this->_content ) ) return '';
-
-		$dom = str_get_html( $this->_content );
+	static private function _convertContent( string $val, callable $fn ): string {
+		$dom = str_get_html( $val );
 		foreach ( $dom->find( 'img' ) as &$elm ) {
-			$elm->src = $this->_convertToActualUrl( $url, $elm->src );
+			$elm->src = call_user_func( $fn, $elm->src );
 			if ( $elm->srcset ) {
 				$ss = explode( ',', $elm->srcset );
 				$ss = array_map( 'trim', $ss );
-				foreach ( $ss as &$s ) $s = $this->_convertToActualUrl( $url, $s );
+				foreach ( $ss as &$s ) $s = call_user_func( $fn, $s );
 				$elm->srcset = implode( ', ', $ss );
 			}
 		}
 		foreach ( $dom->find( 'a' ) as &$elm ) {
-			$elm->href = $this->_convertToActualUrl( $url, $elm->href );
+			$elm->href = call_user_func( $fn, $elm->href );
 		}
-		$content = $dom->save();
+		$ret = $dom->save();
 		$dom->clear();
 		unset( $dom );
-		return $content;
+		return $ret;
 	}
 
-	function setContent( string $val, string $urlPrivate ): void {
+	private function _setContent( string $val ): void {
 		if ( empty( $val ) ) {
 			$this->_content = '';
 			return;
 		}
 		global $nt_store;
 		$url = $nt_store->getPostUrl( $this->_id, $this->_subPath );
-
-		$dom = str_get_html($val);
-		foreach ( $dom->find( 'img' ) as &$elm ) {
-			$elm->src = $this->_convertToPortableUrl( $url, $elm->src, $urlPrivate );
-			if ( $elm->srcset ) {
-				$ss = explode( ',', $elm->srcset );
-				$ss = array_map( 'trim', $ss );
-				foreach ( $ss as &$s ) $s = $this->_convertToPortableUrl( $url, $s, $urlPrivate );
-				$elm->srcset = implode( ', ', $ss );
-			}
-		}
-		foreach ( $dom->find( 'a' ) as &$elm ) {
-			$elm->href = $this->_convertToPortableUrl( $url, $elm->href, $urlPrivate );
-		}
-		$this->_content = $dom->save();
-		$dom->clear();
-		unset( $dom );
+		$c = self::_convertContent( $val, function ( $tar ) use ( $url ) {
+			return self::_convertToPortableUrl( $url, $tar );
+		} );
+		$this->_content = $c;
 	}
 
-	function getExcerpt( int $len ): string {
+	public function getContent(): string {
+		global $nt_store;
+		if ( $this->_content === null ) {
+			$dir = $nt_store->getPostDir( $this->_id, $this->_subPath );
+			$res = $this->_readContent( $dir );
+			if ( $res === false ) $this->_content = '';
+		}
+		if ( empty( $this->_content ) ) return '';
+
+		$url = $nt_store->getPostUrl( $this->_id, $this->_subPath );
+		$c = self::_convertContent( $this->_content, function ( $tar ) use ( $url ) {
+			return self::_convertToActualUrl( $url, $tar );
+		} );
+		return $c;
+	}
+
+	public function getExcerpt( int $len ): string {
 		$str = strip_tags( $this->getContent() );
 		$exc = mb_substr( $str, 0, $len );
 		if ( mb_strlen( $exc ) < mb_strlen( $str ) ) $exc .= '...';

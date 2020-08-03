@@ -5,16 +5,17 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-04
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
-require_once( __DIR__ . '/../core/util/template.php' );
-require_once( __DIR__ . '/../core/util/query-string.php' );
+require_once( __DIR__ . '/../core/util/date-format.php' );
 require_once( __DIR__ . '/../core/util/param.php' );
+require_once( __DIR__ . '/../core/util/query-string.php' );
+require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
 
@@ -40,7 +41,7 @@ function handle_query( array $q ): array {
 			break;
 		case 'update':
 			$p = $nt_store->getPost( $q_id );
-			$p->assign( $q, NT_URL_ADMIN );
+			$p->assign( $q );
 			$t_p = $nt_store->writePost( $p );
 			$msg = _ht( 'Update Complete' );
 			break;
@@ -227,7 +228,7 @@ function echo_metabox_text( Post $post, string $key, string $label, bool $intern
 function echo_metabox_date( Post $post, string $key, string $label, bool $internal ): void {
 	$val = $post->getMetaValue( $key );
 	if ( $val === null ) $date = '';
-	else $date = Post::parseDate( $val );
+	else $date = parseDate( $val );
 
 	$cls = $internal ? 'metabox-date' : 'frame frame-sub metabox-date';
 ?>
@@ -248,8 +249,8 @@ function echo_metabox_date_range( Post $post, string $key, string $label, bool $
 		$bgn = '';
 		$end = '';
 	} else {
-		$bgn = Post::parseDate( $val[0] );
-		$end = Post::parseDate( $val[1] );
+		$bgn = parseDate( $val[0] );
+		$end = parseDate( $val[1] );
 	}
 	$cls = $internal ? 'metabox-date-range' : 'frame frame-sub metabox-date-range';
 ?>

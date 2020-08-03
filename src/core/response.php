@@ -5,13 +5,14 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-04
  *
  */
 
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-store.php' );
+require_once( __DIR__ . '/util/date-format.php' );
 require_once( __DIR__ . '/util/param.php' );
 
 $nt_config = load_config( NT_DIR_DATA );
@@ -165,13 +166,13 @@ function _get_meta( Post $p, array &$cls ): array {
 				$es = _get_date_status( $val, $val );
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
-				$ret[ $key ] = Post::parseDate( $val );
+				$ret[ $key ] = parseDate( $val );
 				break;
 			case 'date-range':
 				$es = _get_date_status( $val[0], $val[1] );
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
-				$ret[ $key ] = array_map( function ( $e ) { return Post::parseDate( $e ); }, $val );
+				$ret[ $key ] = array_map( function ( $e ) { return parseDate( $e ); }, $val );
 				break;
 		}
 		$ret[ "$key@type" ] = $type;
