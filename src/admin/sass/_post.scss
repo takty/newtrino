@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-30
+ * @version 2020-08-04
  *
  */
 
@@ -131,6 +131,10 @@
 			padding: { left: 0.45rem; right: 0.45rem; }
 		}
 	}
+	.flatpickr.date-range input {
+		min-width: 14rem;
+		@include for-tl { min-width: unset; }
+	}
 	.button.cross.delete {
 		@include for-tl {
 			width: 2.5rem;
@@ -148,5 +152,8 @@
 
 .mce-tinymce,
 .mce-widget {
-	button { display: inline-block; }
+	button {
+		display: inline-block;
+		min-width: unset;
+	}
 }

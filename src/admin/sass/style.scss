@@ -3,7 +3,7 @@
  * Stlye for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
@@ -132,8 +132,8 @@ a {
 	@include for-tl {
 		align-self: flex-start;
 		flex-direction: column;
-		align-items: flex-start;
-		width: 16rem;
+		align-items: stretch;
+		width: 16.5rem;
 	}
 
 	padding: 0.5rem 1rem;
@@ -148,7 +148,7 @@ a {
 	}
 
 	.flatpickr-input {
-		min-width: 12rem;
+		min-width: 11rem;
 		@include for-tl { width: 100%; }
 		max-height: 2rem;
 
@@ -344,6 +344,7 @@ input[type=button],
 			}
 			min-width: 1.25rem;
 			width: 1.25rem;
+			padding: 0;
 			vertical-align: middle;
 		}
 	}
