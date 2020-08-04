@@ -14,7 +14,6 @@ define( 'NT_ADMIN', true );
 
 require_once( __DIR__ . '/../core/index.php' );
 require_once( __DIR__ . '/class-session.php' );
-require_once( __DIR__ . '/util/tag.php' );
 
 $nt_config  = load_config( NT_DIR_DATA );
 $nt_res     = load_resource( NT_DIR_ADMIN_RES, $nt_config['lang_admin'] );
@@ -67,4 +66,20 @@ function get_asset_url( $fs ) {
 		}
 	}
 	return null;
+}
+
+function translate( string $str ): string {
+	global $nt_res;
+	foreach ( $nt_res as $key => $vals ) {
+		if ( isset( $vals[ $str ] ) ) return $vals[ $str ];
+	}
+	return $str;
+}
+
+function _h( string $str ): string {
+	return htmlspecialchars( $str, ENT_QUOTES, 'UTF-8' );
+}
+
+function _ht( string $str ): string {
+	return htmlspecialchars( translate( $str ), ENT_QUOTES, 'UTF-8' );
 }
