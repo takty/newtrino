@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-05
  *
  */
 
@@ -45,7 +45,7 @@ class Session {
 	private $_errMsg    = '';
 	private $_sessionId = '';
 
-	function __construct( string $urlAdmin, string $dirAcct, string $dirSession ) {
+	public function __construct( string $urlAdmin, string $dirAcct, string $dirSession ) {
 		$this->_urlAdmin   = $urlAdmin;
 		$this->_dirAcct    = $dirAcct;
 		$this->_dirSession = $dirSession;

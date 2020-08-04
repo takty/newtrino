@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-05
  *
  */
 
@@ -81,7 +81,7 @@ class Media {
 		$tmpFile      = $file['tmp_name'];
 		$origFileName = $file['name'];
 
-		$fileName = $this->getUniqueFileName( $origFileName );
+		$fileName = $this->_getUniqueFileName( $origFileName );
 		if ( empty( $fileName ) ) return false;
 
 		$path = $this->_dir . $fileName;
@@ -111,7 +111,7 @@ class Media {
 		}
 	}
 
-	private function getUniqueFileName( string $fileName, string $postFix = '' ): string {
+	private function _getUniqueFileName( string $fileName, string $postFix = '' ): string {
 		$pi   = pathinfo( $fileName );
 		$ext  = '.' . $pi['extension'];
 		$name = $pi['filename'] . $postFix;
@@ -239,7 +239,7 @@ class Media {
 		$div = 8;
 		imageconvolution( $newImg, $mat, $div, 0 );
 
-		$newFn = $this->getUniqueFileName( $fn, "-$size" );
+		$newFn = $this->_getUniqueFileName( $fn, "-$size" );
 		$this->_saveImage( $newFn, $mime, $newImg );
 		$ret = [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
 		imagedestroy( $newImg );

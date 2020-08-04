@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-05
  *
  */
 
@@ -15,12 +15,12 @@ require_once( __DIR__ . '/class-logger.php' );
 
 class Indexer {
 
-	static function segmentSearchQuery( string $searchQuery ): array {
-		return self::_create_bigram( $searchQuery );
+	static public function segmentSearchQuery( string $searchQuery ): array {
+		return self::_createBigram( $searchQuery );
 	}
 
-	static function createSearchIndex( string $text ): string {
-		$ws = self::_create_bigram( $text );
+	static public function createSearchIndex( string $text ): string {
+		$ws = self::_createBigram( $text );
 		$sum = [];
 		foreach ( $ws as $w ) {
 			if ( isset( $sum[ $w ] ) ) $sum[ $w ] += 1;
@@ -35,7 +35,7 @@ class Indexer {
 		return implode( "\n", $idx );
 	}
 
-	static function calcIndexScore( array $words, string $bfPath ): float {
+	static public function calcIndexScore( array $words, string $bfPath ): float {
 		if ( ! is_readable( $bfPath ) ) {
 			Logger::output( 'error', "(Indexer::calcIndexScore is_readable) [$bfPath]" );
 			return 0;
@@ -76,7 +76,7 @@ class Indexer {
 	// -------------------------------------------------------------------------
 
 
-	static private function _create_bigram( string $text ): array {
+	static private function _createBigram( string $text ): array {
 		$ret = [];
 
 		$text = mb_convert_kana( $text, 'acHV' );
@@ -87,12 +87,12 @@ class Indexer {
 
 		foreach ( $sts as $st ) {
 			if ( empty( $st ) ) continue;
-			self::_split_term( $st, $ret );
+			self::_splitTerm( $st, $ret );
 		}
 		return $ret;
 	}
 
-	static private function _split_term( string $term, array &$bis ): void {
+	static private function _splitTerm( string $term, array &$bis ): void {
 		$chs = preg_split( "//u", $term, -1, PREG_SPLIT_NO_EMPTY );
 
 		$temp = '';
