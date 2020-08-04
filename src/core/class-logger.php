@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-01
+ * @version 2020-08-04
  *
  */
 
@@ -14,6 +14,7 @@ class Logger {
 
 	const MAX_SIZE = 4000;
 	const LOG_FILE = __DIR__ . '/var/log/log.txt';
+	const FILE_NUM = 5;
 
 	static public $debug = false;
 
@@ -51,10 +52,11 @@ class Logger {
 	}
 
 	static private function rotateFile( string $dir, string $fn, string $ext ): void {
-		if ( is_file( "$dir{$fn}[5]$ext" ) ) {
-			unlink( "$dir{$fn}[5]$ext" );
-		}
-		for ( $i = 4; $i > 0; $i -= 1 ) {
+		$n = self::FILE_NUM;
+		$path = "$dir{$fn}[$n]$ext";
+		if ( is_file( $path ) ) unlink( $path );
+
+		for ( $i = $n - 1; $i > 0; $i -= 1 ) {
 			if ( ! is_file( "$dir{$fn}[$i]$ext" ) ) continue;
 			$j = $i + 1;
 			rename( "$dir{$fn}[$i]$ext", "$dir{$fn}[$j]$ext" );
