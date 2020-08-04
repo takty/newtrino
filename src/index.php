@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-02
+ * @version 2020-08-04
  *
  */
 
@@ -29,9 +29,9 @@ if ( $is_direct ) {
 
 
 function query_ajax( array $req ): void {
-	$query  = isset( $req['query' ] ) ? json_decode( $req['query' ], true ) : [];
-	$filter = isset( $req['filter'] ) ? json_decode( $req['filter'], true ) : [];
-	$option = isset( $req['option'] ) ? json_decode( $req['option'], true ) : [];
+	$query  = isset( $req['query' ] ) ? ( json_decode( $req['query' ], true ) ?? [] ) : [];
+	$filter = isset( $req['filter'] ) ? ( json_decode( $req['filter'], true ) ?? [] ) : [];
+	$option = isset( $req['option'] ) ? ( json_decode( $req['option'], true ) ?? [] ) : [];
 
 	if ( isset( $query['id'] ) ) {
 		$d = create_response_single( $query, $filter, $option );

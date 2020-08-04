@@ -5,15 +5,15 @@ namespace nt;
  * Function for Sending Files
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-04
  *
  */
 
 
 function sendFile( string $path, ?string $mimeType = null, bool $isDownload = false ): void {
-	if ( ! is_file( $path ) ) {
+	if ( ! is_file( $path ) || ! is_readable( $path ) ) {
 		header( 'HTTP/1.1 404 Not Found' );
-		die( $path );
+		die( 1 );
 	}
 	$mimeType = $mimeType ?? ( new \finfo( FILEINFO_MIME_TYPE ) )->file( $path );
 	if ( ! preg_match( '/\A\S+?\/\S+/', $mimeType ) ) {

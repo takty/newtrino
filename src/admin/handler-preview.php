@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-04
  *
  */
 
@@ -40,16 +40,8 @@ function handle_query( array $q ): array {
 		'date'       => $q_date,
 		'content'    => $q_content,
 		'taxonomies' => $tax2tls,
+		'css'        => get_asset_url( [ 'preview.min.css', 'preview.css' ] ),
+		'js'         => get_asset_url( [ 'preview.min.js', 'preview.js' ] ),
 	];
-	if ( is_file( NT_DIR_DATA . 'preview.min.css' ) ) {
-		$ret['css'] = NT_URL . 'data/preview.min.css';
-	} else if ( is_file( NT_DIR_DATA . 'preview.css' ) ) {
-		$ret['css'] = NT_URL . 'data/preview.css';
-	}
-	if ( is_file( NT_DIR_DATA . 'preview.min.js' ) ) {
-		$ret['js'] = NT_URL . 'data/preview.min.js';
-	} else if ( is_file( NT_DIR_DATA . 'preview.js' ) ) {
-		$ret['js'] = NT_URL . 'data/preview.js';
-	}
 	return $ret;
 }

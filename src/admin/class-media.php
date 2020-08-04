@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-01
+ * @version 2020-08-04
  *
  */
 
@@ -99,9 +99,16 @@ class Media {
 	}
 
 	public function remove( string $fileName ): void {
-		$path = $this->_dir . $fileName;
-		@unlink( $path );
-		$this->_removeMeta( $fileName );
+		$fileNames = $this->_removeMeta( $fileName );
+
+		foreach ( $fileNames as $fn ) {
+			$path = $this->_dir . $fn;
+			if ( ! is_file( $path ) ) continue;
+			$res = unlink( $path );
+			if ( $res === false ) {
+				Logger::output( 'error', "(Media::remove unlink) [$path]" );
+			}
+		}
 	}
 
 	private function getUniqueFileName( string $fileName, string $postFix = '' ): string {
@@ -131,13 +138,13 @@ class Media {
 		if ( $this->_data ) return $this->_data;
 
 		$path = $this->_meta;
-		if ( is_file( $path ) ) {
+		if ( is_file( $path ) && is_readable( $path ) ) {
 			$json = file_get_contents( $path );
 			if ( $json === false ) {
 				Logger::output( 'error', "(Media::_loadMeta file_get_contents) [$path]" );
 				return [];
 			}
-			return $this->_data = json_decode( $json, true );
+			return $this->_data = json_decode( $json, true ) ?? [];
 		} else {
 			return $this->_data = [];
 		}
@@ -175,28 +182,26 @@ class Media {
 		$this->_saveMeta( $meta );
 	}
 
-	private function _removeMeta( string $fileName ): void {
+	private function _removeMeta( string $fileName ): array {
 		$meta = $this->_loadMeta();
+		$removed = [ $fileName ];
 		$idx = -1;
-		$sizes = null;
+
 		foreach ( $meta as $i => $m ) {
-			if ( $m['file_name'] === $fileName ) {
-				$idx = $i;
-				if ( isset( $m['sizes'] ) ) $sizes = $m['sizes'];
-				break;
-			}
-		}
-		if ( $idx !== -1 ) {
-			if ( $sizes !== null ) {
-				foreach ( $sizes as $s => $d ) {
-					if ( ! isset( $d['file_name'] ) ) continue;
-					$path = $this->_dir . $d['file_name'];
-					if ( is_file( $path ) ) @unlink( $path );
+			if ( $m['file_name'] !== $fileName ) continue;
+			$idx = $i;
+			if ( isset( $m['sizes'] ) ) {
+				foreach ( $m['sizes'] as $s => $d ) {
+					if ( isset( $d['file_name'] ) ) $removed[] = $d['file_name'];
 				}
 			}
-			array_splice( $meta, $idx, 1 );
+			break;
 		}
-		$this->_saveMeta( $meta );
+		if ( $idx !== -1 ) {
+			array_splice( $meta, $idx, 1 );
+			$this->_saveMeta( $meta );
+		}
+		return $removed;
 	}
 
 

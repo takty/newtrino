@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-01
+ * @version 2020-08-04
  *
  */
 
@@ -42,9 +42,9 @@ define( 'NT_MODE_FILE', 0660 );
 function load_config( string $dirData ): array {
 	$conf = [];
 	$path = $dirData . 'config.json';
-	if ( is_file( $path ) ) {
+	if ( is_file( $path ) && is_readable( $path ) ) {
 		$json = file_get_contents( $path );
-		$conf = json_decode( $json, true );
+		$conf = json_decode( $json, true ) ?? [];
 	}
 	// Default Config
 	$conf += [

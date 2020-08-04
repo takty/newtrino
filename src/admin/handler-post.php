@@ -59,33 +59,25 @@ function handle_query( array $q ): array {
 		'message' => $msg,
 		'lang'    => $lang,
 
-		'editor_css'    => get_editor_css_url(),
+		'editor_css'    => get_asset_url( [ 'editor.min.css', 'editor.css' ] ),
 		'editor_option' => get_editor_option( $lang ),
 
-		'post_title'   => $t_p->getTitle(),
-		'post_date'    => $t_p->getDate(),
-		'post_content' => $t_p->getContent(),
+		'post_title'    => $t_p->getTitle(),
+		'post_date'     => $t_p->getDate(),
+		'post_content'  => $t_p->getContent(),
 		'status@select' => _create_status_select( $t_p ),
 
 		't_p' => $t_p,
 	];
 }
 
-function get_editor_css_url(): string {
-	if ( is_file( NT_DIR_DATA . 'editor.min.css' ) ) {
-		return NT_URL . 'data/editor.min.css';
-	} else if ( is_file( NT_DIR_DATA . 'editor.css' ) ) {
-		return NT_URL . 'data/editor.css';
-	}
-	return '';
-}
-
 function get_editor_option( string $lang ): string {
 	$fn = '';
-	if ( is_file( NT_DIR_DATA . "editor.$lang.json" ) ) {
-		$fn = NT_DIR_DATA . "editor.$lang.json";
-	} else if ( is_file( NT_DIR_DATA . 'editor.json' ) ) {
-		$fn = NT_DIR_DATA . 'editor.json';
+	foreach ( [ "editor.$lang.json", 'editor.json' ] as $f ) {
+		if ( is_file( NT_DIR_DATA . $f ) && is_readable( NT_DIR_DATA . $f ) ) {
+			$fn = NT_DIR_DATA . $f;
+			break;
+		}
 	}
 	if ( empty( $fn ) ) return '';
 	$json = file_get_contents( $fn );

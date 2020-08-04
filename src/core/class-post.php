@@ -211,7 +211,7 @@ class Post {
 
 	private function _readInfoFile( string $postDir ): ?array {
 		$path = $postDir . self::INFO_FILE_NAME;
-		$json = @file_get_contents( $path );
+		$json = file_get_contents( $path );
 		if ( $json === false ) {
 			Logger::output( 'error', "(Post::_readInfoFile file_get_contents) [$path]" );
 			return null;
@@ -331,7 +331,7 @@ class Post {
 
 	private function _readContent( string $postDir ): bool {
 		$path = $postDir . self::CONT_FILE_NAME;
-		if ( ! is_file( $path ) ) return false;
+		if ( ! is_file( $path ) || ! is_readable( $path ) ) return false;
 
 		$cont = file_get_contents( $path );
 		if ( $cont === false ) {

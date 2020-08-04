@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-02
+ * @version 2020-08-04
  *
  */
 
@@ -199,7 +199,7 @@ class Session {
 
 	private function _loadSessionFile( string $sid ): ?array {
 		$path = $this->_dirSession . $sid;
-		if ( ! is_file( $path ) ) return null;
+		if ( ! is_file( $path ) || ! is_readable( $path ) ) return null;
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
 			Logger::output( 'error', "(Session::_loadSessionFile file_get_contents) [$path]" );
@@ -209,7 +209,6 @@ class Session {
 	}
 
 	private function _removeSessionFile( string $sid ): void {
-		if ( ! is_dir( $this->_dirSession ) ) return;
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) ) return;
 		$res = unlink( $path );

@@ -5,7 +5,7 @@ namespace nt;
  * Init for Admin
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-08-04
  *
  */
 
@@ -26,9 +26,10 @@ $nt_session = new Session( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_SESSION );
 
 function load_resource( string $dirData, string $lang ): array {
 	$path = $dirData . $lang . '.json';
-	if ( is_file( $path ) ) {
+	if ( is_file( $path ) && is_readable( $path ) ) {
 		$json = file_get_contents( $path );
-		return json_decode( $json, true );
+		$res = json_decode( $json, true );
+		if ( $res !== null ) return $res;
 	}
 	return [];
 }
@@ -53,4 +54,17 @@ function start_session( bool $create_store, bool $close_dialog = false ) {
 		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 		exit();
 	}
+}
+
+
+// Utilities -------------------------------------------------------------------
+
+
+function get_asset_url( $fs ) {
+	foreach ( $fs as $f ) {
+		if ( is_file( NT_DIR_DATA . $f ) && is_readable( NT_DIR_DATA . $f ) ) {
+			return NT_URL . 'data/' . $f;
+		}
+	}
+	return null;
 }
