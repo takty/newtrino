@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
@@ -24,7 +24,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/style.min.css">
 <script src="js/list.min.js"></script>
-<title><?= _ht('Post List') ?> - Newtrino</title>
+<title><?= _ht( 'Post List' ) ?> - Newtrino</title>
 </head>
 <body class='list'>
 <header class="header">
@@ -67,7 +67,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			</select>
 		</div>
 		<div class="button-row right">
-			<select class="accent" onchange="document.location.href = this.value;">
+			<select id="sel-new-post" class="accent" onchange="document.location.href = this.value;">
 				<option value="#"><?= _ht( "New Post" ) ?></option>
 {{#filter.new}}
 				<option value="{{url}}">{{label}}</option>

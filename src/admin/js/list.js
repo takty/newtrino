@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
@@ -93,4 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		req.send('mode=status' + '&id=' + id + '&val=' + status + '&cache=' + Date.now());
 	}
+});
+
+
+// -----------------------------------------------------------------------------
+
+
+window.addEventListener('load', () => {  // Must when 'load' event
+	const selNewPost = document.getElementById('sel-new-post');
+	const optFirst = selNewPost.querySelector('option:first-child');
+	selNewPost.value = optFirst.value;
 });
