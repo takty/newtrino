@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-05
  *
  */
 
@@ -32,6 +32,11 @@ function copySync(from, to) {
 const SRC_ADMIN = './src/admin/';
 const DIST_BASE = './dist/';
 const DIST_ADMIN = DIST_BASE + 'admin/';
+
+const config = require('./package.json');
+
+const REP_VERSION = '%VERSION%';
+const VERSION     = 'v' + config['version'];
 
 
 // -----------------------------------------------------------------------------
@@ -134,6 +139,7 @@ gulp.task('sass', () => {
 		.pipe($.sourcemaps.init())
 		.pipe($.dartSass({ outputStyle: 'compressed' }))
 		.pipe($.autoprefixer({ remove: false }))
+		.pipe($.replace(REP_VERSION, VERSION))
 		.pipe($.rename({ extname: '.min.css' }))
 		.pipe($.sourcemaps.write('.'))
 		.pipe(gulp.dest(DIST_ADMIN + 'css/'));

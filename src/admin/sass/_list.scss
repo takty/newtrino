@@ -3,10 +3,31 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-08-04
  *
  */
 
+
+body.list {
+	position: relative;
+	&::after {
+		content: '%VERSION%';
+
+		position: absolute;
+		left    : 0.85rem;
+		bottom  : 0.75rem;
+		transform-origin: left bottom;
+		transform: rotate(-90deg);
+		@include for-tl {
+			left  : 1rem;
+			bottom: 0.75rem;
+			transform: none;
+		}
+
+		font-size: 0.75rem;
+		color    : rgba(#000, 0.75);
+	}
+}
 
 .list-taxonomy-cancel {
 	display: flex;
