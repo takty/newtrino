@@ -3,19 +3,22 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-05
  *
  */
 
 
 document.addEventListener('DOMContentLoaded', () => {
-	setButtonEvents();
-
 	const lang = document.getElementById('lang').value;
 
-	const msgCon = document.getElementById('message-confirmation').value;
-	window.addEventListener('beforeunload', (e) => { if (isModified) return (e.returnValue = msgCon); });
+	window.addEventListener('beforeunload', (e) => {
+		if (isModified) {
+			e.preventDefault();
+			e.returnValue = '';
+		}
+	});
 
+	setButtonEvents();
 	initPublishingMetabox();
 	initDateMetabox();
 	initDateRangeMetabox();
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function initEditorPane() {
 		const css  = document.getElementById('editor-css').value;
 		const json = document.getElementById('editor-option').value;
-		const opt = json ? JSON.parse(json) : {};
+		const opt  = json ? JSON.parse(json) : {};
 
 		const args = Object.assign({
 			selector: '#post-content',
@@ -121,19 +124,26 @@ document.addEventListener('DOMContentLoaded', () => {
 			removed_menuitems: 'newdocument',
 			toolbar1: 'formatselect | bold italic underline strikethrough | superscript subscript | bullist numlist | alignleft aligncenter alignright | link unlink',
 			toolbar2: 'undo redo | styleselect | removeformat | forecolor backcolor',
+			block_formats: 'Paragraph=p;Heading 3=h3;Heading 4=h4;Heading 5=h5;Preformatted=pre',
 			content_css: css,
 			language: lang,
-			setup: (ed) => { ed.on('change', (ed) => { isModified = true; }); },
 			code_dialog_width: 800,
 			nonbreaking_force_tab: true,
+			object_resizing: 'img',
+			setup: (e) => { e.on('change', () => { isModified = true; }); },
 		}, opt)
 		tinymce.init(args);
-		document.getElementById('post-title').addEventListener('change', (e) => {
-			if (e.target.value !== '') {
-				const es = document.getElementsByClassName('message');
-				for (let e of es) e.style.display = '';
-			}
-			onModified();
+
+		let st = null
+		document.getElementById('post-title').addEventListener('input', (e) => {
+			if (st) clearTimeout(st);
+			st = setTimeout(() => {
+				if (e.target.value !== '') {
+					const es = document.getElementsByClassName('message');
+					for (let e of es) e.style.display = '';
+				}
+				onModified();
+			}, 100);
 		});
 	}
 
