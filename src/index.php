@@ -193,7 +193,7 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 	return $items;
 }
 
-function _create_pagination_view( array $msg, int $page_count, string $base_url ): array {
+function _create_pagination_view( array $msg, int $page_count, string $base_url ): ?array {
 	$c = intval( $msg['query']['page'] ?? 1 );
 	$cur = max( 1, min( $c, $page_count ) );
 	$pages = [];
@@ -203,7 +203,7 @@ function _create_pagination_view( array $msg, int $page_count, string $base_url 
 		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
 	}
-	if ( count( $pages ) === 1 ) return [];
+	if ( count( $pages ) === 1 ) return null;
 	return [
 		'previous' => ( ( 1 < $cur ) ? $pages[ $cur - 2 ]['url'] : '' ),
 		'next'     => ( ( $cur < $page_count ) ? $pages[ $cur ]['url'] : '' ),

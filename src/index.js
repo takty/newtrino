@@ -146,7 +146,7 @@ window.NT = window['NT'] || {};
 			if (i === cur) p['is_selected'] = true;
 			pages.push(p);
 		}
-		if (pages.length === 1) return {};
+		if (pages.length === 1) return null;
 		return {
 			previous: ((1 < cur) ? pages[cur - 2].url : ''),
 			next    : ((cur < pageCount) ? pages[cur].url : ''),
