@@ -1,12 +1,14 @@
 [
 	{
 		"slug": "post",
-		"label": "投稿",
+		"label": "Posts",
+		"label@ja": "投稿",
 		"taxonomy": [ "category", "lang" ]
 	},
 	{
 		"slug": "event",
-		"label": "イベント",
+		"label": "Events",
+		"label@ja": "イベント",
 		"taxonomy": [ "target", "lang" ],
 		"meta": [
 			{

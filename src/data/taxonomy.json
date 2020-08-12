@@ -8,12 +8,12 @@
         "terms": [
             {
                 "slug": "news",
-                "label@en": "News",
+                "label": "News",
                 "label@ja": "ニュース"
             },
             {
                 "slug": "column",
-                "label@en": "Columns",
+                "label": "Columns",
                 "label@ja": "コラム"
             }
         ]
@@ -26,12 +26,12 @@
         "terms": [
             {
                 "slug": "public",
-                "label@en": "For Public",
+                "label": "For Public",
                 "label@ja": "一般公開"
             },
             {
                 "slug": "researcher",
-                "label@en": "For Researchers",
+                "label": "For Researchers",
                 "label@ja": "研究者向け"
             }
         ]
