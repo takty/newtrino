@@ -5,10 +5,12 @@ namespace nt;
  * Handler - Preview
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-12
  *
  */
 
+
+define( 'NT_ADMIN_PREVIEW', true );
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );

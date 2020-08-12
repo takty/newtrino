@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-08-12
  *
  */
 
@@ -22,10 +22,11 @@ class Taxonomy {
 
 	public function __construct( string $data_dir, array $args = [] ) {
 		$this->_dir = $data_dir;
-		$args = array_merge( [
-			'lang' => 'en',
-		], $args );
-		$this->_lang = $args['lang'];
+
+		$langKey = ( defined( 'NT_ADMIN' ) && ! defined( 'NT_ADMIN_PREVIEW' ) ) ? 'lang_admin' : 'lang';
+		$args = array_merge( [ $langKey => 'en' ], $args );
+
+		$this->_lang = $args[ $langKey ];
 	}
 
 
