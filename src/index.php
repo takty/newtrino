@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-12
  *
  */
 
@@ -194,7 +194,8 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 }
 
 function _create_pagination_view( array $msg, int $page_count, string $base_url ): array {
-	$cur = isset( $msg['query']['page'] ) ? max( 1, min( $msg['query']['page'], $page_count ) ) : 1;
+	$c = intval( $msg['query']['page'] ?? 1 );
+	$cur = max( 1, min( $c, $page_count ) );
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
 		$url = create_canonical_url( $base_url, $msg['query'], [ 'page' => $i ] );
@@ -202,6 +203,7 @@ function _create_pagination_view( array $msg, int $page_count, string $base_url 
 		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
 	}
+	if ( count( $pages ) === 1 ) return [];
 	return [
 		'previous' => ( ( 1 < $cur ) ? $pages[ $cur - 2 ]['url'] : '' ),
 		'next'     => ( ( $cur < $page_count ) ? $pages[ $cur ]['url'] : '' ),

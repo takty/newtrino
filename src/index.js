@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-29
+ * @version 2020-08-12
  *
  */
 
@@ -137,7 +137,8 @@ window.NT = window['NT'] || {};
 	}
 
 	function _createPaginationView(msg, pageCount, baseUrl) {
-		const cur = (msg.query && msg.query.page) ? Math.max(1, Math.min(msg.query.page, pageCount)) : 1;
+		const c = (msg.query && msg.query.page) ? parseInt(msg.query.page, 10) : 1;
+		const cur = Math.max(1, Math.min(c, pageCount));
 		const pages = [];
 		for (let i = 1; i <= pageCount; i += 1) {
 			const url = createCanonicalUrl(baseUrl, msg.query, { page: i });
@@ -145,6 +146,7 @@ window.NT = window['NT'] || {};
 			if (i === cur) p['is_selected'] = true;
 			pages.push(p);
 		}
+		if (pages.length === 1) return {};
 		return {
 			previous: ((1 < cur) ? pages[cur - 2].url : ''),
 			next    : ((cur < pageCount) ? pages[cur].url : ''),
@@ -335,22 +337,20 @@ window.NT = window['NT'] || {};
 	function createCanonicalQuery(ps, overwrite = []) {
 		ps = Object.assign({}, ps, overwrite);
 		const qs = [];
-		if (ps['id']) {
-			qs.push(['id', ps.id]);
-		} else if (ps['date']) {
-			qs.push(['date', ps.date]);
-		} else if (ps['search']) {
-			qs.push(['search', ps.search]);
-		} else {  // taxonomy
-			for (let tax in ps) {
-				if (tax === 'id' || tax === 'date' || tax === 'search' || tax === 'page') continue;
-				const ts = Array.isArray(ps[tax]) ? ps[tax].join(',') : ps[tax];
-				qs.push([tax, ts]);
-			}
+		if (ps['id'])       qs.push(['id',       ps.id      ]);
+		if (ps['type'])     qs.push(['type',     ps.type    ]);
+		if (ps['date'])     qs.push(['date',     ps.date    ]);
+		if (ps['search'])   qs.push(['search',   ps.search  ]);
+		if (ps['per_page']) qs.push(['per_page', ps.per_page]);
+
+		const keys = ['id', 'type', 'date', 'search', 'per_page', 'page', 'taxonomy'];
+		for (let tax in ps) {  // taxonomy
+			if (keys.indexOf(tax) !== -1) continue;
+			const ts = Array.isArray(ps[tax]) ? ps[tax].join(',') : ps[tax];
+			if (ts.length === 0) continue;
+			qs.push([tax, ts]);
 		}
-		if (ps['page']) {
-			if (1 < ps.page) qs.push('page=' + ps.page);
-		}
+		if (ps['page'] && 1 < ps.page) qs.push(['page', ps.page]);
 		return createQueryString(qs);
 	}
 
