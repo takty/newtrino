@@ -74,17 +74,21 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	</main>
 <?php \nt\end( $view, empty( $view['post'] ) ); ?>
 <?php \nt\begin(); ?>
+{{#navigation.pagination}}
 	<div class="aside aside-navigation">
 		<div class="pagination">
-{{#navigation.pagination}}
-			<a href="{{previous}}">Previous</a>
+{{#previous}}
+			<a href="{{.}}">Previous</a>
+{{/previous}}
 			<select onchange="document.location.href = this.value;">
 				{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
 			</select>
-			<a href="{{next}}">Next</a>
-{{/navigation.pagination}}
-		</div>
+{{#next}}
+			<a href="{{.}}">Next</a>
+{{/next}}
 	</div>
+</div>
+{{/navigation.pagination}}
 <?php \nt\end( $view, empty( $view['post'] ) ); ?>
 <!-- ======================================================================= -->
 <?php \nt\begin(); ?>
