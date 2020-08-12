@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-05
+ * @version 2020-08-12
  *
  */
 
@@ -80,7 +80,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <input id="editor-option" type="hidden" value="{{editor_option}}">
 
 <div id="dialog-placeholder">
-	<iframe id="dialog-media"></iframe>
+	<iframe id="dialog-media" class="frame"></iframe>
 	<div id="dialog-preview" class="frame dialog">
 		<header class="header">
 			<div class="inner">
@@ -89,7 +89,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 				<button class="accent" id="btn-close"><?= _ht( 'Close' ) ?></button>
 			</div>
 		</header>
-		<iframe name="iframe-preview"></iframe>
+		<iframe name="iframe-preview" class="frame preview"></iframe>
 	</div>
 </div>
 <?php \nt\end( $view ); ?>
