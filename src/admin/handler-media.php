@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Media
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-13
+ * @version 2020-08-14
  *
  */
 
@@ -25,7 +25,7 @@ function handle_query( array $q ): array {
 
 	$q_filter = $q['filter'] ?? null;
 	$q_target = $q['target'] ?? '';
-	$q_size   = $a['size']   ?? '';
+	$q_size   = $q['size']   ?? '';
 
 	$media = new Media( $q_id, Post::MEDIA_DIR_NAME, NT_URL );
 
