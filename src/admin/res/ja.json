@@ -42,9 +42,11 @@
 		"Insert Media": "メディアの挿入",
 		"Update Complete": "更新完了",
 		"Enter Title Here": "ここにタイトルを入力",
-		"The title is blank.": "タイトルが空です。"
+		"The title is blank.": "タイトルが空です。",
+		"Select": "選択"
 	},
 	"media": {
+		"Images": "画像",
 		"Add New": "新規追加",
 		"Image Alignment": "画像の配置",
 		"Left": "左",
