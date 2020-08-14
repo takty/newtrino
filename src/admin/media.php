@@ -70,7 +70,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			</ul>
 		</div>
 	</div>
-	<div class="container-sub">
+	<div class="container-sub"{{#meta_target}} disabled{{/meta_target}}>
 		<div class="frame frame-compact">
 			<div>
 				<div class="heading"><?= _ht( 'Image Alignment' ) ?></div>
