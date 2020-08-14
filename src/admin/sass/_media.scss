@@ -3,10 +3,17 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-08-14
  *
  */
 
+
+body.media {
+	h1 span:not(:empty) {
+		font-weight: normal;
+		&::before { content: ' - '; }
+	}
+}
 
 .scroller {
 	position: absolute;
@@ -78,7 +85,4 @@ select#image-size {
 #media-url {
 	width: 16rem;
 	max-width: 100%;
-	color: #ccc;
-	height: 2rem;
-	font-size: 0.75rem;
 }
