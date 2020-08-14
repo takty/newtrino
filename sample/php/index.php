@@ -29,6 +29,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{{excerpt}}}</div>
 							<div class="date">{{date}}</div>
+							{{#meta.thumbnail}}
+							<img src="{{url}}" width="{{width}}" height="{{height}}" srcset="{{srcset}}">
+							{{/meta.thumbnail}}
 						</a>
 					</li>
 {{/posts}}
@@ -45,10 +48,15 @@ header( 'Content-Type: text/html;charset=utf-8' );
 							{{#taxonomy.category}}
 							<span class="category">{{label}}</span>
 							{{/taxonomy.category}}
-							<span class="event-date">Event Date: {{meta.duration.from}} to {{meta.duration.to}}</span>
+							{{#meta.duration}}
+							<span class="event-date">Event Date: {{from}} to {{to}}</span>
+							{{/meta.duration}}
 							<div class="title">{{title}}</div>
 							<div class="excerpt">{{{excerpt}}}</div>
 							<div class="date">{{date}}</div>
+							{{#meta.thumbnail}}
+							<img src="{{url}}" width="{{width}}" height="{{height}}" srcset="{{srcset}}">
+							{{/meta.thumbnail}}
 						</a>
 					</li>
 {{/posts}}

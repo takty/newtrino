@@ -28,28 +28,28 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</header>
 		<div class="aside aside-filter">
 			<div class="filter-date">
-{{#filter.date}}
+				{{#filter.date}}
 				<select onchange="document.location.href = this.value;">
 					<option value="./">Year</option>
 					{{#year}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/year}}
 				</select>
-{{/filter.date}}
+				{{/filter.date}}
 			</div>
 			<div class="filter-taxonomy">
-{{#filter.taxonomy}}
+				{{#filter.taxonomy}}
 				<select onchange="document.location.href = this.value;">
 					<option value="./">Category</option>
 					{{#category}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/category}}
 				</select>
-{{/filter.taxonomy}}
+				{{/filter.taxonomy}}
 			</div>
 			<div class="filter-search">
-{{#filter.search}}
+				{{#filter.search}}
 				<form action="./" type="GET">
 					<input type="text" name="search" value="{{keyword}}">
 					<input type="submit" value="Search">
 				</form>
-{{/filter.search}}
+				{{/filter.search}}
 			</div>
 		</div>
 		<div class="entry-content">
@@ -57,15 +57,18 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#posts}}
 				<li class="{{class@joined}}" id="temp-item-post">
 					<a href="{{url}}">
-{{#taxonomy.category}}
+						{{#taxonomy.category}}
 						<span class="category">{{label}}</span>
-{{/taxonomy.category}}
-{{#taxonomy.category@has.event}}
-						<span class="event-date">Event Date: {{meta.duration.0}} to {{meta.duration.1}}</span>
-{{/taxonomy.category@has.event}}
+						{{/taxonomy.category}}
+						{{#meta.duration}}
+						<span class="event-date">Event Date: {{from}} to {{to}}</span>
+						{{/meta.duration}}
 						<div class="title">{{title}}</div>
 						<div class="excerpt">{{{excerpt}}}</div>
 						<div class="date">{{date}}</div>
+						{{#meta.thumbnail}}
+						<img src="{{url}}" width="{{width}}" height="{{height}}" srcset="{{srcset}}">
+						{{/meta.thumbnail}}
 					</a>
 				</li>
 {{/posts}}
@@ -77,15 +80,15 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#navigation.pagination}}
 	<div class="aside aside-navigation">
 		<div class="pagination">
-{{#previous}}
+			{{#previous}}
 			<a href="{{.}}">Previous</a>
-{{/previous}}
+			{{/previous}}
 			<select onchange="document.location.href = this.value;">
 				{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
 			</select>
-{{#next}}
+			{{#next}}
 			<a href="{{.}}">Next</a>
-{{/next}}
+			{{/next}}
 	</div>
 </div>
 {{/navigation.pagination}}
@@ -95,18 +98,16 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#post}}
 	<main class="entry {{class@joined}}">
 		<header class="entry-header">
-{{#taxonomy.category}}
+			{{#taxonomy.category}}
 			<div class="category">{{label}}</div>
-{{/taxonomy.category}}
+			{{/taxonomy.category}}
 			<h2>{{title}}</h2>
-{{#taxonomy.category@has.event}}
-			<span class="event-term">
-				Event Date: {{meta.duration.0}} to {{meta.duration.1}}
-			</span>
-{{/taxonomy.category@has.event}}
-{{^taxonomy.category@has.event}}
+			{{#meta.duration}}
+			<span class="event-date">Event Date: {{from}} to {{to}}</span>
+			{{/meta.duration}}
+			{{^meta.duration}}
 			<div class="date">{{date}}</div>
-{{/taxonomy.category@has.event}}
+			{{/meta.duration}}
 		</header>
 		<div class="entry-content">
 			{{&post.content}}
@@ -118,8 +119,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#navigation.post_navigation}}
 	<div class="aside aside-navigation">
 		<div class="post_navigation">
-			{{#previous}}<a href="{{url}}">Previous</a>{{/previous}}
-			{{#next}}<a href="{{url}}">Next</a>{{/next}}
+			{{#previous}}
+			<a href="{{url}}">Previous</a>
+			{{/previous}}
+			{{#next}}
+			<a href="{{url}}">Next</a>
+			{{/next}}
 		</div>
 	</div>
 {{/navigation.post_navigation}}
