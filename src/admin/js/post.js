@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-05
+ * @version 2020-08-14
  *
  */
 
@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	initPublishingMetabox();
 	initDateMetabox();
 	initDateRangeMetabox();
+	initMediaMetabox();
+	initMediaImageMetabox();
 	initEditorPane();
 	adjustEditorHeight();
 
@@ -99,16 +101,53 @@ document.addEventListener('DOMContentLoaded', () => {
 		for (let e of es) {
 			e.addEventListener('change', () => {
 				const ds = e._flatpickr.selectedDates;
-				const fs = document.getElementsByName('meta:' + e.dataset.key + '[]');
-				fs[0].value = moment(ds[0]).format('YYYY-MM-DD');
-				fs[1].value = moment(ds[1]).format('YYYY-MM-DD');
+				const m = {
+					from: moment(ds[0]).format('YYYY-MM-DD'),
+					to  : moment(ds[1]).format('YYYY-MM-DD'),
+				};
+				const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
+				fs.value = JSON.stringify(m);
 			});
-			const fs = document.getElementsByName('meta:' + e.dataset.key + '[]');
-			const bgn = moment(fs[0].value).toDate();
-			const end = moment(fs[1].value).toDate();
-			e._flatpickr.setDate([bgn, end]);
+			const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
+			console.log(fs);
+			const m = JSON.parse(fs.value);
+			if (m === null) continue;
+			const from = moment(m.from).toDate();
+			const to   = moment(m.to  ).toDate();
+			e._flatpickr.setDate([from, to]);
 		}
 	}
+
+	function initMediaMetabox() {
+		const ms = document.querySelectorAll('.metabox-media');
+		addBtnEvent('.metabox-media .open-media-dialog', openMediaDialog);
+		for (let m of ms) {
+			const btnDel = m.querySelector('.button.delete');
+			if (!btnDel) continue;
+			btnDel.addEventListener('click', (e) => {
+				m.querySelector('.media-name').value = '';
+				m.querySelector('.media-json').value = '';
+			});
+		}
+	}
+
+	function initMediaImageMetabox() {
+		const ms = document.querySelectorAll('.metabox-media-image');
+		addBtnEvent('.metabox-media-image .open-media-dialog', openMediaDialog);
+		for (const m of ms) {
+			const btnDel = m.querySelector('.button.delete');
+			if (!btnDel) continue;
+			btnDel.addEventListener('click', (e) => {
+				m.querySelector('.media-name').value = '';
+				m.querySelector('.media-json').value = '';
+				m.querySelector('.image > div').style.backgroundImage = null;
+			});
+		}
+	}
+
+
+	// -------------------------------------------------------------------------
+
 
 	function initEditorPane() {
 		const css  = document.getElementById('editor-css').value;
@@ -118,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const args = Object.assign({
 			selector: '#post-content',
 			plugins: [
-				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image imagetools insertdatetime',
+				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image insertdatetime',
 				'link lists media nonbreaking noneditable paste print searchreplace table textcolor textpattern visualblocks visualchars',
 			],
 			removed_menuitems: 'newdocument',
@@ -170,13 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		const btnPreviewClose = document.querySelector('#btn-close');
 		btnPreviewClose.addEventListener('click', closeDialog);
 
-		addBtnEvent('btn-list');
-		addBtnEvent('btn-update', update);
-		addBtnEvent('btn-dialog-media', openMediaDialog);
-		addBtnEvent('btn-dialog-preview', openPreviewDialog);
+		addBtnEvent('#btn-list');
+		addBtnEvent('#btn-update', update);
+		addBtnEvent('#btn-dialog-media', openMediaDialog);
+		addBtnEvent('#btn-dialog-preview', openPreviewDialog);
+	}
 
-		function addBtnEvent(id, fn = null) {
-			const btn = document.getElementById(id);
+	function addBtnEvent(sel, fn = null) {
+		const btns = document.querySelectorAll(sel);
+		for (let btn of btns) {
 			btn.addEventListener('mouseup', (e) => {
 				if (e.button === 0) {
 					e.preventDefault();
@@ -238,23 +279,29 @@ function closeDialog() {
 // -----------------------------------------------------------------------------
 
 
-function insertImage(name, src, w, h, align, size, srcset, linkFull) {
+function insertMediaToContent(data) {
 	closeDialog();
-	const sss = srcset ? ` srcset="${srcset}"` : '';
-	const imgCls = linkFull ? `size-${size}` : `size-${size} ${align}`;
-	const img = `<img class="${imgCls}" src="${src}"${sss} alt="${name}" width="${w}" height="${h}" loading="lazy">`;
-
-	if (linkFull) {
-		const a_bgn = `<a href="${linkFull}" class="${align}">`;
-		const a_end = '</a>';
-		tinymce.activeEditor.execCommand('mceInsertContent', false, a_bgn + img + a_end);
+	let str = '';
+	if (data['size']) {
+		const ss  = data.srcset ? ` srcset="${data.srcset}"` : '';
+		const cls = `size-${data.size}` + (data.linkUrl ? '' : ` ${data.align}`);
+		str = `<img class="${cls}" src="${data.url}"${ss} alt="${data.name}" width="${data.width}" height="${data.height}" loading="lazy">`;
+		if (data.linkUrl) str = `<a href="${data.linkUrl}" class="${data.align}">${str}</a>`;
 	} else {
-		tinymce.activeEditor.execCommand('mceInsertContent', false, img);
+		str = `<a href="${data.url}">${data.name}</a>`;
 	}
+	tinymce.activeEditor.execCommand('mceInsertContent', false, str);
 }
 
-function insertFile(name, src) {
+function insertMediaToMeta(target, data) {
 	closeDialog();
-	const a = `<a href="${src}">${name}</a>`;
-	tinymce.activeEditor.execCommand('mceInsertContent', false, a);
+	const f = document.getElementById(target);
+	if (!f) return;
+	const jsonElm = f.querySelector('.media-json');
+	if (jsonElm) jsonElm.value = JSON.stringify(data);
+
+	const nameElm = f.querySelector('.media-name');
+	if (nameElm) nameElm.value = data.name;
+	const imgElm = f.querySelector('.image > div');
+	if (imgElm && data && data.minUrl) imgElm.style.backgroundImage = 'url("' + data.minUrl + '")';
 }

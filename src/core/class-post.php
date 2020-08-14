@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-14
  *
  */
 
@@ -160,7 +160,18 @@ class Post {
 				$vals["meta:$key"] = packDate( $vals["meta:$key"] );
 			}
 			if ( $m['type'] === 'date-range' ) {
-				$vals["meta:$key"] = array_map( function ( $e ) { return packDate( $e ); }, $vals["meta:$key"] );
+				$json = $vals["meta:$key"];
+				$d = json_decode( $json, true );
+				if ( $d !== null ) {
+					$d['from'] = packDate( $d['from'] );
+					$d['to']   = packDate( $d['to']   );
+					$vals["meta:$key"] = $d;
+				}
+			}
+			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
+				$json = $vals["meta:$key"];
+				$d = json_decode( $json, true );
+				if ( $d !== null ) $vals["meta:$key"] = $d;
 			}
 			$this->setMetaValue( $key, $vals["meta:$key"] );
 		}

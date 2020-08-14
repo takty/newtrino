@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-14
  *
  */
 
@@ -143,6 +143,93 @@
 			min-height: 1rem;
 			padding: 0;
 		}
+	}
+}
+
+.metabox-media,
+.metabox-media-image {
+	.metabox-container {
+		display: flex;
+		flex-wrap: wrap;
+
+		> * + * { margin-left: 0.5rem; }
+		@include for-tl { > * + * { margin-left: 0; } }
+
+		.button.delete {
+			max-height: 2rem;
+			height: 2rem;
+		}
+	}
+}
+
+.metabox-media {
+	.media-name {
+		width: 16rem;
+		max-width: 100%;
+	}
+	@include for-tl {
+		.open-media-dialog {
+			order: 1;
+			margin-top: 0.5rem;
+		}
+		.button.cross.delete {
+			order: 2;
+			margin-left: auto;
+			margin-top: 0.5rem;
+		}
+	}
+}
+
+.metabox-media-image {
+	.open-media-dialog {
+		display: inline-flex;
+		user-select: none;
+		width: 5.25rem;
+
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		background-color: #fff;
+		&:hover { border-color: #88f; }
+
+		&::before {
+			content: '';
+			display: inline-block;
+			padding-bottom: 66.67%;
+		}
+
+		position: relative;
+		> div {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-size: contain;
+			background-position: center;
+			pointer-events: none;
+		}
+	}
+	.open-media-dialog + * {
+		display: flex;
+		flex-direction: column;
+
+		margin-left: 0.5rem;
+		width: 16rem;
+		max-width: calc(100% - 5.75rem);
+	}
+	.media-name {
+		width: 100%;
+	}
+	.button.cross.delete {
+		margin-left: auto;
+		margin-top : 0.5rem;
+
+		width     : 2.5rem;
+		min-width : 2.5rem;
+		height    : 1rem;
+		min-height: 1rem;
+
+		padding: 0;
 	}
 }
 

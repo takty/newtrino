@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-14
  *
  */
 
@@ -175,22 +175,29 @@ function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = f
 		if ( empty( $label ) ) continue;
 		switch ( $m['type'] ) {
 			case 'group':
-				echo_metabox_group( $post, $label, $m['items'] );
+				echo_metabox_group( $post, $m, $label );
 				break;
 			case 'text':
-				echo_metabox_text( $post, $m['key'], $label, $internal );
+				echo_metabox_text( $post, $m, $label, $internal );
 				break;
 			case 'date':
-				echo_metabox_date( $post, $m['key'], $label, $internal );
+				echo_metabox_date( $post, $m, $label, $internal );
 				break;
 			case 'date-range':
-				echo_metabox_date_range( $post, $m['key'], $label, $internal );
+				echo_metabox_date_range( $post, $m, $label, $internal );
+				break;
+			case 'media':
+				echo_metabox_media( $post, $m, $label, $internal );
+				break;
+			case 'media-image':
+				echo_metabox_media_image( $post, $m, $label, $internal );
 				break;
 		}
 	}
 }
 
-function echo_metabox_group( Post $post, string $label, array $items ): void {
+function echo_metabox_group( Post $post, array $m, string $label ): void {
+	$items = $m['items'];
 ?>
 	<div class="frame frame-sub metabox-group">
 		<div class="title"><?= _ht( $label ) ?></div>
@@ -203,28 +210,28 @@ function echo_metabox_group( Post $post, string $label, array $items ): void {
 <?php
 }
 
-function echo_metabox_text( Post $post, string $key, string $label, bool $internal ): void {
-	$val = $post->getMetaValue( $key );
-	if ( $val === null ) $text = '';
-	else $text = $val;
+function echo_metabox_text( Post $post, array $m, string $label, bool $internal ): void {
+	$key  = $m['key'];
+	$val  = $post->getMetaValue( $key );
+	$text = ( $val === null ) ? '' : $val;
 
-	$cls = $internal ? 'metabox-text' : 'frame frame-sub metabox-text';
+	$cls = $internal ? '' : ' frame frame-sub';
 ?>
-	<div class="<?= $cls ?>">
+	<div class="metabox-text<?= $cls ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div><input type="text" name="meta:<?= _h( $key ) ?>" value="<?= _h( $text ) ?>"></div>
 	</div>
 <?php
 }
 
-function echo_metabox_date( Post $post, string $key, string $label, bool $internal ): void {
-	$val = $post->getMetaValue( $key );
-	if ( $val === null ) $date = '';
-	else $date = parseDate( $val );
+function echo_metabox_date( Post $post, array $m, string $label, bool $internal ): void {
+	$key  = $m['key'];
+	$val  = $post->getMetaValue( $key );
+	$date = ( $val === null ) ? '' : parseDate( $val );
 
-	$cls = $internal ? 'metabox-date' : 'frame frame-sub metabox-date';
+	$cls = $internal ? '' : ' frame frame-sub';
 ?>
-	<div class="<?= $cls ?>">
+	<div class="metabox-date<?= $cls ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="flatpickr date" data-key="<?= _h( $key ) ?>">
 			<input type="text" readonly="readonly" data-input>
@@ -235,25 +242,70 @@ function echo_metabox_date( Post $post, string $key, string $label, bool $intern
 <?php
 }
 
-function echo_metabox_date_range( Post $post, string $key, string $label, bool $internal ): void {
-	$val = $post->getMetaValue( $key );
-	if ( $val === null ) {
-		$bgn = '';
-		$end = '';
-	} else {
-		$bgn = parseDate( $val[0] );
-		$end = parseDate( $val[1] );
-	}
-	$cls = $internal ? 'metabox-date-range' : 'frame frame-sub metabox-date-range';
+function echo_metabox_date_range( Post $post, array $m, string $label, bool $internal ): void {
+	$key  = $m['key'];
+	$mv   = $post->getMetaValue( $key );
+	$json = json_encode( $mv );
+	$from = ( $mv && isset( $mv['from'] ) ) ? $mv['from'] : '';
+	$to   = ( $mv && isset( $mv['to']   ) ) ? $mv['to']   : '';
+
+	$cls = $internal ? '' : ' frame frame-sub';
 ?>
-	<div class="<?= $cls ?>">
+	<div class="metabox-date-range<?= $cls ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="flatpickr date-range" data-key="<?= _h( $key ) ?>">
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>
 		</div>
-		<input type="hidden" name="meta:<?= _h( $key ) ?>[]" value="<?= _h( $bgn ) ?>">
-		<input type="hidden" name="meta:<?= _h( $key ) ?>[]" value="<?= _h( $end ) ?>">
+		<input type="hidden" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
+	</div>
+<?php
+}
+
+function echo_metabox_media( Post $post, array $m, string $label, bool $internal ): void {
+	$key  = $m['key'];
+	$mv   = $post->getMetaValue( $key );
+	$json = json_encode( $mv );
+	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
+
+	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
+	$cls = $internal ? '' : ' frame frame-sub';
+?>
+	<div class="metabox-media<?= $cls ?>" id="metabox:<?= _h( $key ) ?>">
+		<div class="title"><?= _ht( $label ) ?></div>
+		<div class="metabox-container">
+			<a class="button open-media-dialog" data-src="<?= _h( $md ) ?>"><?= _ht( 'Select' ) ?></a>
+			<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">
+			<a class="button delete cross right"></a>
+		</div>
+		<input type="hidden" class="media-json" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
+	</div>
+<?php
+}
+
+function echo_metabox_media_image( Post $post, array $m, string $label, bool $internal ): void {
+	$key  = $m['key'];
+	$size = $m['option']['size'] ?? 'medium';
+	$mv   = $post->getMetaValue( $key );
+	$json = json_encode( $mv );
+	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
+	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('url("' . $mv['minUrl'] . '")') : '';
+
+	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
+	$cls = $internal ? '' : ' frame frame-sub';
+?>
+	<div class="metabox-media-image<?= $cls ?>" id="metabox:<?= _h( $key ) ?>">
+		<div class="title"><?= _ht( $label ) ?></div>
+		<div class="metabox-container">
+			<a class="image open-media-dialog" data-src="<?= _h( $md ) ?>" title="<?= _ht( 'Select' ) ?>">
+				<div style="background-image:<?= _h( $bgi ) ?>"></div>
+			</a>
+			<div>
+				<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">
+				<a class="button delete cross right"></a>
+			</div>
+		</div>
+		<input type="hidden" class="media-json" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
 	</div>
 <?php
 }
