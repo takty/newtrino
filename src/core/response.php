@@ -178,6 +178,9 @@ function _get_meta( Post $p, array &$cls ): array {
 					'to'   => parseDate( $val['to'] ),
 				];
 				break;
+			default:
+				$ret[ $key ] = $val;
+				break;
 		}
 		$ret[ "$key@type" ] = $type;
 	}
