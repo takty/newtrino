@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-14
  *
  */
 
@@ -307,8 +307,8 @@ function _create_meta_cols( Post $p ): array {
 			if ( $type === 'date' ) {
 				$_lab = _h( parseDate( $val ) );
 			} else if ( $type === 'date-range' ) {
-				$_bgn = _h( parseDate( $val[0] ) );
-				$_end = _h( parseDate( $val[1] ) );
+				$_bgn = isset( $val['from'] ) ? _h( parseDate( $val['from'] ) ) : '';
+				$_end = isset( $val['to']   ) ? _h( parseDate( $val['to']   ) ) : '';
 				if ( $_bgn === $_end ) {
 					$_lab = "<span>$_bgn</span>";
 				} else {
@@ -337,17 +337,21 @@ function _get_meta( Post $p, array &$cls ): array {
 		if ( $type !== 'group' && $val === null ) continue;
 
 		switch ( $type ) {
-			case 'date-range':
+			case 'date':
 				$ret[ $key ] = parseDate( $val );
 				break;
 			case 'date-range':
 				$es = Post::DATE_STATUS_ONGOING;
 				$now = date( 'Ymd' );
-				if ( $now < $val[0] ) $es = Post::DATE_STATUS_UPCOMING;
-				else if ( $val[1] < $now ) $es = Post::DATE_STATUS_FINISHED;
+				if ( ! isset( $val['from'] ) || ! isset( $val['to'] ) ) break;
+				if ( $now < $val['from'] ) $es = Post::DATE_STATUS_UPCOMING;
+				else if ( $val['to'] < $now ) $es = Post::DATE_STATUS_FINISHED;
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
-				$ret[ $key ] = array_map( function ( $e ) { return parseDate( $e ); }, $val );
+				$ret[ $key ] = [
+					'from' => parseDate( $val['from'] ),
+					'to'   => parseDate( $val['to']   ),
+				];
 				break;
 		}
 		$ret[ "$key@type" ] = $type;

@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-14
  *
  */
 
@@ -169,10 +169,14 @@ function _get_meta( Post $p, array &$cls ): array {
 				$ret[ $key ] = parseDate( $val );
 				break;
 			case 'date-range':
-				$es = _get_date_status( $val[0], $val[1] );
+				if ( ! $val['from'] || ! $val['to'] ) break;
+				$es = _get_date_status( $val['from'], $val['to'] );
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
-				$ret[ $key ] = array_map( function ( $e ) { return parseDate( $e ); }, $val );
+				$ret[ $key ] = [
+					'from' => parseDate( $val['from'] ),
+					'to'   => parseDate( $val['to'] ),
+				];
 				break;
 		}
 		$ret[ "$key@type" ] = $type;

@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-12
+ * @version 2020-08-14
  *
  */
 
@@ -169,7 +169,7 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 		}
 		$p['url'] = $base_url . '?' . urlencode( $p['id'] );
 		if ( $date_format ) {
-			$p['date']     = date_create( $p['date'] )->format( $date_format );
+			$p['date']     = date_create( $p['date']     )->format( $date_format );
 			$p['modified'] = date_create( $p['modified'] )->format( $date_format );
 		}
 		if ( isset( $p['meta'] ) ) {
@@ -180,8 +180,8 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 					$val = date_create( $val )->format( $date_format );
 				}
 				if ( $p['meta']["$key@type"] === 'date-range' ) {
-					$val[0] = date_create( $val[0] )->format( $date_format );
-					$val[1] = date_create( $val[1] )->format( $date_format );
+					$val['from'] = isset( $val['from'] ) ? date_create( $val['from'] )->format( $date_format ) : '';
+					$val['to']   = isset( $val['to']   ) ? date_create( $val['to']   )->format( $date_format ) : '';
 				}
 			}
 		}
