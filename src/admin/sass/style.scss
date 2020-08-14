@@ -81,6 +81,8 @@ a {
 }
 
 .container-sub {
+	&[disabled] { display: none; }
+
 	> .frame + .frame {
 		margin-top: 1rem;
 	}
