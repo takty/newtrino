@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Media
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-08-13
  *
  */
 
@@ -22,6 +22,10 @@ function handle_query( array $q ): array {
 	$q_id   = $q['id']   ?? 0;
 	$q_mode = $q['mode'] ?? '';
 	$msg	= '';
+
+	$q_filter = $q['filter'] ?? null;
+	$q_target = $q['target'] ?? '';
+	$q_size   = $a['size']   ?? '';
 
 	$media = new Media( $q_id, Post::MEDIA_DIR_NAME, NT_URL );
 
@@ -52,8 +56,18 @@ function handle_query( array $q ): array {
 			break;
 	}
 
-	$items = $media->getItemList();
+	$items = $media->getItemList( $q_filter );
 	foreach ( $items as $idx => &$it ) $it['index'] = $idx;
+
+	$ft = '';
+	switch ( $q_filter ) {
+		case 'image': $ft = _ht( 'Images' ); break;
+	}
+	global $nt_config;
+	$size_width = 0;
+	if ( $q_size && isset( $nt_config['image_sizes'][ $q_size ] ) ) {
+		$size_width = $nt_config['image_sizes'][ $q_size ]['width'];
+	}
 
 	return [
 		'id'            => $q_id,
@@ -62,6 +76,11 @@ function handle_query( array $q ): array {
 		'sizes'         => _create_size_options(),
 		'message'       => $msg,
 		'max_file_size' => _get_max_file_size(),
+		'button_label'  => translate( $q_target ? 'Select' : 'Insert Into Post' ),
+
+		'filter_type'     => $ft,
+		'meta_target'     => $q_target,
+		'meta_size_width' => $size_width,
 	];
 }
 
