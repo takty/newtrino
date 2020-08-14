@@ -158,7 +158,7 @@ gulp.task('sample-system', () => {
 });
 
 gulp.task('sample-data', () => {
-	return gulp.src(['src/data/*'], { base: 'src' })
+	return gulp.src(['src/data/*', 'src/data/.htaccess'], { base: 'src' })
 		.pipe($.plumber())
 		.pipe($.ignore.include({ isFile: true }))
 		.pipe($.changed('sample/nt', { hasChanged: $.changed.compareContents }))
