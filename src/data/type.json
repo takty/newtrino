@@ -3,7 +3,18 @@
 		"slug": "post",
 		"label": "Posts",
 		"label@ja": "投稿",
-		"taxonomy": [ "category", "lang" ]
+		"taxonomy": [ "category", "lang" ],
+		"meta": [
+			{
+				"key": "thumbnail",
+				"type": "media-image",
+				"label": "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option": {
+					"size": "small"
+				}
+			}
+		]
 	},
 	{
 		"slug": "event",
@@ -11,6 +22,15 @@
 		"label@ja": "イベント",
 		"taxonomy": [ "target", "lang" ],
 		"meta": [
+			{
+				"key": "thumbnail",
+				"type": "media-image",
+				"label": "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option": {
+					"size": "small"
+				}
+			},
 			{
 				"key": "duration",
 				"type": "date-range",
