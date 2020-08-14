@@ -3,7 +3,7 @@
  * Media Dialog (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-27
+ * @version 2020-08-14
  *
  */
 
@@ -14,8 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	const btnDelete = document.getElementById('btn-delete');
 	const btnInsert = document.getElementById('btn-insert');
 
-	const maxFileSize = parseInt(document.getElementById('max-file-size').value);
+	const maxFileSize    = parseInt(document.getElementById('max-file-size').value);
 	const msgMaxFileSize = document.getElementById('message-max-file-size');
+
+	const metaTarget    = document.getElementById('meta-target').value;
+	const metaSizeWidth = document.getElementById('meta-size-width').value;
 
 	btnAdd.addEventListener('click', doAdd);
 	btnClose.addEventListener('click', doClose);
@@ -101,38 +104,65 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function doInsert() {
-		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
-		const fn = p.querySelector('.file-name').value;
-		const ss = p.querySelector('.sizes');
+		const it   = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
+		const ss   = it.querySelector('.sizes');
+		const url  = it.querySelector('.file-url').value;
+		const name = it.querySelector('.file-name').value;
+		const data = { url, name };
 
-		if (ss) {
-			const metas = JSON.parse(ss.value);
-			const align = selAlign.value;
-			const size  = selSize.value;
-			const link  = chkLink.checked;
 
-			const m   = metas[size];
-			const w   = m.width;
-			const h   = m.height;
-			const url = m.url;
+		if (metaTarget) {
+			if (ss) {
+				const sizes           = JSON.parse(ss.value);
+				const [minSize, size] = getMinAndCeilSize(sizes, metaSizeWidth);
+				const m               = sizes[size];
+				const url2x           = m.width ? get2xUrl(sizes, m.width) : null;
 
-			const url2x   = w ? get2xUrl(metas, w) : null;
-			const srcset  = (url2x) ? `${url}, ${url2x} 2x` : null;
-			const linkUrl = (link) ? metas['full'].url : null;
-			window.parent.insertImage(fn, url, w, h, align, size, srcset, linkUrl);
+				data['url']    = m.url;
+				data['width']  = m.width;
+				data['height'] = m.height;
+				data['size']   = size;
+				data['srcset'] = (url2x) ? `${m.url}, ${url2x} 2x` : null;
+				data['minUrl'] = sizes[minSize].url;
+			}
+			window.parent.insertMediaToMeta(metaTarget, data);
 		} else {
-			const url = p.querySelector('.file-url').value;
-			window.parent.insertFile(fn, url);
+			if (ss) {
+				const sizes = JSON.parse(ss.value);
+				const size  = selSize.value;
+				const m     = sizes[size];
+				const url2x = m.width ? get2xUrl(sizes, m.width) : null;
+
+				data['url']    = m.url;
+				data['url2x']  = url2x;
+				data['width']  = m.width;
+				data['height'] = m.height;
+				data['size']   = size;
+				data['srcset'] = (url2x) ? `${m.url}, ${url2x} 2x` : null;
+
+				data['align']   = selAlign.value;
+				data['linkUrl'] = (chkLink.checked) ? sizes['full'].url : null;
+			}
+			window.parent.insertMediaToContent(data);
 		}
 	}
 
 	function get2xUrl(sizes, width) {
-		for (const vals of Object.values(sizes)) {
-			if (width * 2 === vals.width) return vals.url;
+		for (const val of Object.values(sizes)) {
+			if (width * 2 === val.width) return val.url;
 		}
-		if (sizes.full.width !== width) {
-			return sizes.full.url;
-		}
+		if (sizes.full.width !== width) return sizes.full.url;
 		return null;
 	}
+
+	function getMinAndCeilSize(sizes, width) {
+		const kvs = [];
+		for (const key of Object.keys(sizes)) kvs.push([key, sizes[key]]);
+		kvs.sort((a, b) => { return a[1].width < b[1].width; });
+		for (const kv of kvs) {
+			if (width <= kv[1].width) return [kvs[0][0], kv[0]];
+		}
+		return [kvs[0][0], 'full'];
+	}
+
 });

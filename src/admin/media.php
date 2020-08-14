@@ -5,7 +5,7 @@ namespace nt;
  * Media Dialog
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-08-14
  *
  */
 
@@ -30,13 +30,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\begin(); ?>
 <header class="header">
 	<div class="inner">
-		<h1><?= _ht( 'Insert Media' ) ?></h1>
+		<h1><?= _ht( 'Insert Media' ) ?><span>{{filter_type}}</span></h1>
 		<form action="media.php?id={{id}}" method="post" enctype="multipart/form-data" id="form-upload">
 			<input type="hidden" name="mode" value="upload">
 			<div hidden><input type="file" name="upload_file" id="upload-file"></div>
 			<button id="btn-add" type="button"><?= _ht( 'Add New' ) ?></button>
 		</form>
-		<input type="hidden" id="max-file-size" value="{{max_file_size}}">
 		<div class="spacer"></div>
 		<button type="button" id="btn-close"><?= _ht( 'Close' ) ?></button>
 	</div>
@@ -106,10 +105,13 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<button class="delete" type="button" id="btn-delete"><?= _ht( 'Permanently Delete' ) ?></button>
 		</form>
 		<div class="spacer"></div>
-		<button type="button" class="accent" id="btn-insert"><?= _ht( 'Insert Into Post' ) ?></button>
+		<button type="button" class="accent" id="btn-insert">{{button_label}}</button>
 	</div>
 </footer>
 
+<input type="hidden" id="meta-target" value="{{meta_target}}">
+<input type="hidden" id="meta-size-width" value="{{meta_size_width}}">
+<input type="hidden" id="max-file-size" value="{{max_file_size}}">
 <input type="hidden" id="msg-delete" value="<?= _ht( 'Do you want to delete the selected media file?' ) ?>">
 <?php \nt\end( $view ); ?>
 
