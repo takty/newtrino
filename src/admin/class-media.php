@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-05
+ * @version 2020-08-14
  *
  */
 
@@ -36,7 +36,7 @@ class Media {
 	// -------------------------------------------------------------------------
 
 
-	public function getItemList(): array {
+	public function getItemList( ?string $filter = null ): array {
 		$meta = $this->_loadMeta();
 
 		$list = [];
@@ -52,7 +52,7 @@ class Media {
 				} else {
 					$item['url@min'] = $this->_mediaUrl( $m['sizes']['full']['file_name'] );
 				}
-			}
+			} else if ( $filter === 'image' ) continue;
 			$item['file_name'] = $m['file_name'];
 			$item['url']       = $this->_mediaUrl( $m['file_name'] );
 			$item['ext']       = $ext;
