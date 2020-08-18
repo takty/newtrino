@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-08-18
  *
  */
 
@@ -92,8 +92,10 @@ function query( array $args = [] ): array {
 	$query  += parse_query_string( 'id' );
 	$filter += [ 'date' => 'year' ];
 
-	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-
+	if ( ! $base_url ) {
+		$base_url = ( empty( $_SERVER['HTTPS'] ) ? 'http://' : 'https://' ) . $_SERVER['HTTP_HOST'];
+		$base_url .= parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+	}
 	$msg = [
 		'query'  => $query,
 		'filter' => $filter,
