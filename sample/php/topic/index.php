@@ -11,10 +11,20 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>
-	<?php \nt\begin(); ?>{{post.title}} - <?php \nt\end( $view, isset( $view['post'] ) ); ?>
-	Newtrino Sample
-</title>
+<?php \nt\begin(); ?>
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{post.url}}">
+<meta property="og:title" content="{{post.title}}">
+<meta property="og:description" content="{{post.excerpt}}">
+<meta property="og:site_name" content="Newtrino Sample">
+{{#post.meta.thumbnail}}
+<meta property="og:image" content="{{url}}">
+{{/post.meta.thumbnail}}
+<title>{{post.title}} - Newtrino Sample</title>
+<?php \nt\end( $view, isset( $view['post'] ) ); ?>
+<?php \nt\begin(); ?>
+<title>Newtrino Sample</title>
+<?php \nt\end( $view, ! isset( $view['post'] ) ); ?>
 </head>
 <body>
 	<header>
