@@ -3,7 +3,7 @@
  * Login (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-23
+ * @version 2020-08-18
  *
  */
 
@@ -45,4 +45,17 @@ body.login {
 		align-items    : center;
 		justify-content: flex-end;
 	}
+}
+
+.cookie {
+	margin-top: -0.75rem;
+
+	font-size: 0.75rem;
+	line-height: 1.25;
+	text-align: justify;
+
+	summary {
+		width: max-content;
+	}
+	div { margin-top: 1.25rem; }
 }

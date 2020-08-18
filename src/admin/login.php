@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-25
+ * @version 2020-08-18
  *
  */
 
@@ -48,6 +48,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<nav>
 			<button type="submit" id="btn-login" class="accent"><?= _ht( 'Log In' ) ?></button>
 		</nav>
+		<details class="cookie"><summary><?= _ht( 'Use Of Cookies...' ) ?></summary><div><?= _ht( 'Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.' ) ?></div></details>
 	</form>
 	<div id="key"></div>
 </div>
