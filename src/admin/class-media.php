@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-08-19
  *
  */
 
@@ -160,6 +160,7 @@ class Media {
 			Logger::output( 'error', "(Media::_loadMeta file_put_contents) [$out_path]" );
 			return;
 		}
+		chmod( $path, NT_MODE_FILE );
 	}
 
 	private function _addMeta( string $fileName ): void {
@@ -301,6 +302,7 @@ class Media {
 				imagegif( $img, $path );
 				break;
 		}
+		chmod( $path, NT_MODE_FILE );
 	}
 
 }
