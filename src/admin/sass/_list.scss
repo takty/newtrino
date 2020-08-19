@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-08-19
  *
  */
 
@@ -53,16 +53,14 @@ body.list {
 
 		&:first-child { padding-left: 2px; }
 		&:last-child { padding-right: 2px; }
+	}
+	td {
+		line-height: 1.35;
 
 		&.title {
 			width: 100%;
 			white-space: normal;
-			line-height: 1.25;
 		}
-	}
-	td {
-		line-height: 1.25;
-
 		&.taxonomy {
 			a { white-space: nowrap; }
 		}
