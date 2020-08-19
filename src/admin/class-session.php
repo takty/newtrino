@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-05
+ * @version 2020-08-19
  *
  */
 
@@ -226,6 +226,7 @@ class Session {
 			Logger::output( 'error', "(Session::_saveSessionFile file_put_contents) [$path]" );
 			return false;
 		}
+		chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
