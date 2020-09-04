@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-09-04
  *
  */
 
@@ -161,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				'link lists media nonbreaking noneditable paste print searchreplace table textcolor textpattern visualblocks visualchars',
 			],
 			removed_menuitems: 'newdocument',
-			toolbar1: 'formatselect | bold italic underline strikethrough | superscript subscript | bullist numlist | alignleft aligncenter alignright | link unlink',
-			toolbar2: 'undo redo | styleselect | removeformat | forecolor backcolor',
-			block_formats: 'Paragraph=p;Heading 3=h3;Heading 4=h4;Heading 5=h5;Preformatted=pre',
+			toolbar1: 'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat',
+			toolbar2: 'formatselect | bullist numlist | blockquote | alignleft aligncenter alignright | styleselect',
+			block_formats: 'Paragraph=p;Heading 3=h3;Heading 4=h4;Heading 5=h5;Blockquote=blockquote;Preformatted=pre',
 			content_css: css,
 			language: lang,
 			code_dialog_width: 800,
