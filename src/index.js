@@ -21,7 +21,7 @@ window.NT = window['NT'] || {};
 		const option  = args.option   ? args.option   : {};
 		let   baseUrl = args.base_url ? args.base_url : false;
 
-		query  = Object.assign(parseQueryString('id', ['search']), query);
+		query  = Object.assign(parseQueryString('id'), query);
 		filter = Object.assign({ date: 'year' }, filter);
 
 		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
@@ -289,7 +289,7 @@ window.NT = window['NT'] || {};
 	// -------------------------------------------------------------------------
 
 
-	function parseQueryString(defaultKey, ignoredKeys = []) {
+	function parseQueryString(defaultKey) {
 		const regex = /([^&=]+)=?([^&]*)/g;
 		const str = window.location.search.substring(1);
 
@@ -300,7 +300,8 @@ window.NT = window['NT'] || {};
 		const es = Object.entries(ps);
 		let defaultVal = '';
 		for (let i = 0; i < es.length; ++i) {
-			if (!es[i][1] && !ignoredKeys.includes(es[i][0])) defaultVal = es[i][0];
+			const [key, val] = es[i];
+			if (defaultKey && !val && !str.includes(key + '=')) defaultVal = key;
 		}
 		if (defaultVal) ps[defaultKey] = defaultVal;
 

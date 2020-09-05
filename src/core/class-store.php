@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2020-09-05
  *
  */
 
@@ -104,13 +104,15 @@ class Store {
 	// ------------------------------------------------------------------------
 
 
-	public function getPost( string $id ): ?Post {
+	public function getPost( ?string $id ): ?Post {
+		if ( $id === null ) return null;
 		$p = new Post( $id, $this->getSubPath( $id, null ) );
 		if ( ! $p->load() ) return null;
 		return $p;
 	}
 
-	public function getPostWithNextAndPrevious( string $id, array $cond = [] ): ?array {
+	public function getPostWithNextAndPrevious( ?string $id, array $cond = [] ): ?array {
+		if ( $id === null ) return null;
 		$posts = $this->_getPosts( $cond );
 		$idIndex = null;
 		for ($i = 0; $i < count( $posts ); $i += 1 ) {

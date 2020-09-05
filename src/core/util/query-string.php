@@ -10,11 +10,13 @@ namespace nt;
  */
 
 
-function parse_query_string( ?string $default_key = null, array $ignored_keys = [] ): array {
+function parse_query_string( ?string $default_key = null ): array {
+	$str = $_SERVER['QUERY_STRING'];
+
 	$ps = [];
 	$default_val = '';
 	foreach ( $_REQUEST as $key => $val ) {
-		if ( $default_key !== null && empty( $val ) && ! in_array( $key, $ignored_keys, true ) ) {
+		if ( $default_key !== null && empty( $val ) && strpos( $str, $key . '=' ) === false ) {
 			$default_val = $key;
 		} else {
 			$ps[ $key ] = $val;

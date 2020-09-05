@@ -89,7 +89,7 @@ function query( array $args = [] ): array {
 	$option   = $args['option']   ?? [];
 	$base_url = $args['base_url'] ?? null;
 
-	$query  += parse_query_string( 'id', [ 'search' ] );
+	$query  += parse_query_string( 'id' );
 	$filter += [ 'date' => 'year' ];
 
 	if ( ! $base_url ) {
