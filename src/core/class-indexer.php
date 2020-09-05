@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-05
+ * @version 2020-09-05
  *
  */
 
@@ -89,6 +89,7 @@ class Indexer {
 			if ( empty( $st ) ) continue;
 			self::_splitTerm( $st, $ret );
 		}
+		if ( empty( $ret ) && ! empty( $text ) ) $ret = [ $text ];
 		return $ret;
 	}
 
