@@ -5,16 +5,16 @@ namespace nt;
  * Functions for Query Strings
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-14
+ * @version 2020-09-05
  *
  */
 
 
-function parse_query_string( ?string $default_key = null ): array {
+function parse_query_string( ?string $default_key = null, array $ignored_keys = [] ): array {
 	$ps = [];
 	$default_val = '';
 	foreach ( $_REQUEST as $key => $val ) {
-		if ( $default_key !== null && empty( $val ) ) {
+		if ( $default_key !== null && empty( $val ) && ! in_array( $key, $ignored_keys, true ) ) {
 			$default_val = $key;
 		} else {
 			$ps[ $key ] = $val;

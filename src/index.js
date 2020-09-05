@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-12
+ * @version 2020-09-05
  *
  */
 
@@ -21,7 +21,7 @@ window.NT = window['NT'] || {};
 		const option  = args.option   ? args.option   : {};
 		let   baseUrl = args.base_url ? args.base_url : false;
 
-		query  = Object.assign(parseQueryString('id'), query);
+		query  = Object.assign(parseQueryString('id', ['search']), query);
 		filter = Object.assign({ date: 'year' }, filter);
 
 		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
@@ -289,7 +289,7 @@ window.NT = window['NT'] || {};
 	// -------------------------------------------------------------------------
 
 
-	function parseQueryString(defaultKey) {
+	function parseQueryString(defaultKey, ignoredKeys = []) {
 		const regex = /([^&=]+)=?([^&]*)/g;
 		const str = window.location.search.substring(1);
 
@@ -300,7 +300,7 @@ window.NT = window['NT'] || {};
 		const es = Object.entries(ps);
 		let defaultVal = '';
 		for (let i = 0; i < es.length; ++i) {
-			if (!es[i][1]) defaultVal = es[i][0];
+			if (!es[i][1] && !ignoredKeys.includes(es[i][0])) defaultVal = es[i][0];
 		}
 		if (defaultVal) ps[defaultKey] = defaultVal;
 

@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-18
+ * @version 2020-09-05
  *
  */
 
@@ -89,7 +89,7 @@ function query( array $args = [] ): array {
 	$option   = $args['option']   ?? [];
 	$base_url = $args['base_url'] ?? null;
 
-	$query  += parse_query_string( 'id' );
+	$query  += parse_query_string( 'id', [ 'search' ] );
 	$filter += [ 'date' => 'year' ];
 
 	if ( ! $base_url ) {
