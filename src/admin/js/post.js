@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			nonbreaking_force_tab: true,
 			table_resize_bars: false,
 			object_resizing: 'img',
+			link_context_toolbar: true,
 			setup: (e) => { e.on('change', () => { isModified = true; }); },
 		}, opt)
 		tinymce.init(args);
