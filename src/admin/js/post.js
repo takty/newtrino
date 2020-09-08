@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-04
+ * @version 2020-09-08
  *
  */
 
@@ -168,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			language: lang,
 			code_dialog_width: 800,
 			nonbreaking_force_tab: true,
+			table_resize_bars: false,
 			object_resizing: 'img',
 			setup: (e) => { e.on('change', () => { isModified = true; }); },
 		}, opt)
