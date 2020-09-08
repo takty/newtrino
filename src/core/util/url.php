@@ -5,12 +5,15 @@ namespace nt;
  * Functions for URLs
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-03
+ * @version 2020-09-08
  *
  */
 
 
 function resolve_url( string $target, string $base ): string {
+	$target = trim( $target );
+	if ( strpos( $target, '#' ) === 0 ) return $target;
+
 	$comp = parse_url( $base );
 	$dir = preg_replace( '!/[^/]*$!', '/', $comp['path'] );
 
