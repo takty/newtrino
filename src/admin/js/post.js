@@ -84,11 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		flatpickr('.flatpickr.date', { wrap: true, locale: lang });
 		for (let e of es) {
 			e.addEventListener('change', () => {
-				const d = e._flatpickr.selectedDate;
 				const f = document.getElementsByName('meta:' + e.dataset.key)[0];
-				f.value = moment(d).format('YYYY-MM-DD');
+				const ds = e._flatpickr.selectedDates;
+				if (ds.length) {
+					f.value = moment(ds[0]).format('YYYY-MM-DD');
+				} else {
+					f.value = '';
+				}
 			});
 			const f = document.getElementsByName('meta:' + e.dataset.key)[0];
+			if (!f.value) continue;
 			const d = moment(f.value).toDate();
 			e._flatpickr.setDate(d);
 		}
@@ -100,15 +105,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		flatpickr('.flatpickr.date-range', { wrap: true, mode: 'range', locale: lang });
 		for (let e of es) {
 			e.addEventListener('change', () => {
-				const ds = e._flatpickr.selectedDates;
-				const m = {
-					from: moment(ds[0]).format('YYYY-MM-DD'),
-					to  : moment(ds[1]).format('YYYY-MM-DD'),
-				};
 				const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
-				fs.value = JSON.stringify(m);
+				const ds = e._flatpickr.selectedDates;
+				if (ds.length) {
+					fs.value = JSON.stringify({
+						from: moment(ds[0]).format('YYYY-MM-DD'),
+						to  : moment(ds[1]).format('YYYY-MM-DD'),
+					});
+				} else {
+					fs.value = '';
+				}
 			});
 			const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
+			if (!fs.value) continue;
 			const m = JSON.parse(fs.value);
 			if (m === null) continue;
 			const from = moment(m.from).toDate();

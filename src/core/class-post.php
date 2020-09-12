@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-09-12
  *
  */
 
@@ -155,7 +155,10 @@ class Post {
 				continue;
 			}
 			$key = $m['key'];
-			if ( ! isset( $vals["meta:$key"] ) ) continue;
+			if ( empty( $vals["meta:$key"] ) ) {
+				$this->setMetaValue( $key, null );
+				continue;
+			}
 			if ( $m['type'] === 'date' ) {
 				$vals["meta:$key"] = packDate( $vals["meta:$key"] );
 			}
@@ -333,7 +336,11 @@ class Post {
 	}
 
 	public function setMetaValue( string $key, $val ): void {
-		$this->_meta[ $key ] = $val;
+		if ( $val === null ) {
+			unset( $this->_meta[ $key ] );
+		} else {
+			$this->_meta[ $key ] = $val;
+		}
 	}
 
 

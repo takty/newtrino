@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-09-12
  *
  */
 
@@ -245,9 +245,7 @@ function echo_metabox_date( Post $post, array $m, string $label, bool $internal 
 function echo_metabox_date_range( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
-	$json = json_encode( $mv );
-	$from = ( $mv && isset( $mv['from'] ) ) ? $mv['from'] : '';
-	$to   = ( $mv && isset( $mv['to']   ) ) ? $mv['to']   : '';
+	$json = ( $mv ) ? json_encode( $mv ) : '';
 
 	$cls = $internal ? '' : ' frame frame-sub';
 ?>
@@ -265,7 +263,7 @@ function echo_metabox_date_range( Post $post, array $m, string $label, bool $int
 function echo_metabox_media( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
-	$json = json_encode( $mv );
+	$json = ( $mv ) ? json_encode( $mv ) : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 
 	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
@@ -287,7 +285,7 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 	$key  = $m['key'];
 	$size = $m['option']['size'] ?? 'medium';
 	$mv   = $post->getMetaValue( $key );
-	$json = json_encode( $mv );
+	$json = ( $mv ) ? json_encode( $mv ) : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('url("' . $mv['minUrl'] . '")') : '';
 
