@@ -174,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			block_formats: 'Paragraph=p;Heading 3=h3;Heading 4=h4;Heading 5=h5;Blockquote=blockquote;Preformatted=pre',
 			content_css: css,
 			language: lang,
+			element_format: 'html',
 			code_dialog_width: 800,
 			nonbreaking_force_tab: true,
 			table_resize_bars: false,
