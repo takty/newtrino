@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-12
+ * @version 2020-09-13
  *
  */
 
@@ -237,16 +237,42 @@
 // -----------------------------------------------------------------------------
 
 
-.mce-tinymce,
-.mce-container,
-.mce-widget,
-.mce-reset {
-	button {
-		display: inline-block;
-		min-width: unset;
+body.post {
+	.mce-container,
+	.mce-widget,
+	.mce-reset {
+		button {
+			display: inline-block;
+			min-width: unset;
+		}
 	}
-}
-
-.mce-tab {
-	line-height: 1 !important;
+	.mce-container,
+	.mce-container *:not(.mce-ico),
+	.mce-widget,
+	.mce-widget *:not(.mce-ico),
+	.mce-reset {
+		font-family: unset;
+	}
+	.mce-floatpanel {
+		border-radius: 2px;
+	}
+	.mce-title {
+		font-size: 1rem;
+		line-height: 1rem;
+	}
+	.mce-btn,
+	.mce-textbox {
+		border-radius: 4px;
+	}
+	.mce-container[role='tabpanel'] {
+		background-color: #fff;  // Hack for fixing borders
+	}
+	i.mce-i-checkbox {
+		border-radius: 2px;
+	}
+	.mce-window[aria-label='Source code'] {
+		.mce-textbox {
+			font-family: monospace;
+		}
+	}
 }
