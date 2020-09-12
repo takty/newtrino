@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-08
+ * @version 2020-09-12
  *
  */
 
@@ -109,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				fs.value = JSON.stringify(m);
 			});
 			const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
-			console.log(fs);
 			const m = JSON.parse(fs.value);
 			if (m === null) continue;
 			const from = moment(m.from).toDate();
