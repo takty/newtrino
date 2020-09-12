@@ -3,9 +3,49 @@
  * Editor Styles (Sample)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-31
+ * @version 2020-09-12
  *
  */
+
+
+/* Default Styles ----------------------------------------------------------- */
+
+
+body > * + *,
+blockquote > * + * {
+	margin-top: 1.5rem;
+}
+
+h3:not(:first-child) { margin-top: 3rem; }
+h4:not(:first-child) { margin-top: 1.5rem; }
+h5:not(:first-child) { margin-top: 1rem; }
+
+h2, h3, h4, h5, h6,
+hr {
+	clear: both;
+}
+
+p, ul, ol, dl {
+	border: 1px dashed #ccc;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table, table td, table th, table caption {
+	border: 1px dashed #ccc;
+}
+
+td {
+	min-width: 1rem;
+	padding  : 0.25rem;
+}
+
+thead td,
+th {
+	background-color: #def;
+}
 
 
 /* Alignments --------------------------------------------------------------- */

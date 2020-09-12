@@ -177,9 +177,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			element_format: 'html',
 			code_dialog_width: 800,
 			nonbreaking_force_tab: true,
-			table_resize_bars: false,
 			object_resizing: 'img',
 			link_context_toolbar: true,
+			table_default_attributes: {},
+			table_default_styles: {},
+			table_resize_bars: false,
+			table_advtab: false,
+			table_class_list: [],
+			visual_table_class: ' ',
 			setup: (e) => { e.on('change', () => { isModified = true; }); },
 		}, opt)
 		tinymce.init(args);
