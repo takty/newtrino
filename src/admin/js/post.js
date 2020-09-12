@@ -292,16 +292,21 @@ function closeDialog() {
 
 function insertMediaToContent(data) {
 	closeDialog();
-	let str = '';
 	if (data['size']) {
 		const ss  = data.srcset ? ` srcset="${data.srcset}"` : '';
 		const cls = `size-${data.size}` + (data.linkUrl ? '' : ` ${data.align}`);
-		str = `<img class="${cls}" src="${data.url}"${ss} alt="${data.name}" width="${data.width}" height="${data.height}" loading="lazy">`;
+		let str = `<img class="${cls}" src="${data.url}"${ss} alt="${data.name}" width="${data.width}" height="${data.height}" loading="lazy">`;
 		if (data.linkUrl) str = `<a href="${data.linkUrl}" class="${data.align}">${str}</a>`;
+		tinymce.activeEditor.execCommand('mceInsertContent', false, str);
 	} else {
-		str = `<a href="${data.url}">${data.name}</a>`;
+		const s = tinymce.activeEditor.selection.getContent();
+		if (s !== '') {
+			tinymce.activeEditor.execCommand('mceInsertLink', false, data.url);
+		} else {
+			const str = `<a href="${data.url}">${data.name}</a>`;
+			tinymce.activeEditor.execCommand('mceInsertContent', false, str);
+		}
 	}
-	tinymce.activeEditor.execCommand('mceInsertContent', false, str);
 }
 
 function insertMediaToMeta(target, data) {
