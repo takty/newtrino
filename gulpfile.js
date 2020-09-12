@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-09-12
  *
  */
 
@@ -58,12 +58,10 @@ gulp.task('copy-flatpickr', (done) => {
 gulp.task('copy-tinymce', (done) => {
 	const dir = './node_modules/tinymce/';
 	copySync(dir + 'tinymce.min.js', DIST_ADMIN + 'js/tinymce/');
-	copySync(dir + 'plugins/**/*', DIST_ADMIN + 'js/tinymce/plugins/');
-	copySync(dir + 'skins/**/*', DIST_ADMIN + 'js/tinymce/skins/');
-	copySync(dir + 'themes/**/*', DIST_ADMIN + 'js/tinymce/themes/');
+	copySync(dir + 'plugins/*', DIST_ADMIN + 'js/tinymce/plugins/');
+	copySync(dir + 'skins/lightgray/*', DIST_ADMIN + 'js/tinymce/skins/lightgray/');
+	copySync(dir + 'themes/modern/*', DIST_ADMIN + 'js/tinymce/themes/modern/');
 	copySync('./node_modules/tinymce-i18n/langs/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
-	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/inlite');
-	fs.removeSync(DIST_ADMIN + 'js/tinymce/themes/mobile');
 	const ups = [  // Removed plugins
 		'autoresize',	'autosave',		'bbcode',	'codesample',
 		'emoticons',	'fullpage',		'help',		'importcss',
