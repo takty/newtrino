@@ -5,7 +5,7 @@ namespace nt;
  * Media Dialog
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-09-12
  *
  */
 
@@ -33,6 +33,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<h1><?= _ht( 'Insert Media' ) ?><span>{{filter_type}}</span></h1>
 		<form action="media.php?id={{id}}" method="post" enctype="multipart/form-data" id="form-upload">
 			<input type="hidden" name="mode" value="upload">
+			<input type="hidden" name="target" value="{{meta_target}}">
 			<div hidden><input type="file" name="upload_file" id="upload-file"></div>
 			<button id="btn-add" type="button"><?= _ht( 'Add New' ) ?></button>
 		</form>
