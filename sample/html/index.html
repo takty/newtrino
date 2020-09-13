@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<script src="../nt/index.min.js"></script>
+<title>Newtrino Sample</title>
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		NT.queryRecentPosts('../nt/', (view) => {
+			NT.renderTemplate('#post[type="text/html"]', view);
+		}, { count: 2, base_url: './topic/', query: { type: 'post' },  option: { date_format: 'Y-MM-DD' } });
+		NT.queryRecentPosts('../nt/', (view) => {
+			NT.renderTemplate('#event[type="text/html"]', view);
+		}, { count: 2, base_url: './topic/', query: { type: 'event' }, option: { date_format: 'Y-MM-DD' } });
+	});
+</script>
+</head>
+<body>
+	<header>
+		<h1>Newtrino Sample</h1>
+	</header>
+	<main>
+		<div>
+			<h2>Posts</h2>
+			<script type="text/html" id="post">
+				<ul id="list-item-post">
+{{#posts}}
+					<li class="{{class@joined}}">
+						<a href="{{url}}">
+							{{#taxonomy.category}}
+							<span class="category">{{label}}</span>
+							{{/taxonomy.category}}
+							<div class="title">{{title}}</div>
+							<div class="excerpt">{{{excerpt}}}</div>
+							<div class="date">{{date}}</div>
+							{{#meta.thumbnail}}
+							<img src="{{url}}" width="{{width}}" height="{{height}}" srcset="{{srcset}}">
+							{{/meta.thumbnail}}
+						</a>
+					</li>
+{{/posts}}
+				</ul>
+			</script>
+		</div>
+		<div>
+			<h2>Events</h2>
+			<script type="text/html" id="event">
+				<ul id="list-item-event">
+{{#posts}}
+					<li class="{{class@joined}}">
+						<a href="{{url}}">
+							{{#taxonomy.category}}
+							<span class="category">{{label}}</span>
+							{{/taxonomy.category}}
+							{{#meta.duration}}
+							<span class="event-date">Event Date: {{from}} to {{to}}</span>
+							{{/meta.duration}}
+							<div class="title">{{title}}</div>
+							<div class="excerpt">{{{excerpt}}}</div>
+							<div class="date">{{date}}</div>
+							{{#meta.thumbnail}}
+							<img src="{{url}}" width="{{width}}" height="{{height}}" srcset="{{srcset}}">
+							{{/meta.thumbnail}}
+						</a>
+					</li>
+{{/posts}}
+				</ul>
+			</script>
+		</div>
+		<nav>
+			<a href="topic/">Show More...</a>
+		</nav>
+	</main>
+</body>
+</html>

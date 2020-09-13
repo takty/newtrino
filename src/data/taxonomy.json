@@ -1,0 +1,56 @@
+[
+    {
+        "slug": "category",
+        "label": "Categories",
+        "label@ja": "カテゴリ",
+        "sg_label": "Category",
+        "is_exclusive": true,
+        "terms": [
+            {
+                "slug": "news",
+                "label": "News",
+                "label@ja": "ニュース"
+            },
+            {
+                "slug": "column",
+                "label": "Columns",
+                "label@ja": "コラム"
+            }
+        ]
+    },
+    {
+        "slug": "target",
+        "label": "Targets",
+        "label@ja": "対象者",
+        "sg_label": "Target",
+        "terms": [
+            {
+                "slug": "public",
+                "label": "For Public",
+                "label@ja": "一般公開"
+            },
+            {
+                "slug": "researcher",
+                "label": "For Researchers",
+                "label@ja": "研究者向け"
+            }
+        ]
+    },
+    {
+        "slug": "lang",
+        "label": "Languages",
+        "label@ja": "言語",
+        "terms": [
+            {
+                "slug": "ja",
+                "label": "Japanese",
+                "label@ja": "日本語"
+            },
+            {
+                "slug": "en",
+                "label": "English",
+                "label@ja": "英語"
+            }
+        ]
+    }
+]

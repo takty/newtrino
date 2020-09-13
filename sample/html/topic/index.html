@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<script src="../../nt/index.min.js"></script>
+<title>Newtrino Sample</title>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	NT.query('../../nt/', (view) => {
+		NT.renderTemplate('[type="text/html"]', view);
+	}, {
+		filter: { taxonomy: ['category'], date_format: 'Y' },
+		option: { date_format: 'Y-MM-DD' }
+	});
+});
+</script>
+<script type="text/html" data-replace="title" data-section="#post">
+	{{post.title}} - Newtrino Sample
+</script>
+</head>
+<body>
+	<header>
+		<h1><a href="../">Newtrino Sample</a></h1>
+	</header>
+<!-- ======================================================================= -->
+	<script type="text/html" data-section="^post">
+		<main>
+			<header class="entry-header">
+				<h2>Topics</h2>
+			</header>
+			<div class="aside aside-filter">
+				<div class="filter-date">
+					{{#filter.date}}
+					<select onchange="document.location.href = this.value;">
+						<option value="./">Year</option>
+						{{#year}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/year}}
+					</select>
+					{{/filter.date}}
+				</div>
+				<div class="filter-taxonomy">
+					{{#filter.taxonomy}}
+					<select onchange="document.location.href = this.value;">
+						<option value="./">Category</option>
+						{{#category}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/category}}
+					</select>
+					{{/filter.taxonomy}}
+				</div>
+				<div class="filter-search">
+					{{#filter.search}}
+					<form action="./" type="GET">
+						<input type="text" name="search" value="{{keyword}}">
+						<input type="submit" value="Search">
+					</form>
+					{{/filter.search}}
+				</div>
+			</div>
+			<div class="entry-content">
+				<ul id="list-item-post">
+{{#posts}}
+					<li class="{{class@joined}}" id="temp-item-post">
+						<a href="{{url}}">
+							{{#taxonomy.category}}
+							<span class="category">{{label}}</span>
+							{{/taxonomy.category}}
+							{{#meta.duration}}
+							<span class="event-date">Event Date: {{from}} to {{to}}</span>
+							{{/meta.duration}}
+							<div class="title">{{title}}</div>
+							<div class="excerpt">{{{excerpt}}}</div>
+							<div class="date">{{date}}</div>
+							{{#meta.thumbnail}}
+							<img src="{{url}}" width="{{width}}" height="{{height}}" srcset="{{srcset}}">
+							{{/meta.thumbnail}}
+						</a>
+					</li>
+{{/posts}}
+				</ul>
+			</div>
+		</main>
+	</script>
+	<script type="text/html" data-section="^post">
+{{#navigation.pagination}}
+		<div class="aside aside-navigation">
+			<div class="pagination">
+				{{#previous}}
+				<a href="{{.}}">Previous</a>
+				{{/previous}}
+				<select onchange="document.location.href = this.value;">
+					{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
+				</select>
+				{{#next}}
+				<a href="{{.}}">Next</a>
+				{{/next}}
+			</div>
+		</div>
+{{/navigation.pagination}}
+	</script>
+<!-- ======================================================================= -->
+	<script type="text/html" data-section="#post">
+{{#post}}
+		<main class="entry {{class@joined}}">
+			<header class="entry-header">
+				{{#taxonomy.category}}
+				<div class="category">{{label}}</div>
+				{{/taxonomy.category}}
+				<h2>{{title}}</h2>
+				{{#meta.duration}}
+				<span class="event-date">Event Date: {{from}} to {{to}}</span>
+				{{/meta.duration}}
+				{{^meta.duration}}
+				<div class="date">{{date}}</div>
+				{{/meta.duration}}
+			</header>
+			<div class="entry-content">
+				{{&post.content}}
+			</div>
+		</main>
+{{/post}}
+	</script>
+	<script type="text/html" data-section="#post">
+{{#navigation.post_navigation}}
+		<div class="aside aside-navigation">
+			<div class="post_navigation">
+				{{#previous}}
+				<a href="{{url}}">Previous</a>
+				{{/previous}}
+				{{#next}}
+				<a href="{{url}}">Next</a>
+				{{/next}}
+			</div>
+		</div>
+{{/navigation.post_navigation}}
+	</script>
+<!-- ======================================================================= -->
+</body>
+
+</html>

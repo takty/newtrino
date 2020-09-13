@@ -1,0 +1,84 @@
+message {
+	query: {
+		id: xxxx
+		page: x
+		<post_per_page>: [int]
+		date: xxxx, xxxx-xx, xxxx-xx-xx
+		<taxonomy>: term
+		search: xxxx
+		type: xxxx
+	}
+	filter: {
+		date: 'day' or 'month' or 'year'
+		date_format: 'Y-m-d'
+		taxonomy: ['category']
+		type: xxxx
+	}
+	option: {
+		lang: 'en'
+		date_format: 'Y-m-d'
+	}
+}
+
+respose {
+	status:
+	post:
+	posts:
+	page_count:
+	adjacent_post: {
+		previous: p
+		next: p
+	}
+	date: {
+		month: {
+			date:
+			count:
+			label:
+		}
+	}
+	taxonomy: {
+		category: {
+			slug: [string]
+			label: [string]
+		}
+	}
+}
+
+view {
+	posts: []
+	post: {
+		id:
+		url:
+	}
+	filter: {
+		date: {
+			month: [
+				{
+					label:
+					url:
+				}
+			]
+		}
+		search: {
+			keyword: str
+		}
+		taxonomy: {
+			category: [
+				label:
+				url:
+			]
+		}
+	}
+	navigation {
+		pagination: {
+			previous: p
+			next: p
+			pages: [
+				{
+					label:
+					url:
+				}
+			]
+		}
+	}
+}

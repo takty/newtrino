@@ -1,0 +1,43 @@
+[
+	{
+		"slug": "post",
+		"label": "Posts",
+		"label@ja": "投稿",
+		"taxonomy": [ "category", "lang" ],
+		"meta": [
+			{
+				"key": "thumbnail",
+				"type": "media-image",
+				"label": "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option": {
+					"size": "small"
+				}
+			}
+		]
+	},
+	{
+		"slug": "event",
+		"label": "Events",
+		"label@ja": "イベント",
+		"taxonomy": [ "target", "lang" ],
+		"meta": [
+			{
+				"key": "thumbnail",
+				"type": "media-image",
+				"label": "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option": {
+					"size": "small"
+				}
+			},
+			{
+				"key": "duration",
+				"type": "date-range",
+				"label": "Event Duration",
+				"label@ja": "開催期間",
+				"is_column_shown": true
+			}
+		]
+	}
+]

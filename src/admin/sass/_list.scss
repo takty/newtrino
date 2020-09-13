@@ -1,0 +1,124 @@
+/**
+ *
+ * List (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-08-19
+ *
+ */
+
+
+body.list {
+	position: relative;
+	&::after {
+		content: '%VERSION%';
+
+		position: absolute;
+		left    : 0.85rem;
+		bottom  : 0.75rem;
+		transform-origin: left bottom;
+		transform: rotate(-90deg);
+		@include for-tl {
+			left  : 1rem;
+			bottom: 0.75rem;
+			transform: none;
+		}
+
+		font-size: 0.75rem;
+		color    : rgba(#000, 0.75);
+	}
+}
+
+.list-taxonomy-cancel {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.list-item {
+	border-bottom: 1px solid #ccc;
+	width: 100%;
+
+	tr:nth-of-type(2n) { background-color: hsl(150, 10%, 95%); }
+
+	th {
+		border-bottom: 1px solid #ccc;
+		text-align: center;
+		white-space: nowrap;
+
+		&:not(:last-child) { min-width: 5rem; }
+	}
+	th, td {
+		padding: 0.75rem 0.5rem;
+		@include for-tl { padding: { left: 0.75rem; right: 0.75rem; } }
+
+		&:first-child { padding-left: 2px; }
+		&:last-child { padding-right: 2px; }
+	}
+	td {
+		line-height: 1.35;
+
+		&.title {
+			width: 100%;
+			white-space: normal;
+		}
+		&.taxonomy {
+			a { white-space: nowrap; }
+		}
+		&.date {
+			font-size: 0.65rem;
+			white-space: nowrap;
+			> span {
+				display: block;
+				text-align: right;
+				@include for-de {
+					display: inline-block;
+					padding: 0 0.15rem;
+				}
+			}
+		}
+		&.meta-type-date,
+		&.meta-type-date-range {
+			font-size: 0.65rem;
+			white-space: nowrap;
+			span {
+				display: block;
+				text-align: right;
+			}
+		}
+
+		.restore-post {
+			min-width: 4.25rem;
+			justify-content: center;
+		}
+
+		a[href="#"] {
+			pointer-events: none;
+			text-decoration: none;
+			color: initial;
+		}
+	}
+}
+
+.pagination {
+    display    : grid;
+    place-items: center;
+
+	margin-top: 1.5rem;
+	> * + * { margin-left: 0.5rem; }
+}
+
+.button-row.buttom {
+	margin-top: 1rem;
+
+	display: flex;
+	flex-wrap: wrap;
+
+	> a:not(:last-child) { margin-right: 0.5rem; }
+	> a {
+		&[href="#"],
+		&[data-href="#"] {
+			display: none;
+		}
+		&.right { margin-left: auto; }
+	}
+}

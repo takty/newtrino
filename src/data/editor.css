@@ -1,0 +1,141 @@
+/**
+ *
+ * Editor Styles (Sample)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-09-12
+ *
+ */
+
+
+/* Default Styles ----------------------------------------------------------- */
+
+
+body > * + *,
+blockquote > * + * {
+	margin-top: 1.5rem;
+}
+
+h3:not(:first-child) { margin-top: 3rem; }
+h4:not(:first-child) { margin-top: 1.5rem; }
+h5:not(:first-child) { margin-top: 1rem; }
+
+h2, h3, h4, h5, h6,
+hr {
+	clear: both;
+}
+
+p, ul, ol, dl {
+	border: 1px dashed #ccc;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table, table td, table th, table caption {
+	border: 1px dashed #ccc;
+}
+
+td {
+	min-width: 1rem;
+	padding  : 0.25rem;
+}
+
+thead td,
+th {
+	background-color: #def;
+}
+
+
+/* Alignments --------------------------------------------------------------- */
+
+
+.alignleft {
+	float: left;
+	margin: 0 1rem 2rem 0;
+}
+
+.alignright {
+	float: right;
+	margin: 0 0 2rem 1rem;
+}
+
+.aligncenter {
+	display: block;
+	width: 100%;
+	margin: 0 auto 2rem auto;
+	text-align: center;
+}
+
+
+/* Image Sizes -------------------------------------------------------------- */
+
+
+.size-small,
+.size-medium-small,
+.size-medium,
+.size-medium-large,
+.size-large,
+.size-extra-large,
+.size-huge {
+	width: 100%;
+	height: auto;
+}
+
+.size-small        { max-width:  128px; }
+.size-medium-small { max-width:  256px; }
+.size-medium       { max-width:  384px; }
+.size-medium-large { max-width:  512px; }
+.size-large        { max-width:  768px; }
+.size-extra-large  { max-width: 1024px; }
+.size-huge         { max-width: 1536px; }
+
+.size-full {
+	width: auto;
+	height: auto;
+	max-width: 100%;
+}
+
+
+/* Custom Styles ------------------------------------------------------------ */
+
+
+a.button {
+	position   : relative;
+	display    : inline-grid;
+	place-items: center;
+
+	padding: 0.5rem 1rem;
+	border : 1px solid #ccc;
+}
+
+div.frame,
+div.frame-alt {
+	clear: both;
+	margin: 1rem 0;
+	padding: 1rem;
+}
+
+div.frame > *:first-child,
+div.frame-alt > *:first-child {
+	margin-top: 0;
+}
+
+div.frame > *:last-child,
+div.frame-alt > *:last-child {
+	margin-bottom: 0;
+}
+
+div.frame {
+	border: 1px solid #ccc;
+}
+
+div.frame-alt {
+	border: 3px double #ccc;
+}
+
+div.clear {
+	border: 1px dotted #bbf;
+	clear : both;
+}

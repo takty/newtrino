@@ -1,0 +1,401 @@
+/**
+ *
+ * Stlye for Private Area (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-08-19
+ *
+ */
+
+
+@import 'mixin';
+
+@import 'login';
+@import 'list';
+@import 'post';
+@import 'media';
+
+
+html, body {
+	min-height: 100vh;
+	margin: 0;
+}
+
+body {
+	display       : flex;
+	flex-direction: column;
+
+	font-family: "BIZ UDPGothic", sans-serif;
+}
+
+body:not(.dialog) {
+	padding: { top: 0.75rem; bottom: 0.75rem; }
+	background-image: linear-gradient(to right bottom, hsl(150, 45%, 70%) 0%, hsl(240, 55%, 75%) 100%);
+}
+
+a {
+	text-decoration: underline;
+	color: hsl(240, 80%, 50%);
+}
+
+.header,
+.container,
+.footer {
+	width: min(96rem, calc(100% - 2rem));
+	.dialog & { width: 100%; }
+	margin: { left: auto; right: auto; }
+}
+
+.header,
+.footer {
+	.inner {
+		display        : flex;
+		align-items    : center;
+		justify-content: space-between;
+
+		.spacer { flex-grow: 1; }
+		> * + *:not(:empty) { margin-left: 1rem; }
+	}
+}
+
+.header {
+	> *:not(:empty) { padding-bottom: 0.75rem; }
+
+	.message:not(:empty) { padding-top: 0.25rem; }
+}
+
+.footer {
+	> *:not(:empty) { padding-top: 0.75rem; }
+}
+
+.container {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	@include for-tl { flex-direction: row; }
+}
+
+.container-main {
+	flex-grow: 1;
+	position: relative;
+}
+
+.container-sub {
+	&[disabled] { display: none; }
+
+	> .frame + .frame {
+		margin-top: 1rem;
+	}
+}
+
+.container-sub + .container-main {
+	margin-top: 1rem;
+	@include for-tl {
+		margin-top: 0;
+		margin-left: 1rem;
+	}
+}
+
+.container-main + .container-sub {
+	margin-top: 1rem;
+	@include for-tl {
+		margin-top: 0;
+		margin-left: 1rem;
+	}
+}
+
+.frame {
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	background-color: rgba(#fff, 0.95);
+	font-size: 0.85rem;
+
+	box-shadow:
+		0 1px 1px rgba(#000, 0.10),
+		0 2px 2px rgba(#000, 0.08),
+		0 3px 3px rgba(#000, 0.06),
+		0 4px 4px rgba(#000, 0.04);
+	.dialog & {
+		box-shadow: 0 1px 2px rgba(#000, 0.1);
+	}
+
+	padding: 1rem;
+	@include for-tl { padding: 1.25rem; }
+
+	&.preview { padding: 0; }
+}
+
+.frame-sub,
+.frame-compact {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+
+	@include for-tl {
+		align-self: flex-start;
+		flex-direction: column;
+		align-items: stretch;
+		flex-shrink: 0;
+		width: 16.5rem;
+	}
+
+	padding: 0.5rem 1rem;
+	@include for-tl { padding: 0.75rem 1.25rem; }
+	> * {
+		padding: { top: 0.5rem; bottom: 0.5rem; }
+		max-width: 100%;
+	}
+	> *:not(:last-child) { margin-right: 1rem; }
+	@include for-tl {
+		> *:not(:last-child) { margin-right: 0; }
+	}
+
+	.flatpickr-input {
+		min-width: 11rem;
+		@include for-tl { width: 100%; }
+		max-height: 2rem;
+
+		font-size: 0.75rem;
+	}
+
+	.button-row {
+		display: flex;
+		justify-content: space-between;
+		flex-grow: 1;
+		@include for-tl { width: 100%; }
+
+		&.right {
+			margin-left: auto;
+			justify-content: flex-end;
+		}
+		> * + * { margin-left: 1rem; }
+	}
+}
+
+.frame-sub {
+	.title {
+		white-space: nowrap;
+		font-weight: bold;
+	}
+}
+
+.frame-compact {
+	> * {
+		display    : flex;
+		flex-wrap  : wrap;
+		align-items: center;
+	}
+
+	.heading {
+		font-weight: bold;
+		margin: 0.25rem 0.5rem 0.25rem 0;
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+h1 {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: bold;
+	color: #333;
+}
+
+body.login,
+body.list,
+body.post {
+	h1 {
+		text-shadow: 0 0 1px #fff;
+		&::before {
+			content: '';
+			display: inline-block;
+			width: 2rem;
+			height: 2rem;
+			margin: {
+				top: -0.5rem;
+				right: 0.5rem;
+				bottom: -0.5rem;
+			}
+			background: {
+				image: url('logo.png');
+				size: contain;
+			}
+		}
+	}
+}
+
+body.login {
+	h1::before {
+		margin-left: -0.25rem;
+	}
+}
+
+#dialog-preview {
+	h1::before { content: none; }
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+input[type='text'],
+input[type='password'],
+input[type='month'],
+select:not(.flatpickr-monthDropdown-months),
+button,
+input[type=button],
+.button {
+	border: 1px solid #ccc;
+	border-radius: 4px;
+
+	background-color: #fff;
+	color: #333;
+
+	font: inherit;
+	font-size: 0.85rem;
+	text-decoration: none;
+	line-height: 1.15;
+	white-space: nowrap;
+
+	&:hover { border-color: #88f; }
+
+	&:disabled {
+		pointer-events: none;
+		opacity: 0.5;
+	}
+}
+
+input[type='text'],
+input[type='password'] {
+	max-height: 2.5rem;
+	height: 2.5rem;
+
+	padding: 0.5rem 0.5rem;
+	text-align: left;
+
+	&[readonly] {
+		cursor: default;
+		color: #777;
+		height: 2rem;
+		font-size: 0.75rem;
+		padding: { top: 0; bottom: 0; }
+	}
+}
+
+input[type='month'],
+select:not(.flatpickr-monthDropdown-months) {
+	max-height: 2rem;
+	height: 2rem;
+	padding: 0.25rem 0.25rem;
+	@include for-tp { padding: { left: 0.5rem; right: 0.5rem; } }
+}
+
+select:not(.flatpickr-monthDropdown-months) {
+	-webkit-appearance: menulist;
+
+	&.accent:not(:hover) {
+		border-color: hsl(60, 80%, 40%);
+		background-color: hsl(60, 75%, 90%);
+
+		> option { background-color: unset; }
+	}
+}
+
+button,
+input[type=button],
+.button {
+	display: inline-flex;
+	align-items: center;
+
+	min-width: 1.5rem;
+	@include for-tl { min-width: 2rem; }
+
+	max-height: 2rem;
+	height: 2rem;
+	padding: { top: 0.25rem; bottom: 0.25rem; }
+
+	padding: { left: 0.5rem; right: 0.5rem; }
+	@include for-tp { padding: { left: 0.75rem; right: 0.75rem; } }
+
+	text-align: center;
+	user-select: none;
+
+	&.accent:not(:hover) {
+		border-color: hsl(60, 80%, 40%);
+		background-color: hsl(60, 75%, 90%);
+	}
+	&.delete:not(:hover),
+	&.delper:not(:hover) {
+		border-color: hsl(0, 70%, 55%);
+		background-color: hsl(0, 75%, 92.5%);
+	}
+	&.mini {
+		min-width: 1.5rem;
+		padding: 0.5rem 0.25rem;
+	}
+	&.cross {
+		position: relative;
+		&::before,
+		&::after {
+			content : '';
+			position: absolute;
+			top     : calc(50% - 0.5rem / 2);
+			left    : calc(50% - 1px / 2);
+			width   : 0;
+			height  : 0.5rem;
+
+			border-left: 1px solid #333;
+			transform-origin: center center;
+		}
+		&::before { transform: rotate(45deg); }
+		&::after { transform: rotate(-45deg); }
+
+		&.delete {
+			&::before,
+			&::after {
+				border-left-color: red;
+			}
+			min-width: 1.25rem;
+			width: 1.25rem;
+			padding: 0;
+			vertical-align: middle;
+		}
+	}
+	&.tag {
+		padding: 0.25rem 0.35rem;
+		height: 1.5rem;
+		font-size: 0.75rem;
+
+		&.cross {
+			padding-right: 1.15rem;
+			&::before,
+			&::after {
+				content : '';
+				position: absolute;
+				top     : calc(50% - 0.5rem / 2);
+				left    : calc(100% - 0.6rem - 1px / 2);
+				height  : 0.5rem;
+			}
+		}
+	}
+}
+
+input[type='text'],
+input[type='password'] {
+	&:not(.flatpickr-input) {
+		& + button,
+		& + input[type=button],
+		& + .button {
+			max-height: 2.5rem;
+			height: 2.5rem;
+		}
+	}
+}
+
+label.checkbox {
+	display: flex;
+	input { margin-right: 0.25rem; }
+}

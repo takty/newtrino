@@ -1,0 +1,62 @@
+/**
+ *
+ * Login (SCSS)
+ *
+ * @author Takuto Yanagida @ Space-Time Inc.
+ * @version 2020-08-19
+ *
+ */
+
+
+body.login {
+    display    : grid;
+    place-items: center;
+
+	#key {
+		position: absolute;
+		left: 1rem;
+		right: 1rem;
+		bottom: 1rem;
+		opacity: 0.1;
+	}
+}
+
+.frame-login {
+	margin-bottom: 10vh;
+	width: 100%;
+	max-width: 20rem;
+
+	h1 { text-align: center; }
+
+	dl, p, nav {
+		margin-top: 1.5rem;
+	}
+
+	dd + dt { margin-top: 1.25rem; }
+	dd { margin-top: 0.5rem; }
+
+	input[type=text],
+	input[type=password] {
+		width: 100%;
+	}
+
+	nav {
+		display        : flex;
+		align-items    : center;
+		justify-content: flex-end;
+	}
+}
+
+.cookie {
+	margin-top: -0.85rem;
+
+	font-size: 0.75rem;
+	line-height: 1.35;
+	text-align: justify;
+
+	summary {
+		width: max-content;
+		cursor: default;
+	}
+	div { margin-top: 1.25rem; }
+}
