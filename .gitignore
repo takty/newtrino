@@ -1,7 +1,5 @@
 /node_modules/
 /vendor/
 /dist/
-npm-debug.log
 /sample/nt/
-!/sample/nt/post
-/_removed/
+npm-debug.log
