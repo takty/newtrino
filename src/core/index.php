@@ -32,9 +32,7 @@ if ( defined( 'NT_ADMIN' ) ) {
 	define( 'NT_URL_ADMIN', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );
 }
 
-if ( file_exists( NT_DIR_DATA . 'mode.php' ) ) {
-	require_once( NT_DIR_DATA . 'mode.php' );
-}
+if ( file_exists( NT_DIR_DATA . 'mode.php' ) ) require_once( NT_DIR_DATA . 'mode.php' );
 if ( ! defined( 'NT_MODE_DIR'  ) ) define( 'NT_MODE_DIR',  0770 );
 if ( ! defined( 'NT_MODE_FILE' ) ) define( 'NT_MODE_FILE', 0660 );
 
