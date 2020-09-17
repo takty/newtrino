@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-12
+ * @version 2020-09-17
  *
  */
 
@@ -59,8 +59,10 @@ function handle_query( array $q ): array {
 		'message' => $msg,
 		'lang'    => $lang,
 
+		'editor_js'     => get_asset_url( [ "editor.$lang.min.js", "editor.$lang.js", 'editor.min.js', 'editor.js' ] ),
 		'editor_css'    => get_asset_url( [ 'editor.min.css', 'editor.css' ] ),
 		'editor_option' => get_editor_option( $lang ),
+		'assets_url'    => NT_URL . 'data/assets/',
 
 		'post_title'    => $t_p->getTitle(),
 		'post_date'     => $t_p->getDate(),

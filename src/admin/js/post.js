@@ -3,9 +3,13 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-12
+ * @version 2020-09-17
  *
  */
+
+
+window.NT = window['NT'] || {};
+window.NT.tiny_mce_before_init = window.NT['tiny_mce_before_init'] || [];
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -161,8 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		const css  = document.getElementById('editor-css').value;
 		const json = document.getElementById('editor-option').value;
 		const opt  = json ? JSON.parse(json) : {};
+		const assetsUrl = document.getElementById('assets-url').value;
 
-		const args = Object.assign({
+		let args = Object.assign({
 			selector: '#post-content',
 			plugins: [
 				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image insertdatetime',
@@ -187,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			visual_table_class: ' ',
 			setup: (e) => { e.on('change', () => { isModified = true; }); },
 		}, opt)
+		for (let f of window.NT.tiny_mce_before_init) args = f(args, lang, assetsUrl);
 		tinymce.init(args);
 
 		let st = null

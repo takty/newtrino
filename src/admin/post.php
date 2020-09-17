@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-12
+ * @version 2020-09-17
  *
  */
 
@@ -78,6 +78,8 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <input id="lang" type="hidden" value="{{lang}}">
 <input id="editor-css" type="hidden" value="{{editor_css}}">
 <input id="editor-option" type="hidden" value="{{editor_option}}">
+<input id="assets-url" type="hidden" value="{{assets_url}}">
+<script src="{{editor_js}}"></script>
 
 <div id="dialog-placeholder">
 	<iframe id="dialog-media" class="frame"></iframe>
