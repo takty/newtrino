@@ -2,7 +2,7 @@
 namespace nt;
 /**
  *
- * Overwriting Mode Settings
+ * Overwriting Mode Settings (Sample)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
  * @version 2020-09-16
