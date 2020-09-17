@@ -18,6 +18,12 @@
 			"wrapper": true
 		},
 		{
+			"title"  : "擬似タブ・ページ",
+			"block"  : "div",
+			"classes": "pseudo-tab-page",
+			"wrapper": true
+		},
+		{
 			"title"  : "フロート解除",
 			"block"  : "div",
 			"classes": "clear"

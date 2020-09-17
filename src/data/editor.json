@@ -18,6 +18,12 @@
 			"wrapper": true
 		},
 		{
+			"title"  : "Pseudo Tab Page",
+			"block"  : "div",
+			"classes": "pseudo-tab-page",
+			"wrapper": true
+		},
+		{
 			"title"  : "Clear Float",
 			"block"  : "div",
 			"classes": "clear"
