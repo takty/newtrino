@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-12
+ * @version 2020-09-17
  *
  */
 
@@ -119,7 +119,7 @@ gulp.task('copy-css', (done) => {
 
 gulp.task('copy', gulp.series('copy-src', 'copy-css', 'copy-lib'));
 
-gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js'])
+gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js', '!src/data/*.js'])
 	.pipe($.plumber())
 	.pipe($.sourcemaps.init())
 	.pipe($.babel({
@@ -156,14 +156,27 @@ gulp.task('sample-system', () => {
 });
 
 gulp.task('sample-data', () => {
-	return gulp.src(['src/data/*', 'src/data/.htaccess'], { base: 'src' })
+	return gulp.src(['src/data/*', 'src/data/.htaccess', '!src/data/*.js'], { base: 'src' })
 		.pipe($.plumber())
 		.pipe($.ignore.include({ isFile: true }))
 		.pipe($.changed('sample/nt', { hasChanged: $.changed.compareContents }))
 		.pipe(gulp.dest('sample/nt'));
 });
 
-gulp.task('sample', gulp.series('sample-system', 'sample-data'));
+gulp.task('sample-data-js', () => gulp.src(['src/data/*.js'])
+	.pipe($.plumber())
+	.pipe($.sourcemaps.init())
+	.pipe($.babel({
+		presets: [['@babel/preset-env']],
+	}))
+	.pipe($.terser())
+	.pipe($.rename({ extname: '.min.js' }))
+	.pipe($.sourcemaps.write('.'))
+	.pipe($.changed('sample/nt/data', { hasChanged: $.changed.compareContents }))
+	.pipe(gulp.dest('sample/nt/data'))
+);
+
+gulp.task('sample', gulp.series('sample-system', 'sample-data', 'sample-data-js'));
 
 gulp.task('watch', () => {
 	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy', 'sample'));
