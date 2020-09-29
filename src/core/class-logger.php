@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-05
+ * @version 2020-09-29
  *
  */
 
@@ -47,7 +47,10 @@ class Logger {
 		} else {
 			$dirLog = dirname( $path );
 			if ( ! is_dir( $dirLog ) ) mkdir( $dirLog, NT_MODE_DIR, true );
-			if ( is_dir( $dirLog ) ) chmod( $dirLog, NT_MODE_DIR );
+			if ( is_dir( $dirLog ) ) {
+				chmod( dirname( $dirLog ), NT_MODE_DIR );
+				chmod( $dirLog, NT_MODE_DIR );
+			}
 		}
 	}
 
