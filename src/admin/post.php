@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-17
+ * @version 2020-09-29
  *
  */
 
@@ -45,7 +45,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<div class="message" id="message-enter-title" hidden><?= _ht( 'The title is blank.' ) ?></div>
 </header>
 
-<form name="form-post" id="form-post" action="post.php" method="post">
+<form name="form-post" id="form-post" action="post.php" method="post" enctype="multipart/form-data">
 	<div class="container">
 		<div class="container-sub">
 			<div class="frame frame-sub">
