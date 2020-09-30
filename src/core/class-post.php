@@ -268,7 +268,7 @@ class Post {
 		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
 		foreach ( $ms as $m ) {
-			if ( ! isset( $meta[ $m['key'] ] ) ) continue;
+			if ( empty( $meta[ $m['key'] ] ) ) continue;
 			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
 				$meta[ $m['key'] ] = self::_convertMediaUrl( $meta[ $m['key'] ], $fn );
 			}
