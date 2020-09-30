@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-19
+ * @version 2020-09-30
  *
  */
 
@@ -226,7 +226,7 @@ class Session {
 			Logger::output( 'error', "(Session::_saveSessionFile file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $path, NT_MODE_FILE );
+		@chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
@@ -250,12 +250,12 @@ class Session {
 	static private function _ensureDir( string $path ): bool {
 		if ( is_dir( $path ) ) {
 			if ( NT_MODE_DIR !== ( fileperms( $path ) & 0777 ) ) {
-				chmod( $path, NT_MODE_DIR );
+				@chmod( $path, NT_MODE_DIR );
 			}
 			return true;
 		}
 		if ( mkdir($path, NT_MODE_DIR, true ) ) {
-			chmod( $path, NT_MODE_DIR );
+			@chmod( $path, NT_MODE_DIR );
 			return true;
 		}
 		Logger::output( 'error', "(Session::_ensureDir) [$path]" );

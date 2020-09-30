@@ -81,7 +81,7 @@ class Post {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 		if ( ! is_dir( $path ) ) mkdir( $path, NT_MODE_DIR );
-		if ( is_dir( $path ) ) chmod( $path, NT_MODE_DIR );
+		if ( is_dir( $path ) ) @chmod( $path, NT_MODE_DIR );
 
 		$this->_writeInfo( $path, true );
 		$this->_writeContent( $path );
@@ -107,7 +107,7 @@ class Post {
 			Logger::output( 'error', "(Post::_writeSearchIndex file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $path, NT_MODE_FILE );
+		@chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
@@ -248,7 +248,7 @@ class Post {
 			Logger::output( 'error', "(Post::_writeInfoFile file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $path, NT_MODE_FILE );
+		@chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 
@@ -412,7 +412,7 @@ class Post {
 			Logger::output( 'error', "(Post::_writeContent file_put_contents) [$path]" );
 			return false;
 		}
-		chmod( $path, NT_MODE_FILE );
+		@chmod( $path, NT_MODE_FILE );
 		return true;
 	}
 

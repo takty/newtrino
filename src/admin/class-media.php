@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-19
+ * @version 2020-09-30
  *
  */
 
@@ -87,10 +87,10 @@ class Media {
 		$path = $this->_dir . $fileName;
 		if ( is_uploaded_file( $tmpFile ) ) {
 			if ( ! is_dir( $this->_dir ) ) mkdir( $this->_dir, NT_MODE_DIR );
-			if ( is_dir( $this->_dir ) ) chmod( $this->_dir, NT_MODE_DIR );
+			if ( is_dir( $this->_dir ) ) @chmod( $this->_dir, NT_MODE_DIR );
 
 			if ( move_uploaded_file( $tmpFile, $path ) ) {
-				chmod( $path, NT_MODE_FILE );
+				@chmod( $path, NT_MODE_FILE );
 				$this->_addMeta( $fileName );
 				return true;
 			}
@@ -160,7 +160,7 @@ class Media {
 			Logger::output( 'error', "(Media::_loadMeta file_put_contents) [$out_path]" );
 			return;
 		}
-		chmod( $path, NT_MODE_FILE );
+		@chmod( $path, NT_MODE_FILE );
 	}
 
 	private function _addMeta( string $fileName ): void {
@@ -302,7 +302,7 @@ class Media {
 				imagegif( $img, $path );
 				break;
 		}
-		chmod( $path, NT_MODE_FILE );
+		@chmod( $path, NT_MODE_FILE );
 	}
 
 }

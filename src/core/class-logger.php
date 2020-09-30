@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-29
+ * @version 2020-09-30
  *
  */
 
@@ -35,7 +35,7 @@ class Logger {
 
 	static private function _ensureFile( string $path ): void {
 		if ( is_file( $path ) ) {
-			chmod( $path, NT_MODE_FILE );
+			@chmod( $path, NT_MODE_FILE );
 			$fsize = filesize( $path );
 			if ( self::MAX_SIZE < $fsize ) {
 				$pi  = pathinfo( $path );
@@ -48,8 +48,8 @@ class Logger {
 			$dirLog = dirname( $path );
 			if ( ! is_dir( $dirLog ) ) mkdir( $dirLog, NT_MODE_DIR, true );
 			if ( is_dir( $dirLog ) ) {
-				chmod( dirname( $dirLog ), NT_MODE_DIR );
-				chmod( $dirLog, NT_MODE_DIR );
+				@chmod( dirname( $dirLog ), NT_MODE_DIR );
+				@chmod( $dirLog, NT_MODE_DIR );
 			}
 		}
 	}
