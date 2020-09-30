@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-17
+ * @version 2020-09-30
  *
  */
 
@@ -100,7 +100,7 @@ gulp.task('copy-src', () => gulp.src([
 		'src/**/.htaccess',
 		'!src/*.js',
 		'!src/**/*.js',
-		'!src/data/*',
+		'!src/data/**/*',
 		'!src/admin/sass/*',
 	], { base: 'src' })
 	.pipe($.plumber())
@@ -183,5 +183,7 @@ gulp.task('watch', () => {
 	gulp.watch('src/**/*.js', gulp.series('js', 'sample'));
 	gulp.watch('src/**/*.scss', gulp.series('sass', 'sample'));
 });
+
+gulp.task('build', gulp.parallel('copy', 'js', 'sass'));
 
 gulp.task('default', gulp.series('copy', 'js', 'sass', 'sample', 'watch'));
