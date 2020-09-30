@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-12
+ * @version 2020-09-30
  *
  */
 
@@ -149,6 +149,9 @@ class Post {
 	}
 
 	private function _assignMetaInternal( array $ms, array $vals ): void {
+		global $nt_store;
+		$url = $nt_store->getPostUrl( $this->_id, $this->_subPath );
+
 		foreach ( $ms as $m ) {
 			if ( $m['type'] === 'group' ) {
 				$this->_assignMetaInternal( $m['items'], $vals );
@@ -174,6 +177,10 @@ class Post {
 			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
 				$json = $vals["meta:$key"];
 				$d = json_decode( $json, true );
+				$d = self::_convertMediaUrl( $d, function ( $tar ) use ( $url ) {
+					$tar = self::_convertToPortableUrl( $url, $tar );
+					return self::_convertToActualUrl( $url, $tar );
+				} );
 				if ( $d !== null ) $vals["meta:$key"] = $d;
 			}
 			$this->setMetaValue( $key, $vals["meta:$key"] );
@@ -204,7 +211,7 @@ class Post {
 		$this->_date     = $info['date'];
 		$this->_modified = $info['modified'];
 		$this->_taxonomy = $info['taxonomy'];
-		$this->_meta     = $info['meta'];
+		$this->_meta     = $this->_convertMediaUrlToActual( $postDir, $info['type'], $info['meta'] );
 		if ( isset( $info['_index_score'] ) ) $this->_indexScore = $info['_index_score'];
 		return true;
 	}
@@ -218,7 +225,7 @@ class Post {
 			'date'     => $this->_date,
 			'modified' => $this->_modified,
 			'taxonomy' => $this->_taxonomy,
-			'meta'     => $this->_meta,
+			'meta'     => $this->_convertMediaUrlToPortable( $postDir, $this->_type, $this->_meta ),
 		];
 		return $this->_writeInfoFile( $postDir, $info );
 	}
@@ -243,6 +250,42 @@ class Post {
 		}
 		chmod( $path, NT_MODE_FILE );
 		return true;
+	}
+
+	private function _convertMediaUrlToActual( string $postDir, string $type, array $meta ) {
+		return self::_convertMediaUrls( $type, $meta, function ( $tar ) use ( $postDir ) {
+			return self::_convertToActualUrl( $postDir, $tar );
+		} );
+	}
+
+	private function _convertMediaUrlToPortable( string $postDir, string $type, array $meta ) {
+		return self::_convertMediaUrls( $type, $meta, function ( $tar ) use ( $postDir ) {
+			return self::_convertToPortableUrl( $postDir, $tar );
+		} );
+	}
+
+	static private function _convertMediaUrls( string $type, array $meta, callable $fn ) {
+		global $nt_store;
+		$ms = $nt_store->type()->getMetaAll( $type );
+		foreach ( $ms as $m ) {
+			if ( ! isset( $meta[ $m['key'] ] ) ) continue;
+			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
+				$meta[ $m['key'] ] = self::_convertMediaUrl( $meta[ $m['key'] ], $fn );
+			}
+		}
+		return $meta;
+	}
+
+	static private function _convertMediaUrl( array $d, callable $fn ) {
+		if ( isset( $d['url'] ) )    $d['url']    = call_user_func( $fn, $d['url'] );
+		if ( isset( $d['minUrl'] ) ) $d['minUrl'] = call_user_func( $fn, $d['minUrl'] );
+		if ( isset( $d['srcset'] ) ) {
+			$ss = explode( ',', $d['srcset'] );
+			$ss = array_map( 'trim', $ss );
+			$ss = array_map( $fn, $ss );
+			$d['srcset'] = implode( ', ', $ss );
+		}
+		return $d;
 	}
 
 	// ----
