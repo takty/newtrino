@@ -38,8 +38,10 @@ body.list {
 	border-bottom: 1px solid #ccc;
 	width: 100%;
 
-	display: block;
-	overflow-x: scroll;
+	@include for-ph-o {
+		display: block;
+		overflow-x: scroll;
+	}
 
 	tr:nth-of-type(2n) { background-color: hsl(150, 10%, 95%); }
 
