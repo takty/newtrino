@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-30
+ * @version 2020-10-01
  *
  */
 
@@ -38,6 +38,9 @@ body.list {
 	border-bottom: 1px solid #ccc;
 	width: 100%;
 
+	display: block;
+	overflow-x: scroll;
+
 	tr:nth-of-type(2n) { background-color: hsl(150, 10%, 95%); }
 
 	th {
@@ -60,6 +63,7 @@ body.list {
 		&.title {
 			width: 100%;
 			white-space: normal;
+			min-width: 8rem;
 		}
 		&.taxonomy {
 			a { white-space: nowrap; }
