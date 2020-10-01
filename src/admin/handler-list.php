@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-14
+ * @version 2020-10-01
  *
  */
 
@@ -99,7 +99,7 @@ function _create_type_filter_view( array $query, array $types, string $list_url 
 	$cur = $query['type'] ?? '';
 	$as = [];
 	foreach ( $types as $slug => $d ) {
-		$url = create_canonical_url( $list_url, $query, [ 'type' => $slug ] );
+		$url = create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null ] );
 		$p = [ 'label' => $d['label'], 'url' => $url ];
 		if ( $slug === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
