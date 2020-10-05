@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-30
+ * @version 2020-10-05
  *
  */
 
@@ -29,6 +29,10 @@ function copySync(from, to) {
 	}
 }
 
+function packageDir(name) {
+	return path.dirname(require.resolve(name + '/package.json'));
+}
+
 const SRC_ADMIN = './src/admin/';
 const DIST_BASE = './dist/';
 const DIST_ADMIN = DIST_BASE + 'admin/';
@@ -41,27 +45,28 @@ const VERSION     = 'v' + config['version'];
 
 // -----------------------------------------------------------------------------
 
-
 gulp.task('copy-jssha', (done) => {
-	copySync('./node_modules/jssha/dist/sha256.js', DIST_ADMIN + 'js/jssha/');
+	const dir = packageDir('jssha');
+	copySync(dir + '/sha256.js', DIST_ADMIN + 'js/jssha/');
 	done();
 });
 
 gulp.task('copy-flatpickr', (done) => {
-	const dir = './node_modules/flatpickr/dist/';
-	copySync(dir + 'flatpickr.min.js', DIST_ADMIN + 'js/flatpickr/');
-	copySync(dir + 'flatpickr.min.css', DIST_ADMIN + 'css/flatpickr/');
-	copySync(dir + 'l10n/ja.js', DIST_ADMIN + 'js/flatpickr/');
+	const dir = packageDir('flatpickr');
+	copySync(dir + '/flatpickr.min.js', DIST_ADMIN + 'js/flatpickr/');
+	copySync(dir + '/flatpickr.min.css', DIST_ADMIN + 'css/flatpickr/');
+	copySync(dir + '/l10n/ja.js', DIST_ADMIN + 'js/flatpickr/');
 	done();
 });
 
 gulp.task('copy-tinymce', (done) => {
-	const dir = './node_modules/tinymce/';
-	copySync(dir + 'tinymce.min.js', DIST_ADMIN + 'js/tinymce/');
-	copySync(dir + 'plugins/*', DIST_ADMIN + 'js/tinymce/plugins/');
-	copySync(dir + 'skins/lightgray/*', DIST_ADMIN + 'js/tinymce/skins/lightgray/');
-	copySync(dir + 'themes/modern/*', DIST_ADMIN + 'js/tinymce/themes/modern/');
-	copySync('./node_modules/tinymce-i18n/langs/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
+	const dir = packageDir('tinymce');
+	copySync(dir + '/tinymce.min.js', DIST_ADMIN + 'js/tinymce/');
+	copySync(dir + '/plugins/*', DIST_ADMIN + 'js/tinymce/plugins/');
+	copySync(dir + '/skins/lightgray/*', DIST_ADMIN + 'js/tinymce/skins/lightgray/');
+	copySync(dir + '/themes/modern/*', DIST_ADMIN + 'js/tinymce/themes/modern/');
+	const dir_i18n = packageDir('tinymce-i18n');
+	copySync(dir_i18n + '/langs/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
 	const ups = [  // Removed plugins
 		'autoresize',	'autosave',		'bbcode',	'codesample',
 		'emoticons',	'fullpage',		'help',		'importcss',
@@ -73,7 +78,8 @@ gulp.task('copy-tinymce', (done) => {
 });
 
 gulp.task('copy-nacss-reset', (done) => {
-	copySync('./node_modules/nacss-reset/dist/reset.min.css', DIST_ADMIN + 'css/');
+	const dir = packageDir('nacss-reset');
+	copySync(dir + '/reset.min.css', DIST_ADMIN + 'css/');
 	done();
 });
 
