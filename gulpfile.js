@@ -47,15 +47,15 @@ const VERSION     = 'v' + config['version'];
 
 gulp.task('copy-jssha', (done) => {
 	const dir = packageDir('jssha');
-	copySync(dir + '/sha256.js', DIST_ADMIN + 'js/jssha/');
+	copySync(dir + '/dist/sha256.js', DIST_ADMIN + 'js/jssha/');
 	done();
 });
 
 gulp.task('copy-flatpickr', (done) => {
 	const dir = packageDir('flatpickr');
-	copySync(dir + '/flatpickr.min.js', DIST_ADMIN + 'js/flatpickr/');
-	copySync(dir + '/flatpickr.min.css', DIST_ADMIN + 'css/flatpickr/');
-	copySync(dir + '/l10n/ja.js', DIST_ADMIN + 'js/flatpickr/');
+	copySync(dir + '/dist/flatpickr.min.js', DIST_ADMIN + 'js/flatpickr/');
+	copySync(dir + '/dist/flatpickr.min.css', DIST_ADMIN + 'css/flatpickr/');
+	copySync(dir + '/dist/l10n/ja.js', DIST_ADMIN + 'js/flatpickr/');
 	done();
 });
 
@@ -79,7 +79,7 @@ gulp.task('copy-tinymce', (done) => {
 
 gulp.task('copy-nacss-reset', (done) => {
 	const dir = packageDir('nacss-reset');
-	copySync(dir + '/reset.min.css', DIST_ADMIN + 'css/');
+	copySync(dir + '/dist/reset.min.css', DIST_ADMIN + 'css/');
 	done();
 });
 
