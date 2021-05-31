@@ -20,7 +20,7 @@ message {
 	}
 }
 
-respose {
+response {
 	status:
 	post:
 	posts:
