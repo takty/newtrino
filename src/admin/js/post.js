@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-17
+ * @version 2021-05-31
  *
  */
 
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		isModified = true;
 		const es = document.getElementsByClassName('message');
 		for (let e of es) e.style.display = '';
-		const um = document.getElementById('message-updated');
+		const um = document.getElementById('message-notification');
 		um.innerText = '';
 	}
 
