@@ -3,7 +3,7 @@
  * Container Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-03-04
+ * @version 2020-09-15
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -28,9 +28,24 @@ $stile-container-4-child-min-width: 10rem !default;
 
 %stile-container-child-inside {
 	flex-grow: 1;
-	> *:first-child { margin-top:    0; }
-	> *:last-child  { margin-bottom: 0; }
-	*[data-stile ~= 'only-child-element'] { margin: { top: 0; bottom: 0; } }
+	> *:first-child {
+		margin-top: 0;
+		> *:first-child { margin-top: 0; }
+	}
+	> *:last-child  {
+		margin-bottom: 0;
+		> *:last-child  { margin-bottom: 0; }
+	}
+	*[data-stile ~= 'only-child-element'] {
+		margin: { top: 0; bottom: 0; }
+	}
+	.aligncenter,
+	.alignleft [data-stile ~= 'aligncenter'],
+	.alignright[data-stile ~= 'aligncenter'] {
+		&[data-stile ~= 'has-only-child-element'] {
+			margin: { top: 0; bottom: 0; }
+		}
+	}
 }
 
 @mixin stile-container-column {
@@ -40,10 +55,12 @@ $stile-container-4-child-min-width: 10rem !default;
 		@include layout-gap($stile-container-column-gap, $stile-container-column-gap-v);
 		display  : flex;
 		flex-wrap: wrap;
+		pointer-events: none;
 
 		// One of Columns
 		> * {
 			@extend %stile-container-child-inside;
+			pointer-events: auto;
 		}
 	}
 	.column-2 {
@@ -82,11 +99,13 @@ $stile-container-4-child-min-width: 10rem !default;
 		display        : flex;
 		flex-wrap      : wrap;
 		justify-content: space-between;
+		pointer-events : none;
 
 		// One of Cards
 		> * {
 			@extend %stile-container-child-inside;
 			&:empty { margin-right: $stile-container-card-gap; }
+			pointer-events: auto;
 		}
 	}
 	.card-2 {

@@ -3,7 +3,7 @@
  * Alignment Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-03-04
+ * @version 2020-09-15
  *
  * @import '../basic/base';
  * @import '../basic/query';
@@ -36,10 +36,21 @@ $stile-alignment-size-width         : 72rem !default;
 		.aligncenter,
 		.alignleft [data-stile ~= 'aligncenter'],
 		.alignright[data-stile ~= 'aligncenter'] {
-			&[data-stile ~= 'has-only-child-element'],
 			&[data-stile ~= 'only-child-element'],
+			&[data-stile ~= 'has-only-child-element'],
 			> *[data-stile ~= 'only-child-element'] {
-				margin: { top: 0; bottom: 0; }
+				margin-top: 0;
+			}
+		}
+	}
+	*:last-child {
+		.aligncenter,
+		.alignleft [data-stile ~= 'aligncenter'],
+		.alignright[data-stile ~= 'aligncenter'] {
+			&[data-stile ~= 'only-child-element'],
+			&[data-stile ~= 'has-only-child-element'],
+			> *[data-stile ~= 'only-child-element'] {
+				margin-bottom: 0;
 			}
 		}
 	}
