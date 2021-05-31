@@ -271,7 +271,6 @@ class Store {
 			Logger::output( 'error', "(Store::createNewPost is_writable) Directory Is Not Writable [$this->_dirRoot . $subPath]" );
 			return null;
 		}
-		return null;
 		if ( $dir = opendir( $archPath ) ) {
 			flock( $dir, LOCK_EX );
 			$id = $this->_ensureUniquePostId( $archPath, $dateRaw );
