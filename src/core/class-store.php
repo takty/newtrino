@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-05
+ * @version 2021-05-31
  *
  */
 
@@ -244,10 +244,13 @@ class Store {
 
 	private function _loadInfo( string $postDir ): ?array {
 		$infoPath = $postDir . '/' . Post::INFO_FILE_NAME;
+		$json     = false;
 		try {
-			$json = file_get_contents( $infoPath );
+			if ( file_exists( $infoPath ) ) {
+				$json = file_get_contents( $infoPath );
+			}
 		} catch ( Error $e ) {
-			$json = false;
+			// Do nothing
 		}
 		if ( $json === false ) {
 			Logger::output( 'error', "(Post::_loadInfo file_get_contents) [$infoPath]" );
@@ -264,6 +267,11 @@ class Store {
 		$dateRaw = date( 'YmdHis' );
 		list( $archPath, $subPath ) = $this->createArchAndSubPath( $type, $dateRaw, true );
 
+		if ( ! is_writable( $this->_dirRoot . $subPath ) ) {
+			Logger::output( 'error', "(Store::createNewPost is_writable) Directory Is Not Writable [$this->_dirRoot . $subPath]" );
+			return null;
+		}
+		return null;
 		if ( $dir = opendir( $archPath ) ) {
 			flock( $dir, LOCK_EX );
 			$id = $this->_ensureUniquePostId( $archPath, $dateRaw );
@@ -322,6 +330,10 @@ class Store {
 		$srcPath = $this->getPostDir( $id, $subPath );
 		if ( ! is_dir( $srcPath ) ) {
 			Logger::output( 'error', "(Store::removePost is_dir) Directory Does Not Exist [$srcPath]" );
+			return;
+		}
+		if ( ! is_writable( $this->_dirRoot . $subPath ) ) {
+			Logger::output( 'error', "(Store::removePost is_writable) Directory Is Not Writable [$this->_dirRoot . $subPath]" );
 			return;
 		}
 		rename( $this->getPostDir( $id, $subPath ), $this->getPostDir( $removed_id, $subPath ) );

@@ -5,12 +5,12 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-30
+ * @version 2021-05-31
  *
  */
 
 
-error_reporting( -1 );
+error_reporting( E_ALL );
 ini_set( 'display_errors', 'On' );
 
 require_once( __DIR__ . '/util/url.php' );

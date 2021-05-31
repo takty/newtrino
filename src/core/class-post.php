@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-30
+ * @version 2021-05-31
  *
  */
 
@@ -177,6 +177,7 @@ class Post {
 			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
 				$json = $vals["meta:$key"];
 				$d = json_decode( $json, true );
+				if ( empty( $d ) || ! is_array( $d ) ) continue;
 				$d = self::_convertMediaUrl( $d, function ( $tar ) use ( $url ) {
 					$tar = self::_convertToPortableUrl( $url, $tar );
 					return self::_convertToActualUrl( $url, $tar );
@@ -268,7 +269,7 @@ class Post {
 		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
 		foreach ( $ms as $m ) {
-			if ( empty( $meta[ $m['key'] ] ) ) continue;
+			if ( empty( $meta[ $m['key'] ] ) || ! is_array( $meta[ $m['key'] ] ) ) continue;
 			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
 				$meta[ $m['key'] ] = self::_convertMediaUrl( $meta[ $m['key'] ], $fn );
 			}
