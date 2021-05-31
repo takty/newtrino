@@ -32,7 +32,11 @@
 
 		"Do you want to move the post to trash?": "この投稿をゴミ箱に移動してもよろしいですか？",
 		"Do you want to delete the post permanently?": "この投稿を完全に削除してもよろしいですか？",
-		"Do you want to empty trash?": "ゴミ箱を空にしてもよろしいですか？"
+		"Do you want to empty trash?": "ゴミ箱を空にしてもよろしいですか？",
+
+		"A new post could not be created.": "新規投稿を作成できませんでした。",
+		"The post could not be updated.": "投稿を更新できませんでした。",
+		"The post could not be viewed.": "投稿を表示できませんでした。"
 	},
 	"post": {
 		"Publish": "公開",

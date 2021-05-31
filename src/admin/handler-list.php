@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-10-01
+ * @version 2021-05-31
  *
  */
 
@@ -36,6 +36,8 @@ function handle_query(): array {
 	$date    = get_param( 'date',     null,      $query );
 	$page    = get_param( 'page',     null,      $query );
 	$status  = get_param( 'status',   null,      $query );
+	$error   = get_param( 'error',    null,      $query );
+	unset( $query['error'] );
 
 	if ( isset( $orig_query['remove_id'] ) ) {
 		$nt_store->removePost( $orig_query['remove_id'] );
@@ -58,6 +60,14 @@ function handle_query(): array {
 		return _process_post_for_view( $p, $query, $list_url, $post_url, $is_trash );
 	}, $ret['posts'] );
 
+	$msg = '';
+	if ( $error === 'new' ) {
+		$msg = _ht( 'A new post could not be created.' );
+	} else if ( $error === 'update' ) {
+		$msg = _ht( 'The post could not be updated.' );
+	} else if ( $error === 'view' ) {
+		$msg = _ht( 'The post could not be viewed.' );
+	}
 	return [
 		'posts'            => $ps,
 		'pagination'       => _create_pagination_view( $query, $ret['page_count'], $list_url ),
@@ -72,7 +82,8 @@ function handle_query(): array {
 		],
 		'list_trash'  => $is_trash ? '#' : create_canonical_url( $list_url, $query, [ 'status' => '_trash' ] ),
 		'list_all'    => $is_trash ? create_canonical_url( $list_url, $query, [ 'status' => null ] ) : '#',
-		'empty_trash' => $is_trash ? create_canonical_url( $list_url, $query, [ 'empty_trash' => true, 'status' => null ] ) : '#'
+		'empty_trash' => $is_trash ? create_canonical_url( $list_url, $query, [ 'empty_trash' => true, 'status' => null ] ) : '#',
+		'message'     => $msg,
 	];
 }
 
@@ -88,6 +99,7 @@ function _rearrange_query( array $query ): array {
 		'date'     => 'slug',
 		'type'     => 'slug',
 		'status'   => 'slug',
+		'error'    => 'string',
 	], 'taxonomy' );
 }
 

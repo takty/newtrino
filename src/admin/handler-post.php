@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-17
+ * @version 2021-05-31
  *
  */
 
@@ -36,11 +36,13 @@ function handle_query( array $q ): array {
 	switch ( $q_mode ) {
 		case 'new':
 			$t_p = $nt_store->createNewPost( $query['type'] );
+			if ( ! $t_p ) break;
 			$nt_session->addTempDir( $nt_store->getPostDir( $t_p->getId(), null ) );
 			$t_p->setDate();
 			break;
 		case 'update':
 			$p = $nt_store->getPost( $q_id );
+			if ( ! $p ) break;
 			$p->assign( $q );
 			$t_p = $nt_store->writePost( $p );
 			$msg = _ht( 'Update Complete' );
@@ -49,7 +51,10 @@ function handle_query( array $q ): array {
 			$t_p = $nt_store->getPost( $q_id );
 			break;
 	}
-
+	if ( ! isset( $t_p ) ) {
+		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => ( empty( $q_mode ) ? 'view' : $q_mode ) ] ) );
+		exit;
+	}
 	return [
 		'list_url'    => create_canonical_url( $list_url, $query, [ 'id' => null ] ),
 		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update', 'id' => $t_p->getId() ] ),
@@ -248,6 +253,7 @@ function echo_metabox_date_range( Post $post, array $m, string $label, bool $int
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
 	$json = ( $mv ) ? json_encode( $mv ) : '';
+	$json = is_string( $json ) ? $json : '';
 
 	$cls = $internal ? '' : ' frame frame-sub';
 ?>
@@ -266,6 +272,7 @@ function echo_metabox_media( Post $post, array $m, string $label, bool $internal
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
 	$json = ( $mv ) ? json_encode( $mv ) : '';
+	$json = is_string( $json ) ? $json : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 
 	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
@@ -288,6 +295,7 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 	$size = $m['option']['size'] ?? 'medium';
 	$mv   = $post->getMetaValue( $key );
 	$json = ( $mv ) ? json_encode( $mv ) : '';
+	$json = is_string( $json ) ? $json : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('url("' . $mv['minUrl'] . '")') : '';
 

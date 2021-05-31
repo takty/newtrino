@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2021-05-31
  *
  */
 
@@ -30,6 +30,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <header class="header">
 	<div class="inner">
 		<h1>Newtrino</h1>
+<?php \nt\begin(); ?>
+		<span class="message" id="message-notification">{{message}}</span>
+<?php \nt\end( $view, ! empty( $view['message'] ) ); ?>
 		<span class="spacer"></span>
 		<a href="login.php" class="button"><?= _ht( 'Log Out' ) ?></a>
 	</div>
