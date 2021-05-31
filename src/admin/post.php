@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-29
+ * @version 2021-05-31
  *
  */
 
@@ -38,7 +38,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <header class="header">
 	<div class="inner">
 		<h1>Newtrino</h1>
-		<span class="message" id="message-updated">{{message}}</span>
+		<span class="message" id="message-notification">{{message}}</span>
 		<span class="spacer"></span>
 		<a class="button" href="{{list_url}}" id="btn-list"><?= _ht( 'Post List' ) ?></a>
 	</div>
