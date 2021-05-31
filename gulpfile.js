@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-10-05
+ * @version 2021-05-31
  *
  */
 
@@ -20,11 +20,15 @@ function copySync(from, to) {
 	const isToDir = to.endsWith('/');
 	const files = glob.sync(from);
 	for (let f of files) {
-		if (isToDir) {
-			const fn = path.basename(f);
-			fs.copySync(f, path.join(to, fn));
+		const tar = isToDir ? path.join(to, path.basename(f)) : to;
+		if (fs.statSync(f).isFile()) {
+			const fromBuf = fs.readFileSync(f);
+			const toBuf = fs.readFileSync(tar);
+			if (!fromBuf.equals(toBuf)) {
+				fs.copySync(f, tar);
+			}
 		} else {
-			fs.copySync(f, to);
+			fs.copySync(f, tar);
 		}
 	}
 }
@@ -124,6 +128,7 @@ gulp.task('copy-css', (done) => {
 });
 
 gulp.task('copy', gulp.series('copy-src', 'copy-css', 'copy-lib'));
+gulp.task('copy-watch', gulp.series('copy-src', 'copy-css'));
 
 gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js', '!src/data/*.js'])
 	.pipe($.plumber())
@@ -185,7 +190,7 @@ gulp.task('sample-data-js', () => gulp.src(['src/data/*.js'])
 gulp.task('sample', gulp.series('sample-system', 'sample-data', 'sample-data-js'));
 
 gulp.task('watch', () => {
-	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy', 'sample'));
+	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy-watch', 'sample'));
 	gulp.watch('src/**/*.js', gulp.series('js', 'sample'));
 	gulp.watch('src/**/*.scss', gulp.series('sass', 'sample'));
 });
