@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-02
  *
  */
 
@@ -58,6 +58,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{/status@select}}
 					</select>
 				</div>
+				<hr class="horizontal">
 				<div class="button-row">
 					<button id="btn-dialog-preview" type="button" data-action="{{preview_url}}"><?= _ht( 'Preview' ) ?></button>
 					<button class="accent right" id="btn-update" type="button" data-action="{{update_url}}"><?= _ht( 'Update' ) ?></button>

@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-02
  *
  */
 
@@ -30,12 +30,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <header class="header">
 	<div class="inner">
 		<h1>Newtrino</h1>
-<?php \nt\begin(); ?>
-		<span class="message" id="message-notification">{{message}}</span>
-<?php \nt\end( $view, ! empty( $view['message'] ) ); ?>
 		<span class="spacer"></span>
 		<a href="login.php" class="button"><?= _ht( 'Log Out' ) ?></a>
 	</div>
+<?php \nt\begin(); ?>
+	<div class="message" id="message-error">{{message}}</div>
+<?php \nt\end( $view, ! empty( $view['message'] ) ); ?>
 </header>
 
 <div class="container">
@@ -69,6 +69,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{/filter.per_page}}
 			</select>
 		</div>
+		<hr class="horizontal">
 		<div class="button-row right">
 			<select id="sel-new-post" class="accent" onchange="document.location.href = this.value;">
 				<option value="#"><?= _ht( "New Post" ) ?></option>
@@ -90,52 +91,56 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\end( $view, isset( $view['taxonomy@cancels'] ) ); ?>
 <?php \nt\begin(); ?>
 		<table class="list-item">
-			<tr>
-				<th><?= _ht( 'Status' ) ?></th>
-				<th class="title"><?= _ht( 'Title' ) ?></th>
+			<thead>
+				<tr>
+					<th><?= _ht( 'Status' ) ?></th>
+					<th class="title"><?= _ht( 'Title' ) ?></th>
 {{#meta@cols}}
-				<th>{{label}}</th>
+					<th>{{label}}</th>
 {{/meta@cols}}
 {{#taxonomy@cols}}
-				<th>{{label}}</th>
+					<th>{{label}}</th>
 {{/taxonomy@cols}}
-				<th><?= _ht( 'Date' ) ?></th>
-				<th></th>
-			</tr>
+					<th><?= _ht( 'Date' ) ?></th>
+					<th></th>
+				</tr>
+			<thead>
+			<tbody>
 {{#posts}}
-			<tr data-id="{{id}}">
-				<td>
+				<tr data-id="{{id}}">
+					<td>
 {{#trash}}
-					<button class="restore restore-post" data-href="{{restore}}"><?= _ht( 'Restore' ) ?></button>
+						<button class="restore restore-post" data-href="{{restore}}"><?= _ht( 'Restore' ) ?></button>
 {{/trash}}
 {{^trash}}
-					<select class="post-status">
+						<select class="post-status">
 {{#status@select}}
-						<option value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+							<option value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/status@select}}
-					</select>
+						</select>
 {{/trash}}
-				</td>
-				<td class="title"><a href="{{url}}" class="title">{{title}}</a></td>
+					</td>
+					<td class="title"><a href="{{url}}" class="title">{{title}}</a></td>
 {{#meta@cols}}
-				<td class="meta meta-type-{{type}}"><div>{{{_label}}}</div></td>
+					<td class="meta meta-type-{{type}}"><div>{{{_label}}}</div></td>
 {{/meta@cols}}
 {{#taxonomy@cols}}
-				<td class="taxonomy {{taxonomy}}"><div>
+					<td class="taxonomy {{taxonomy}}"><div>
 {{#terms}}
-				<a href="{{url}}">{{label}}</a>
+					<a href="{{url}}">{{label}}</a>
 {{/terms}}
-				</div></td>
+					</div></td>
 {{/taxonomy@cols}}
-				<td class="date"><span>{{date@sep.0}}</span><span>{{date@sep.1}}</span></td>
+					<td class="date"><span>{{date@sep.0}}</span><span>{{date@sep.1}}</span></td>
 {{#trash}}
-				<td><button class="delper mini cross remove-post" data-href="{{url_remove}}"></button></td>
+					<td><button class="delper mini cross remove-post" data-href="{{url_remove}}"></button></td>
 {{/trash}}
 {{^trash}}
-				<td><button class="trash mini cross remove-post" data-href="{{url_remove}}"></button></td>
+					<td><button class="trash mini cross remove-post" data-href="{{url_remove}}"></button></td>
 {{/trash}}
-			</tr>
+				</tr>
 {{/posts}}
+			</tbody>
 		</table>
 <?php \nt\end( $view ); ?>
 

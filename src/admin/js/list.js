@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-02
  *
  */
 
@@ -51,8 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		window.location.href = href;
 	}
 
-	function clearNotificationMessage() {
-		const mn = document.getElementById('message-notification');
+	function clearErrorMessage() {
+		const mn = document.getElementById('message-error');
 		mn.innerText = '';
 	}
 
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const s = e.target.value;
 			const id = e.target.parentElement.parentElement.dataset.id;
 			setPostStatus(id, s);
-			clearNotificationMessage();
+			clearErrorMessage();
 		});
 	}
 
