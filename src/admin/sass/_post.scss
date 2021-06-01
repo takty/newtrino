@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-01
  *
  */
 
@@ -39,7 +39,7 @@
 	align-items    : center;
 	justify-content: center;
 
-	background-color: rgba(#000, 0.5);
+	background-color: $color-dialog-placeholder-background;
 
 	&.visible { display: flex; }
 }
@@ -186,10 +186,10 @@
 		user-select: none;
 		width: 5.25rem;
 
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		background-color: #fff;
-		&:hover { border-color: #88f; }
+		border          : 1px solid $color-button-border;
+		border-radius   : $radius-button;
+		background-color: $color-button-background;
+		&:hover { border-color: $color-button-border-hover; }
 
 		&::before {
 			content: '';
@@ -240,7 +240,10 @@
 body.post {
 	.mce-tinymce {
 		box-shadow: none;
-		border-radius: 4px;
+		border-radius: $radius-button;
+	}
+	.mce-panel {
+		border-color: $color-button-border;
 	}
 	.mce-container,
 	.mce-widget,
@@ -258,7 +261,7 @@ body.post {
 		font-family: unset;
 	}
 	.mce-floatpanel {
-		border-radius: 2px;
+		border-radius: $radius-button;
 	}
 	.mce-title {
 		font-size: 1rem;
@@ -266,13 +269,13 @@ body.post {
 	}
 	.mce-btn,
 	.mce-textbox {
-		border-radius: 4px;
+		border-radius: $radius-button;
 	}
 	.mce-container[role='tabpanel'] {
 		background-color: #fff;  // Hack for fixing borders
 	}
 	i.mce-i-checkbox {
-		border-radius: 2px;
+		border-radius: $radius-button / 2;
 	}
 	.mce-window[aria-label='Source code'] {
 		.mce-textbox {
@@ -280,6 +283,9 @@ body.post {
 		}
 	}
 	.mce-statusbar {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 $radius-button $radius-button;
+	}
+	.mce-open {
+		border-radius: 0 $radius-button $radius-button 0;
 	}
 }

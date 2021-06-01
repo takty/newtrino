@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-10-01
+ * @version 2021-06-01
  *
  */
 
@@ -35,7 +35,7 @@ body.list {
 }
 
 .list-item {
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid $color-line;
 	width: 100%;
 
 	@include for-ph-o {
@@ -43,10 +43,12 @@ body.list {
 		overflow-x: scroll;
 	}
 
-	tr:nth-of-type(2n) { background-color: hsl(150, 10%, 95%); }
-
+	tbody {
+		tr:nth-of-type(2n + 1) { background-color: hsl(0, 0%, 100%, 90%); }
+		tr:nth-of-type(2n)     { background-color: hsl(0, 0%, 100%, 25%); }
+	}
 	th {
-		border-bottom: 1px solid #ccc;
+		border-bottom: 1px solid $color-line;
 		text-align: center;
 		white-space: nowrap;
 
@@ -56,8 +58,8 @@ body.list {
 		padding: 0.75rem 0.5rem;
 		@include for-tl { padding: { left: 0.75rem; right: 0.75rem; } }
 
-		&:first-child { padding-left: 2px; }
-		&:last-child { padding-right: 2px; }
+		&:first-child { padding-left: 4px; }
+		&:last-child { padding-right: 4px; }
 	}
 	td {
 		line-height: 1.35;

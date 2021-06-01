@@ -3,7 +3,7 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-19
+ * @version 2021-06-01
  *
  */
 
@@ -42,7 +42,7 @@ body.media {
 		width : 6rem;
 		height: 6rem;
 
-		box-shadow: 0 0 4px #ccc inset;
+		box-shadow: 0 0 4px $color-line inset;
 		border-radius: 2px;
 
 		img {
