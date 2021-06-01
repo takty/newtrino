@@ -31,7 +31,7 @@ body {
 
 body:not(.dialog) {
 	padding: { top: 0.75rem; bottom: 0.75rem; }
-	background-image: linear-gradient(to right bottom, hsl(150, 45%, 70%) 0%, hsl(240, 55%, 75%) 100%);
+	background-image: linear-gradient(to right bottom, hsl(150, 40%, 70%) 0%, hsl(240, 50%, 70%) 100%);
 }
 
 a {
@@ -223,7 +223,7 @@ body.login,
 body.list,
 body.post {
 	h1 {
-		text-shadow: 0 0 2px hsla(0, 0%, 100%, 0.5);
+		text-shadow: 0 0 16px hsla(0, 0%, 100%, 0.5);
 		&::before {
 			content: '';
 			display: inline-block;
