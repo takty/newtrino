@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-02
  *
  */
 
@@ -297,7 +297,7 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 	$json = ( $mv ) ? json_encode( $mv ) : '';
 	$json = is_string( $json ) ? $json : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
-	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('url("' . $mv['minUrl'] . '")') : '';
+	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('background-image:url("' . $mv['minUrl'] . '")') : '';
 
 	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
 	$cls = $internal ? '' : ' frame frame-sub';
@@ -306,7 +306,7 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="metabox-container">
 			<a class="image open-media-dialog" data-src="<?= _h( $md ) ?>" title="<?= _ht( 'Select' ) ?>">
-				<div style="background-image:<?= _h( $bgi ) ?>"></div>
+				<div style="<?= _h( $bgi ) ?>"></div>
 			</a>
 			<div>
 				<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">

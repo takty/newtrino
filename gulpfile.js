@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-02
  *
  */
 
@@ -23,8 +23,12 @@ function copySync(from, to) {
 		const tar = isToDir ? path.join(to, path.basename(f)) : to;
 		if (fs.statSync(f).isFile()) {
 			const fromBuf = fs.readFileSync(f);
-			const toBuf = fs.readFileSync(tar);
-			if (!fromBuf.equals(toBuf)) {
+			if (fs.existsSync(tar)) {
+				const toBuf = fs.readFileSync(tar);
+				if (!fromBuf.equals(toBuf)) {
+					fs.copySync(f, tar);
+				}
+			} else {
 				fs.copySync(f, tar);
 			}
 		} else {
@@ -67,15 +71,16 @@ gulp.task('copy-tinymce', (done) => {
 	const dir = packageDir('tinymce');
 	copySync(dir + '/tinymce.min.js', DIST_ADMIN + 'js/tinymce/');
 	copySync(dir + '/plugins/*', DIST_ADMIN + 'js/tinymce/plugins/');
-	copySync(dir + '/skins/lightgray/*', DIST_ADMIN + 'js/tinymce/skins/lightgray/');
-	copySync(dir + '/themes/modern/*', DIST_ADMIN + 'js/tinymce/themes/modern/');
+	copySync(dir + '/skins/*', DIST_ADMIN + 'js/tinymce/skins/');
+	copySync(dir + '/icons/*', DIST_ADMIN + 'js/tinymce/icons/');
+	copySync(dir + '/themes/silver/*', DIST_ADMIN + 'js/tinymce/themes/silver/');
 	const dir_i18n = packageDir('tinymce-i18n');
-	copySync(dir_i18n + '/langs/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
-	const ups = [  // Removed plugins
-		'autoresize',	'autosave',		'bbcode',	'codesample',
-		'emoticons',	'fullpage',		'help',		'importcss',
-		'legacyoutput',	'pagebreak',	'preview',	'save',
-		'tabfocus', 	'toc',			'template',	'wordcount'
+	copySync(dir_i18n + '/langs5/ja.js', DIST_ADMIN + 'js/tinymce/langs/');
+	const ups = [  // Unused plugins
+		'autoresize',	'autosave',		'bbcode',	'codesample',	'emoticons',
+		'fullpage',		'fullscreen',	'help',		'importcss', 	'legacyoutput',
+		'pagebreak',	'preview',		'save',		'tabfocus', 	'toc',
+		'template',		'wordcount'
 	];
 	for (let up of ups) fs.removeSync(DIST_ADMIN + 'js/tinymce/plugins/' + up);
 	done();
@@ -130,7 +135,7 @@ gulp.task('copy-css', (done) => {
 gulp.task('copy', gulp.series('copy-src', 'copy-css', 'copy-lib'));
 gulp.task('copy-watch', gulp.series('copy-src', 'copy-css'));
 
-gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js', '!src/data/*.js'])
+gulp.task('js-minify', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js', '!src/data/*.js', '!src/admin/js/tinymce/langs/*.js'], { base: 'src' })
 	.pipe($.plumber())
 	.pipe($.sourcemaps.init())
 	.pipe($.babel({
@@ -141,6 +146,14 @@ gulp.task('js', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js', '
 	.pipe($.sourcemaps.write('.'))
 	.pipe(gulp.dest('dist'))
 );
+
+gulp.task('js-raw', () => gulp.src(['src/admin/js/tinymce/langs/*.js'], { base: 'src' })
+	.pipe($.plumber())
+	.pipe(gulp.dest('dist'))
+);
+
+// gulp.task('js', gulp.series('js-minify'));
+gulp.task('js', gulp.series('js-minify', 'js-raw'));
 
 gulp.task('sass', () => {
 	return gulp.src([SRC_ADMIN + 'sass/style.scss'])

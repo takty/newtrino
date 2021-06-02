@@ -162,35 +162,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	function initEditorPane() {
-		const css  = document.getElementById('editor-css').value;
-		const json = document.getElementById('editor-option').value;
-		const opt  = json ? JSON.parse(json) : {};
+		const plugins = [
+			'advlist anchor autolink charmap code colorpicker contextmenu directionality hr image insertdatetime',
+			'link lists media nonbreaking noneditable paste print searchreplace table textcolor textpattern visualblocks visualchars',
+		];
+		const toolbars = [
+			'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat',
+			'formatselect | bullist numlist | blockquote | alignleft aligncenter alignright | styleselect',
+		];
+		const formats = [
+			'Paragraph=p',
+			'Heading 3=h3',
+			'Heading 4=h4',
+			'Heading 5=h5',
+			'Blockquote=blockquote',
+			'Preformatted=pre',
+		].join(';');
+
+		const css       = document.getElementById('editor-css').value;
+		const json      = document.getElementById('editor-option').value;
+		const opt       = json ? JSON.parse(json) : {};
 		const assetsUrl = document.getElementById('assets-url').value;
 
 		let args = Object.assign({
+			// Integration and setup options
+			plugins : plugins,
 			selector: '#post-content',
-			plugins: [
-				'advlist anchor autolink charmap code colorpicker contextmenu directionality fullscreen hr image insertdatetime',
-				'link lists media nonbreaking noneditable paste print searchreplace table textcolor textpattern visualblocks visualchars',
-			],
-			removed_menuitems: 'newdocument',
-			toolbar1: 'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat',
-			toolbar2: 'formatselect | bullist numlist | blockquote | alignleft aligncenter alignright | styleselect',
-			block_formats: 'Paragraph=p;Heading 3=h3;Heading 4=h4;Heading 5=h5;Blockquote=blockquote;Preformatted=pre',
-			content_css: css,
-			language: lang,
-			element_format: 'html',
-			code_dialog_width: 800,
-			nonbreaking_force_tab: true,
-			object_resizing: 'img',
-			link_context_toolbar: true,
-			table_default_attributes: {},
-			table_default_styles: {},
-			table_resize_bars: false,
-			table_advtab: false,
-			table_class_list: [],
+			setup   : (e) => { e.on('change', () => { isModified = true; }); },
+
+			// User interface options
+			block_formats    : formats,
+			removed_menuitems: 'newdocument fontformats fontsizes lineheight',
+			toolbar1         : toolbars[0],
+			toolbar2         : toolbars[1],
+
+			// Content appearance options
+			content_css       : css,
 			visual_table_class: ' ',
-			setup: (e) => { e.on('change', () => { isModified = true; }); },
+
+			// Content formatting options
+			element_format: 'html',
+
+			// Localization options
+			language: lang,
+
+			// Advanced editing behaviors
+			object_resizing: 'img',
+
+
+			// Code Plugin
+			code_dialog_width: 800,
+
+			// Link plugin
+			link_context_toolbar: true,
+
+			// Nonbreaking Space plugin
+			nonbreaking_force_tab: true,
+
+			// Table plugin
+			table_default_attributes: {},
+			table_default_styles    : {},
+			table_class_list        : [],
+			table_advtab            : false,
+			table_resize_bars       : false,
 		}, opt)
 		for (let f of window.NT.tiny_mce_before_init) args = f(args, lang, assetsUrl);
 		tinymce.init(args);
@@ -211,11 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	function adjustEditorHeight() {
 		const onResize = () => {
 			const clm = document.querySelector('.container-main');
-			const div = document.querySelector('.container-main .button-row + div');
-			if (div) {
-				const r = div.getBoundingClientRect();
-				const h = clm.clientHeight - (0 | r.top);
-				tinymce.activeEditor.theme.resizeTo(null, h - 100);
+			const ed  = document.querySelector('.container-main .tox-tinymce');
+			if (ed) {
+				const clmStyle  = window.getComputedStyle(clm);
+				const innerH    = clm.clientHeight - parseInt(clmStyle.paddingTop) - parseInt(clmStyle.paddingBottom);
+				const innerOffY = ed.offsetTop - parseInt(clmStyle.paddingTop);
+
+				ed.style.height = (innerH - innerOffY) + 'px';
 			} else {
 				setTimeout(onResize, 100);
 			}
@@ -275,19 +311,27 @@ document.addEventListener('DOMContentLoaded', () => {
 		fp.submit();
 
 		const dlg = document.getElementById('dialog-preview');
-		dlg.classList.add('visible');
-
 		const ph = document.getElementById('dialog-placeholder');
-		ph.classList.add('visible');
+
+		dlg.classList.add('active');
+		ph.classList.add('active');
+		setTimeout(() => {
+			dlg.classList.add('visible');
+			ph.classList.add('visible');
+		}, 10);
 	}
 
 	function openMediaDialog(e) {
 		const dlg = document.getElementById('dialog-media');
 		dlg.src = e.target.dataset.src;
-		dlg.classList.add('visible');
-
 		const ph = document.getElementById('dialog-placeholder');
-		ph.classList.add('visible');
+
+		dlg.classList.add('active');
+		ph.classList.add('active');
+		setTimeout(() => {
+			dlg.classList.add('visible');
+			ph.classList.add('visible');
+		}, 100);
 	}
 });
 
@@ -295,6 +339,10 @@ function closeDialog() {
 	const ph = document.getElementById('dialog-placeholder');
 	ph.classList.remove('visible');
 	for (let c of ph.children) c.classList.remove('visible');
+	setTimeout(() => {
+		ph.classList.remove('active');
+		for (let c of ph.children) c.classList.remove('active');
+	}, 100);
 }
 
 
@@ -308,14 +356,14 @@ function insertMediaToContent(data) {
 		const cls = `size-${data.size}` + (data.linkUrl ? '' : ` ${data.align}`);
 		let str = `<img class="${cls}" src="${data.url}"${ss} alt="${data.name}" width="${data.width}" height="${data.height}" loading="lazy">`;
 		if (data.linkUrl) str = `<a href="${data.linkUrl}" class="${data.align}">${str}</a>`;
-		tinymce.activeEditor.execCommand('mceInsertContent', false, str);
+		tinymce.execCommand('mceInsertContent', false, str);
 	} else {
 		const s = tinymce.activeEditor.selection.getContent();
 		if (s !== '') {
-			tinymce.activeEditor.execCommand('mceInsertLink', false, data.url);
+			tinymce.execCommand('mceInsertLink', false, data.url);
 		} else {
 			const str = `<a href="${data.url}">${data.name}</a>`;
-			tinymce.activeEditor.execCommand('mceInsertContent', false, str);
+			tinymce.execCommand('mceInsertContent', false, str);
 		}
 	}
 }

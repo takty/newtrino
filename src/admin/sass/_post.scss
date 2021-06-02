@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-01
+ * @version 2021-06-02
  *
  */
 
@@ -41,7 +41,11 @@
 
 	background-color: $color-dialog-placeholder-background;
 
-	&.visible { display: flex; }
+	&.active {
+		display: flex;
+		opacity: 0;
+	}
+	&.visible { opacity: 1; }
 }
 
 #dialog-media {  // iframe
@@ -51,7 +55,11 @@
 	max-height: 48rem;
 
 	display: none;
-	&.visible { display: block; }
+	&.active {
+		display: block;
+		opacity: 0;
+	}
+	&.visible { opacity: 1; }
 }
 
 #dialog-preview {
@@ -63,7 +71,11 @@
 	flex-direction: column;
 
 	display: none;
-	&.visible { display: flex; }
+	&.active {
+		display: flex;
+		opacity: 0;
+	}
+	&.visible { opacity: 1; }
 
 	iframe {
 		width: 100%;
@@ -207,6 +219,19 @@
 			background-size: contain;
 			background-position: center;
 			pointer-events: none;
+
+			&[style=''] {
+				background: {
+					image   :
+						linear-gradient( 45deg, rgba(#000, 0.25) 25%, transparent 25%),
+						linear-gradient(-45deg, rgba(#000, 0.25) 25%, transparent 25%),
+						linear-gradient( 45deg, transparent 75%, rgba(#000, 0.25) 75%),
+						linear-gradient(-45deg, transparent 75%, rgba(#000, 0.25) 75%);
+					position: 0 0, 0 6px, 6px -6px, -6px 0;
+					size    : 12px 12px;
+					repeat  : repeat;
+				}
+			}
 		}
 	}
 	.open-media-dialog + * {
@@ -238,54 +263,85 @@
 
 
 body.post {
-	.mce-tinymce {
-		box-shadow: none;
-		border-radius: $radius-button;
-	}
-	.mce-panel {
-		border-color: $color-button-border;
-	}
-	.mce-container,
-	.mce-widget,
-	.mce-reset {
-		button {
-			display: inline-block;
-			min-width: unset;
-		}
-	}
-	.mce-container,
-	.mce-container *:not(.mce-ico),
-	.mce-widget,
-	.mce-widget *:not(.mce-ico),
-	.mce-reset {
+	.tox,
+	.tox .tox-button,
+	.tox .tox-textarea,
+	.tox .tox-textfield,
+	.tox .tox-listbox,
+	.tox .tox-tinymce-aux,
+	.tox .tox-checkbox__label {
 		font-family: unset;
+		font-weight: normal;
+		font-size  : 0.85rem;
 	}
-	.mce-floatpanel {
+	.tox.tox-tinymce,
+	.tox .tox-menu,
+	.tox .tox-textarea,
+	.tox .tox-textfield,
+	.tox .tox-listbox {
+		border-color: $color-button-border;
 		border-radius: $radius-button;
 	}
-	.mce-title {
-		font-size: 1rem;
-		line-height: 1rem;
-	}
-	.mce-btn,
-	.mce-textbox {
+	.tox .tox-form__group {
+		border: 1px solid $color-button-border;
 		border-radius: $radius-button;
-	}
-	.mce-container[role='tabpanel'] {
-		background-color: #fff;  // Hack for fixing borders
-	}
-	i.mce-i-checkbox {
-		border-radius: $radius-button / 2;
-	}
-	.mce-window[aria-label='Source code'] {
-		.mce-textbox {
-			font-family: monospace;
+		overflow: hidden;
+
+		.tox-textarea {
+			border: none;
+			font-family: Consolas, Monaco, 'Courier New', Courier, 'Source Han Code JP', 'IPA Gothic', 'Osaka-Mono', monospace;
 		}
 	}
-	.mce-statusbar {
-		border-radius: 0 0 $radius-button $radius-button;
+
+	.tox .tox-dialog-wrap__backdrop {
+		background-color: $color-dialog-placeholder-background;
 	}
-	.mce-open {
-		border-radius: 0 $radius-button $radius-button 0;
+	.tox .tox-dialog {
+		background-color: $color-frame-background;
+		border-color: $color-frame-border-dialog;
+		border-radius: $radius-frame;
+		backdrop-filter : blur(4px);
+	}
+	.tox .tox-dialog__title {
+		font-family: unset;
+		font-weight: bold;
+		font-size: 1.25rem;
+	}
+	.tox .tox-dialog__header {
+		padding: 1.25rem 1.25rem 0 1.25rem;
+		background-color: transparent;
+	}
+	.tox .tox-dialog__body-content {
+		padding: 1.25rem;
+	}
+	.tox .tox-dialog__footer {
+		padding: 1.25rem;
+		border-top-color: $color-line;
+		background-color: transparent;
+	}
+	.tox .tox-button {
+		border-radius: $radius-button;
+		color        : $color-text;
+
+		border-color    : $color-button-border-accent;
+		background-color: $color-button-background-accent;
+
+		&:hover:not(:disabled),
+		&:active:not(:disabled) {
+			border-color    : $color-button-border-hover;
+			background-color: #fff;
+			color           : $color-text;
+		}
+
+		&.tox-button--secondary {
+			border-color    : $color-button-border;
+			background-color: $color-button-background;
+		}
+	}
+	.tox .tox-label {
+		color: $color-text;
+	}
+	.tox .tox-color-input span::before {
+		background-repeat: repeat;
 	}
 }
