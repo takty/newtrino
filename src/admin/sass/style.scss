@@ -170,6 +170,7 @@ a {
 		min-width: 11rem;
 		@include for-tl { width: 100%; }
 		max-height: 2rem;
+		min-height: 2rem;
 
 		font-size: 0.75rem;
 	}

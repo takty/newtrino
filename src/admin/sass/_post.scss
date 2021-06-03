@@ -298,14 +298,16 @@ body.post {
 	}
 	.tox .tox-dialog {
 		background-color: $color-frame-background;
-		border-color: $color-frame-border-dialog;
-		border-radius: $radius-frame;
+		border-color    : $color-frame-border-dialog;
+		border-radius   : $radius-frame;
 		backdrop-filter : blur(4px);
+
+		max-height: calc(var(--vh, 1vh) * 95);
 	}
 	.tox .tox-dialog__title {
 		font-family: unset;
 		font-weight: bold;
-		font-size: 1.25rem;
+		font-size  : 1.25rem;
 	}
 	.tox .tox-dialog__header {
 		padding: 1.25rem 1.25rem 0 1.25rem;
