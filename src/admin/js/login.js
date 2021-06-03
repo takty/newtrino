@@ -3,10 +3,13 @@
  * Login (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-08
+ * @version 2021-06-03
  *
  */
 
+
+//=
+//=include _common.js
 
 document.addEventListener('DOMContentLoaded', () => {
 	const btn = document.getElementById('btn-login');

@@ -3,10 +3,13 @@
  * List (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-03
  *
  */
 
+
+//=
+//=include _common.js
 
 document.addEventListener('DOMContentLoaded', () => {
 	const btnsRemove  = document.getElementsByClassName('remove-post');

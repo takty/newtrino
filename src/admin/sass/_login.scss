@@ -22,9 +22,9 @@ body.login {
 }
 
 .frame-login {
-	margin-bottom: 10vh;
-	width: 100%;
-	max-width: 20rem;
+	margin-bottom: calc(var(--vh, 1vh) * 10);
+	width        : 100%;
+	max-width    : 20rem;
 
 	h1 { text-align: center; }
 

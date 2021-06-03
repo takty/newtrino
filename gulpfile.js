@@ -139,9 +139,10 @@ gulp.task('copy-css', (done) => {
 gulp.task('copy', gulp.series('copy-src', 'copy-css', 'copy-lib'));
 gulp.task('copy-watch', gulp.series('copy-src', 'copy-css'));
 
-gulp.task('js-minify', () => gulp.src(['src/*.js', 'src/**/*.js', '!src/**/*.min.js', '!src/data/*.js', '!src/admin/js/tinymce/langs/*.js'], { base: 'src' })
+gulp.task('js-minify', () => gulp.src(['src/[^_]*.js', 'src/**/[^_]*.js', '!src/**/*.min.js', '!src/data/*.js', '!src/admin/js/tinymce/langs/*.js'], { base: 'src' })
 	.pipe($.plumber())
 	.pipe($.sourcemaps.init())
+	.pipe($.include())
 	.pipe($.babel({
 		presets: [['@babel/preset-env']],
 	}))

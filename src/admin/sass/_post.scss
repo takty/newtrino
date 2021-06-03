@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-03
  *
  */
 
@@ -51,7 +51,7 @@
 #dialog-media {  // iframe
 	width     : 95vw;
 	max-width : 96rem;
-	height    : 95vh;
+	height    : calc(var(--vh, 1vh) * 95);
 	max-height: 48rem;
 
 	display: none;
@@ -65,7 +65,7 @@
 #dialog-preview {
 	width     : 95vw;
 	max-width : 96rem;
-	height    : 95vh;
+	height    : calc(var(--vh, 1vh) * 95);
 	max-height: 96rem;
 
 	flex-direction: column;

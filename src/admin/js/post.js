@@ -3,14 +3,16 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-03
  *
  */
 
 
+//=
+//=include _common.js
+
 window.NT = window['NT'] || {};
 window.NT.tiny_mce_before_init = window.NT['tiny_mce_before_init'] || [];
-
 
 document.addEventListener('DOMContentLoaded', () => {
 	const lang = document.getElementById('lang').value;
