@@ -3,7 +3,7 @@
  * Login (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-19
+ * @version 2021-06-03
  *
  */
 
@@ -14,16 +14,17 @@ body.login {
 
 	#key {
 		position: absolute;
-		left: 1rem;
-		right: 1rem;
-		bottom: 1rem;
+		left    : 1rem;
+		right   : 1rem;
+		bottom  : 1rem;
+
 		opacity: 0.1;
 	}
 }
 
 .frame-login {
 	margin-bottom: calc(var(--vh, 1vh) * 10);
-	width        : 100%;
+	width        : calc(100% - 1rem);
 	max-width    : 20rem;
 
 	h1 { text-align: center; }
@@ -50,12 +51,12 @@ body.login {
 .cookie {
 	margin-top: -0.85rem;
 
-	font-size: 0.75rem;
+	font-size  : 0.75rem;
 	line-height: 1.35;
-	text-align: justify;
+	text-align : justify;
 
 	summary {
-		width: max-content;
+		width : max-content;
 		cursor: default;
 	}
 	div { margin-top: 1.25rem; }

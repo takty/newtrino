@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-01
+ * @version 2021-06-04
  *
  */
 
@@ -13,18 +13,26 @@ body.list {
 	&::after {
 		content: '%VERSION%';
 
-		position: absolute;
-		left    : 0.85rem;
-		bottom  : 0.75rem;
+		position        : absolute;
 		transform-origin: left bottom;
-		transform: rotate(-90deg);
+
+		left     : 0.75rem;
+		bottom   : 0.8rem;
+		font-size: 0.5rem;
+
+		@include for-tp {
+			left     : 0.85rem;
+			right    : unset;
+			bottom   : 0.75rem;
+			transform: rotate(-90deg);
+			font-size: 0.75rem;
+		}
 		@include for-tl {
-			left  : 1rem;
-			bottom: 0.75rem;
+			left     : 1rem;
+			bottom   : 0.75rem;
 			transform: none;
 		}
 
-		font-size: 0.75rem;
 		color    : rgba(#000, 0.75);
 	}
 }

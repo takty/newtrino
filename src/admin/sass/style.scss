@@ -42,7 +42,10 @@ a {
 .header,
 .container,
 .footer {
-	width: min(96rem, calc(100% - 2rem));
+	width: calc(100% - 1rem);
+	@include for-ta {
+		width: min(96rem, calc(100% - 2rem));
+	}
 	.dialog & { width: 100%; }
 	margin: { left: auto; right: auto; }
 }
@@ -85,12 +88,16 @@ a {
 	&[disabled] { display: none; }
 
 	> .frame + .frame {
-		margin-top: 1rem;
+		margin-top: 0.5rem;
+		@include for-ta { margin-top: 1rem; }
 	}
 }
 
 .container-sub + .container-main {
-	margin-top: 1rem;
+	margin-top: 0.5rem;
+	@include for-tp {
+		margin-top: 1rem;
+	}
 	@include for-tl {
 		margin-top: 0;
 		margin-left: 1rem;
