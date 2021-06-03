@@ -3,12 +3,15 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-03
  *
  */
 
 
 'use strict';
+
+const getBranchName = require('current-git-branch');
+const BRANCH_NAME = getBranchName();
 
 const fs   = require('fs-extra');
 const glob = require('glob');
@@ -48,10 +51,11 @@ const DIST_ADMIN = DIST_BASE + 'admin/';
 const config = require('./package.json');
 
 const REP_VERSION = '%VERSION%';
-const VERSION     = 'v' + config['version'];
+const VERSION     = 'v' + config['version'] + ((BRANCH_NAME === 'develop') ? ' [dev]' : '');
 
 
 // -----------------------------------------------------------------------------
+
 
 gulp.task('copy-jssha', (done) => {
 	const dir = packageDir('jssha');
@@ -201,6 +205,10 @@ gulp.task('sample-data-js', () => gulp.src(['src/data/*.js'])
 );
 
 gulp.task('sample', gulp.series('sample-system', 'sample-data', 'sample-data-js'));
+
+
+// -----------------------------------------------------------------------------
+
 
 gulp.task('watch', () => {
 	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series('copy-watch', 'sample'));

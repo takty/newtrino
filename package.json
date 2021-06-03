@@ -1,6 +1,6 @@
 {
 	"name": "newtrino",
-	"version": "2.21.06",
+	"version": "2.21.6",
 	"description": "A Simple Flat-File Content Managing System",
 	"keywords": [
 		"cms",
@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@babel/core": "^7.14.3",
 		"@babel/preset-env": "^7.14.4",
+		"current-git-branch": "^1.1.0",
 		"flatpickr": "^4.6.9",
 		"fs-extra": "^10.0.0",
 		"glob": "^7.1.7",
