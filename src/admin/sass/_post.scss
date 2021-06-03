@@ -283,7 +283,7 @@ body.post {
 		border-radius: $radius-button;
 	}
 	.tox .tox-form__group {
-		border: 1px solid $color-button-border;
+		border: 1px solid transparent;
 		border-radius: $radius-button;
 		overflow: hidden;
 
