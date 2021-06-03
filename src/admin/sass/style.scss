@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-03
+ * @version 2021-06-04
  *
  */
 
@@ -231,7 +231,6 @@ body.login,
 body.list,
 body.post {
 	h1 {
-		text-shadow: 0 0 16px hsla(0, 0%, 100%, 0.5);
 		&::before {
 			content: '';
 			display: inline-block;
