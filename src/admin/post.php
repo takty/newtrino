@@ -25,7 +25,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <link rel="stylesheet" href="css/style.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<script src="js/moment/moment.min.js"></script>
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>

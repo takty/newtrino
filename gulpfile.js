@@ -103,12 +103,20 @@ gulp.task('copy-mustache', (done) => {
 	done();
 });
 
+gulp.task('copy-moment', (done) => {
+	const dir = packageDir('moment');
+	copySync(dir + '/min/moment.min.js', DIST_ADMIN + 'js/moment/');
+	copySync(dir + '/min/moment.min.js.map', DIST_ADMIN + 'js/moment/');
+	done();
+});
+
 gulp.task('copy-lib', gulp.parallel(
 	'copy-jssha',
 	'copy-flatpickr',
 	'copy-tinymce',
 	'copy-nacss-reset',
 	'copy-mustache',
+	'copy-moment',
 ));
 
 
