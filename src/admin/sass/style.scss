@@ -369,6 +369,7 @@ select:not(.flatpickr-monthDropdown-months) {
 
 label.select,
 .flatpickr-monthDropdown-months + * {
+	display: inline-block;
 	position: relative;
 	&::after {
 		content: '';
