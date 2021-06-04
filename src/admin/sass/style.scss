@@ -26,7 +26,7 @@ body {
 	display       : flex;
 	flex-direction: column;
 
-	font-family: "BIZ UDPGothic", sans-serif;
+	font-family: "BIZ UDPGothic", -apple-system, sans-serif;
 }
 
 body:not(.dialog) {
