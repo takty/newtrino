@@ -63,7 +63,10 @@ a {
 		justify-content: space-between;
 
 		.spacer { flex-grow: 1; }
-		> * + *:not(:empty) { margin-left: 1rem; }
+		> * + *:not(:empty) { margin-left: 0.5rem; }
+		@include for-ta {
+			> * + *:not(:empty) { margin-left: 1rem; }
+		}
 	}
 }
 

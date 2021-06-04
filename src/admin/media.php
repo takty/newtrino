@@ -30,7 +30,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\begin(); ?>
 <header class="header">
 	<div class="inner">
-		<h1><?= _ht( 'Insert Media' ) ?><span>{{filter_type}}</span></h1>
+		<h1><span><?= _ht( 'Insert Media' ) ?></span> <span>{{filter_type}}</span></h1>
 		<form action="media.php?id={{id}}" method="post" enctype="multipart/form-data" id="form-upload">
 			<input type="hidden" name="mode" value="upload">
 			<input type="hidden" name="target" value="{{meta_target}}">

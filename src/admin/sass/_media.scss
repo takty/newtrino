@@ -9,9 +9,16 @@
 
 
 body.media {
-	h1 span:not(:empty) {
-		font-weight: normal;
-		&::before { content: ' - '; }
+	h1 {
+		span:last-child:not(:empty) {
+			font-weight: normal;
+			white-space: nowrap;
+			&::before { content: '- '; }
+		}
+		@include for-ph-o {
+			span { display: block; }
+			span:last-child { font-size: 0.85rem; }
+		}
 	}
 	.container-main { position: relative; }
 }
