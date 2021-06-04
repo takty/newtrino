@@ -265,7 +265,7 @@
 body.post {
 	.tox.tox-tinymce {
 		min-height: 20rem;
-		max-height: calc(var(--vh, 1vh) * 100 - 13.5rem);
+		max-height: calc(var(--vh, 1vh) * 100);
 	}
 	.tox,
 	.tox .tox-button,
