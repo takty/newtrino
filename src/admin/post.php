@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-04
  *
  */
 
@@ -52,11 +52,13 @@ header( 'Content-Type: text/html;charset=utf-8' );
 				<div class="title"><?= _ht( 'Publish' ) ?></div>
 				<div><input form="form-post" type="text" name="post_date" id="post-date" value="{{post_date}}"></div>
 				<div>
-					<select form="form-post" name="post_status" id="post-status">
+					<label class="select">
+						<select form="form-post" name="post_status" id="post-status">
 {{#status@select}}
-						<option id="post-status-{{slug}}" value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+							<option id="post-status-{{slug}}" value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/status@select}}
-					</select>
+						</select>
+					</label>
 				</div>
 				<hr class="horizontal">
 				<div class="button-row">

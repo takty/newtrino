@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-04
  *
  */
 
@@ -148,11 +148,15 @@ function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 	<div class="frame frame-sub">
 		<div class="title"><?= _h( $tax['label'] ) ?></div>
 <?php if ( $is_exclusive ) : ?>
-		<div><select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
+		<div>
+			<label class="select">
+				<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
 <?php foreach( $ts as $t ): ?>
-			<option value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' selected' : '' ?>><?= _h( $t['label'] ) ?></option>
+					<option value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' selected' : '' ?>><?= _h( $t['label'] ) ?></option>
 <?php endforeach; ?>
-		</select></div>
+				</select>
+			</label>
+		</div>
 <?php else : ?>
 <?php foreach( $ts as $t ): ?>
 		<label>

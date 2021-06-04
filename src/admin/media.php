@@ -5,7 +5,7 @@ namespace nt;
  * Media Dialog
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-12
+ * @version 2021-06-04
  *
  */
 
@@ -75,15 +75,19 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<div class="frame frame-compact">
 			<div>
 				<div class="heading"><?= _ht( 'Image Alignment' ) ?></div>
-				<select id="image-align">
-					{{#aligns}}<option value="{{value}}"{{selected}}>{{label}}</option>{{/aligns}}
-				</select>
+				<label class="select">
+					<select id="image-align">
+						{{#aligns}}<option value="{{value}}"{{selected}}>{{label}}</option>{{/aligns}}
+					</select>
+				</label>
 			</div>
 			<div>
 				<div class="heading"><?= _ht( 'Image Size' ) ?></div>
-				<select id="image-size">
-					{{#sizes}}<option value="{{value}}"{{selected}}>{{label}}</option>{{/sizes}}
-				</select>
+				<label class="select">
+					<select id="image-size">
+						{{#sizes}}<option value="{{value}}"{{selected}}>{{label}}</option>{{/sizes}}
+					</select>
+				</label>
 			</div>
 			<div>
 				<label class="checkbox">

@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-02
+ * @version 2021-06-04
  *
  */
 
@@ -43,40 +43,48 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\begin(); ?>
 		<div>
 			<div class="heading"><?= _ht( 'Post Type' ) ?></div>
-			<select onchange="document.location.href = this.value;">
+			<label class="select">
+				<select onchange="document.location.href = this.value;">
 {{#filter.type}}
-				<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+					<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/filter.type}}
-			</select>
+				</select>
+			</label>
 		</div>
 <?php \nt\end( $view, ! empty( $view['filter']['type'] ) ); ?>
 <?php \nt\begin(); ?>
 		<div>
 			<div class="heading"><?= _ht( 'Display Month' ) ?></div>
 {{#filter.date}}
-			<select onchange="document.location.href = this.value;">
+			<label class="select">
+				<select onchange="document.location.href = this.value;">
 {{#month}}
-				<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+					<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/month}}
-			</select>
+				</select>
+			</label>
 {{/filter.date}}
 		</div>
 		<div>
 			<div class="heading"><?= _ht( 'View Count' ) ?></div>
-			<select onchange="document.location.href = this.value;">
+			<label class="select">
+				<select onchange="document.location.href = this.value;">
 {{#filter.per_page}}
-				<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+					<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/filter.per_page}}
-			</select>
+				</select>
+			</label>
 		</div>
 		<hr class="horizontal">
 		<div class="button-row right">
-			<select id="sel-new-post" class="accent" onchange="document.location.href = this.value;">
-				<option value="#"><?= _ht( "New Post" ) ?></option>
+			<label class="select">
+				<select id="sel-new-post" class="accent" onchange="document.location.href = this.value;">
+					<option value="#"><?= _ht( "New Post" ) ?></option>
 {{#filter.new}}
-				<option value="{{url}}">{{label}}</option>
+					<option value="{{url}}">{{label}}</option>
 {{/filter.new}}
-			</select>
+				</select>
+			</label>
 		</div>
 <?php \nt\end( $view ); ?>
 	</nav>
@@ -113,11 +121,13 @@ header( 'Content-Type: text/html;charset=utf-8' );
 						<button class="restore restore-post" data-href="{{restore}}"><?= _ht( 'Restore' ) ?></button>
 {{/trash}}
 {{^trash}}
-						<select class="post-status">
+						<label class="select">
+							<select class="post-status">
 {{#status@select}}
-							<option value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
+								<option value="{{slug}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>
 {{/status@select}}
-						</select>
+							</select>
+						</label>
 {{/trash}}
 					</td>
 					<td class="title"><a href="{{url}}" class="title">{{title}}</a></td>
@@ -148,13 +158,15 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#pagination}}
 		<div class="pagination">
 			{{#previous}}<a class="button" href="{{.}}"><?= _ht( 'New' ) ?></a>{{/previous}}
-			<select onchange="document.location.href = this.value;">
-				{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
-			</select>
+			<label class="select">
+				<select onchange="document.location.href = this.value;">
+					{{#pages}}<option value="{{url}}" {{#is_selected}}selected{{/is_selected}}>{{label}}</option>{{/pages}}
+				</select>
+			</label>
 			{{#next}}<a class="button" href="{{.}}"><?= _ht( 'Old' ) ?></a>{{/next}}
 		</div>
 {{/pagination}}
-		<div class="button-row buttom">
+		<div class="button-row bottom">
 			<a href="{{list_all}}" class="button tag"><?= _ht( "All" ) ?></a>
 			<a href="{{list_trash}}" class="button tag"><?= _ht( "Trash" ) ?></a>
 			<a id="btn-empty-trash" data-href="{{empty_trash}}" class="button tag right delete"><?= _ht( "Empty Trash" ) ?></a>
