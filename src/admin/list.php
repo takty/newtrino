@@ -112,7 +112,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 					<th><?= _ht( 'Date' ) ?></th>
 					<th></th>
 				</tr>
-			<thead>
+			</thead>
 			<tbody>
 {{#posts}}
 				<tr data-id="{{id}}">
