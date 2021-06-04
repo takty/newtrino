@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-04
  *
  */
 
@@ -15,8 +15,6 @@ ini_set( 'display_errors', 'On' );
 
 require_once( __DIR__ . '/util/url.php' );
 require_once( __DIR__ . '/class-logger.php' );
-
-Logger::$debug = true;
 
 
 define( 'NT_DIR', pathinfo( __DIR__, PATHINFO_DIRNAME ) . '/' );
@@ -35,9 +33,14 @@ if ( defined( 'NT_ADMIN' ) ) {
 	define( 'NT_URL_ADMIN', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );
 }
 
-if ( file_exists( NT_DIR_DATA . 'mode.php' ) ) require_once( NT_DIR_DATA . 'mode.php' );
+if ( file_exists( NT_DIR_DATA . 'mode.php' ) ) require_once( NT_DIR_DATA . 'mode.php' );  // for backward compatible
+if ( file_exists( NT_DIR_DATA . 'config.php' ) ) require_once( NT_DIR_DATA . 'config.php' );
+
 if ( ! defined( 'NT_MODE_DIR'  ) ) define( 'NT_MODE_DIR',  0770 );
 if ( ! defined( 'NT_MODE_FILE' ) ) define( 'NT_MODE_FILE', 0660 );
+if ( ! defined( 'NT_DEBUG' ) )     define( 'NT_DEBUG', false );
+
+Logger::$debug = NT_DEBUG;
 
 
 // Functions Used in Initial Process -------------------------------------------
