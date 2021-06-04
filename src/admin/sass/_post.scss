@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-03
+ * @version 2021-06-04
  *
  */
 
@@ -264,7 +264,8 @@
 
 body.post {
 	.tox.tox-tinymce {
-		min-height: 20rme;
+		min-height: 20rem;
+		max-height: calc(var(--vh, 1vh) * 100 - 13.5rem);
 	}
 	.tox,
 	.tox .tox-button,

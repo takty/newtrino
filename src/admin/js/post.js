@@ -251,7 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (ed) {
 				const clmStyle  = window.getComputedStyle(clm);
 				const innerH    = clm.clientHeight - parseInt(clmStyle.paddingTop) - parseInt(clmStyle.paddingBottom);
-				const innerOffY = ed.offsetTop - parseInt(clmStyle.paddingTop);
+
+				// Calculate offsetTop using getBoundingClientRect instead of using ed.offsetTop for Safari
+				const offsetTop = ed.getBoundingClientRect().top - clm.getBoundingClientRect().top;
+				const innerOffY = offsetTop - parseInt(clmStyle.paddingTop);
 
 				ed.style.height = (innerH - innerOffY) + 'px';
 			} else {
@@ -259,6 +262,20 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		setTimeout(onResize, 200);
+
+		window.addEventListener('resize', throttle(onResize), { passive: true });
+		function throttle(fn) {
+			let isRunning;
+			function run() {
+				isRunning = false;
+				fn();
+			}
+			return () => {
+				if (isRunning) return;
+				isRunning = true;
+				requestAnimationFrame(run);
+			};
+		}
 	}
 
 

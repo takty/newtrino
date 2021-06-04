@@ -159,7 +159,7 @@ function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 		</div>
 <?php else : ?>
 <?php foreach( $ts as $t ): ?>
-		<label>
+		<label class="checkbox">
 			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' checked' : '' ?>>
 			<?= _h( $t['label'] ) ?>
 		</label>

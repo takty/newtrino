@@ -44,7 +44,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<div class="message" id="message-max-file-size" hidden><?= _ht( 'The uploaded file exceeds the max file size.' ) ?></div>
 </header>
 
-<div class="container">
+<div class="container container-dialog">
 	<div class="container-main frame">
 		<div class="scroller">
 			<ul class="list-item-media">

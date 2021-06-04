@@ -3,7 +3,7 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-01
+ * @version 2021-06-04
  *
  */
 
@@ -13,6 +13,7 @@ body.media {
 		font-weight: normal;
 		&::before { content: ' - '; }
 	}
+	.container-main { position: relative; }
 }
 
 .scroller {

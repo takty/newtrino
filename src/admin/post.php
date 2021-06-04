@@ -46,7 +46,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 </header>
 
 <form name="form-post" id="form-post" action="post.php" method="post" enctype="multipart/form-data">
-	<div class="container">
+	<div class="container container-post">
 		<div class="container-sub">
 			<div class="frame frame-sub">
 				<div class="title"><?= _ht( 'Publish' ) ?></div>

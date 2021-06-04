@@ -72,45 +72,73 @@ a {
 	> *:not(:empty) { padding-top: 0.75rem; }
 }
 
+
+// -----------------------------------------------------------------------------
+
+
 .container {
 	flex-grow: 1;
 	display: flex;
-	flex-direction: column;
-	@include for-tl { flex-direction: row; }
+
+	.container-main {
+		flex-grow: 1;
+	}
 }
 
-.container-main {
-	flex-grow: 1;
-	position: relative;
+.container-list {
+	flex-direction: column;
+	@include for-tl { flex-direction: row; }
+
+	.container-main {
+		margin-top: 0.5rem;
+		@include for-tp { margin-top: 0.75rem; }
+		@include for-tl {
+			margin-top : 0;
+			margin-left: 1rem;
+		}
+	}
+}
+
+.container-post {
+	flex-direction: column-reverse;
+	@include for-tl { flex-direction: row; }
+
+	.container-sub {
+		margin-top: 0.5rem;
+		@include for-tp { margin-top: 0.75rem; }
+		@include for-tl { margin-top: 0; }
+	}
+	.container-main {
+		@include for-tl { margin-left: 1rem; }
+	}
+}
+
+.container-dialog {
+	flex-direction: column;
+	@include for-tl { flex-direction: row; }
+
+	.container-sub {
+		margin-top: 0.5rem;
+		@include for-tp { margin-top: 0.75rem; }
+		@include for-tl {
+			margin-top : 0;
+			margin-left: 0.75rem;
+		}
+	}
 }
 
 .container-sub {
 	&[disabled] { display: none; }
-
 	> .frame + .frame {
 		margin-top: 0.5rem;
-		@include for-ta { margin-top: 1rem; }
+		@include for-tp { margin-top: 0.75rem; }
+		@include for-tl { margin-top: 1rem; }
 	}
 }
 
-.container-sub + .container-main {
-	margin-top: 0.5rem;
-	@include for-tp {
-		margin-top: 1rem;
-	}
-	@include for-tl {
-		margin-top: 0;
-		margin-left: 1rem;
-	}
-}
 
-.container-main + .container-sub {
-	margin-top: 1rem;
-	@include for-tl {
-		margin-top: 0;
-		margin-left: 1rem;
-	}
-}
+// -----------------------------------------------------------------------------
+
 
 .frame {
 	border          : 1px solid $color-frame-border;
@@ -222,7 +250,10 @@ a {
 
 h1 {
 	margin: 0;
-	font-size: 1.25rem;
+
+	font-size: 1rem;
+	@include for-ta { font-size: 1.25rem; }
+
 	font-weight: bold;
 	color: $color-text;
 }
@@ -264,6 +295,7 @@ body.login {
 
 
 input[type='text'],
+input[type='datetime-local'],
 input[type='password'],
 input[type='month'],
 select:not(.flatpickr-monthDropdown-months),
@@ -290,6 +322,7 @@ input[type=button],
 }
 
 input[type='text'],
+input[type='datetime-local'],
 input[type='password'] {
 	max-height: 2.5rem;
 	height: 2.5rem;
@@ -326,14 +359,14 @@ select:not(.flatpickr-monthDropdown-months) {
 	}
 }
 
-label.select {
+label.select,
+.flatpickr-monthDropdown-months + * {
 	position: relative;
 	&::after {
 		content: '';
 		position: absolute;
 		top: 50%;
 		transform: translateY(calc(-50% - 0.075rem)) rotate(-135deg);
-
 
 		right : 0.4rem;
 		width : 0.3rem;
@@ -349,6 +382,21 @@ label.select {
 
 			border-top-width : 2px;
 			border-left-width: 2px;
+		}
+	}
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+	-webkit-appearance: none;
+	padding-right: 1.25rem;
+
+	& + *::after {
+		pointer-events: none;
+		left : -0.75rem;
+		right: unset;
+		@include for-ta {
+			left : -0.75rem;
+			right: unset;
 		}
 	}
 }
@@ -451,5 +499,6 @@ input[type='password'] {
 
 label.checkbox {
 	display: flex;
+	align-items: center;
 	input { margin-right: 0.25rem; }
 }

@@ -38,7 +38,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\end( $view, ! empty( $view['message'] ) ); ?>
 </header>
 
-<div class="container">
+<div class="container container-list">
 	<nav class="container-sub frame frame-compact">
 <?php \nt\begin(); ?>
 		<div>
@@ -173,11 +173,11 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</div>
 <?php \nt\end( $view ); ?>
 	</div>
-
-	<input id="message-trash" type="hidden" value="<?= _ht( 'Do you want to move the post to trash?' ) ?>">
-	<input id="message-delete-permanently" type="hidden" value="<?= _ht( 'Do you want to delete the post permanently?' ) ?>">
-	<input id="message-empty-trash" type="hidden" value="<?= _ht( 'Do you want to empty trash?' ) ?>">
-
 </div>
+
+<input id="message-trash" type="hidden" value="<?= _ht( 'Do you want to move the post to trash?' ) ?>">
+<input id="message-delete-permanently" type="hidden" value="<?= _ht( 'Do you want to delete the post permanently?' ) ?>">
+<input id="message-empty-trash" type="hidden" value="<?= _ht( 'Do you want to empty trash?' ) ?>">
+
 </body>
 </html>
