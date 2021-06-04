@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-03
+ * @version 2021-06-04
  *
  */
 
@@ -165,8 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function initEditorPane() {
 		const plugins = [
-			'advlist anchor autolink charmap code colorpicker contextmenu directionality hr image insertdatetime',
-			'link lists media nonbreaking noneditable paste print searchreplace table textcolor textpattern visualblocks visualchars',
+			'advlist anchor autolink charmap code directionality hr image insertdatetime',
+			'link lists media nonbreaking noneditable paste print searchreplace table textpattern visualblocks visualchars',
 		];
 		const toolbars = [
 			'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat',
