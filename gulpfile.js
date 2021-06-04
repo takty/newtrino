@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-03
+ * @version 2021-06-04
  *
  */
 
@@ -93,6 +93,7 @@ gulp.task('copy-tinymce', (done) => {
 gulp.task('copy-nacss-reset', (done) => {
 	const dir = packageDir('nacss-reset');
 	copySync(dir + '/dist/reset.min.css', DIST_ADMIN + 'css/');
+	copySync(dir + '/dist/reset.min.css.map', DIST_ADMIN + 'css/');
 	done();
 });
 
