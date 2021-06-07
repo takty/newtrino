@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-06
  *
  */
 
@@ -280,6 +280,7 @@ class Store {
 			$p->setDate();
 			$p->save();
 			flock( $dir, LOCK_UN );
+			closedir( $dir );
 			return $p;
 		}
 		return null;
