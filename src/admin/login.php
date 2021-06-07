@@ -52,10 +52,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	</form>
 	<div id="key"></div>
 </div>
-<?php \nt\end( $view ); ?>
-<?php \nt\begin(); ?>
+{{#error_message}}
 <script>console.log('{{error_message}}');</script>
-<?php \nt\end( $view, ! empty( $view['error_message'] ) ); ?>
+{{/error_message}}
+<?php \nt\end( $view ); ?>
 
 </body>
 </html>

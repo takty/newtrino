@@ -3,12 +3,25 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
 
 body.media {
+    display    : grid;
+    place-items: center;
+}
+
+.frame-media {
+	width     : 95vw;
+	max-width : 96rem;
+	height    : calc(var(--vh, 1vh) * 90);
+	max-height: 48rem;
+
+	display: flex;
+	flex-direction: column;
+
 	h1 {
 		span:last-child:not(:empty) {
 			font-weight: normal;

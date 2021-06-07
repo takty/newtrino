@@ -3,7 +3,7 @@
  * Variables for Style
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
@@ -11,9 +11,10 @@
 $color-text: #222;
 $color-line: hsl(0, 0%, 80%, 90%);
 
-$color-frame-border: transparent;
-$color-frame-border-dialog: $color-line;
-$color-frame-background: rgba(#fff, 0.9);
+$color-frame-border           : transparent;
+$color-frame-border-dialog    : $color-line;
+$color-frame-background       : rgba(#fff, 0.9);
+$color-frame-background-dialog: rgba(#fff, 0.8);
 
 $radius-frame: 8px;
 

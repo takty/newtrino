@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
@@ -159,9 +159,11 @@ a {
 		0 2px 4px rgba(#000, 0.08),
 		0 3px 6px rgba(#000, 0.06),
 		0 4px 8px rgba(#000, 0.04);
-	.dialog & {
+	.dialog &,
+	&.dialog {
 		box-shadow: 0 1px 2px rgba(#000, 0.1);
 		border: 1px solid $color-frame-border-dialog;
+		background-color: $color-frame-background-dialog;
 		overflow: hidden;
 	}
 

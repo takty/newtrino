@@ -86,7 +86,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <script src="{{editor_js}}"></script>
 
 <div id="dialog-placeholder">
-	<iframe id="dialog-media" class="frame"></iframe>
+	<iframe id="dialog-media"></iframe>
 	<iframe id="dialog-login"></iframe>
 	<div id="dialog-preview" class="frame dialog">
 		<header class="header">
