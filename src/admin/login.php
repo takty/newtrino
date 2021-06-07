@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-18
+ * @version 2021-06-07
  *
  */
 
@@ -52,8 +52,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	</form>
 	<div id="key"></div>
 </div>
-<script>console.log('{{error_message}}');</script>
 <?php \nt\end( $view ); ?>
+<?php \nt\begin(); ?>
+<script>console.log('{{error_message}}');</script>
+<?php \nt\end( $view, isset( $view['error_message'] ) ); ?>
 
 </body>
 </html>
