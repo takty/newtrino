@@ -4,7 +4,7 @@ namespace nt;
  *
  * Function for Date Format
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Takuto Yanagida
  * @version 2020-08-04
  *
  */

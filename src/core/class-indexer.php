@@ -4,7 +4,7 @@ namespace nt;
  *
  * Indexer
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Takuto Yanagida
  * @version 2020-09-05
  *
  */

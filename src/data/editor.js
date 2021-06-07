@@ -2,7 +2,7 @@
  *
  * Editor Commands for TinyMCE (Sample)
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Takuto Yanagida
  * @version 2021-06-02
  *
  */

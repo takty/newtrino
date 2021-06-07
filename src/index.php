@@ -4,7 +4,7 @@ namespace nt;
  *
  * Index (PHP)
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Takuto Yanagida
  * @version 2021-06-07
  *
  */
