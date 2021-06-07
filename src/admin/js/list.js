@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-03
+ * @version 2021-06-07
  *
  */
 
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function clearErrorMessage() {
 		const mn = document.getElementById('message-error');
-		mn.innerText = '';
+		if (mn) mn.style.display = 'none';
 	}
 
 
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	for (let statSel of statSels) {
 		statSel.addEventListener('change', (e) => {
 			const s = e.target.value;
-			const id = e.target.parentElement.parentElement.dataset.id;
+			const id = e.target.parentElement.parentElement.parentElement.dataset.id;
 			setPostStatus(id, s);
 			clearErrorMessage();
 		});
