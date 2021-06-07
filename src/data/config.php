@@ -5,7 +5,7 @@ namespace nt;
  * Newtrino Config (Sample)
  *
  * @author Takuto Yanagida
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
@@ -23,4 +23,4 @@ define( 'NT_MODE_FILE', 0660 );
  *
  * If this value is set to true, notices will be displayed during development.
  */
-define( 'WP_DEBUG', true );
+define( 'NT_DEBUG', true );

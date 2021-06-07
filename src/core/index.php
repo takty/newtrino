@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
@@ -38,7 +38,7 @@ if ( file_exists( NT_DIR_DATA . 'config.php' ) ) require_once( NT_DIR_DATA . 'co
 
 if ( ! defined( 'NT_MODE_DIR'  ) ) define( 'NT_MODE_DIR',  0770 );
 if ( ! defined( 'NT_MODE_FILE' ) ) define( 'NT_MODE_FILE', 0660 );
-if ( ! defined( 'NT_DEBUG' ) )     define( 'NT_DEBUG', false );
+if ( ! defined( 'NT_DEBUG'     ) ) define( 'NT_DEBUG', false );
 
 Logger::$debug = NT_DEBUG;
 
