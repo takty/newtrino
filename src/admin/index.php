@@ -49,10 +49,10 @@ function start_session( bool $create_store, bool $is_dialog = false ) {
 	} else if ( $is_dialog ) {
 		header( 'Content-Type: text/html;charset=utf-8' );
 		echo '<!DOCTYPE html><html><head><script>window.parent.closeDialog();</script></head><body></body></html>';
-		exit();
+		exit;
 	} else {
 		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
-		exit();
+		exit;
 	}
 }
 
