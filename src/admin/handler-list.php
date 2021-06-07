@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-05-31
+ * @version 2021-06-07
  *
  */
 
@@ -67,6 +67,8 @@ function handle_query(): array {
 		$msg = _ht( 'The post could not be updated.' );
 	} else if ( $error === 'view' ) {
 		$msg = _ht( 'The post could not be viewed.' );
+	} else if ( $error === 'lock' ) {
+		$msg = _ht( 'The post is being edited by another user.' );
 	}
 	return [
 		'posts'            => $ps,

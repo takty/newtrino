@@ -35,8 +35,9 @@
 		"Do you want to empty trash?": "ゴミ箱を空にしてもよろしいですか？",
 
 		"A new post could not be created.": "新規投稿を作成できませんでした。",
-		"The post could not be updated.": "投稿を更新できませんでした。",
-		"The post could not be viewed.": "投稿を表示できませんでした。"
+		"The post could not be updated.": "この投稿は更新できませんでした。",
+		"The post could not be viewed.": "この投稿は表示できませんでした。",
+		"The post is being edited by another user.": "この投稿は他のユーザーが編集中です。"
 	},
 	"post": {
 		"Publish": "公開",

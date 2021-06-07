@@ -55,7 +55,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <?php \nt\end( $view ); ?>
 <?php \nt\begin(); ?>
 <script>console.log('{{error_message}}');</script>
-<?php \nt\end( $view, isset( $view['error_message'] ) ); ?>
+<?php \nt\end( $view, ! empty( $view['error_message'] ) ); ?>
 
 </body>
 </html>

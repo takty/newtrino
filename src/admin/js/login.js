@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-03
+ * @version 2021-06-07
  *
  */
 
@@ -12,6 +12,14 @@
 //=include _common.js
 
 document.addEventListener('DOMContentLoaded', () => {
+	const qps = [...new URLSearchParams(location.search).entries()].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {});
+	if (qps['dialog'] !== undefined) {
+		document.body.classList.add('dialog');
+		document.forms[0].addEventListener('submit', (e) => {
+			e.preventDefault();
+			window.parent.closeDialog();
+		});
+	}
 	const btn = document.getElementById('btn-login');
 	btn.addEventListener('click', doLogin);
 	btn.addEventListener('contextmenu', (e) => { doLogin(e, true); });

@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-05
+ * @version 2021-06-07
  *
  */
 
@@ -62,7 +62,7 @@ function query_media( array $req ): void {
 
 	if ( $id[0] === '_' ) {  // Temporary ID
 		require_once( __DIR__ . '/admin/class-session.php' );
-		if ( ! Session::startSimply() ) {
+		if ( ! Session::canStart() ) {
 			header( 'HTTP/1.1 404 Not Found' );
 			die;
 		}

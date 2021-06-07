@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-04
+ * @version 2021-06-06
  *
  */
 
@@ -25,7 +25,7 @@ function handle_query( array $q ): array {
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
 
-	$q_id   = $q['id']   ?? 0;
+	$q_id   = $q['id']   ?? null;
 	$q_mode = $q['mode'] ?? '';
 	$msg    = '';
 
@@ -33,11 +33,15 @@ function handle_query( array $q ): array {
 	$query = parse_query_string();
 	$query = _rearrange_query( $query );
 
+	if ( ! $nt_session->lock( $q_id ) ) {
+		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => 'lock' ] ) );
+		exit;
+	}
 	switch ( $q_mode ) {
 		case 'new':
 			$t_p = $nt_store->createNewPost( $query['type'] );
 			if ( ! $t_p ) break;
-			$nt_session->addTempDir( $nt_store->getPostDir( $t_p->getId(), null ) );
+			$nt_session->addTemporaryDirectory( $nt_store->getPostDir( $t_p->getId(), null ) );
 			$t_p->setDate();
 			break;
 		case 'update':
@@ -60,6 +64,7 @@ function handle_query( array $q ): array {
 		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update', 'id' => $t_p->getId() ] ),
 		'preview_url' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview', 'id' => $t_p->getId() ] ),
 		'media_url'   => create_canonical_url( 'media.php', [ 'id' => $t_p->getId() ] ),
+		'ping_url'    => create_canonical_url( 'ajax.php', [ 'mode' => 'ping', 'id' => $t_p->getId() ] ),
 
 		'message' => $msg,
 		'lang'    => $lang,

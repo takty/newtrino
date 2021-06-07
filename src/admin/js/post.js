@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	initMediaImageMetabox();
 	initEditorPane();
 	adjustEditorHeight();
+	startPing();
 
 	let isModified = false;
 
@@ -278,6 +279,31 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
+	function startPing() {
+		const pingUrl = document.getElementById('ping-url').value;
+		let st = null;
+
+		function ping() {
+			let doRepeat = true;
+			const req = new XMLHttpRequest();
+			req.addEventListener('load', (e) => {
+				const msg = req.responseText.match(/<result>([\s\S]*?)<\/result>/i);
+				if (!(msg !== null && msg[1] === 'success')) {
+					doRepeat = false;
+					clearTimeout(st);
+					const dlg = document.getElementById('dialog-login');
+					dlg.src = 'login.php?dialog';
+					openDialog(dlg);
+				}
+			});
+			req.open('post', pingUrl, true);
+			req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			req.send();
+			if ( doRepeat ) st = setTimeout(ping, 2000);
+		}
+		st = setTimeout(ping, 2000);
+	}
+
 
 	// -------------------------------------------------------------------------
 
@@ -330,29 +356,26 @@ document.addEventListener('DOMContentLoaded', () => {
 		fp.submit();
 
 		const dlg = document.getElementById('dialog-preview');
-		const ph = document.getElementById('dialog-placeholder');
-
-		dlg.classList.add('active');
-		ph.classList.add('active');
-		setTimeout(() => {
-			dlg.classList.add('visible');
-			ph.classList.add('visible');
-		}, 10);
+		openDialog(dlg);
 	}
 
 	function openMediaDialog(e) {
 		const dlg = document.getElementById('dialog-media');
 		dlg.src = e.target.dataset.src;
-		const ph = document.getElementById('dialog-placeholder');
-
-		dlg.classList.add('active');
-		ph.classList.add('active');
-		setTimeout(() => {
-			dlg.classList.add('visible');
-			ph.classList.add('visible');
-		}, 100);
+		openDialog(dlg);
 	}
 });
+
+function openDialog( dlg ) {
+	const ph = document.getElementById('dialog-placeholder');
+
+	dlg.classList.add('active');
+	ph.classList.add('active');
+	setTimeout(() => {
+		dlg.classList.add('visible');
+		ph.classList.add('visible');
+	}, 100);
+}
 
 function closeDialog() {
 	const ph = document.getElementById('dialog-placeholder');

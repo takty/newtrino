@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2021-06-04
+ * @version 2021-06-07
  *
  */
 
@@ -31,7 +31,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<div class="inner">
 		<h1>Newtrino</h1>
 		<span class="spacer"></span>
-		<a href="login.php" class="button"><?= _ht( 'Log Out' ) ?></a>
+		<form action="login.php" method="POST">
+			<button type="submit"><?= _ht( 'Log Out' ) ?></button>
+			<input type="hidden" name="mode" value="logout">
+		</form>
 	</div>
 <?php \nt\begin(); ?>
 	<div class="message" id="message-error">{{message}}</div>

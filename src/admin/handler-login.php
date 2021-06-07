@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Login
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-07-24
+ * @version 2021-06-07
  *
  */
 
@@ -16,8 +16,11 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 function handle_query( array $q ): array {
 	global $nt_session;
+
+	$q_mode = $q['mode'] ?? '';
+
 	$res = true;
-	if ( empty( $q['digest'] ) ) {
+	if ( $q_mode === 'logout' || empty( $q['digest'] ) ) {
 		$nt_session->logout();
 	} else {
 		$res = $nt_session->login( $q );

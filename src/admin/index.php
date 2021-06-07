@@ -5,7 +5,7 @@ namespace nt;
  * Init for Admin
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-08-04
+ * @version 2021-06-07
  *
  */
 
@@ -33,11 +33,11 @@ function load_resource( string $dirData, string $lang ): array {
 	return [];
 }
 
-function start_session( bool $create_store, bool $close_dialog = false ) {
+function start_session( bool $create_store, bool $is_dialog = false ) {
 	global $nt_session, $nt_config, $nt_res;
 
 	if ( $nt_session->start() ) {
-		$la = $nt_session->getLangAdmin();
+		$la = $nt_session->getLanguage();
 		if ( $la ) {
 			$nt_config['lang_admin'] = $la;
 			$nt_res = load_resource( NT_DIR_ADMIN_RES, $nt_config['lang_admin'] );
@@ -46,9 +46,10 @@ function start_session( bool $create_store, bool $close_dialog = false ) {
 			global $nt_store;
 			$nt_store = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 		}
-	} else if ( $close_dialog ) {
+	} else if ( $is_dialog ) {
 		header( 'Content-Type: text/html;charset=utf-8' );
 		echo '<!DOCTYPE html><html><head><script>window.parent.closeDialog();</script></head><body></body></html>';
+		exit();
 	} else {
 		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
 		exit();
