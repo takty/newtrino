@@ -3,7 +3,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida
- * @version 2021-06-04
+ * @version 2021-06-08
  *
  */
 
@@ -150,8 +150,8 @@ gulp.task('copy-watch', gulp.series('copy-src', 'copy-css'));
 
 gulp.task('js-minify', () => gulp.src(['src/[^_]*.js', 'src/**/[^_]*.js', '!src/**/*.min.js', '!src/data/*.js', '!src/admin/js/tinymce/langs/*.js'], { base: 'src' })
 	.pipe($.plumber())
-	.pipe($.sourcemaps.init())
 	.pipe($.include())
+	.pipe($.sourcemaps.init())
 	.pipe($.babel({
 		presets: [['@babel/preset-env']],
 	}))
