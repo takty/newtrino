@@ -25,6 +25,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
 <link rel="stylesheet" href="css/style.min.css">
+<link rel="apple-touch-icon" type="image/png" href="css/logo-180x180.png">
 <link rel="icon" type="image/png" href="css/logo.png">
 <script src="js/moment/moment.min.js"></script>
 <script src="js/flatpickr/flatpickr.min.js"></script>
