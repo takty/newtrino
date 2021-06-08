@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-08
  *
  */
 
@@ -86,18 +86,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const statSels = document.getElementsByClassName('post-status');
 
-	for (let statSel of statSels) {
+	for (const statSel of statSels) {
+		statSel.addEventListener('focus', (e) => {
+			statSel.dataset.prev = e.target.selectedIndex;
+		});
 		statSel.addEventListener('change', (e) => {
 			const s = e.target.value;
 			const id = e.target.parentElement.parentElement.parentElement.dataset.id;
-			setPostStatus(id, s);
+			setPostStatus(id, s, statSel);
 			clearErrorMessage();
 		});
 	}
 
-	function setPostStatus(id, status) {
+	function setPostStatus(id, status, statSel) {
 		const req = new XMLHttpRequest();
-		req.addEventListener('load', (e) => {});  // For debug
+		req.addEventListener('load', (e) => {
+			const msg = e.currentTarget.responseText.match(/<result>([\s\S]*?)<\/result>/i);
+			if (msg !== null && msg[1] === 'success') {
+				statSel.dataset.prev = statSel.selectedIndex;
+			} else {
+				statSel.selectedIndex = statSel.dataset.prev;
+			}
+		});
+		req.addEventListener('error', () => {
+			statSel.selectedIndex = statSel.dataset.prev;
+		});
 		req.open('post', 'ajax.php', true);
 		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		req.send('mode=status' + '&id=' + id + '&val=' + status + '&cache=' + Date.now());
