@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-06
+ * @version 2021-06-08
  *
  */
 
@@ -64,7 +64,6 @@ function handle_query( array $q ): array {
 		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update', 'id' => $t_p->getId() ] ),
 		'preview_url' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview', 'id' => $t_p->getId() ] ),
 		'media_url'   => create_canonical_url( 'media.php', [ 'id' => $t_p->getId() ] ),
-		'ping_url'    => create_canonical_url( 'ajax.php', [ 'mode' => 'ping', 'id' => $t_p->getId() ] ),
 
 		'message' => $msg,
 		'lang'    => $lang,

@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-08
  *
  */
 
@@ -51,7 +51,6 @@ class Session {
 		Logger::output( 'info', '(Session)' );
 
 		session_set_cookie_params([
-			'path'     => '/',
 			'samesite' => 'Strict',
 		]);
 	}

@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-08
  *
  */
 
@@ -82,7 +82,6 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <input id="editor-css" type="hidden" value="{{editor_css}}">
 <input id="editor-option" type="hidden" value="{{editor_option}}">
 <input id="assets-url" type="hidden" value="{{assets_url}}">
-<input id="ping-url" type="hidden" value="{{ping_url}}">
 <script src="{{editor_js}}"></script>
 
 <div id="dialog-placeholder">

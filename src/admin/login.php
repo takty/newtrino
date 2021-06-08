@@ -5,13 +5,13 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-08
  *
  */
 
 
 require_once( __DIR__ . '/handler-login.php' );
-$view = handle_query( $_POST );
+$view = handle_query( $_POST, $_GET );
 
 
 header( 'Content-Type: text/html;charset=utf-8' );
@@ -27,9 +27,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <script src="js/login.min.js"></script>
 <title><?= _ht( 'User Authentication' ) ?> - Newtrino</title>
 </head>
-<body class="login">
-
 <?php \nt\begin(); ?>
+<body class="login{{#mode}} {{mode}}{{/mode}}">
+
 <div class="frame frame-login">
 	<h1>Newtrino</h1>
 	<form action="login.php" method="post">
@@ -42,6 +42,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<input type="hidden" name="url" id="url" value="{{url}}">
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
+{{#mode}}
+		<input type="hidden" name="mode" value="{{mode}}">
+{{/mode}}
 {{#is_login_failed}}
 		<p><?= _ht( 'Username or password is wrong.' ) ?></p>
 {{/is_login_failed}}
@@ -50,12 +53,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</nav>
 		<details class="cookie"><summary><?= _ht( 'Use Of Cookies...' ) ?></summary><div><?= _ht( 'Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.' ) ?></div></details>
 	</form>
-	<div id="key"></div>
 </div>
+<div id="key"></div>
 {{#error_message}}
 <script>console.log('{{error_message}}');</script>
 {{/error_message}}
-<?php \nt\end( $view ); ?>
 
 </body>
+<?php \nt\end( $view ); ?>
 </html>

@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-08
  *
  */
 
@@ -280,28 +280,39 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function startPing() {
-		const pingUrl = document.getElementById('ping-url').value;
-		let st = null;
+		const sp  = new URLSearchParams(document.location.search.substring(1));
+		const id  = sp.get('id');
+		const dlg = document.getElementById('dialog-login');
 
 		function ping() {
-			let doRepeat = true;
 			const req = new XMLHttpRequest();
-			req.addEventListener('load', (e) => {
-				const msg = req.responseText.match(/<result>([\s\S]*?)<\/result>/i);
-				if (!(msg !== null && msg[1] === 'success')) {
-					doRepeat = false;
-					clearTimeout(st);
-					const dlg = document.getElementById('dialog-login');
-					dlg.src = 'login.php?dialog';
-					openDialog(dlg);
-				}
-			});
-			req.open('post', pingUrl, true);
+			req.addEventListener('load', pong);
+			req.open('post', 'ajax.php', true);
 			req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			req.send();
-			if ( doRepeat ) st = setTimeout(ping, 2000);
+			req.send('mode=ping&id=' + id + '&cache=' + Date.now());
 		}
-		st = setTimeout(ping, 2000);
+		const MAX_COUNT = 3;
+		const INTERVAL  = 10000;
+		let fc = 0;
+
+		function pong(e) {
+			const msg = e.currentTarget.responseText.match(/<result>([\s\S]*?)<\/result>/i);
+			if (msg !== null && msg[1] === 'success') {
+				fc = 0;
+			} else {
+				fc += 1;
+			}
+			if (MAX_COUNT <= fc) {
+				fc = 0;
+				dlg.src = 'login.php?mode=dialog';
+				openDialog(dlg);
+			}
+		}
+		function iterate() {
+			if (!dlg.classList.contains('active')) ping();
+			setTimeout(iterate, INTERVAL);
+		}
+		setTimeout(iterate, INTERVAL);
 	}
 
 
