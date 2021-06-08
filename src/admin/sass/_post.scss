@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-08
  *
  */
 
@@ -306,7 +306,9 @@ body.post {
 			font-family: Consolas, Monaco, 'Courier New', Courier, 'Source Han Code JP', 'IPA Gothic', 'Osaka-Mono', monospace;
 		}
 	}
-
+	.tox .tox-toolbar__group {
+		height: 39px;  // To display the ruled line
+	}
 	.tox .tox-dialog-wrap__backdrop {
 		background-color: $color-dialog-placeholder-background;
 	}

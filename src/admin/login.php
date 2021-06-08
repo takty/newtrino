@@ -23,6 +23,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/style.min.css">
+<link rel="icon" type="image/png" href="css/logo.png">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.min.js"></script>
 <title><?= _ht( 'User Authentication' ) ?> - Newtrino</title>
