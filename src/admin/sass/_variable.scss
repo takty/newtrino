@@ -3,7 +3,7 @@
  * Variables for Style
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-09
  *
  */
 
@@ -13,19 +13,19 @@ $color-line: hsl(0, 0%, 80%, 90%);
 
 $color-frame-border           : transparent;
 $color-frame-border-dialog    : $color-line;
-$color-frame-background       : rgba(#fff, 0.9);
-$color-frame-background-dialog: rgba(#fff, 0.8);
+$color-frame-background       : rgba(#fff, 0.85);
+$color-frame-background-dialog: rgba(#fff, 0.80);
 
 $radius-frame: 8px;
 
-$color-button-border        : hsl(  0,   0%, 80%, 90%);
-$color-button-border-accent : hsl( 60,  80%, 40%, 90%);
-$color-button-border-caution: hsl(  0,  70%, 55%, 90%);
-$color-button-border-hover  : hsl(240, 100%, 77%, 90%);
+$color-button-border        : hsla(  0,   0%, 80%, 95%);
+$color-button-border-accent : hsla( 60,  80%, 40%, 95%);
+$color-button-border-caution: hsla(  0,  70%, 55%, 95%);
+$color-button-border-hover  : hsla(240, 100%, 77%, 95%);
 
-$color-button-background        : hsl( 0,  0%,  100%, 90%);
-$color-button-background-accent : hsl(60, 75%,   90%, 90%);
-$color-button-background-caution: hsl( 0, 75%,   92%, 90%);
+$color-button-background        : hsla( 0,  0%,  100%, 95%);
+$color-button-background-accent : hsla(60, 75%,   90%, 95%);
+$color-button-background-caution: hsla( 0, 75%,   92%, 95%);
 
 $radius-button: 4px;
 

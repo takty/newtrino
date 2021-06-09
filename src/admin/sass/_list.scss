@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-09
  *
  */
 
@@ -39,6 +39,7 @@ body.list {
 .list-taxonomy-cancel {
 	display: flex;
 	flex-wrap: wrap;
+	padding-bottom: 2px;
 }
 
 .list-item {
@@ -51,8 +52,8 @@ body.list {
 	}
 
 	tbody {
-		tr:nth-of-type(2n + 1) { background-color: hsl(0, 0%, 100%, 90%); }
-		tr:nth-of-type(2n)     { background-color: hsl(0, 0%, 100%, 25%); }
+		tr:nth-of-type(2n + 1) { background-color: hsla(0, 0%, 100%, 0.9); }
+		tr:nth-of-type(2n)     { background-color: hsla(0, 0%, 97.5%, 0.9); }
 	}
 	th, td {
 		padding: 0.75rem 0.5rem;
@@ -62,12 +63,14 @@ body.list {
 		&:last-child  { padding-right: 8px; }
 	}
 	th {
-		padding-top: 0.5rem;
 		border-bottom: 1px solid $color-line;
 		text-align: center;
 		white-space: nowrap;
 
 		&:not(:last-child) { min-width: 5rem; }
+	}
+	&:first-child th {
+		padding-top: 0.5rem;
 	}
 	td {
 		line-height: 1.35;

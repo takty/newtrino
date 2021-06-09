@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-09
  *
  */
 
@@ -31,12 +31,21 @@ body {
 
 body:not(.dialog) {
 	padding: { top: 0.75rem; bottom: 0.75rem; }
-	background-image:
-		linear-gradient(-45deg, #cccc3314 25%, #cccc3300 25%, #cccc3300 50%, #cccc3314 50%, #cccc3314 75%, #cccc3300 75%, #cccc3300),
-		linear-gradient(to right bottom, hsl(150, 35%, 60%) 0%, hsl(240, 50%, 65%) 100%)
-	;
-	background-size: 10px 10px, 100% 100%;
+	@include for-tl { padding-bottom: 1rem; }
 	background-repeat: repeat, no-repeat;
+
+	background-image:
+		linear-gradient(-45deg,
+			#cccc3314 25%,
+			#cccc3300 25%,
+			#cccc3300 50%,
+			#cccc3314 50%,
+			#cccc3314 75%,
+			#cccc3300 75%,
+			#cccc3300
+		),
+		linear-gradient(to right bottom, hsl(150, 35%, 60%) 0%, hsl(240, 50%, 65%) 100%);
+	background-size: 10px 10px, 100% 100%;
 }
 
 a {
@@ -48,9 +57,8 @@ a {
 .container,
 .footer {
 	width: calc(100% - 1rem);
-	@include for-ta {
-		width: min(96rem, calc(100% - 2rem));
-	}
+	@include for-tp { width: min(96rem, calc(100% - 1.5rem)); }
+	@include for-tl { width: min(96rem, calc(100% - 2rem)); }
 	.dialog & { width: 100%; }
 	margin: { left: auto; right: auto; }
 }
@@ -148,20 +156,24 @@ a {
 // -----------------------------------------------------------------------------
 
 
+@mixin floating-shadow {
+	box-shadow:
+		0 1px 2px rgba(#000, 0.12),
+		0 2px 4px rgba(#000, 0.10),
+		0 3px 6px rgba(#000, 0.08),
+		0 4px 8px rgba(#000, 0.06);
+}
+
 .frame {
 	border          : 1px solid $color-frame-border;
 	border-radius   : $radius-frame;
 	background-color: $color-frame-background;
-	backdrop-filter : blur(4px);
+	backdrop-filter : blur(2px);
 
-	box-shadow:
-		0 1px 2px rgba(#000, 0.10),
-		0 2px 4px rgba(#000, 0.08),
-		0 3px 6px rgba(#000, 0.06),
-		0 4px 8px rgba(#000, 0.04);
+	@include floating-shadow;
 	.dialog &,
 	&.dialog {
-		box-shadow: 0 1px 2px rgba(#000, 0.1);
+		box-shadow: 0 1px 2px rgba(#000, 0.08);
 		border: 1px solid $color-frame-border-dialog;
 		background-color: $color-frame-background-dialog;
 		overflow: hidden;
@@ -328,6 +340,12 @@ input[type=button],
 	&:disabled {
 		pointer-events: none;
 		opacity: 0.5;
+	}
+
+	body > .header & {
+		@include floating-shadow;
+		border-color: transparent;
+		&:hover { border-color: $color-button-border-hover; }
 	}
 }
 
