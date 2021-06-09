@@ -23,10 +23,10 @@ body.list {
 		bottom: 0.8rem;
 
 		@include for-tp-o {
-			left     : 0.85rem;
+			left     : 0.70rem;
 			bottom   : 0.75rem;
 			transform: rotate(-90deg);
-			font-size: 0.75rem;
+			font-size: 0.65rem;
 		}
 		@include for-tl {
 			left     : 1rem;
