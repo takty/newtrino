@@ -3,7 +3,7 @@
  * Gulpfile - Copy Libraries
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-10
  *
  */
 
@@ -75,7 +75,7 @@ const copyMoment = (done) => {
 	done();
 };
 
-exports.task_copy_lib = gulp.parallel(
+exports.taskCopyLib = gulp.parallel(
 	copyJssha,
 	copyFlatpickr,
 	copyTinymce,

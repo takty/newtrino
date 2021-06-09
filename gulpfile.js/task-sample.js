@@ -33,4 +33,4 @@ const sampleDataJs = makeTaskJs([
 	'./src/data/*.js'
 ], './sample/nt/data');
 
-exports.task_sample = gulp.series(sampleSystem, sampleData, sampleDataJs);
+exports.taskSample = gulp.series(sampleSystem, sampleData, sampleDataJs);
