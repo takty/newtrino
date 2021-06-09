@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-09
  *
  */
 
@@ -33,7 +33,7 @@ function handle_query( array $q ): array {
 	$query = parse_query_string();
 	$query = _rearrange_query( $query );
 
-	if ( ! $nt_session->lock( $q_id ) ) {
+	if ( $q_id && ! $nt_session->lock( $q_id ) ) {
 		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => 'lock' ] ) );
 		exit;
 	}
