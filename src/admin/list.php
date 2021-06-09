@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-09
  *
  */
 
@@ -79,7 +79,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</div>
 		<hr class="horizontal">
 		<div class="button-row right">
-			<label class="select">
+			<label class="select accent">
 				<select id="sel-new-post" class="accent" onchange="document.location.href = this.value;">
 					<option value="#"><?= _ht( "New Post" ) ?></option>
 {{#filter.new}}

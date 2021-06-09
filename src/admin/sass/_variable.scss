@@ -18,14 +18,18 @@ $color-frame-background-dialog: rgba(#fff, 0.80);
 
 $radius-frame: 8px;
 
-$color-button-border        : hsla(  0,   0%, 80%, 95%);
-$color-button-border-accent : hsla( 60,  80%, 40%, 95%);
-$color-button-border-caution: hsla(  0,  70%, 55%, 95%);
-$color-button-border-hover  : hsla(240, 100%, 77%, 95%);
+$color-button-border        : hsla(  0,   0%, 80%, 0.95);
+$color-button-border-accent : hsla( 60,  80%, 40%, 0.95);
+$color-button-border-caution: hsla(345,  70%, 55%, 0.95);
+$color-button-border-hover  : hsla(240, 100%, 77%, 0.95);
 
-$color-button-background        : hsla( 0,  0%,  100%, 95%);
-$color-button-background-accent : hsla(60, 75%,   90%, 95%);
-$color-button-background-caution: hsla( 0, 75%,   92%, 95%);
+$color-button-background        : hsla(  0,  0%, 100%, 95%);
+$color-button-background-accent : hsla( 60, 80%,  50%, 95%);
+$color-button-background-caution: hsla(345, 70%,  75%, 95%);
+
+$color-button-text        : $color-text;
+$color-button-text-accent : $color-text;
+$color-button-text-caution: $color-text;
 
 $radius-button: 4px;
 

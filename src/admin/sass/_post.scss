@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-09
  *
  */
 
@@ -273,6 +273,9 @@
 
 
 body.post {
+	textarea[name='post_content'] {
+		min-height: 20rem;
+	}
 	.tox.tox-tinymce {
 		min-height: 20rem;
 		max-height: calc(var(--vh, 1vh) * 100);
@@ -296,6 +299,50 @@ body.post {
 		border-color: $color-button-border;
 		border-radius: $radius-button;
 	}
+	.tox .tox-button {
+		display: inline-flex;
+		align-items: center;
+
+		border-radius: $radius-button;
+		border-color    : $color-button-border-accent;
+		background-color: $color-button-background-accent;
+		color           : $color-button-text-accent;
+		&:active:not(:disabled),
+		&:focus:not(:disabled),
+		&:hover:not(:disabled) {
+			border-color    : $color-button-border-hover;
+			background-color: $color-button-background-accent;
+			color           : $color-button-text-accent;
+		}
+
+		&.tox-button--secondary {
+			border-color    : $color-button-border;
+			background-color: $color-button-background;
+			color           : $color-button-text;
+			&:active:not(:disabled),
+			&:focus:not(:disabled),
+			&:hover:not(:disabled) {
+				border-color    : $color-button-border-hover;
+				background-color: $color-button-background;
+				color           : $color-button-text;
+			}
+		}
+	}
+	.tox .tox-label {
+		color: $color-text;
+	}
+	.tox .tox-color-input span::before {
+		background-repeat: repeat;
+	}
+	.tox .tox-textfield,
+	.tox .tox-listbox {
+		&:hover { border-color: $color-button-border-hover; }
+		&:focus {
+			outline: 0;
+			border-color: $color-button-border-hover;
+		}
+	}
+
 	.tox .tox-form__group {
 		border: 1px solid transparent;
 		border-radius: $radius-button;
@@ -309,9 +356,11 @@ body.post {
 	.tox .tox-toolbar__group {
 		height: 39px;  // To display the ruled line
 	}
+
 	.tox .tox-dialog-wrap__backdrop {
 		background-color: $color-dialog-placeholder-background;
 	}
+
 	.tox .tox-dialog {
 		background-color: $color-frame-background;
 		border-color    : $color-frame-border-dialog;
@@ -336,30 +385,5 @@ body.post {
 		padding: 1.25rem;
 		border-top-color: $color-line;
 		background-color: transparent;
-	}
-	.tox .tox-button {
-		border-radius: $radius-button;
-		color        : $color-text;
-
-		border-color    : $color-button-border-accent;
-		background-color: $color-button-background-accent;
-
-		&:hover:not(:disabled),
-		&:active:not(:disabled) {
-			border-color    : $color-button-border-hover;
-			background-color: #fff;
-			color           : $color-text;
-		}
-
-		&.tox-button--secondary {
-			border-color    : $color-button-border;
-			background-color: $color-button-background;
-		}
-	}
-	.tox .tox-label {
-		color: $color-text;
-	}
-	.tox .tox-color-input span::before {
-		background-repeat: repeat;
 	}
 }

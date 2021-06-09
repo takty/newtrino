@@ -326,7 +326,7 @@ input[type='password'],
 input[type='month'],
 select:not(.flatpickr-monthDropdown-months),
 button,
-input[type=button],
+input[type='button'],
 .button {
 	border          : 1px solid $color-button-border;
 	border-radius   : $radius-button;
@@ -336,10 +336,13 @@ input[type=button],
 	font: inherit;
 	font-size: 0.85rem;
 	text-decoration: none;
-	line-height: 1.15;
 	white-space: nowrap;
 
 	&:hover { border-color: $color-button-border-hover; }
+	&:focus {
+		outline: 0;
+		border-color: $color-button-border-hover;
+	}
 
 	&:disabled {
 		pointer-events: none;
@@ -351,6 +354,12 @@ input[type=button],
 		border-color: transparent;
 		&:hover { border-color: $color-button-border-hover; }
 	}
+}
+
+button,
+input[type='button'],
+.button {
+	line-height: 2rem;
 }
 
 input[type='text'],
@@ -371,6 +380,14 @@ input[type='password'] {
 	}
 }
 
+input[type='checkbox'] {
+	&:hover { border-color: $color-button-border-hover; }
+	&:focus-visible {
+		outline-color: $color-button-border-hover;
+		outline-offset: 0;
+	}
+}
+
 input[type='month'],
 select:not(.flatpickr-monthDropdown-months) {
 	max-height: 2rem;
@@ -383,11 +400,13 @@ select:not(.flatpickr-monthDropdown-months) {
 	padding-right: 1rem;
 	@include for-tp { padding-right: 1.25rem; }
 
-	&.accent:not(:hover) {
+	&.accent {
 		border-color    : $color-button-border-accent;
 		background-color: $color-button-background-accent;
+		color           : $color-button-text-accent;
+		&:hover { border-color: $color-button-border-hover; }
 
-		> option { background-color: unset; }
+		> option { background-color: #fff; }
 	}
 }
 
@@ -416,6 +435,13 @@ label.select,
 			border-top-width : 2px;
 			border-left-width: 2px;
 		}
+	}
+}
+
+label.select.accent {
+	&::after {
+		border-top-color : $color-button-text-accent;
+		border-left-color: $color-button-text-accent;
 	}
 }
 
@@ -453,14 +479,18 @@ input[type=button],
 	text-align: center;
 	user-select: none;
 
-	&.accent:not(:hover) {
+	&.accent {
 		border-color    : $color-button-border-accent;
 		background-color: $color-button-background-accent;
+		color           : $color-button-text-accent;
+		&:hover { border-color: $color-button-border-hover; }
 	}
-	&.delete:not(:hover),
-	&.delper:not(:hover) {
+	&.delete,
+	&.delper {
 		border-color    : $color-button-border-caution;
 		background-color: $color-button-background-caution;
+		color           : $color-button-text-caution;
+		&:hover { border-color: $color-button-border-hover; }
 	}
 	&.mini {
 		min-width: 1.5rem;
@@ -491,7 +521,7 @@ input[type=button],
 		&.delete {
 			&::before,
 			&::after {
-				border-left-color: red;
+				border-left-color: $color-button-text-caution;
 			}
 			min-width: 1.25rem;
 			width: 1.25rem;
