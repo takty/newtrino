@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-10
  *
  */
 
@@ -92,6 +92,7 @@ function get_editor_option( string $lang ): string {
 	}
 	if ( empty( $fn ) ) return '';
 	$json = file_get_contents( $fn );
+	if ( $json === false ) return '';
 	$opt = json_decode( $json, true );
 	if ( $opt === null ) return '';
 	return json_encode( $opt, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );

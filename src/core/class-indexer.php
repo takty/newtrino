@@ -5,7 +5,7 @@ namespace nt;
  * Indexer
  *
  * @author Takuto Yanagida
- * @version 2020-09-05
+ * @version 2021-06-10
  *
  */
 
@@ -37,12 +37,12 @@ class Indexer {
 
 	static public function calcIndexScore( array $words, string $bfPath ): float {
 		if ( ! is_readable( $bfPath ) ) {
-			Logger::output( 'error', "(Indexer::calcIndexScore is_readable) [$bfPath]" );
+			Logger::output( 'error', "(Indexer::calcIndexScore) The bigram file is not readable [$bfPath]" );
 			return 0;
 		}
 		$fp = fopen( $bfPath, 'r' );
 		if ( ! $fp ) {
-			Logger::output( 'error', "(Indexer::calcIndexScore fopen) [$bfPath]" );
+			Logger::output( 'error', "(Indexer::calcIndexScore) Cannot open the bigram file [$bfPath]" );
 			return 0;
 		}
 		$score = 0;

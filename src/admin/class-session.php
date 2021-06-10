@@ -48,7 +48,6 @@ class Session {
 		ini_set( 'session.name', 'newtrino' );
 		ini_set( 'session.use_strict_mode', 1 );
 		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
-		Logger::output( 'info', '(Session)' );
 
 		session_set_cookie_params([
 			'samesite' => 'Strict',
@@ -86,7 +85,8 @@ class Session {
 
 	public function login( array $params ): bool {
 		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['nonce'] ) || empty( $params['cnonce'] ) ) {
-			$this->_errMsg = 'Parameters are wrong.';
+			Logger::output( 'info', '(Session::login) Parameters are invalid' );
+			$this->_errMsg = 'Parameters are invalid';
 			return false;
 		}
 		$as = $this->_getAccountFile();
@@ -105,23 +105,26 @@ class Session {
 			$digest = hash( self::HASH_ALGO, $code );
 			if ( $digest === $params['digest'] ) {
 				$lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
-				return $this->_create( $lang );
+				$ret = $this->_create( $lang );
+				if ( $ret ) Logger::output( 'info', '(Session:login) Login succeeded' );
+				return $ret;
 			}
 		}
+		Logger::output( 'info', '(Session:login) Login failed' );
 		return false;
 	}
 
 	private function _getAccountFile(): ?array {
 		$path = $this->_dirAcct . self::ACCT_FILE_NAME;
 		if ( is_file( $path ) === false ) {
-			Logger::output( 'error', "(Session::login is_file) [$path]" );
-			$this->_errMsg = 'Account file does not exist.';
+			Logger::output( 'error', "(Session::_getAccountFile) The account file does not exist" );
+			$this->_errMsg = 'The account file does not exist';
 			return null;
 		}
 		$as = file( $path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 		if ( $as === false ) {
-			Logger::output( 'error', "(Session::login file) [$path]" );
-			$this->_errMsg = 'Account file cannot be opened.';
+			Logger::output( 'error', "(Session::_getAccountFile) Cannot open the account file" );
+			$this->_errMsg = 'Cannot open the account file';
 			return null;
 		}
 		return $as;
@@ -129,6 +132,7 @@ class Session {
 
 	public function logout(): void {
 		$this->_stop();
+		Logger::output( 'info', '(Session::logout) Logout' );
 	}
 
 
@@ -153,7 +157,8 @@ class Session {
 			$this->_unlock( $h );
 		}
 		if ( $res === false ) {
-			$this->_errMsg = 'Session file cannot be written.';
+			Logger::output( 'error', '(Session::_create) Cannot write the session file' );
+			$this->_errMsg = 'Cannot write the session file';
 		}
 		return $res;
 	}
@@ -248,6 +253,7 @@ class Session {
 			}
 			$this->_unlock( $h );
 		}
+		Logger::output( 'info', '(Session::lock) Post locking ' . ( $ret ? 'succeeded' : 'failed' ) . " [$pid]" );
 		return $ret;
 	}
 
@@ -324,7 +330,7 @@ class Session {
 	static public function deleteAllIn( string $dir ): void {
 		$dir = rtrim( $dir, '/' );
 		if ( ! is_dir( $dir ) ) {
-			Logger::output( 'error', "(Session::deleteAllIn is_dir) [$dir]" );
+			Logger::output( 'error', "(Session::deleteAllIn) The directory does not exist [$dir]" );
 			return;
 		}
 		foreach ( scandir( $dir ) as $fn ) {
@@ -364,7 +370,8 @@ class Session {
 
 	private function _getSessionIds(): array {
 		$sids = scandir( $this->_dirSession );
-		return ( $sids === false ) ? [] : $sids;
+		if ( $sids === false ) return [];
+		return array_diff( $sids, [ '.', '..' ] );
 	}
 
 	private function _loadSessionFileAll(): array {
@@ -384,21 +391,31 @@ class Session {
 
 	private function _loadSessionFile( string $sid ): ?array {
 		$path = $this->_dirSession . $sid;
-		if ( ! is_file( $path ) || ! is_readable( $path ) ) return null;
-		$json = file_get_contents( $path );
-		if ( $json === false ) {
-			Logger::output( 'error', "(Session::_loadSessionFile file_get_contents) [$path]" );
+		if ( ! is_file( $path ) || ! is_readable( $path ) ) {
+			Logger::output( 'error', "(Session::_loadSessionFile) The session file does not exist or is not readable [$sid]" );
 			return null;
 		}
-		return json_decode( $json, true );
+		$json = file_get_contents( $path );
+		if ( $json === false ) {
+			Logger::output( 'error', "(Session::_loadSessionFile) Cannot read the session file [$sid]" );
+			return null;
+		}
+		$data = json_decode( $json, true );
+		if ( $data === null ) {
+			Logger::output( 'error', "(Session::_loadSessionFile) The session file is invalid [$sid]" );
+		}
+		return $data;
 	}
 
 	private function _removeSessionFile( string $sid ): void {
 		$path = $this->_dirSession . $sid;
-		if ( ! is_file( $path ) ) return;
+		if ( ! is_file( $path ) ) {
+			Logger::output( 'error', "(Session::_removeSessionFile) Session file does not exist [$sid]" );
+			return;
+		}
 		$res = unlink( $path );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Session::_removeSessionFile unlink) [$path]" );
+			Logger::output( 'error', "(Session::_removeSessionFile) Cannot remove the session file [$sid]" );
 		}
 	}
 
@@ -408,7 +425,7 @@ class Session {
 		$json = json_encode( $sf, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Session::_saveSessionFile file_put_contents) [$path]" );
+			Logger::output( 'error', "(Session::_saveSessionFile) Cannot write the session file [$sid]" );
 			return false;
 		}
 		@chmod( $path, NT_MODE_FILE );
@@ -426,7 +443,7 @@ class Session {
 			@chmod( $path, NT_MODE_DIR );
 			return true;
 		}
-		Logger::output( 'error', "(Session::_ensureDir) [$path]" );
+		Logger::output( 'error', "(Session::_ensureDir) The session directory is not usable [$path]" );
 		return false;
 	}
 

@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-10
  *
  */
 
@@ -51,7 +51,9 @@ function load_config( string $dirData ): array {
 	$path = $dirData . 'config.json';
 	if ( is_file( $path ) && is_readable( $path ) ) {
 		$json = file_get_contents( $path );
-		$conf = json_decode( $json, true ) ?? [];
+		if ( $json !== false ) {
+			$conf = json_decode( $json, true ) ?? [];
+		}
 	}
 	// Default Config
 	$conf += [

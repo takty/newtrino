@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida
- * @version 2021-06-06
+ * @version 2021-06-10
  *
  */
 
@@ -232,7 +232,7 @@ class Store {
 					continue;
 				}
 				if ( $isTrash && $fn[0] !== '-' ) continue;
-				$info = $this->_loadInfo( $root . $path . $fn );
+				$info = $this->_loadInfo( $root . $path . $fn, $fn );
 				if ( $info === null ) continue;
 				if ( $query->match( $info, "$root$path$fn/" . Post::BIGM_FILE_NAME ) ) {
 					$ret[] = [ 'id' => $fn, 'subPath' => $path, 'info' => $info ];
@@ -242,7 +242,7 @@ class Store {
 		}
 	}
 
-	private function _loadInfo( string $postDir ): ?array {
+	private function _loadInfo( string $postDir, string $pid ): ?array {
 		$infoPath = $postDir . '/' . Post::INFO_FILE_NAME;
 		$json     = false;
 		try {
@@ -253,10 +253,14 @@ class Store {
 			// Do nothing
 		}
 		if ( $json === false ) {
-			Logger::output( 'error', "(Post::_loadInfo file_get_contents) [$infoPath]" );
+			Logger::output( 'error', "(Store::_loadInfo) Cannot read the info data [$pid]" );
 			return null;
 		}
-		return json_decode( $json, true );
+		$data = json_decode( $json, true );
+		if ( $data === null ) {
+			Logger::output( 'error', "(Store::_loadInfo) The info data is invalid [$pid]" );
+		}
+		return $data;
 	}
 
 
@@ -268,7 +272,7 @@ class Store {
 		list( $archPath, $subPath ) = $this->createArchAndSubPath( $type, $dateRaw, true );
 
 		if ( ! is_writable( $this->_dirRoot . $subPath ) ) {
-			Logger::output( 'error', "(Store::createNewPost is_writable) Directory Is Not Writable [$this->_dirRoot . $subPath]" );
+			Logger::output( 'error', "(Store::createNewPost) The post directory is not writable [$subPath]" );
 			return null;
 		}
 		if ( $dir = opendir( $archPath ) ) {
@@ -329,14 +333,18 @@ class Store {
 		$removed_id = "-$id";
 		$srcPath = $this->getPostDir( $id, $subPath );
 		if ( ! is_dir( $srcPath ) ) {
-			Logger::output( 'error', "(Store::removePost is_dir) Directory Does Not Exist [$srcPath]" );
+			Logger::output( 'error', "(Store::removePost) The post directory does not exist [$id]" );
 			return;
 		}
 		if ( ! is_writable( $this->_dirRoot . $subPath ) ) {
-			Logger::output( 'error', "(Store::removePost is_writable) Directory Is Not Writable [$this->_dirRoot . $subPath]" );
+			Logger::output( 'error', "(Store::removePost) The post directory is not writable [$id]" );
 			return;
 		}
-		rename( $this->getPostDir( $id, $subPath ), $this->getPostDir( $removed_id, $subPath ) );
+		if ( rename( $srcPath, $this->getPostDir( $removed_id, $subPath ) ) ) {
+			Logger::output( 'info', "(Store::removePost) Post removing succeeded [$id]" );
+		} else {
+			Logger::output( 'error', "(Store::removePost) Post removing failed [$id]" );
+		}
 	}
 
 	public function restorePost( string $removed_id ): void {
@@ -345,10 +353,14 @@ class Store {
 		$id = substr( $removed_id, 1 );
 		$srcPath = $this->getPostDir( $removed_id, $subPath );
 		if ( ! is_dir( $srcPath ) ) {
-			Logger::output( 'error', "(Store::restorePost is_dir) Directory Does Not Exist [$srcPath]" );
+			Logger::output( 'error', "(Store::restorePost) The post directory does not exist [$removed_id]" );
 			return;
 		}
-		rename( $srcPath, $this->getPostDir( $id, $subPath ) );
+		if ( rename( $srcPath, $this->getPostDir( $id, $subPath ) ) ) {
+			Logger::output( 'info', "(Store::restorePost) Post restoring succeeded [$id]" );
+		} else {
+			Logger::output( 'error', "(Store::restorePost) Post restoring failed [$id]" );
+		}
 	}
 
 	public function emptyTrash( string $type ): void {
@@ -362,7 +374,7 @@ class Store {
 	static public function deleteAll( string $dir ): void {
 		$dir = rtrim( $dir, '/' );
 		if ( ! is_dir( $dir ) ) {
-			Logger::output( 'error', "(Store::deleteAll is_dir) Directory Does Not Exist [$dir]" );
+			Logger::output( 'error', "(Store::deleteAll) The post directory does not exist [$dir]" );
 			return;
 		}
 		foreach ( scandir( $dir ) as $fn ) {

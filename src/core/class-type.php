@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida
- * @version 2020-08-12
+ * @version 2021-06-10
  *
  */
 
@@ -88,12 +88,12 @@ class Type {
 
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( 'error', "(Type::_loadData file_get_contents) [$path]" );
+			Logger::output( 'error', "(Type::_loadData) Cannot read the type definition [$path]" );
 			die;
 		}
 		$data = json_decode( $json, true );
 		if ( $data === null ) {
-			Logger::output( 'error', "(Type::_loadData json_decode) [$path]" );
+			Logger::output( 'error', "(Type::_loadData) The type definition is invalid [$path]" );
 			die;
 		}
 		return $this->_data = $this->_processData( $data );;

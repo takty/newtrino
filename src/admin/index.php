@@ -5,7 +5,7 @@ namespace nt;
  * Init for Admin
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-10
  *
  */
 
@@ -27,6 +27,7 @@ function load_resource( string $dirData, string $lang ): array {
 	$path = $dirData . $lang . '.json';
 	if ( is_file( $path ) && is_readable( $path ) ) {
 		$json = file_get_contents( $path );
+		if ( $json === false ) return [];
 		$res = json_decode( $json, true );
 		if ( $res !== null ) return $res;
 	}
