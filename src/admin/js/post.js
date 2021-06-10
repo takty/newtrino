@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-11
  *
  */
 
@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			btnDel.addEventListener('click', (e) => {
 				m.querySelector('.media-name').value = '';
 				m.querySelector('.media-json').value = '';
+				btnDel.setAttribute('disabled', true);
 			});
 		}
 	}
@@ -155,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				m.querySelector('.media-name').value = '';
 				m.querySelector('.media-json').value = '';
 				m.querySelector('.image > div').style.backgroundImage = null;
+				btnDel.setAttribute('disabled', true);
 			});
 		}
 	}
@@ -440,4 +442,6 @@ function insertMediaToMeta(target, data) {
 	if (nameElm) nameElm.value = data.name;
 	const imgElm = f.querySelector('.image > div');
 	if (imgElm && data && data.minUrl) imgElm.style.backgroundImage = 'url("' + data.minUrl + '")';
+	const delBtn = f.querySelector('.button.delete');
+	if (delBtn) delBtn.removeAttribute('disabled');
 }

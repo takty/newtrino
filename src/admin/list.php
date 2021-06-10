@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-10
  *
  */
 
@@ -171,7 +171,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<div class="button-row bottom">
 			<a href="{{list_all}}" class="button tag"><?= _ht( "All" ) ?></a>
 			<a href="{{list_trash}}" class="button tag"><?= _ht( "Trash" ) ?></a>
-			<a id="btn-empty-trash" data-href="{{empty_trash}}" class="button tag right delete"><?= _ht( "Empty Trash" ) ?></a>
+			<a id="btn-empty-trash" data-href="{{empty_trash}}" class="button tag right delete"{{^posts}} disabled{{/posts}}><?= _ht( "Empty Trash" ) ?></a>
 		</div>
 <?php \nt\end( $view ); ?>
 	</div>

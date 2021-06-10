@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-11
  *
  */
 
@@ -284,15 +284,16 @@ function echo_metabox_media( Post $post, array $m, string $label, bool $internal
 	$json = is_string( $json ) ? $json : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 
-	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
-	$cls = $internal ? '' : ' frame frame-sub';
+	$md   = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
+	$cls  = $internal ? '' : ' frame frame-sub';
+	$attr = empty( $name ) ? ' disabled' : '';
 ?>
 	<div class="metabox-media<?= $cls ?>" id="metabox:<?= _h( $key ) ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div class="metabox-container">
 			<a class="button open-media-dialog" data-src="<?= _h( $md ) ?>"><?= _ht( 'Select' ) ?></a>
 			<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">
-			<a class="button delete cross right"></a>
+			<a class="button delete cross right"<?= $attr ?>></a>
 		</div>
 		<input type="hidden" class="media-json" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
 	</div>
@@ -308,8 +309,9 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('background-image:url("' . $mv['minUrl'] . '")') : '';
 
-	$md = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
-	$cls = $internal ? '' : ' frame frame-sub';
+	$md   = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
+	$cls  = $internal ? '' : ' frame frame-sub';
+	$attr = empty( $name ) ? ' disabled' : '';
 ?>
 	<div class="metabox-media-image<?= $cls ?>" id="metabox:<?= _h( $key ) ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
@@ -319,7 +321,7 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 			</a>
 			<div>
 				<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">
-				<a class="button delete cross right"></a>
+				<a class="button delete cross right"<?= $attr ?>></a>
 			</div>
 		</div>
 		<input type="hidden" class="media-json" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">

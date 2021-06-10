@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-10
  *
  */
 
@@ -344,7 +344,8 @@ input[type='button'],
 		border-color: $color-button-border-hover;
 	}
 
-	&:disabled {
+	&:disabled,
+	&[disabled] {
 		pointer-events: none;
 		opacity: 0.5;
 	}
