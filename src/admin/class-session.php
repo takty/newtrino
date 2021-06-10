@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-10
  *
  */
 
@@ -144,6 +144,7 @@ class Session {
 		$this->_sessionId = $_SESSION['session_id'];
 		if ( $lang ) $_SESSION['lang'] = $lang;
 
+		$res = false;
 		if ( $h = $this->_lock() ) {
 			foreach ( $this->_getSessionIds() as $sid ) {
 				$this->_checkTimestamp( $sid, false );
@@ -342,7 +343,9 @@ class Session {
 
 
 	private function _lock() {
-		if ( ! is_dir( $this->_dirSession ) ) return null;
+		if ( ! is_dir( $this->_dirSession ) ) {
+			if ( ! self::_ensureDir( $this->_dirSession ) ) return null;
+		}
 		if ( $h = opendir( $this->_dirSession ) ) {
 			flock( $h, LOCK_EX );
 			return $h;
