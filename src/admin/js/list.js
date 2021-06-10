@@ -3,13 +3,12 @@
  * List (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-10
  *
  */
 
 
-//=
-//=include _common.js
+// @include _common.js
 
 document.addEventListener('DOMContentLoaded', () => {
 	const btnsRemove  = document.getElementsByClassName('remove-post');

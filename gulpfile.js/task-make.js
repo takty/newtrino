@@ -43,15 +43,13 @@ const minifyJs = makeJsTask([
 
 const copyJs = makeCopyTask(['./src/admin/js/tinymce/langs/*.js'], './dist', './src');
 
-const sass = () => gulp.src(['./src/admin/sass/style.scss'])
+const sass = () => gulp.src(['./src/admin/sass/style.scss'], { sourcemaps: true })
 	.pipe($.plumber())
-	.pipe($.sourcemaps.init())
 	.pipe($.dartSass({ outputStyle: 'compressed' }))
 	.pipe($.autoprefixer({ remove: false }))
 	.pipe($.replace(REP_VERSION, VERSION))
 	.pipe($.rename({ extname: '.min.css' }))
-	.pipe($.sourcemaps.write('.'))
-	.pipe(gulp.dest('./dist/admin/css/'));
+	.pipe(gulp.dest('./dist/admin/css/', { sourcemaps: '.' }));
 
 exports.taskCopy = gulp.series(copySrc, copyCss);
 exports.taskJs   = gulp.series(minifyJs, copyJs);;

@@ -3,13 +3,12 @@
  * Login (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-10
  *
  */
 
 
-//=
-//=include _common.js
+// @include _common.js
 
 document.addEventListener('DOMContentLoaded', () => {
 	const btn = document.getElementById('btn-login');

@@ -35,28 +35,24 @@ const gulp = require('gulp');
 const $    = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
 
 function makeJsTask(src, dest = './dist', base = null) {
-	return () => gulp.src(src, { base: base })
+	return () => gulp.src(src, { base: base, sourcemaps: true })
 		.pipe($.plumber())
-		.pipe($.include())
-		.pipe($.sourcemaps.init())
+		.pipe($.preprocess())
 		.pipe($.babel())
 		.pipe($.terser())
 		.pipe($.rename({ extname: '.min.js' }))
-		.pipe($.sourcemaps.write('.'))
 		.pipe($.changed(dest, { hasChanged: $.changed.compareContents }))
-		.pipe(gulp.dest(dest));
+		.pipe(gulp.dest(dest, { sourcemaps: '.' }));
 }
 
 function makeSassTask(src, dest = './dist', base = null) {
-	return () => gulp.src(src, { base: base })
+	return () => gulp.src(src, { base: base, sourcemaps: true })
 		.pipe($.plumber())
-		.pipe($.sourcemaps.init())
 		.pipe($.dartSass({ outputStyle: SASS_OUTPUT_STYLE }))
 		.pipe($.autoprefixer({ remove: false }))
 		.pipe($.rename({ extname: '.min.css' }))
-		.pipe($.sourcemaps.write('.'))
 		.pipe($.changed(dest, { hasChanged: $.changed.compareContents }))
-		.pipe(gulp.dest(dest));
+		.pipe(gulp.dest(dest, { sourcemaps: '.' }));
 }
 
 function makeCopyTask(src, dest = './dist', base = null) {
