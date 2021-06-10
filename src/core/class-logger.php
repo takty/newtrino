@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida
- * @version 2021-05-31
+ * @version 2021-06-10
  *
  */
 
@@ -26,7 +26,7 @@ class Logger {
 
 		flock( $fp, LOCK_EX );
 		set_file_buffer( $fp, 0 );
-		$line = join( ' ', [ date( 'Y-m-d H:i:s' ), getenv( 'REMOTE_USER' ), ucfirst( strtolower( $type ) ), $msg ] );
+		$line = join( ' ', [ date( '[Y-m-d H:i:s]' ), $_SERVER['REMOTE_ADDR'], ucfirst( strtolower( $type ) ), $msg ] );
 		if ( self::$debug && $type !== 'info' ) {
 			print( htmlspecialchars( $line, ENT_HTML5 ) . "<br>\n" );
 		}
