@@ -18,21 +18,22 @@ const gulp = require('gulp');
 
 const { taskCopyLib } = require('./task-copy-lib');
 
-const { copyWatch, js, sass } = require('./task-make');
-
-const build = gulp.parallel(gulp.series(copyWatch, taskCopyLib), js, sass);
+const { taskCopy, taskJs, taskSass } = require('./task-make');
 
 const { taskSample } = require('./task-sample');
+
+const taskBuild = gulp.parallel(gulp.series(taskCopy, taskCopyLib), taskJs, taskSass);
 
 
 // -----------------------------------------------------------------------------
 
 
 const watch = (done) => {
-	gulp.watch(['src/**/*.html', 'src/**/*.php'], gulp.series(copyWatch, taskSample));
-	gulp.watch('src/**/*.js', gulp.series(js, taskSample));
-	gulp.watch('src/**/*.scss', gulp.series(sass, taskSample));
+	gulp.watch('src/**/*.{html,css,svg,png,php}', gulp.series(taskCopy, taskSample));
+	gulp.watch('src/**/*.js', gulp.series(taskJs, taskSample));
+	gulp.watch('src/**/*.scss', gulp.series(taskSass, taskSample));
 	done();
 };
 
-exports.default = gulp.series(build, taskSample, watch);
+exports.default = gulp.series(taskBuild, taskSample, watch);
+exports.build   = taskBuild;

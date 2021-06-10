@@ -3,61 +3,38 @@
  * Common functions for gulp process
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-10
  *
  */
 
 
 'use strict';
 
-const fs = require('fs-extra');
-const glob = require('glob');
 const path = require('path');
 
-function copySync(from, to) {
-	const isToDir = to.endsWith('/');
-	const files = glob.sync(from);
-	for (let f of files) {
-		const tar = isToDir ? path.join(to, path.basename(f)) : to;
-		if (fs.statSync(f).isFile()) {
-			const fromBuf = fs.readFileSync(f);
-			if (fs.existsSync(tar)) {
-				const toBuf = fs.readFileSync(tar);
-				if (!fromBuf.equals(toBuf)) {
-					fs.copySync(f, tar);
-				}
-			} else {
-				fs.copySync(f, tar);
-			}
-		} else {
-			fs.copySync(f, tar);
-		}
-	}
-}
-
-function packageDir(name) {
+function pkgDir(name) {
 	return path.dirname(require.resolve(name + '/package.json'));
 }
 
-function makeVersionString(devPostfix = ' [dev]') {
+function verStr(devPostfix = ' [dev]') {
 	const getBranchName = require('current-git-branch');
-	const BRANCH_NAME = getBranchName();
-	const config = require('../package.json');
-	return 'v' + config['version'] + ((BRANCH_NAME === 'develop') ? devPostfix : '');
+
+	const bn  = getBranchName();
+	const pkg = require('../package.json');
+	return 'v' + pkg['version'] + ((bn === 'develop') ? devPostfix : '');
 }
 
-exports.copySync          = copySync;
-exports.packageDir        = packageDir;
-exports.makeVersionString = makeVersionString;
+exports.pkgDir = pkgDir;
+exports.verStr = verStr;
 
 
 // -----------------------------------------------------------------------------
 
 
 const gulp = require('gulp');
-const $ = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
+const $    = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
 
-function makeTaskJs(src, dest = './dist', base = null) {
+function makeJsTask(src, dest = './dist', base = null) {
 	return () => gulp.src(src, { base: base })
 		.pipe($.plumber())
 		.pipe($.include())
@@ -70,7 +47,7 @@ function makeTaskJs(src, dest = './dist', base = null) {
 		.pipe(gulp.dest(dest));
 }
 
-function makeTaskSass(src, dest = './dist', base = null) {
+function makeSassTask(src, dest = './dist', base = null) {
 	return () => gulp.src(src, { base: base })
 		.pipe($.plumber())
 		.pipe($.sourcemaps.init())
@@ -82,7 +59,7 @@ function makeTaskSass(src, dest = './dist', base = null) {
 		.pipe(gulp.dest(dest));
 }
 
-function makeTaskCopy(src, dest = './dist', base = null) {
+function makeCopyTask(src, dest = './dist', base = null) {
 	return () => gulp.src(src, { base: base })
 		.pipe($.plumber())
 		.pipe($.ignore.include({ isFile: true }))
@@ -90,6 +67,6 @@ function makeTaskCopy(src, dest = './dist', base = null) {
 		.pipe(gulp.dest(dest));
 }
 
-exports.makeTaskJs   = makeTaskJs;
-exports.makeTaskSass = makeTaskSass;
-exports.makeTaskCopy = makeTaskCopy;
+exports.makeJsTask   = makeJsTask;
+exports.makeSassTask = makeSassTask;
+exports.makeCopyTask = makeCopyTask;

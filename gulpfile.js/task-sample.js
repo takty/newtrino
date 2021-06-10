@@ -1,6 +1,6 @@
 /**
  *
- * Gulpfile - Sample
+ * Gulpfile - Tasks for building sample
  *
  * @author Takuto Yanagida
  * @version 2021-06-10
@@ -12,25 +12,23 @@
 
 const gulp = require('gulp');
 
-const { makeTaskJs, makeTaskCopy } = require('./common');
+const { makeJsTask, makeCopyTask } = require('./common');
 
 
 // -----------------------------------------------------------------------------
 
 
-const sampleSystem = makeTaskCopy([
+const copyNt = makeCopyTask([
 	'./dist/**/*',
 	'./dist/**/.htaccess'
 ], './sample/nt');
 
-const sampleData = makeTaskCopy([
+const copyData = makeCopyTask([
 	'./src/data/**/*',
 	'./src/data/**/.htaccess',
 	'!./src/data/*.js'
 ], './sample/nt', './src');
 
-const sampleDataJs = makeTaskJs([
-	'./src/data/*.js'
-], './sample/nt/data');
+const minifyDataJs = makeJsTask('./src/data/*.js', './sample/nt/data');
 
-exports.taskSample = gulp.series(sampleSystem, sampleData, sampleDataJs);
+exports.taskSample = gulp.series(copyNt, copyData, minifyDataJs);

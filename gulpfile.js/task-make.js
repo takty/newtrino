@@ -1,6 +1,6 @@
 /**
  *
- * Gulpfile
+ * Gulpfile - Tasks for making system
  *
  * @author Takuto Yanagida
  * @version 2021-06-10
@@ -11,18 +11,18 @@
 'use strict';
 
 const gulp = require('gulp');
-const $ = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
+const $    = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
 
-const { makeVersionString, makeTaskJs, makeTaskCopy } = require('./common');
+const { verStr, makeJsTask, makeCopyTask } = require('./common');
 
 const REP_VERSION = '%VERSION%';
-const VERSION = makeVersionString(' [dev]');
+const VERSION     = verStr(' [dev]');
 
 
 // -----------------------------------------------------------------------------
 
 
-const copySrc = makeTaskCopy([
+const copySrc = makeCopyTask([
 	'./src/**/*',
 	'./src/**/.htaccess',
 	'!./src/*.js',
@@ -31,13 +31,9 @@ const copySrc = makeTaskCopy([
 	'!./src/admin/sass/*',
 ], './dist', './src');
 
-const copyCss = makeTaskCopy([
-	'./src/admin/sass/*.css',
-	'./src/admin/sass/*.svg',
-	'./src/admin/sass/*.png',
-], './dist/admin/css');
+const copyCss = makeCopyTask('./src/admin/sass/*.{css,svg,png}', './dist/admin/css');
 
-const jsMinify = makeTaskJs([
+const minifyJs = makeJsTask([
 	'./src/[^_]*.js',
 	'./src/**/[^_]*.js',
 	'!./src/**/*.min.js',
@@ -45,10 +41,7 @@ const jsMinify = makeTaskJs([
 	'!./src/admin/js/tinymce/langs/*.js'
 ], './dist', './src');
 
-const jsRaw = makeTaskCopy(['./src/admin/js/tinymce/langs/*.js'], './dist', './src');
-
-// const js = gulp.series(jsMinify);
-const js = gulp.series(jsMinify, jsRaw);
+const copyJs = makeCopyTask(['./src/admin/js/tinymce/langs/*.js'], './dist', './src');
 
 const sass = () => gulp.src(['./src/admin/sass/style.scss'])
 	.pipe($.plumber())
@@ -60,6 +53,6 @@ const sass = () => gulp.src(['./src/admin/sass/style.scss'])
 	.pipe($.sourcemaps.write('.'))
 	.pipe(gulp.dest('./dist/admin/css/'));
 
-exports.copyWatch = gulp.series(copySrc, copyCss);
-exports.js        = js;
-exports.sass      = sass;
+exports.taskCopy = gulp.series(copySrc, copyCss);
+exports.taskJs   = gulp.series(minifyJs, copyJs);;
+exports.taskSass = sass;
