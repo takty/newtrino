@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-10
  *
  */
 
@@ -48,8 +48,8 @@ function query_media( array $req ): void {
 	$media = null;
 
 	foreach ( $_GET as $key => $val ) {
-		$id    = $key;
-		$media = $val;
+		$id    = strval( $key );
+		$media = strval( $val );
 		break;
 	}
 	if ( empty( $id ) || empty( $media ) ) {
