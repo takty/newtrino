@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-11
  *
  */
 
@@ -27,7 +27,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="icon" type="image/png" href="css/logo.png">
 <script src="js/jssha/sha256.js"></script>
 <script src="js/login.min.js"></script>
-<title><?= _ht( 'User Authentication' ) ?> - Newtrino</title>
+<title><?= _ht( 'Log In' ) ?> - Newtrino</title>
 </head>
 <?php \nt\begin(); ?>
 <body class="login{{#mode}} {{mode}}{{/mode}}">
