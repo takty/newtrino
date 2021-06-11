@@ -3,7 +3,7 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-11
  *
  */
 
@@ -63,7 +63,7 @@ body.media {
 		width : 6rem;
 		height: 6rem;
 
-		box-shadow: 0 0 4px $color-line inset;
+		box-shadow: 0 0 2px 1px $color-line inset;
 		border-radius: 2px;
 
 		img {
