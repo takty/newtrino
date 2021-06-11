@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-11
  *
  */
 
@@ -22,6 +22,7 @@ require_once( __DIR__ . '/core/util/file-sender.php' );
 if ( $is_direct ) {
 	if ( ! empty( $_POST ) ) query_ajax( $_POST );
 	else if ( ! empty( $_GET ) ) query_media( $_GET );
+	else header( $_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );
 }
 
 
@@ -53,7 +54,7 @@ function query_media( array $req ): void {
 		break;
 	}
 	if ( empty( $id ) || empty( $media ) ) {
-		header( 'HTTP/1.1 404 Not Found' );
+		header( $_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );
 		die;
 	}
 
@@ -63,17 +64,17 @@ function query_media( array $req ): void {
 	if ( $id[0] === '_' ) {  // Temporary ID
 		require_once( __DIR__ . '/admin/class-session.php' );
 		if ( ! Session::canStart() ) {
-			header( 'HTTP/1.1 404 Not Found' );
+			header( $_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );
 			die;
 		}
 	}
 	if ( $id[0] === '-' ) {  // Trash
-		header( 'HTTP/1.1 404 Not Found' );
+		header( $_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );
 		die;
 	}
 	$postDir = $nt_store->getPostDir( $id, null );
 	if ( ! is_dir( $postDir ) ) {
-		header( 'HTTP/1.1 404 Not Found' );
+		header( $_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );
 		die;
 	}
 	sendFile( $postDir . 'media/' . $media );
