@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-11
  *
  */
 
@@ -118,7 +118,7 @@ class Media {
 	private function _getUniqueFileName( string $fileName, string $postFix = '' ): string {
 		$pi   = pathinfo( $fileName );
 		$ext  = '.' . $pi['extension'];
-		$name = $pi['filename'] . $postFix;
+		$name = self::_sanitizeFileName( $pi['filename'] ) . $postFix;
 
 		$nfn = "$name$ext";
 		if ( ! $this->_isFileExist( $nfn ) ) return $nfn;
@@ -132,6 +132,14 @@ class Media {
 
 	private function _isFileExist( string $fileName ): bool {
 		return is_dir( $this->_dir ) && is_file( $this->_dir . $fileName );
+	}
+
+	static private function _sanitizeFileName( $name ) {
+		$scs  = [ '/', '\\', ':', '*', '?', '"', '<', '>', '|', chr( 0 ) ];
+		$name = str_replace( $scs, '_', $name );
+		$name = preg_replace( '/[\r\n\t]+/u', '_', $name );
+		$name = preg_replace( '/^\./u', '_', $name );
+		return $name;
 	}
 
 
