@@ -3,7 +3,7 @@
  * Gulpfile - Tasks for making system
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-13
  *
  */
 
@@ -30,8 +30,10 @@ const copySrc = makeCopyTask([
 	'!./src/data/**/*',
 	'!./src/admin/sass/*',
 ], './dist', './src');
+copySrc.displayName = 'makeCopySrc';
 
 const copyCss = makeCopyTask('./src/admin/sass/*.{css,svg,png}', './dist/admin/css');
+copyCss.displayName = 'makeCopyCss';
 
 const minifyJs = makeJsTask([
 	'./src/[^_]*.js',
@@ -40,8 +42,10 @@ const minifyJs = makeJsTask([
 	'!./src/data/*.js',
 	'!./src/admin/js/tinymce/langs/*.js'
 ], './dist', './src');
+minifyJs.displayName = 'makeMinifyJs';
 
 const copyJs = makeCopyTask(['./src/admin/js/tinymce/langs/*.js'], './dist', './src');
+copyJs.displayName = 'makeCopyJs';
 
 const sass = () => gulp.src(['./src/admin/sass/style.scss'], { sourcemaps: true })
 	.pipe($.plumber())
@@ -50,7 +54,9 @@ const sass = () => gulp.src(['./src/admin/sass/style.scss'], { sourcemaps: true 
 	.pipe($.replace(REP_VERSION, VERSION))
 	.pipe($.rename({ extname: '.min.css' }))
 	.pipe(gulp.dest('./dist/admin/css/', { sourcemaps: '.' }));
+sass.displayName = 'makeSass';
 
-exports.taskCopy = gulp.series(copySrc, copyCss);
+exports.taskSrc  = copySrc;
+exports.taskCss  = copyCss;
 exports.taskJs   = gulp.series(minifyJs, copyJs);;
 exports.taskSass = sass;

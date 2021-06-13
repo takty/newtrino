@@ -3,7 +3,7 @@
  * Gulpfile - Tasks for copying libraries
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-13
  *
  */
 
@@ -23,31 +23,41 @@ const DIST_ADMIN = './dist/admin/';
 
 const makeTaskCopyMustache = () => {
 	// Dest directory must be capitalized
-	return makeCopyTask('./vendor/mustache/mustache/src/Mustache/**/*', DIST_BASE + 'core/lib/Mustache/', './vendor/mustache/mustache/src/Mustache/');
+	const f = makeCopyTask('./vendor/mustache/mustache/src/Mustache/**/*', DIST_BASE + 'core/lib/Mustache/', './vendor/mustache/mustache/src/Mustache/');
+	f.displayName = 'copyLibCopyMustache';
+	return f;
 };
 
 const makeTaskCopyNacssReset = () => {
 	const dir = pkgDir('nacss-reset');
-	return makeCopyTask(dir + '/dist/reset.min.css*(.map)', DIST_ADMIN + 'css/');
+	const f = makeCopyTask(dir + '/dist/reset.min.css*(.map)', DIST_ADMIN + 'css/');
+	f.displayName = 'copyLibCopyNacssReset';
+	return f;
 };
 
 const makeTaskCopyJssha = () => {
 	const dir = pkgDir('jssha');
-	return makeCopyTask(dir + '/dist/sha256.js', DIST_ADMIN + 'js/jssha/');
+	const f = makeCopyTask(dir + '/dist/sha256.js', DIST_ADMIN + 'js/jssha/');
+	f.displayName = 'copyLibCopyJssha';
+	return f;
 };
 
 const makeTaskCopyMoment = () => {
 	const dir = pkgDir('moment');
-	return makeCopyTask(dir + '/min/moment.min.js*(.map)', DIST_ADMIN + 'js/moment/');
+	const f = makeCopyTask(dir + '/min/moment.min.js*(.map)', DIST_ADMIN + 'js/moment/');
+	f.displayName = 'copyLibCopyMoment';
+	return f;
 };
 
 const makeTaskCopyFlatpickr = () => {
 	const dir = pkgDir('flatpickr');
-	return gulp.parallel(
+	const f = gulp.parallel(
 		makeCopyTask(dir + '/dist/flatpickr.min.js', DIST_ADMIN + 'js/flatpickr/'),
 		makeCopyTask(dir + '/dist/flatpickr.min.css', DIST_ADMIN + 'css/flatpickr/'),
 		makeCopyTask(dir + '/dist/l10n/ja.js', DIST_ADMIN + 'js/flatpickr/')
 	);
+	f.displayName = 'copyLibCopyFlatpickr';
+	return f;
 };
 
 const makeTaskCopyTinymce = () => {
@@ -58,7 +68,7 @@ const makeTaskCopyTinymce = () => {
 		'fullpage', 'fullscreen', 'help', 'importcss', 'legacyoutput', 'pagebreak',
 		'preview', 'save', 'tabfocus', 'textcolor', 'toc', 'template', 'wordcount'
 	];
-	return gulp.parallel(
+	const f = gulp.parallel(
 		makeCopyTask(dir + '/tinymce.min.js', DIST_ADMIN + 'js/tinymce/'),
 		makeCopyTask(dir + '/skins/**/*', DIST_ADMIN + 'js/tinymce/skins/', dir + '/skins/'),
 		makeCopyTask(dir + '/icons/**/*', DIST_ADMIN + 'js/tinymce/icons/', dir + '/icons/'),
@@ -66,6 +76,8 @@ const makeTaskCopyTinymce = () => {
 		makeCopyTask(dir_i18n + '/langs5/ja.js', DIST_ADMIN + 'js/tinymce/langs/'),
 		makeCopyTask([dir + '/plugins/**/*', ...ups.map(e => `!${dir}/plugins/${e}/**/*`)], DIST_ADMIN + 'js/tinymce/plugins/', dir + '/plugins/')
 	);
+	f.displayName = 'copyLibCopyTinymce';
+	return f;
 };
 
 exports.taskCopyLib = gulp.parallel(
