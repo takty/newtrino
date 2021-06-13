@@ -77,7 +77,7 @@ const watch = () => {
 		'!./src/admin/js/tinymce/langs/*.js'
 	], opt, minifyJs);
 	gulp.watch([
-		'./src/admin/sass/style.scss'
+		'./src/admin/sass/*.scss'
 	], opt, sass);
 };
 
