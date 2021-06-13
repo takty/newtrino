@@ -3,7 +3,7 @@
  * Media Dialog (JS)
  *
  * @author Takuto Yanagida
- * @version 2020-08-14
+ * @version 2021-06-14
  *
  */
 
@@ -35,7 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			return;
 		}
 		msgMaxFileSize.hidden = true;
-		if (upfile.value !== '') document.getElementById('form-upload').submit();
+		if (upfile.value !== '') {
+			window.parent.reopenDialog();
+			setTimeout(() => { document.getElementById('form-upload').submit(); }, 100);
+		}
 	});
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
@@ -100,7 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const file_name = p.querySelector('.file-name').value;
 
 		document.getElementById('delete-file').value = file_name;
-		document.getElementById('form-delete').submit();
+		window.parent.reopenDialog();
+		setTimeout(() => { document.getElementById('form-delete').submit(); }, 100);
 	}
 
 	function doInsert() {
@@ -109,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		const url  = it.querySelector('.file-url').value;
 		const name = it.querySelector('.file-name').value;
 		const data = { url, name };
-
 
 		if (metaTarget) {
 			if (ss) {

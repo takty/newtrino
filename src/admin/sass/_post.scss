@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-14
  *
  */
 
@@ -44,32 +44,30 @@
 	&.active {
 		display: flex;
 		opacity: 0;
+		transition: opacity 0.1s ease;
 	}
 	&.visible { opacity: 1; }
 }
 
-#dialog-media {  // iframe
+#dialog-media,
+#dialog-login,
+#dialog-preview {
 	display: none;
 	&.active {
-		display: block;
 		opacity: 0;
-
-		width : 100vw;
-		height: calc(var(--vh, 1vh) * 99);
+		transition: opacity 0.1s ease 0.1s;
 	}
 	&.visible { opacity: 1; }
 }
 
+#dialog-media,
 #dialog-login {  // iframe
-	display: none;
 	&.active {
 		display: block;
-		opacity: 0;
 
 		width : 100vw;
 		height: calc(var(--vh, 1vh) * 99);
 	}
-	&.visible { opacity: 1; }
 }
 
 #dialog-preview {
@@ -80,12 +78,9 @@
 
 	flex-direction: column;
 
-	display: none;
 	&.active {
 		display: flex;
-		opacity: 0;
 	}
-	&.visible { opacity: 1; }
 
 	iframe {
 		width: 100%;

@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
+ * @version 2021-06-14
  *
  */
 
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let curDlg = null;
 
-function openDialog( dlg ) {
+function openDialog(dlg) {
 	if ( curDlg ) return;
 	curDlg = dlg;
 	const ph = document.getElementById('dialog-placeholder');
@@ -389,7 +389,15 @@ function openDialog( dlg ) {
 	setTimeout(() => {
 		dlg.classList.add('visible');
 		ph.classList.add('visible');
-	}, 100);
+
+		const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
+		if (f) f.onload = () => { f.classList.add('visible'); }
+	}, 200);
+}
+
+function reopenDialog() {
+	const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
+	if (f) f.classList.remove('visible');
 }
 
 function closeDialog(doReLogin = false) {
@@ -403,10 +411,11 @@ function closeDialog(doReLogin = false) {
 		curDlg.classList.remove('active');
 		const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
 		if (f && f.src) f.removeAttribute('src');
+		if (f) f.onload = null;
 		curDlg = null;
 
 		if (doReLogin) openLoginDialog();
-	}, 100);
+	}, 200);
 }
 
 function openLoginDialog() {
