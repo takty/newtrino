@@ -5,7 +5,7 @@ namespace nt;
  * Init for Admin
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-13
  *
  */
 
@@ -48,7 +48,7 @@ function start_session( bool $create_store, bool $is_dialog = false ) {
 			$nt_store = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 		}
 	} else if ( $is_dialog ) {
-		close_dialog_frame();
+		close_dialog_frame( true );
 		exit;
 	} else {
 		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
@@ -69,9 +69,10 @@ function start_ajax_session( bool $create_store ) {
 	return false;
 }
 
-function close_dialog_frame() {
+function close_dialog_frame( $do_re_login = false ) {
+	$f = $do_re_login ? 'true' : '';
 	header( 'Content-Type: text/html;charset=utf-8' );
-	echo '<!DOCTYPE html><html><head><script>window.parent.closeDialog();</script></head><body></body></html>';
+	echo "<!DOCTYPE html><html><head><script>window.parent.closeDialog($f);</script></head><body></body></html>";
 }
 
 

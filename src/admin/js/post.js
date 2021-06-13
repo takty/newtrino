@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-13
  *
  */
 
@@ -305,8 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			if (MAX_COUNT <= fc) {
 				fc = 0;
-				dlg.src = 'login.php?mode=dialog';
-				openDialog(dlg);
+				openLoginDialog();
 			}
 		}
 		function iterate() {
@@ -322,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function setButtonEvents() {
 		const btnPreviewClose = document.querySelector('#btn-close');
-		btnPreviewClose.addEventListener('click', closeDialog);
+		btnPreviewClose.addEventListener('click', () => { closeDialog(); });
 
 		addBtnEvent('#btn-list');
 		addBtnEvent('#btn-update', update);
@@ -393,7 +392,7 @@ function openDialog( dlg ) {
 	}, 100);
 }
 
-function closeDialog() {
+function closeDialog(doReLogin = false) {
 	if (!curDlg) return;
 
 	const ph = document.getElementById('dialog-placeholder');
@@ -405,7 +404,16 @@ function closeDialog() {
 		const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
 		if (f && f.src) f.removeAttribute('src');
 		curDlg = null;
+
+		if (doReLogin) openLoginDialog();
 	}, 100);
+}
+
+function openLoginDialog() {
+	console.log('openLoginDialog');
+	const dlg = document.getElementById('dialog-login');
+	dlg.src = 'login.php?mode=dialog';
+	openDialog(dlg);
 }
 
 
