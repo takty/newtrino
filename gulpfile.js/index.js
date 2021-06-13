@@ -16,26 +16,31 @@ const gulp = require('gulp');
 // -----------------------------------------------------------------------------
 
 
-const { taskCopyLib } = require('./task-copy-lib');
+const { taskAdminLib } = require('./task-admin-lib');
+const { taskAdminSrc, taskAdminCss, taskAdminJs, taskAdminSass, watchAdmin } = require('./task-admin-make');
 
-const { taskSrc, taskCss, taskJs, taskSass } = require('./task-make');
+exports.admin = gulp.series(taskAdminLib, taskAdminSrc, taskAdminCss, taskAdminJs, taskAdminSass);
 
-const { taskSample } = require('./task-sample');
+const { taskCoreLib } = require('./task-core-lib');
+const { taskCoreSrc, taskCoreJs, watchCore } = require('./task-core-make');
 
-const taskBuild = gulp.parallel(gulp.series(taskSrc, taskCss, taskCopyLib), taskJs, taskSass);
+exports.core = gulp.series(taskCoreLib, taskCoreSrc, taskCoreJs);
+
+const { taskSampleNt, taskSampleData, taskSampleJs, watchSample } = require('./task-sample');
+
+exports.sample = gulp.series(taskSampleNt, taskSampleData, taskSampleJs );
+
+exports.build = gulp.parallel(exports.admin, exports.core);
 
 
 // -----------------------------------------------------------------------------
 
 
 const watch = (done) => {
-	const opt = { delay: 1000 };
-	gulp.watch('src/**/*.{html,svg,png,php}', opt, gulp.series(taskSrc, taskSample));
-	gulp.watch('src/**/*.css', opt, gulp.series(taskCss, taskSample));
-	gulp.watch('src/**/*.js', opt, gulp.series(taskJs, taskSample));
-	gulp.watch('src/**/*.scss', opt, gulp.series(taskSass, taskSample));
+	watchAdmin();
+	watchCore();
+	watchSample();
 	done();
 };
 
-exports.default = gulp.series(taskBuild, taskSample, watch);
-exports.build   = taskBuild;
+exports.default = gulp.series(exports.build, exports.sample, watch);
