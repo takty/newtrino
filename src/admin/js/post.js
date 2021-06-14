@@ -381,26 +381,38 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
+function openLoginDialog() {
+	const dlg = document.getElementById('dialog-login');
+	dlg.src = 'login.php?mode=dialog';
+	openDialog(dlg, 'login');
+}
+
 let curDlg = null;
 
 function openDialog(dlg) {
-	if ( curDlg ) return;
+	if (curDlg) return;
 	curDlg = dlg;
+
 	const ph = document.getElementById('dialog-placeholder');
+	ph.classList.add('active');
 
 	dlg.classList.add('active');
-	ph.classList.add('active');
 	const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
 	if (f) f.onload = () => {
-		setTimeout(() => { f.classList.add('visible'); }, 100);
+		setTimeout(() => {
+			ph.classList.remove('loading');
+			f.classList.add('visible');
+		}, 100);
 	}
 	setTimeout(() => { ph.classList.add('visible'); }, 100);
 	setTimeout(() => { dlg.classList.add('visible'); }, 200);
 }
 
-function reopenDialog() {
+function reopenDialogLater() {
 	const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
 	if (f) f.classList.remove('visible');
+	const ph = document.getElementById('dialog-placeholder');
+	ph.classList.add('loading');
 }
 
 function closeDialog(doReLogin = false) {
@@ -408,9 +420,11 @@ function closeDialog(doReLogin = false) {
 
 	const ph = document.getElementById('dialog-placeholder');
 	ph.classList.remove('visible');
+
 	curDlg.classList.remove('visible');
 	setTimeout(() => {
 		ph.classList.remove('active');
+
 		curDlg.classList.remove('active');
 		const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
 		if (f && f.src) f.removeAttribute('src');
@@ -419,12 +433,6 @@ function closeDialog(doReLogin = false) {
 
 		if (doReLogin) openLoginDialog();
 	}, 100);
-}
-
-function openLoginDialog() {
-	const dlg = document.getElementById('dialog-login');
-	dlg.src = 'login.php?mode=dialog';
-	openDialog(dlg);
 }
 
 
