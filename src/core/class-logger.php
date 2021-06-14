@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-14
  *
  */
 
@@ -18,7 +18,10 @@ class Logger {
 
 	static public $debug = false;
 
-	static public function output( string $type, string $msg ): void {
+	static public function output( string $type, $msg ): void {
+		if ( ! is_string( $msg ) ) {
+			$msg = var_export( $msg, true );
+		}
 		$path = self::LOG_FILE;
 		self::_ensureFile( $path );
 		$fp = fopen( $path, 'ab+' );
@@ -28,7 +31,7 @@ class Logger {
 		set_file_buffer( $fp, 0 );
 		$line = join( ' ', [ date( '[Y-m-d H:i:s]' ), $_SERVER['REMOTE_ADDR'], ucfirst( strtolower( $type ) ), $msg ] );
 		if ( self::$debug && $type !== 'info' ) {
-			print( htmlspecialchars( $line, ENT_HTML5 ) . "<br>\n" );
+			print( str_replace( "\n", "<br>\n", htmlspecialchars( $line, ENT_HTML5 ) ) . "<br>\n" );
 		}
 		fputs( $fp, "$line\n" );
 		flock( $fp, LOCK_UN );
