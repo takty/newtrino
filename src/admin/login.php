@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-14
  *
  */
 
@@ -45,7 +45,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
 {{#mode}}
-		<input type="hidden" name="mode" value="{{mode}}">
+		<input type="hidden" name="mode" value="{{.}}">
 {{/mode}}
 {{#is_login_failed}}
 		<p><?= _ht( 'Username or password is wrong.' ) ?></p>
@@ -58,7 +58,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 </div>
 <div id="key"></div>
 {{#error_message}}
-<script>console.log('{{error_message}}');</script>
+<script>console.log('{{.}}');</script>
 {{/error_message}}
 
 </body>
