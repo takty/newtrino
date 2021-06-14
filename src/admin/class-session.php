@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-14
  *
  */
 
@@ -15,16 +15,16 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Session {
 
-	const TIMEOUT_SESSION = 7200;  // 7200 = 120 minutes * 60 seconds
-	const TIMEOUT_LOCK    = 60;    //   60 =   1 minutes * 60 seconds
+	const TIMEOUT_SESSION = 1800;  //  1800 = 30 minutes * 60 seconds
+	const TIMEOUT_LOCK    = 60;    //    60 =  1 minutes * 60 seconds
 	const ACCT_FILE_NAME  = 'account';
 	const HASH_ALGO       = 'sha256';
 
-	static public function getRealm(): string {
+	public static function getRealm(): string {
 		return 'newtrino';
 	}
 
-	static public function getNonce(): string {
+	public static function getNonce(): string {
 		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
 	}
 
@@ -47,6 +47,8 @@ class Session {
 
 		ini_set( 'session.name', 'newtrino' );
 		ini_set( 'session.use_strict_mode', 1 );
+		ini_set( 'session.use_cookies', 1 );
+		ini_set( 'session.use_only_cookies', 1 );
 		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
 
 		session_set_cookie_params([
@@ -104,9 +106,10 @@ class Session {
 
 			$digest = hash( self::HASH_ALGO, $code );
 			if ( $digest === $params['digest'] ) {
+				$user = $params['user'];
 				$lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
-				$ret = $this->_create( $lang );
-				if ( $ret ) Logger::output( 'info', '(Session:login) Login succeeded' );
+				$ret = $this->_create( $user, $lang );
+				if ( $ret ) Logger::output( 'info', "(Session:login) Login succeeded [$user]" );
 				return $ret;
 			}
 		}
@@ -139,21 +142,24 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private function _create( ?string $lang ): bool {
-		session_start();
-		session_regenerate_id( true );
-		$_SESSION['session_id']  = self::getNonce();
-		$_SESSION['fingerprint'] = self::_getFingerprint( $_SESSION['session_id'] );
-
-		$this->_sessionId = $_SESSION['session_id'];
-		if ( $lang ) $_SESSION['lang'] = $lang;
-
+	private function _create( string $user, ?string $lang ): bool {
+		if ( ! self::_session_start() ) {
+			$this->_doDestroySession();
+			return false;
+		}
 		$res = false;
 		if ( $h = $this->_lock() ) {
-			foreach ( $this->_getSessionIds() as $sid ) {
-				$this->_checkTimestamp( $sid, false );
-			}
-			$res = $this->_saveSessionFile( $this->_sessionId, [ 'timestamp' => time() ] );
+			$existingSession = $this->_cleanSessions( $user );
+
+			$nonce = $existingSession ?? self::getNonce();
+			$_SESSION['user']        = $user;
+			$_SESSION['session_id']  = $nonce;
+			$_SESSION['fingerprint'] = self::_getFingerprint( $nonce, $user );
+
+			$this->_sessionId = $nonce;
+			if ( $lang ) $_SESSION['lang'] = $lang;
+
+			$res = $this->_saveSessionFile( $this->_sessionId, [ 'timestamp' => time(), 'user' => $user ] );
 			$this->_unlock( $h );
 		}
 		if ( $res === false ) {
@@ -163,56 +169,84 @@ class Session {
 		return $res;
 	}
 
-	static public function canStart(): bool {
-		session_start();
-		session_regenerate_id( true );
+	public static function canStart(): bool {
+		if ( ! self::_session_start() ) return false;
+
+		if ( empty( $_SESSION['user'] ) )        return false;
 		if ( empty( $_SESSION['session_id'] ) )  return false;
 		if ( empty( $_SESSION['fingerprint'] ) ) return false;
 
-		if ( self::_getFingerprint( $_SESSION['session_id'] ) !== $_SESSION['fingerprint'] ) return false;
+		$fp = self::_getFingerprint( $_SESSION['session_id'], $_SESSION['user'] );
+		if ( $fp !== $_SESSION['fingerprint'] ) return false;
 		return true;
 	}
 
 	public function start(): bool {
 		$ret = self::canStart();
-		if ( ! $ret ) return false;
-
+		if ( ! $ret ) {
+			$this->_doDestroySession();
+			return false;
+		}
 		$this->_sessionId = $_SESSION['session_id'];
 		if ( ! empty( $_SESSION['lang'] ) ) $this->_lang = $_SESSION['lang'];
-		return $this->_checkTimestamp( $this->_sessionId, true );
+		return $this->_checkTimestamp( $this->_sessionId );
 	}
 
 	private function _stop(): void {
-		session_start();
-		session_regenerate_id( true );
-		if ( empty( $_SESSION['session_id'] ) )  return;
-		if ( empty( $_SESSION['fingerprint'] ) ) return;
+		self::_session_start();
 
+		$this->_doDestroySession();
 		if ( isset( $_COOKIE[ session_name() ] ) ) {
 			setcookie( session_name(), '', [ 'expires' => time() - 42000, 'samesite' => 'Strict' ] );
-		}
-		if ( $h = $this->_lock() ) {
-			$this->_removeSessionFile( $_SESSION['session_id'] );
-			$this->_unlock( $h );
 		}
 		$_SESSION = [];
 		session_destroy();
 	}
 
-	static private function _getFingerprint( $sid ): string {
-		$fp = self::getRealm();
-		$fp .= $_SERVER['HTTP_USER_AGENT'] ?? '';
-		$fp .= $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
-		$fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-		$fp .= $sid;
-		return md5( $fp );
+	private function _doDestroySession() {
+		if ( isset( $_SESSION['session_id'] ) && $h = $this->_lock() ) {
+			Logger::output( 'info', '(Session::_doDestroySession) Destroy the session file [' . $_SESSION['session_id'] . ']' );
+			$this->_removeSessionFile( $_SESSION['session_id'] );
+			$this->_unlock( $h );
+		}
 	}
 
+	private static function _session_start(): bool {
+		if ( ! session_start() ) return false;
+		if ( ! session_regenerate_id( true ) ) return false;
+		return true;
+	}
 
-	// ------------------------------------------------------------------------
+	private static function _getFingerprint( $sid, $user ): string {
+		$fp  = self::getRealm();
+		$fp .= $sid . $user;
+		$fp .= $_SERVER['HTTP_USER_AGENT'] ?? '';
+		$fp .= $_SERVER['HTTP_ACCEPT'] ?? '';
+		$fp .= $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
+		$fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+		$fp .= $_SERVER['REMOTE_ADDR'] ?? '';
+		return hash( self::HASH_ALGO, $fp );
+	}
 
+	private function _cleanSessions( string $user ): ?string {
+		$now = time();
+		$sfs = [];
 
-	private function _checkTimestamp( string $sid, bool $doUpdate ): bool {
+		foreach ( $this->_loadSessionFileAll() as $sid => $sf ) {
+			$time = intval( $sf['timestamp'] ?? 0 );
+			if ( self::TIMEOUT_SESSION < $now - $time ) {
+				$this->_removeSessionFile( $sid, $sf );
+			} else {
+				$sfs[ $sid ] = $sf;
+			}
+		}
+		foreach ( $sfs as $sid => $sf ) {
+			if ( $sf['user'] === $user ) return $sid;
+		}
+		return null;
+	}
+
+	private function _checkTimestamp( string $sid ): bool {
 		$sf = $this->_loadSessionFile( $sid );
 		if ( $sf === null ) return false;
 
@@ -220,16 +254,12 @@ class Session {
 		$time = intval( $sf['timestamp'] ?? 0 );
 
 		if ( self::TIMEOUT_SESSION < $now - $time ) {
-			$this->_removeAllTemporaryDirectory( $sf );
-			$this->_removeSessionFile( $sid );
+			$this->_removeSessionFile( $sid, $sf );
 			return false;
 		}
-		if ( $doUpdate ) {
-			$sf['timestamp'] = $now;
-			$sf = $this->_cleanLock( $sf );
-			$this->_saveSessionFile( $sid, $sf );
-		}
-		return true;
+		$sf['timestamp'] = $now;
+		$sf = $this->_cleanLock( $sf );
+		return $this->_saveSessionFile( $sid, $sf );
 	}
 
 
@@ -272,10 +302,6 @@ class Session {
 		return $ret;
 	}
 
-
-	// ------------------------------------------------------------------------
-
-
 	private function _getLockingSession( string $pid ) {
 		foreach ( $this->_loadSessionFileAll() as $sid => $sf ) {
 			if ( $this->_isLockValid( $sf, $pid ) ) {
@@ -284,10 +310,6 @@ class Session {
 		}
 		return null;
 	}
-
-
-	// -------------------------------------------------------------------------
-
 
 	private function _isLockValid( array $sf, string $pid ): bool {
 		if ( ! isset( $sf['lock'][ $pid ] ) ) return false;
@@ -319,31 +341,6 @@ class Session {
 		return $sf;
 	}
 
-	private function _removeAllTemporaryDirectory( array $sf ): void {
-		if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
-			foreach ( $sf['temp_dir'] as $dir ) {
-				self::deleteAllIn( $dir );
-			}
-		}
-	}
-
-	static public function deleteAllIn( string $dir ): void {
-		$dir = rtrim( $dir, '/' );
-		if ( ! is_dir( $dir ) ) {
-			Logger::output( 'error', "(Session::deleteAllIn) The directory does not exist [$dir]" );
-			return;
-		}
-		foreach ( scandir( $dir ) as $fn ) {
-			if ( $fn === '.' || $fn === '..' ) continue;
-			if ( is_dir( "$dir/$fn" ) ) {
-				self::deleteAllIn( "$dir/$fn" );
-			} else {
-				unlink( "$dir/$fn" );
-			}
-		}
-		rmdir( $dir );
-	}
-
 
 	// ------------------------------------------------------------------------
 
@@ -364,19 +361,12 @@ class Session {
 		closedir( $h );
 	}
 
-
-	// -------------------------------------------------------------------------
-
-
-	private function _getSessionIds(): array {
-		$sids = scandir( $this->_dirSession );
-		if ( $sids === false ) return [];
-		return array_diff( $sids, [ '.', '..' ] );
-	}
-
 	private function _loadSessionFileAll(): array {
+		$sids = scandir( $this->_dirSession );
+		$sids = ( $sids === false ) ? [] : array_diff( $sids, [ '.', '..' ] );
+
 		$ret = [];
-		foreach ( $this->_getSessionIds() as $sid ) {
+		foreach ( $sids as $sid ) {
 			$sf = $this->_loadSessionFile( $sid );
 			if ( $sf !== null ) {
 				$ret[ $sid ] = $sf;
@@ -384,10 +374,6 @@ class Session {
 		}
 		return $ret;
 	}
-
-
-	// -------------------------------------------------------------------------
-
 
 	private function _loadSessionFile( string $sid ): ?array {
 		$path = $this->_dirSession . $sid;
@@ -407,7 +393,15 @@ class Session {
 		return $data;
 	}
 
-	private function _removeSessionFile( string $sid ): void {
+	private function _removeSessionFile( string $sid, array $sf = null ): void {
+		if ( ! $sf ) $sf = $this->_loadSessionFile( $sid );
+		if ( $sf ) {
+			if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
+				foreach ( $sf['temp_dir'] as $dir ) {
+					self::_deleteAllIn( $dir );
+				}
+			}
+		}
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) ) {
 			Logger::output( 'error', "(Session::_removeSessionFile) Session file does not exist [$sid]" );
@@ -432,7 +426,24 @@ class Session {
 		return true;
 	}
 
-	static private function _ensureDir( string $path ): bool {
+	private static function _deleteAllIn( string $dir ): void {
+		$dir = rtrim( $dir, '/' );
+		if ( ! is_dir( $dir ) ) {
+			Logger::output( 'error', "(Session::_deleteAllIn) The directory does not exist [$dir]" );
+			return;
+		}
+		foreach ( scandir( $dir ) as $fn ) {
+			if ( $fn === '.' || $fn === '..' ) continue;
+			if ( is_dir( "$dir/$fn" ) ) {
+				self::_deleteAllIn( "$dir/$fn" );
+			} else {
+				unlink( "$dir/$fn" );
+			}
+		}
+		rmdir( $dir );
+	}
+
+	private static function _ensureDir( string $path ): bool {
 		if ( is_dir( $path ) ) {
 			if ( NT_MODE_DIR !== ( fileperms( $path ) & 0777 ) ) {
 				@chmod( $path, NT_MODE_DIR );
