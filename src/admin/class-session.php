@@ -330,6 +330,7 @@ class Session {
 		foreach ( $lock as $pid => $time ) {
 			if ( self::TIMEOUT_LOCK < $now - $time ) {
 				unset( $lock[ $pid ] );
+				Logger::output( 'info', "(Session::_cleanLock) Post unlocking succeeded [$pid]" );
 			}
 		}
 		if ( empty( $lock ) ) {
@@ -428,7 +429,7 @@ class Session {
 	private static function _deleteAllIn( string $dir ): void {
 		$dir = rtrim( $dir, '/' );
 		if ( ! is_dir( $dir ) ) {
-			Logger::output( 'error', "(Session::_deleteAllIn) The directory does not exist [$dir]" );
+			Logger::output( 'info', "(Session::_deleteAllIn) The directory does not exist [$dir]" );
 			return;
 		}
 		foreach ( scandir( $dir ) as $fn ) {
