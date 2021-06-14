@@ -305,7 +305,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			if (MAX_COUNT <= fc) {
 				fc = 0;
-				openLoginDialog();
+				if (curDlg) {
+					closeDialog(true);
+				} else {
+					openLoginDialog();
+				}
 			}
 		}
 		function iterate() {
@@ -386,13 +390,12 @@ function openDialog(dlg) {
 
 	dlg.classList.add('active');
 	ph.classList.add('active');
-	setTimeout(() => {
-		dlg.classList.add('visible');
-		ph.classList.add('visible');
-
-		const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
-		if (f) f.onload = () => { f.classList.add('visible'); }
-	}, 200);
+	const f = curDlg.tagName === 'IFRAME' ? curDlg : curDlg.querySelector('iframe');
+	if (f) f.onload = () => {
+		setTimeout(() => { f.classList.add('visible'); }, 100);
+	}
+	setTimeout(() => { ph.classList.add('visible'); }, 100);
+	setTimeout(() => { dlg.classList.add('visible'); }, 200);
 }
 
 function reopenDialog() {
@@ -415,11 +418,10 @@ function closeDialog(doReLogin = false) {
 		curDlg = null;
 
 		if (doReLogin) openLoginDialog();
-	}, 200);
+	}, 100);
 }
 
 function openLoginDialog() {
-	console.log('openLoginDialog');
 	const dlg = document.getElementById('dialog-login');
 	dlg.src = 'login.php?mode=dialog';
 	openDialog(dlg);
