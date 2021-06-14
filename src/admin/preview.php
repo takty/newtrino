@@ -5,7 +5,7 @@ namespace nt;
  * Preview
  *
  * @author Takuto Yanagida
- * @version 2020-07-31
+ * @version 2021-06-14
  *
  */
 
@@ -22,6 +22,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="js/preview.min.js"></script>
 {{#css}}<link rel="stylesheet" media="all" href="{{.}}" />{{/css}}
 {{#js}}<script src="{{.}}"></script>{{/js}}
 <title><?= _ht( 'Preview' ) ?> - Newtrino</title>
