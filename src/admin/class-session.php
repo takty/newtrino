@@ -221,7 +221,6 @@ class Session {
 		$fp  = self::getRealm();
 		$fp .= $sid . $user;
 		$fp .= $_SERVER['HTTP_USER_AGENT'] ?? '';
-		$fp .= $_SERVER['HTTP_ACCEPT'] ?? '';
 		$fp .= $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
 		$fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 		$fp .= $_SERVER['REMOTE_ADDR'] ?? '';
@@ -375,10 +374,10 @@ class Session {
 		return $ret;
 	}
 
-	private function _loadSessionFile( string $sid ): ?array {
+	private function _loadSessionFile( string $sid, bool $silent = false ): ?array {
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) || ! is_readable( $path ) ) {
-			Logger::output( 'error', "(Session::_loadSessionFile) The session file does not exist or is not readable [$sid]" );
+			Logger::output( $silent ? 'info' : 'error', "(Session::_loadSessionFile) The session file does not exist or is not readable [$sid]" );
 			return null;
 		}
 		$json = file_get_contents( $path );
@@ -394,7 +393,7 @@ class Session {
 	}
 
 	private function _removeSessionFile( string $sid, array $sf = null ): void {
-		if ( ! $sf ) $sf = $this->_loadSessionFile( $sid );
+		if ( ! $sf ) $sf = $this->_loadSessionFile( $sid, true );
 		if ( $sf ) {
 			if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
 				foreach ( $sf['temp_dir'] as $dir ) {
@@ -404,7 +403,7 @@ class Session {
 		}
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) ) {
-			Logger::output( 'error', "(Session::_removeSessionFile) Session file does not exist [$sid]" );
+			Logger::output( 'info', "(Session::_removeSessionFile) Session file does not exist [$sid]" );
 			return;
 		}
 		$res = unlink( $path );
