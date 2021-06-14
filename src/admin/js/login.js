@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-14
  *
  */
 
@@ -23,18 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function doLogin(event, showKey = false) {
 		event.preventDefault();
-		const user = document.getElementById('user').value;
+		const user  = document.getElementById('user').value;
 		const pwElm = document.getElementById('pw');
-		const pw = pwElm.value;
+		const pw    = pwElm.value;
 
-		const realm = document.getElementById('realm').value;
+		const realm  = document.getElementById('realm').value;
 		const cnonce = createNonce();
 		const method = 'post';
-		const url = document.getElementById('url').value;
-		const nonce = document.getElementById('nonce').value;
+		const url    = document.getElementById('url').value;
+		const nonce  = document.getElementById('nonce').value;
 
-		const a1 = hash(user + ':' + realm + ':' + pw);
-		const a2 = hash(method + ':' + url);
+		const a1     = hash(user + ':' + realm + ':' + pw);
+		const a2     = hash(method + ':' + url);
 		const digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
 
 		if (showKey) {
