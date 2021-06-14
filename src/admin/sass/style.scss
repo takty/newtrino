@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-14
  *
  */
 
@@ -37,13 +37,13 @@ body:not(.dialog) {
 	background-repeat: repeat, no-repeat;
 	background-image :
 		linear-gradient(-45deg,
-			hsla(60, 40%, 50%, 0.1) 25%,
-			hsla(60, 40%, 50%, 0.0) 25%,
-			hsla(60, 40%, 50%, 0.0) 50%,
-			hsla(60, 40%, 50%, 0.1) 50%,
-			hsla(60, 40%, 50%, 0.1) 75%,
-			hsla(60, 40%, 50%, 0.0) 75%,
-			hsla(60, 40%, 50%, 0.0)
+			hsla(60, 30%, 60%, 0.1) 25%,
+			hsla(60, 30%, 60%, 0.0) 25%,
+			hsla(60, 30%, 60%, 0.0) 50%,
+			hsla(60, 30%, 60%, 0.1) 50%,
+			hsla(60, 30%, 60%, 0.1) 75%,
+			hsla(60, 30%, 60%, 0.0) 75%,
+			hsla(60, 30%, 60%, 0.0)
 		),
 		linear-gradient(to right bottom, hsl(180, 25%, 60%), hsl(220, 35%, 50%));
 }

@@ -304,6 +304,7 @@
 body.post {
 	textarea[name='post_content'] {
 		min-height: 20rem;
+		opacity: 0;
 	}
 	.tox.tox-tinymce {
 		min-height: 20rem;
