@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-15
  *
  */
 
@@ -15,17 +15,26 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Session {
 
-	const TIMEOUT_SESSION = 1800;  //  1800 = 30 minutes * 60 seconds
-	const TIMEOUT_LOCK    = 60;    //    60 =  1 minutes * 60 seconds
+	const TIMEOUT_SESSION = 1800;  // 1800 = 30 minutes * 60 seconds
+	const TIMEOUT_LOCK    = 60;    //   60 =  1 minutes * 60 seconds
+	const LOGIN_NONCE_GL  = 300;   //  300 =  5 minutes * 60 seconds (Expires in 10 minutes max.)
 	const ACCT_FILE_NAME  = 'account';
 	const HASH_ALGO       = 'sha256';
 
-	public static function getRealm(): string {
+	public static function getAuthKey(): string {
+		if ( defined( 'NT_AUTH_KEY' ) ) return NT_AUTH_KEY;
 		return 'newtrino';
 	}
 
 	public static function getNonce(): string {
 		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
+	}
+
+	public static function getAuthNonce( int $step = 1 ): string {
+		$time = intval( ceil( time() / self::LOGIN_NONCE_GL ) );
+		$time += $step;
+		$seed = strval( getlastmod() );
+		return hash( self::HASH_ALGO, $seed . $time );
 	}
 
 
@@ -86,56 +95,101 @@ class Session {
 
 
 	public function login( array $params ): bool {
-		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['nonce'] ) || empty( $params['cnonce'] ) ) {
+		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['cnonce'] ) ) {
 			Logger::output( 'info', '(Session::login) Parameters are invalid' );
 			$this->_errMsg = 'Parameters are invalid';
 			return false;
 		}
-		$as = $this->_getAccountFile();
-		if ( $as === null ) return false;
+		[ 'user' => $user, 'digest' => $digest, 'cnonce' => $cnonce ] = $params;
 
-		$a2 = hash( self::HASH_ALGO, 'post:' . $this->_url );
-
-		foreach ( $as as $a ) {
-			$a = trim( $a );
-			if ( empty( $a ) || $a[0] === '#' ) continue;
-			$cs = explode( "\t", trim( $a ) );
-			if ( $cs[0] !== $params['user'] ) continue;
-			$a1 = strtolower( $cs[1] );
-			$code = implode( ':', [ $a1, $params['nonce'], $params['cnonce'], $a2 ] );
-
-			$digest = hash( self::HASH_ALGO, $code );
-			if ( $digest === $params['digest'] ) {
-				$user = $params['user'];
-				$lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
-				$ret = $this->_create( $user, $lang );
-				if ( $ret ) Logger::output( 'info', "(Session:login) Login succeeded [$user]" );
-				return $ret;
+		if ( $this->_authUser( $user, $digest, $cnonce, $out_lang ) ) {
+			if ( $this->_create( $user, $out_lang ) ) {
+				Logger::output( 'info', "(Session:login) Login succeeded [$user]" );
+				return true;
 			}
 		}
-		Logger::output( 'info', '(Session:login) Login failed' );
+		Logger::output( 'info', "(Session:login) Login failed [$user]" );
 		return false;
-	}
-
-	private function _getAccountFile(): ?array {
-		$path = $this->_dirAcct . self::ACCT_FILE_NAME;
-		if ( is_file( $path ) === false ) {
-			Logger::output( 'error', "(Session::_getAccountFile) The account file does not exist" );
-			$this->_errMsg = 'The account file does not exist';
-			return null;
-		}
-		$as = file( $path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		if ( $as === false ) {
-			Logger::output( 'error', "(Session::_getAccountFile) Cannot open the account file" );
-			$this->_errMsg = 'Cannot open the account file';
-			return null;
-		}
-		return $as;
 	}
 
 	public function logout(): void {
 		$this->_stop();
 		Logger::output( 'info', '(Session::logout) Logout' );
+	}
+
+	private function _authUser( string $user, string $digest, string $cnonce, ?string &$out_lang ): bool {
+		$as = null;
+		if ( $h = $this->_lock() ) {
+			$as = $this->_getAccountFile();
+			$as = $this->_upgradeAccountFile( $as );
+			$this->_unlock( $h );
+		}
+		if ( $as === null ) return false;
+
+		$a2 = hash( self::HASH_ALGO, $this->_url );
+		$ns = [ self::getAuthNonce( 0 ), self::getAuthNonce( 1 ) ];
+
+		foreach ( $as as $a ) {
+			$a = trim( $a );
+			if ( empty( $a ) || $a[0] === '#' ) continue;
+			$cs = explode( "\t", $a );
+			if ( $cs[0] !== $user ) continue;
+			$a1p = substr( strtolower( $cs[1] ), 3 );
+
+			foreach ( $ns as $nonce ) {
+				$d = hash( self::HASH_ALGO, "$a1p:$nonce:$cnonce:$a2" );
+				if ( $d === $digest ) {
+					$out_lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private function _upgradeAccountFile( array $as ): array {
+		$new = [];
+		$mod = false;
+		foreach ( $as as $a ) {
+			$a = trim( $a );
+			if ( empty( $a ) || $a[0] === '#' ) {
+				$new[] = $a;
+				continue;
+			}
+			$cs = explode( "\t", $a );
+			$a1 = strtolower( $cs[1] );
+
+			if ( substr( $a1, 0, 3 ) !== '#!#' ) {
+				$cs[1] = '#!#' . hash( self::HASH_ALGO, "$a1:$this->_url" );
+				$mod = true;
+			}
+			$new[] = implode( "\t", $cs );
+		}
+		if ( $mod ) {
+			$path = $this->_dirAcct . self::ACCT_FILE_NAME;
+			$res  = file_put_contents( $path, implode( "\n", $new ) );
+			if ( $res === false ) {
+				Logger::output( 'error', "(Session::_upgradeAccountFile) Cannot upgrade the account file" );
+				$this->_errMsg = 'Cannot upgrade the account file';
+			}
+		}
+		return $new;
+	}
+
+	private function _getAccountFile(): array {
+		$path = $this->_dirAcct . self::ACCT_FILE_NAME;
+		if ( is_file( $path ) === false ) {
+			Logger::output( 'error', "(Session::_getAccountFile) The account file does not exist" );
+			$this->_errMsg = 'The account file does not exist';
+			return [];
+		}
+		$as = file( $path, FILE_IGNORE_NEW_LINES );
+		if ( $as === false ) {
+			Logger::output( 'error', "(Session::_getAccountFile) Cannot open the account file" );
+			$this->_errMsg = 'Cannot open the account file';
+			return [];
+		}
+		return $as;
 	}
 
 
@@ -218,7 +272,7 @@ class Session {
 	}
 
 	private static function _getFingerprint( $sid, $user ): string {
-		$fp  = self::getRealm();
+		$fp  = self::getAuthKey();
 		$fp .= $sid . $user;
 		$fp .= $_SERVER['HTTP_USER_AGENT'] ?? '';
 		$fp .= $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';

@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-15
  *
  */
 
@@ -39,8 +39,6 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<dt><?= _ht( 'Username:' ) ?></dt><dd><input type="text" name="user" id="user"></dd>
 			<dt><?= _ht( 'Password:' ) ?></dt><dd><input type="password" id="pw"></dd>
 		</dl>
-		<input type="hidden" name="realm" id="realm" value="{{realm}}">
-		<input type="hidden" name="nonce" id="nonce" value="{{nonce}}">
 		<input type="hidden" name="url" id="url" value="{{url}}">
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
@@ -55,8 +53,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</nav>
 		<details class="cookie"><summary><?= _ht( 'Use Of Cookies...' ) ?></summary><div><?= _ht( 'Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.' ) ?></div></details>
 	</form>
+	<input type="hidden" name="key" id="key" value="{{key}}">
+	<input type="hidden" name="nonce" id="nonce" value="{{nonce}}">
 </div>
-<div id="key"></div>
+<div id="account"></div>
 {{#error_message}}
 <script>console.log('{{.}}');</script>
 {{/error_message}}

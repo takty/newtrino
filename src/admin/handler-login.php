@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-15
  *
  */
 
@@ -35,8 +35,8 @@ function handle_query( array $q, array $q_get ): array {
 	}
 
 	return [
-		'realm'           => Session::getRealm(),
-		'nonce'           => Session::getNonce(),
+		'key'             => Session::getAuthKey(),
+		'nonce'           => Session::getAuthNonce(),
 		'url'             => $nt_session->getUrl(),
 		'error_message'   => $nt_session->getErrorMessage(),
 		'is_login_failed' => ! $res,

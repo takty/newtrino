@@ -5,7 +5,7 @@ namespace nt;
  * Newtrino Config (Sample)
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-15
  *
  */
 
@@ -24,3 +24,10 @@ define( 'NT_MODE_FILE', 0660 );
  * If this value is set to true, notices will be displayed during development.
  */
 define( 'NT_DEBUG', true );
+
+/*
+ * Authentication Key
+ *
+ * This key will be exposed in the HTML of the login screen.
+ */
+define( 'NT_AUTH_KEY', 'newtrino' );

@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-15
  *
  */
 
@@ -21,25 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
 		doLogin(e, true);
 	});
 
-	function doLogin(event, showKey = false) {
-		event.preventDefault();
+	function doLogin(e, showAcct = false) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const user  = document.getElementById('user').value;
 		const pwElm = document.getElementById('pw');
 		const pw    = pwElm.value;
 
-		const realm  = document.getElementById('realm').value;
-		const cnonce = createNonce();
-		const method = 'post';
-		const url    = document.getElementById('url').value;
+		const key    = document.getElementById('key').value;
 		const nonce  = document.getElementById('nonce').value;
+		const url    = document.getElementById('url').value;
+		const cnonce = createNonce();
 
-		const a1     = hash(user + ':' + realm + ':' + pw);
-		const a2     = hash(method + ':' + url);
-		const digest = hash(a1 + ':' + nonce + ':' + cnonce + ':' + a2);
+		const a1     = hash(user + ':' + key + ':' + pw);
+		const a1p    = hash(a1 + ':' + url);
+		const digest = hash(a1p + ':' + nonce + ':' + cnonce + ':' + hash(url));
 
-		if (showKey) {
+		if (showAcct) {
 			if (user && pw) {
-				const elm = document.getElementById('key');
+				const elm = document.getElementById('account');
 				elm.innerHTML = user + '\t' + a1;
 			}
 			return;
@@ -53,9 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	function createNonce() {
 		const str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 		const len = str.length;
+
+		const rands = new Uint32Array(64);
+		window.crypto.getRandomValues(rands);
+
 		let ret = '';
-		for (let i = 0; i < 64; i += 1) {
-			ret += str.charAt(Math.random() * 23456789 % len);
+		for (let i = 0; i < rands.length; i += 1) {
+			ret += str.charAt(rands[i] % len);
 		}
 		return ret;
 	}
