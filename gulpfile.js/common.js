@@ -3,12 +3,15 @@
  * Common functions for gulp process
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
+ * @version 2021-06-17
  *
  */
 
 
 'use strict';
+
+const SASS_OUTPUT_STYLE = 'compressed';  // 'expanded' or 'compressed'
+
 
 const path = require('path');
 
