@@ -15,8 +15,8 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Auth {
 
-	const TIMEOUT_INVITATION = 604800;  //   60 =  7 days * 24 hours * 60 minutes * 60 seconds
-	const AUTH_NONCE_GL      = 300;     //  300 =  5 minutes * 60 seconds (Expires in 10 minutes max.)
+	const TIMEOUT_INVITATION = 604800;  // 7 days * 24 hours * 60 minutes * 60 seconds
+	const AUTH_NONCE_GL      = 300;     // 5 minutes * 60 seconds (Expires in 10 minutes max.)
 
 	const ACCT_FILE_NAME = 'account';
 	const HASH_ALGO      = 'sha256';
@@ -130,7 +130,10 @@ class Auth {
 			$this->_errCode = 'INVALID_CODE';
 			return false;
 		}
-		if ( empty( $params['user'] ) || empty( $params['hash'] ) ) {
+		if (
+			empty( $params['user'] ) || empty( $params['hash'] ) ||
+			( isset( $params['user'] ) && ! preg_match( '/^(?=.*[a-z])[\-_a-z0-9]{4,32}$/i', $params['user'] ) )
+		) {
 			Logger::output( 'info', '(Auth::signUp) Parameters are invalid' );
 			$this->_errCode = 'INVALID_PARAM';
 			return false;
