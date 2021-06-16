@@ -101,7 +101,7 @@ class Session {
 			$this->_unlock( $h );
 		}
 		if ( $res === false ) {
-			Logger::output( 'error', '(Session::create) Cannot write the session file' );
+			Logger::error( __METHOD__, 'Cannot write the session file' );
 		}
 		return $res;
 	}
@@ -137,7 +137,7 @@ class Session {
 		}
 		$_SESSION = [];
 		session_destroy();
-		Logger::output( 'info', '(Session::destroy) Session destroyed' );
+		Logger::info( __METHOD__, 'Session destroyed' );
 	}
 
 
@@ -165,7 +165,7 @@ class Session {
 
 	private function _doDestroy() {
 		if ( isset( $_SESSION['sid'] ) && $h = $this->_lock() ) {
-			Logger::output( 'info', '(Session::_doDestroy) Destroy the session file [' . $_SESSION['sid'] . ']' );
+			Logger::info( __METHOD__, 'Destroy the session file', $_SESSION['sid'] );
 			$this->_removeSessionFile( $_SESSION['sid'] );
 			$this->_unlock( $h );
 		}
@@ -226,7 +226,7 @@ class Session {
 			}
 			$this->_unlock( $h );
 		}
-		Logger::output( 'info', '(Session::lock) Post locking ' . ( $ret ? 'succeeded' : 'failed' ) . " [$pid]" );
+		Logger::info( __METHOD__, 'Post locking ' . ( $ret ? 'succeeded' : 'failed' ), $pid );
 		return $ret;
 	}
 
@@ -278,7 +278,7 @@ class Session {
 		foreach ( $lock as $pid => $time ) {
 			if ( self::TIMEOUT_LOCK < $now - $time ) {
 				unset( $lock[ $pid ] );
-				Logger::output( 'info', "(Session::_cleanLock) Post unlocking succeeded [$pid]" );
+				Logger::info( __METHOD__, 'Post unlocking succeeded', $pid );
 			}
 		}
 		if ( empty( $lock ) ) {
@@ -326,17 +326,21 @@ class Session {
 	private function _loadSessionFile( string $sid, bool $silent = false ): ?array {
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) || ! is_readable( $path ) ) {
-			Logger::output( $silent ? 'info' : 'error', "(Session::_loadSessionFile) The session file does not exist or is not readable [$sid]" );
+			if ( $silent ) {
+				Logger::info( __METHOD__, 'The session file does not exist or is not readable', $sid );
+			} else {
+				Logger::error( __METHOD__, 'The session file does not exist or is not readable', $sid );
+			}
 			return null;
 		}
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( 'error', "(Session::_loadSessionFile) Cannot read the session file [$sid]" );
+			Logger::error( __METHOD__, 'Cannot read the session file', $sid );
 			return null;
 		}
 		$data = json_decode( $json, true );
 		if ( $data === null ) {
-			Logger::output( 'error', "(Session::_loadSessionFile) The session file is invalid [$sid]" );
+			Logger::error( __METHOD__, 'The session file is invalid', $sid );
 		}
 		return $data;
 	}
@@ -352,12 +356,12 @@ class Session {
 		}
 		$path = $this->_dirSession . $sid;
 		if ( ! is_file( $path ) ) {
-			Logger::output( 'info', "(Session::_removeSessionFile) Session file does not exist [$sid]" );
+			Logger::info( __METHOD__, 'Session file does not exist', $sid );
 			return;
 		}
 		$res = unlink( $path );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Session::_removeSessionFile) Cannot remove the session file [$sid]" );
+			Logger::error( __METHOD__, 'Cannot remove the session file', $sid );
 		}
 	}
 
@@ -367,7 +371,7 @@ class Session {
 		$json = json_encode( $sf, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Session::_saveSessionFile) Cannot write the session file [$sid]" );
+			Logger::error( __METHOD__, 'Cannot write the session file', $sid );
 			return false;
 		}
 		@chmod( $path, NT_MODE_FILE );
@@ -377,7 +381,7 @@ class Session {
 	private static function _deleteAllIn( string $dir ): void {
 		$dir = rtrim( $dir, '/' );
 		if ( ! is_dir( $dir ) ) {
-			Logger::output( 'info', "(Session::_deleteAllIn) The directory does not exist [$dir]" );
+			Logger::info( __METHOD__, 'The directory does not exist', $dir );
 			return;
 		}
 		foreach ( scandir( $dir ) as $fn ) {
@@ -402,7 +406,7 @@ class Session {
 			@chmod( $path, NT_MODE_DIR );
 			return true;
 		}
-		Logger::output( 'error', "(Session::_ensureDir) The session directory is not usable [$path]" );
+		Logger::error( __METHOD__, 'The session directory is not usable', $path );
 		return false;
 	}
 

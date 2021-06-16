@@ -60,24 +60,24 @@ class Auth {
 
 	public function signIn( array $params ): ?array {
 		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['cnonce'] ) ) {
-			Logger::output( 'info', '(Auth::login) Parameters are invalid' );
+			Logger::info( __METHOD__, 'Parameters are invalid' );
 			$this->_errCode = 'INVALID PARAM';
 			return null;
 		}
 		[ 'user' => $user, 'digest' => $digest, 'cnonce' => $cnonce ] = $params;
 
 		if ( $this->_verify( $user, $digest, $cnonce, $out_lang ) ) {
-			Logger::output( 'info', "(Auth::login) Login succeeded [$user]" );
+			Logger::info( __METHOD__, 'Sign-in succeeded', $user );
 			return [ 'user' => $user, 'lang' => $out_lang ];
 		}
-		Logger::output( 'info', "(Auth::login) Login failed [$user]" );
+		Logger::info( __METHOD__, 'Sign-in failed', $user );
 		return null;
 	}
 
 	private function _verify( string $user, string $digest, string $cnonce, ?string &$out_lang ): bool {
 		$as = null;
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read( 'authUser' );
+			$as = $this->_read();
 			$as = $this->_cleanInvitation( $as );
 			$this->_unlock( $h );
 		}
@@ -116,9 +116,9 @@ class Auth {
 		$res = false;
 
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read( 'issueInvitation' );
+			$as = $this->_read();
 			$as[] = "*$limit\t$code";
-			$res = $this->_write( $as, 'issueInvitation' );
+			$res = $this->_write( $as );
 			$this->_unlock( $h );
 		}
 		return $res ? $code : null;
@@ -126,16 +126,16 @@ class Auth {
 
 	public function signUp( array $params ): bool {
 		if ( empty( $params['code'] ) ) {
-			Logger::output( 'info', "(Auth::signUp) The invitation code is empty." );
-			$this->_errCode = 'INVALID_CODE';
+			Logger::info( __METHOD__, 'The invitation code is empty' );
+			$this->_errCode = 'invalid_code';
 			return false;
 		}
 		if (
 			empty( $params['user'] ) || empty( $params['hash'] ) ||
 			( isset( $params['user'] ) && ! preg_match( '/^(?=.*[a-z])[\-_a-z0-9]{4,32}$/i', $params['user'] ) )
 		) {
-			Logger::output( 'info', '(Auth::signUp) Parameters are invalid' );
-			$this->_errCode = 'INVALID_PARAM';
+			Logger::info( __METHOD__, 'Parameters are invalid' );
+			$this->_errCode = 'invalid_param';
 			return false;
 		}
 		[ 'user' => $user, 'code' => $code, 'hash' => $hash ] = $params;
@@ -147,12 +147,12 @@ class Auth {
 		$now = time();
 
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read( 'signUp' );
+			$as = $this->_read();
 
 			$users = $this->_getUsers( $as );
 			if ( in_array( $user, $users, true ) ) {
 				$this->_unlock( $h );
-				$this->_errCode = 'INVALID_PARAM';
+				$this->_errCode = 'invalid_param';
 				return false;
 			}
 
@@ -166,7 +166,6 @@ class Auth {
 				}
 				$cs = explode( "\t", $a );
 				$us = $cs[0];
-				$a1 = strtolower( $cs[1] );
 
 				if ( $us[0] === '*' ) {
 					if ( $cs[1] === $code ) {
@@ -176,8 +175,8 @@ class Auth {
 							if ( $lang ) $cs[2] = $lang;
 							$mod = true;
 						} else {
-							Logger::output( 'info', "(Auth::signUp) The invitation code has expired." );
-							$this->_errCode = 'EXPIRED_CODE';
+							Logger::info( __METHOD__, 'The invitation code has expired' );
+							$this->_errCode = 'expired_code';
 							break;
 						}
 					}
@@ -185,10 +184,10 @@ class Auth {
 				$new[] = implode( "\t", $cs );
 			}
 			if ( $mod ) {
-				$res = $this->_write( $new, 'signUp' );
+				$res = $this->_write( $new );
 			} else {
-				Logger::output( 'info', "(Auth::signUp) The invitation code is invalid." );
-				$this->_errCode = 'INVALID_CODE';
+				Logger::info( __METHOD__, 'The invitation code is invalid' );
+				$this->_errCode = 'invalid_code';
 			}
 			$this->_unlock( $h );
 		}
@@ -213,7 +212,7 @@ class Auth {
 			}
 			$new[] = implode( "\t", $cs );
 		}
-		if ( $mod ) $this->_write( $new, 'cleanUpInvitationCode' );
+		if ( $mod ) $this->_write( $new );
 		return $new;
 	}
 
@@ -253,26 +252,26 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
-	private function _read( string $fn ): array {
+	private function _read(): array {
 		if ( is_file( $this->_path ) === false ) {
-			Logger::output( 'error', "(Auth::$fn) The account file does not exist" );
-			$this->_errCode = 'INTERNAL_ERROR';
+			Logger::error( __METHOD__, 'The account file does not exist' );
+			$this->_errCode = 'internal_error';
 			return [];
 		}
 		$as = file( $this->_path, FILE_IGNORE_NEW_LINES );
 		if ( $as === false ) {
-			Logger::output( 'error', "(Auth::$fn) Cannot open the account file" );
-			$this->_errCode = 'INTERNAL_ERROR';
+			Logger::error( __METHOD__, 'Cannot open the account file' );
+			$this->_errCode = 'internal_error';
 			return [];
 		}
 		return $as;
 	}
 
-	private function _write( array $ac, string $fn ): bool {
+	private function _write( array $ac ): bool {
 		$res = file_put_contents( $this->_path, implode( "\n", $ac ) );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Auth::$fn) Cannot write the account file" );
-			$this->_errCode = 'INTERNAL_ERROR';
+			Logger::error( __METHOD__, 'Cannot write the account file' );
+			$this->_errCode = 'internal_error';
 			return false;
 		}
 		return true;

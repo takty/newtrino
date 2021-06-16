@@ -63,16 +63,13 @@ function handle_query(): array {
 		return _process_post_for_view( $p, $query, $list_url, $post_url, $is_trash );
 	}, $ret['posts'] );
 
-	$msg = '';
-	if ( $error === 'new' ) {
-		$msg = _ht( 'A new post could not be created.' );
-	} else if ( $error === 'update' ) {
-		$msg = _ht( 'The post could not be updated.' );
-	} else if ( $error === 'view' ) {
-		$msg = _ht( 'The post could not be viewed.' );
-	} else if ( $error === 'lock' ) {
-		$msg = _ht( 'The post is being edited by another user.' );
-	}
+	$msgs = [
+		'new'    => _ht( 'A new post could not be created.' ),
+		'update' => _ht( 'The post could not be updated.' ),
+		'view'   => _ht( 'The post could not be viewed.' ),
+		'lock'   => _ht( 'The post is being edited by another user.' ),
+	];
+	$msg = $msgs[ $error ] ?? '';
 	return [
 		'posts'            => $ps,
 		'pagination'       => _create_pagination_view( $query, $ret['page_count'], $list_url ),

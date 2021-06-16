@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-16
  *
  */
 
@@ -83,7 +83,7 @@ class Media {
 
 		$fileName = $this->_getUniqueFileName( $origFileName );
 		if ( empty( $fileName ) ) {
-			Logger::output( 'error', "(Media::upload) File uploading failed [$fileName]" );
+			Logger::error( __METHOD__, 'File uploading failed', $fileName );
 			return false;
 		}
 		$path = $this->_dir . $fileName;
@@ -94,11 +94,11 @@ class Media {
 			if ( move_uploaded_file( $tmpFile, $path ) ) {
 				@chmod( $path, NT_MODE_FILE );
 				$this->_addMeta( $fileName );
-				Logger::output( 'info', "(Media::upload) File uploading succeeded [$fileName]" );
+				Logger::info( __METHOD__, 'File uploading succeeded', $fileName );
 				return true;
 			}
 		}
-		Logger::output( 'error', "(Media::upload) File uploading failed [$fileName]" );
+		Logger::error( __METHOD__, 'File uploading failed', $fileName );
 		return false;
 	}
 
@@ -110,7 +110,7 @@ class Media {
 			if ( ! is_file( $path ) ) continue;
 			$res = unlink( $path );
 			if ( $res === false ) {
-				Logger::output( 'error', "(Media::remove) Cannot remove the file [$path]" );
+				Logger::error( __METHOD__, 'Cannot remove the file', $path );
 			}
 		}
 	}
@@ -153,12 +153,12 @@ class Media {
 		if ( is_file( $path ) && is_readable( $path ) ) {
 			$json = file_get_contents( $path );
 			if ( $json === false ) {
-				Logger::output( 'error', "(Media::_loadMeta) Cannot read the meta data [$path]" );
+				Logger::error( __METHOD__, 'Cannot read the meta data', $path );
 				return [];
 			}
 			$data = json_decode( $json, true );
 			if ( $data === null ) {
-				Logger::output( 'error', "(Media::_loadMeta) The meta data is invalid [$path]" );
+				Logger::error( __METHOD__, 'The meta data is invalid', $path );
 			}
 			return $this->_data = $data ?? [];
 		}
@@ -172,7 +172,7 @@ class Media {
 		$path = $this->_meta;
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Media::_saveMeta) Cannot write the meta data [$path]" );
+			Logger::error( __METHOD__, 'Cannot write the meta data', $path );
 			return;
 		}
 		@chmod( $path, NT_MODE_FILE );

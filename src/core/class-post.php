@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-16
  *
  */
 
@@ -88,7 +88,7 @@ class Post {
 			$this->_writeContent( $path ) &&
 			$this->_writeSearchIndex( $path )
 		) {
-			Logger::output( 'info', "(Post::save) Post saving succeeded [$this->_id]" );
+			Logger::info( __METHOD__, 'Post saving succeeded', $this->_id );
 		}
 	}
 
@@ -108,7 +108,7 @@ class Post {
 		$idx = Indexer::createSearchIndex( $text );
 		$ret = file_put_contents( $path, $idx, LOCK_EX );
 		if ( $ret === false ) {
-			Logger::output( 'error', "(Post::_writeSearchIndex) Cannot write the index data [$this->_id]" );
+			Logger::error( __METHOD__, 'Cannot write the index data', $this->_id );
 			return false;
 		}
 		@chmod( $path, NT_MODE_FILE );
@@ -239,12 +239,12 @@ class Post {
 		$path = $postDir . self::INFO_FILE_NAME;
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( 'error', "(Post::_readInfoFile) Cannot read the info data [$this->_id]" );
+			Logger::error( __METHOD__, 'Cannot read the info data', $this->_id );
 			return null;
 		}
 		$data = json_decode( $json, true );
 		if ( $data === null ) {
-			Logger::output( 'error', "(Post::_readInfoFile) The info data is invalid [$this->_id]" );
+			Logger::error( __METHOD__, 'The info data is invalid', $this->_id );
 		}
 		return $data;
 	}
@@ -254,7 +254,7 @@ class Post {
 		$json = json_encode( $info, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Post::_writeInfoFile) Cannot write the info data [$this->_id]" );
+			Logger::error( __METHOD__, 'Cannot write the info data', $this->_id );
 			return false;
 		}
 		@chmod( $path, NT_MODE_FILE );
@@ -405,7 +405,7 @@ class Post {
 
 		$cont = file_get_contents( $path );
 		if ( $cont === false ) {
-			Logger::output( 'error', "(Post::_readContent) Cannot read the post [$this->_id]" );
+			Logger::error( __METHOD__, 'Cannot read the post', $this->_id );
 			return false;
 		}
 		$this->_content = $cont;
@@ -418,7 +418,7 @@ class Post {
 		$path = $postDir . self::CONT_FILE_NAME;
 		$res = file_put_contents( $path, $this->_content, LOCK_EX );
 		if ( $res === false ) {
-			Logger::output( 'error', "(Post::_writeContent) Cannot write the post [$this->_id]" );
+			Logger::error( __METHOD__, 'Cannot write the post', $this->_id );
 			return false;
 		}
 		@chmod( $path, NT_MODE_FILE );

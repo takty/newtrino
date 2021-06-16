@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-16
  *
  */
 
@@ -88,12 +88,12 @@ class Taxonomy {
 
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
-			Logger::output( 'error', "(Taxonomy::_loadData) Cannot read the taxonomy definition [$path]" );
+			Logger::error( __METHOD__, 'Cannot read the taxonomy definition', $path );
 			die;
 		}
 		$data = json_decode( $json, true );
 		if ( $data === null ) {
-			Logger::output( 'error', "(Taxonomy::_loadData) The taxonomy definition is invalid [$path]" );
+			Logger::error( __METHOD__, 'The taxonomy definition is invalid', $path );
 			die;
 		}
 		return $this->_data = $this->_processData( $data );;

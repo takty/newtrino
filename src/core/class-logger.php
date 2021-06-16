@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-16
  *
  */
 
@@ -17,6 +17,26 @@ class Logger {
 	const FILE_NUM = 5;
 
 	static public $debug = false;
+
+	static public function info( string $where, string $msg, string $additional = '' ): void {
+		if ( ! is_string( $msg ) ) {
+			$msg = var_export( $msg, true );
+		}
+		if ( ! empty( $additional ) ) {
+			$additional = " [$additional]";
+		}
+		self::output( 'info', "($where) $msg$additional" );
+	}
+
+	static public function error( string $where, string $msg, string $additional = '' ): void {
+		if ( ! is_string( $msg ) ) {
+			$msg = var_export( $msg, true );
+		}
+		if ( ! empty( $additional ) ) {
+			$additional = " [$additional]";
+		}
+		self::output( 'error', "($where) $msg$additional" );
+	}
 
 	static public function output( string $type, $msg ): void {
 		if ( ! is_string( $msg ) ) {

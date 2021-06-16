@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Media
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-16
  *
  */
 
@@ -32,20 +32,20 @@ function handle_query( array $q ): array {
 	switch ( $q_mode ) {
 		case 'upload':
 			if ( ! isset( $_FILES['upload_file']['error'] ) || ! is_int( $_FILES['upload_file']['error'] ) ) {
-				Logger::output( 'error', '(handler-media::handle_query) Parameters are invalid' );
+				Logger::error( __FUNCTION__, 'Parameters are invalid' );
 				break;
 			}
 			$err = $_FILES['upload_file']['error'];
 			if ( $err === UPLOAD_ERR_OK ) {
 				$media->upload( $_FILES['upload_file'] );
 			} else if ( $err === UPLOAD_ERR_NO_FILE ) {
-				Logger::output( 'error', '(handler-media::handle_query) No file was uploaded [UPLOAD_ERR_NO_FILE]' );
+				Logger::error( __FUNCTION__, 'No file was uploaded [UPLOAD_ERR_NO_FILE]' );
 				$msg = _ht( 'No file was uploaded.' );
 			} else if ( $err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE ) {
-				Logger::output( 'error', '(handler-media::handle_query) The uploaded file exceeds the max file size [UPLOAD_ERR_INI_SIZE or UPLOAD_ERR_FORM_SIZE]' );
+				Logger::error( __FUNCTION__, 'The uploaded file exceeds the max file size [UPLOAD_ERR_INI_SIZE or UPLOAD_ERR_FORM_SIZE]' );
 				$msg = _ht( 'The uploaded file exceeds the max file size.' );
 			} else {
-				Logger::output( 'error', '(handler-media::handle_query) An unknown error occurred' );
+				Logger::error( __FUNCTION__, 'An unknown error occurred' );
 				$msg = _ht( 'An unknown error occurred.' );
 			}
 			break;

@@ -25,10 +25,10 @@ function handle_query( array $q, array $q_get ): array {
 	$msg_reg   = '';
 
 	$msgs = [
-		'INVALID_CODE'   => _ht( 'The invitation code is invalid.' ),
-		'INVALID_PARAM'  => _ht( 'User name or password is not appropriate.' ),
-		'EXPIRED_CODE'   => _ht( 'Your invitation code is expired.' ),
-		'INTERNAL_ERROR' => _ht( 'Internal error occurred.' ),
+		'invalid_code'   => _ht( 'The invitation code is invalid.' ),
+		'invalid_param'  => _ht( 'User name or password is not appropriate.' ),
+		'expired_code'   => _ht( 'Your invitation code is expired.' ),
+		'internal_error' => _ht( 'Internal error occurred.' ),
 	];
 	if ( $mode === 'login' ) {
 		if ( empty( $q['digest'] ) ) {  // First view
