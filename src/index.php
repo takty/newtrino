@@ -55,27 +55,31 @@ function query_media( array $req ): void {
 	}
 	if ( empty( $id ) || empty( $media ) ) {
 		http_response_code( 404 );
-		die;
+		exit;
 	}
 
 	$nt_config = load_config( NT_DIR_DATA );
 	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 
 	if ( $id[0] === '_' ) {  // Temporary ID
-		require_once( __DIR__ . '/admin/class-session.php' );
-		if ( ! Session::canStart() ) {
+		$ok = false;
+		if ( file_exists( __DIR__ . '/admin/class-session.php' ) ) {
+			require_once( __DIR__ . '/admin/class-session.php' );
+			if ( Session::canStart() ) $ok = true;
+		}
+		if ( ! $ok ) {
 			http_response_code( 404 );
-			die;
+			exit;
 		}
 	}
 	if ( $id[0] === '-' ) {  // Trash
 		http_response_code( 404 );
-		die;
+		exit;
 	}
 	$postDir = $nt_store->getPostDir( $id, null );
 	if ( ! is_dir( $postDir ) ) {
 		http_response_code( 404 );
-		die;
+		exit;
 	}
 	sendFile( $postDir . 'media/' . $media );
 }
