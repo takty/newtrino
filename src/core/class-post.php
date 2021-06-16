@@ -75,7 +75,7 @@ class Post {
 	}
 
 	public function save( string $id = null ): void {
-		if ( ! defined( 'NT_ADMIN' ) ) die;
+		if ( ! defined( 'NT_ADMIN' ) ) exit;
 		if ( ! empty( $id ) ) $this->_id = $id;
 
 		global $nt_store;
@@ -120,7 +120,7 @@ class Post {
 
 
 	public function assign( array $vals ): void {
-		if ( ! defined( 'NT_ADMIN' ) ) die;
+		if ( ! defined( 'NT_ADMIN' ) ) exit;
 		$this->setTitle( $vals['post_title'] );
 		$this->setStatus( $vals['post_status'] );
 

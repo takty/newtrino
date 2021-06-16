@@ -89,12 +89,12 @@ class Type {
 		$json = file_get_contents( $path );
 		if ( $json === false ) {
 			Logger::error( __METHOD__, 'Cannot read the type definition', $path );
-			die;
+			exit;
 		}
 		$data = json_decode( $json, true );
 		if ( $data === null ) {
 			Logger::error( __METHOD__, 'The type definition is invalid', $path );
-			die;
+			exit;
 		}
 		return $this->_data = $this->_processData( $data );;
 	}
