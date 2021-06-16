@@ -29,6 +29,19 @@ class Session {
 		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
 	}
 
+	private static function _setCookieParams(): void {
+		ini_set( 'session.name', 'newtrino' );
+		ini_set( 'session.use_strict_mode', 1 );
+		ini_set( 'session.use_cookies', 1 );
+		ini_set( 'session.use_only_cookies', 1 );
+		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
+
+		session_set_cookie_params([
+			'samesite' => 'Strict',
+			'path'     => get_url_from_path( NT_DIR ),
+		]);
+	}
+
 
 	// ------------------------------------------------------------------------
 
@@ -43,15 +56,7 @@ class Session {
 		$this->_url        = $urlAdmin;
 		$this->_dirSession = $dirSession;
 
-		ini_set( 'session.name', 'newtrino' );
-		ini_set( 'session.use_strict_mode', 1 );
-		ini_set( 'session.use_cookies', 1 );
-		ini_set( 'session.use_only_cookies', 1 );
-		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
-
-		session_set_cookie_params([
-			'samesite' => 'Strict',
-		]);
+		self::_setCookieParams();
 	}
 
 	public function getLanguage(): string {
@@ -102,6 +107,8 @@ class Session {
 	}
 
 	public static function canStart(): bool {
+		global $nt_session;
+		if ( ! isset( $nt_session ) ) self::_setCookieParams();
 		if ( ! self::_sessionStart() ) return false;
 
 		if ( empty( $_SESSION['sid'] ) )   return false;
