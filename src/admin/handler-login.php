@@ -11,11 +11,13 @@ namespace nt;
 
 
 require_once( __DIR__ . '/index.php' );
+require_once( __DIR__ . '/class-auth.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
 
 function handle_query( array $q, array $q_get ): array {
 	global $nt_session;
+	$auth = new Auth( NT_URL_ADMIN, NT_DIR_DATA );
 
 	$mode      = $q['mode'] ?? '';
 	$is_dialog = isset( $q['dialog'] ) || isset( $q_get['dialog'] );
@@ -29,10 +31,11 @@ function handle_query( array $q, array $q_get ): array {
 		'INTERNAL_ERROR' => _ht( 'Internal error occurred.' ),
 	];
 	if ( $mode === 'login' ) {
-		if ( empty( $q['digest'] ) ) {
-			$nt_session->logout();
+		if ( empty( $q['digest'] ) ) {  // First view
+			$nt_session->destroy();
 		} else {
-			if ( $nt_session->login( $q ) ) {
+			$ul = $auth->signIn( $q );
+			if ( $ul && $nt_session->create( $ul['user'], $ul['lang'] ) ) {
 				if ( $is_dialog ) {
 					close_dialog_frame();
 				} else {
@@ -43,24 +46,24 @@ function handle_query( array $q, array $q_get ): array {
 			$msg_log = _ht( 'User name or password is wrong.' );
 		}
 	} else if ( $mode === 'issue' ) {
-		$code = $nt_session->issueInvitationCode( $q );
+		$code = $auth->issueInvitation( $q );
 		if ( $code ) {
 			$msg_log = $code;
 		} else {
-			$msg_reg = $msgs[ $nt_session->getErrorCode() ] ?? '';
+			$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
 		}
 	} else if ( $mode === 'register' ) {
-		if ( $nt_session->register( $q ) ) {
+		if ( $auth->signUp( $q ) ) {
 			$msg_log = _ht( 'Registration succeeded.' );
 		} else {
-			$msg_reg = $msgs[ $nt_session->getErrorCode() ] ?? '';
+			$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
 		}
 	}
 
 	return [
-		'key'       => Session::getAuthKey(),
-		'nonce'     => Session::getAuthNonce(),
-		'url'       => $nt_session->getUrl(),
+		'key'       => Auth::getAuthKey(),
+		'nonce'     => Auth::getAuthNonce(),
+		'url'       => NT_URL_ADMIN,
 		'msg_log'   => $msg_log,
 		'msg_reg'   => $msg_reg,
 		'is_dialog' => $is_dialog,
