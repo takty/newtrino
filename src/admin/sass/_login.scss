@@ -3,7 +3,7 @@
  * Login (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-15
+ * @version 2021-06-16
  *
  */
 
@@ -11,15 +11,6 @@
 body.login {
     display    : grid;
     place-items: center;
-
-	#account {
-		position: absolute;
-		left    : 1rem;
-		right   : 1rem;
-		bottom  : 1rem;
-
-		opacity: 0.1;
-	}
 }
 
 .frame-login {
@@ -27,20 +18,34 @@ body.login {
 	width        : calc(100% - 1rem);
 	max-width    : 20rem;
 
-	h1 { text-align: center; }
+	h1 {
+		text-align : center;
+		cursor     : pointer;
+		user-select: none;
+	}
 
 	dl, p, nav {
 		margin-top: 1.5rem;
 	}
 
+	p {
+		line-height: 1.5;
+	}
+
 	dd + dt { margin-top: 1.25rem; }
 	dd { margin-top: 0.5rem; }
+
+	form.hidden {
+		display: none;
+	}
 
 	input[type=text],
 	input[type=password] {
 		width: 100%;
 	}
-
+	input[invalid] {
+		border-color: $color-button-border-caution;
+	}
 	nav {
 		display        : flex;
 		align-items    : center;

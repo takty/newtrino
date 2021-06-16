@@ -5,13 +5,23 @@
 		"Close": "閉じる"
 	},
 	"login": {
-		"Username:": "ユーザー名:",
+		"User Name:": "ユーザー名:",
 		"Password:": "パスワード:",
 		"Log In": "ログイン",
 		"Log Out": "ログアウト",
-		"Username or password is wrong.": "ユーザー名かパスワードが異なります。",
-		"Use Of Cookies...": "クッキーの使用...",
-		"Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.": "Newtrino管理画面では、不正アクセスを防止し、セキュリティを確保するため、クッキーを利用しています。クッキーがブロックされている場合、ログインできません。なお、クッキーに個人情報は含まれません。"
+		"User name or password is wrong.": "ユーザー名かパスワードが異なります。",
+		"Use of Cookies...": "クッキーの使用...",
+		"Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.": "Newtrino管理画面では、不正アクセスを防止し、セキュリティを確保するため、クッキーを利用しています。クッキーがブロックされている場合、ログインできません。なお、クッキーに個人情報は含まれません。",
+
+		"Invitation Code:": "招待コード:",
+		"New User Name:": "新規ユーザー名:",
+		"New Password:": "新規パスワード:",
+		"Register": "登録",
+		"The invitation code is invalid.": "招待コードが異なります。",
+		"User name or password is not appropriate.": "ユーザー名かパスワードが適切ではありません。",
+		"Internal error occurred.": "内部エラーが発生しました。",
+		"Registration succeeded.": "登録に成功しました。",
+		"Do you want to issue an invitation code?": "招待コードを発行しますか？"
 	},
 	"list": {
 		"Post Type": "投稿タイプ",

@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-16
  *
  */
 
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function openLoginDialog() {
 	const dlg = document.getElementById('dialog-login');
-	dlg.src = 'login.php?mode=dialog';
+	dlg.src = 'login.php?dialog';
 	openDialog(dlg, 'login');
 }
 

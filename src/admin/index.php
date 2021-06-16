@@ -5,7 +5,7 @@ namespace nt;
  * Init for Admin
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
+ * @version 2021-06-16
  *
  */
 
@@ -59,7 +59,7 @@ function start_session( bool $create_store, bool $is_dialog = false ) {
 function start_ajax_session( bool $create_store ) {
 	global $nt_session;
 
-	if ( $nt_session->start() ) {
+	if ( $nt_session->start( true ) ) {
 		if ( $create_store ) {
 			global $nt_store, $nt_config;
 			$nt_store = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );

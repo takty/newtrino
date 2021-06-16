@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-15
+ * @version 2021-06-16
  *
  */
 
@@ -15,9 +15,11 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Session {
 
-	const TIMEOUT_SESSION = 1800;  // 1800 = 30 minutes * 60 seconds
-	const TIMEOUT_LOCK    = 60;    //   60 =  1 minutes * 60 seconds
-	const LOGIN_NONCE_GL  = 300;   //  300 =  5 minutes * 60 seconds (Expires in 10 minutes max.)
+	const TIMEOUT_SESSION         = 1800;    // 1800 = 30 minutes * 60 seconds
+	const TIMEOUT_LOCK            = 60;      //   60 =  1 minutes * 60 seconds
+	const TIMEOUT_INVITATION_CODE = 604800;  //   60 =  7 days * 24 hours * 60 minutes * 60 seconds
+	const LOGIN_NONCE_GL          = 300;     //  300 =  5 minutes * 60 seconds (Expires in 10 minutes max.)
+
 	const ACCT_FILE_NAME  = 'account';
 	const HASH_ALGO       = 'sha256';
 
@@ -46,7 +48,7 @@ class Session {
 	private $_dirSession;
 
 	private $_lang      = '';
-	private $_errMsg    = '';
+	private $_errCode   = '';
 	private $_sessionId = '';
 
 	public function __construct( string $urlAdmin, string $dirAcct, string $dirSession ) {
@@ -73,8 +75,8 @@ class Session {
 		return $this->_lang;
 	}
 
-	public function getErrorMessage(): string {
-		return $this->_errMsg;
+	public function getErrorCode(): string {
+		return $this->_errCode;
 	}
 
 
@@ -97,7 +99,7 @@ class Session {
 	public function login( array $params ): bool {
 		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['cnonce'] ) ) {
 			Logger::output( 'info', '(Session::login) Parameters are invalid' );
-			$this->_errMsg = 'Parameters are invalid';
+			$this->_errCode = 'INVALID PARAM';
 			return false;
 		}
 		[ 'user' => $user, 'digest' => $digest, 'cnonce' => $cnonce ] = $params;
@@ -121,7 +123,7 @@ class Session {
 		$as = null;
 		if ( $h = $this->_lock() ) {
 			$as = $this->_getAccountFile();
-			$as = $this->_upgradeAccountFile( $as );
+			$as = $this->_cleanUpInvitationCode( $as );
 			$this->_unlock( $h );
 		}
 		if ( $as === null ) return false;
@@ -134,10 +136,10 @@ class Session {
 			if ( empty( $a ) || $a[0] === '#' ) continue;
 			$cs = explode( "\t", $a );
 			if ( $cs[0] !== $user ) continue;
-			$a1p = substr( strtolower( $cs[1] ), 3 );
+			$a1 = strtolower( $cs[1] );
 
 			foreach ( $ns as $nonce ) {
-				$d = hash( self::HASH_ALGO, "$a1p:$nonce:$cnonce:$a2" );
+				$d = hash( self::HASH_ALGO, "$a1:$nonce:$cnonce:$a2" );
 				if ( $d === $digest ) {
 					$out_lang = ( 2 < count( $cs ) && ! empty( $cs[2] ) ) ? $cs[2] : null;
 					return true;
@@ -147,9 +149,125 @@ class Session {
 		return false;
 	}
 
-	private function _upgradeAccountFile( array $as ): array {
+	private function _getAccountFile(): array {
+		$path = $this->_dirAcct . self::ACCT_FILE_NAME;
+		if ( is_file( $path ) === false ) {
+			Logger::output( 'error', "(Session::_getAccountFile) The account file does not exist" );
+			$this->_errCode = 'INTERNAL_ERROR';
+			return [];
+		}
+		$as = file( $path, FILE_IGNORE_NEW_LINES );
+		if ( $as === false ) {
+			Logger::output( 'error', "(Session::_getAccountFile) Cannot open the account file" );
+			$this->_errCode = 'INTERNAL_ERROR';
+			return [];
+		}
+		return $as;
+	}
+
+
+	// ------------------------------------------------------------------------
+
+
+	public function issueInvitationCode( array $params ): ?string {
+		if ( ! $this->login( $params ) ) return false;
+		$code = self::getNonce();
+		$limit = time() + self::TIMEOUT_INVITATION_CODE;
+
+		$res = false;
+
+		if ( $h = $this->_lock() ) {
+			$as = $this->_getAccountFile();
+			$as[] = "*$limit\t$code";
+
+			$path = $this->_dirAcct . self::ACCT_FILE_NAME;
+			$res  = file_put_contents( $path, implode( "\n", $as ) );
+			if ( $res === false ) {
+				Logger::output( 'error', "(Session::issueInvitationCode) Cannot write the account file" );
+				$this->_errCode = 'INTERNAL_ERROR';
+			}
+			$this->_unlock( $h );
+		}
+		return $res ? $code : null;
+	}
+
+	public function register( array $params ): bool {
+		if ( empty( $params['code'] ) ) {
+			Logger::output( 'info', "(Session::register) The invitation code is empty." );
+			$this->_errCode = 'INVALID_CODE';
+			return false;
+		}
+		if ( empty( $params['user'] ) || empty( $params['code'] ) || empty( $params['hash'] ) ) {
+			Logger::output( 'info', '(Session::register) Parameters are invalid' );
+			$this->_errCode = 'INVALID_PARAM';
+			return false;
+		}
+		[ 'user' => $user, 'code' => $code, 'hash' => $hash ] = $params;
+		$ca = explode( '|', $code );
+		$code = $ca[0];
+		$lang = $ca[1] ?? null;
+
+		$res = false;
+		$now = time();
+
+		if ( $h = $this->_lock() ) {
+			$as = $this->_getAccountFile();
+
+			$users = $this->_getUserNames( $as );
+			if ( in_array( $user, $users, true ) ) {
+				$this->_unlock( $h );
+				$this->_errCode = 'INVALID_PARAM';
+				return $res;
+			}
+
+			$new = [];
+			$mod = false;
+			foreach ( $as as $a ) {
+				$a = trim( $a );
+				if ( empty( $a ) || $a[0] === '#' ) {
+					$new[] = $a;
+					continue;
+				}
+				$cs = explode( "\t", $a );
+				$us = $cs[0];
+				$a1 = strtolower( $cs[1] );
+
+				if ( $us[0] === '*' ) {
+					if ( $cs[1] === $code ) {
+						if ( $now <= intval( substr( $us, 1 ) ) ) {
+							$cs[0] = $user;
+							$cs[1] = $hash;
+							if ( $lang ) $cs[2] = $lang;
+							$mod = true;
+						} else {
+							Logger::output( 'info', "(Session::register) The invitation code has expired." );
+							$this->_errCode = 'EXPIRED_CODE';
+							break;
+						}
+					}
+				}
+				$new[] = implode( "\t", $cs );
+			}
+			if ( $mod ) {
+				$path = $this->_dirAcct . self::ACCT_FILE_NAME;
+				$res  = file_put_contents( $path, implode( "\n", $new ) );
+				if ( $res === false ) {
+					Logger::output( 'error', "(Session::register) Cannot write the account file" );
+					$this->_errCode = 'INTERNAL_ERROR';
+				}
+			} else {
+				Logger::output( 'info', "(Session::register) The invitation code is invalid." );
+				$this->_errCode = 'INVALID_CODE';
+			}
+			$this->_unlock( $h );
+		}
+		return $res;
+	}
+
+	private function _cleanUpInvitationCode( array $as ): array {
 		$new = [];
 		$mod = false;
+		$now = time();
 		foreach ( $as as $a ) {
 			$a = trim( $a );
 			if ( empty( $a ) || $a[0] === '#' ) {
@@ -157,11 +275,10 @@ class Session {
 				continue;
 			}
 			$cs = explode( "\t", $a );
-			$a1 = strtolower( $cs[1] );
 
-			if ( substr( $a1, 0, 3 ) !== '#!#' ) {
-				$cs[1] = '#!#' . hash( self::HASH_ALGO, "$a1:$this->_url" );
+			if ( $cs[0][0] === '*' && intval( substr( $cs[0], 1 ) ) < $now ) {
 				$mod = true;
+				continue;
 			}
 			$new[] = implode( "\t", $cs );
 		}
@@ -169,27 +286,28 @@ class Session {
 			$path = $this->_dirAcct . self::ACCT_FILE_NAME;
 			$res  = file_put_contents( $path, implode( "\n", $new ) );
 			if ( $res === false ) {
-				Logger::output( 'error', "(Session::_upgradeAccountFile) Cannot upgrade the account file" );
-				$this->_errMsg = 'Cannot upgrade the account file';
+				Logger::output( 'error', "(Session::_upgradeAccountFile) Cannot clean up the account file" );
+				$this->_errCode = 'INTERNAL_ERROR';
 			}
 		}
 		return $new;
 	}
 
-	private function _getAccountFile(): array {
-		$path = $this->_dirAcct . self::ACCT_FILE_NAME;
-		if ( is_file( $path ) === false ) {
-			Logger::output( 'error', "(Session::_getAccountFile) The account file does not exist" );
-			$this->_errMsg = 'The account file does not exist';
-			return [];
+	private function _getUserNames( array $as ): array {
+		$ret = [];
+		foreach ( $as as $a ) {
+			$a = trim( $a );
+			if ( empty( $a ) || $a[0] === '#' ) {
+				$new[] = $a;
+				continue;
+			}
+			[ $user ] = explode( "\t", $a );
+			if ( $user[0] === '*' ) {
+				continue;
+			}
+			$ret[] = $user;
 		}
-		$as = file( $path, FILE_IGNORE_NEW_LINES );
-		if ( $as === false ) {
-			Logger::output( 'error', "(Session::_getAccountFile) Cannot open the account file" );
-			$this->_errMsg = 'Cannot open the account file';
-			return [];
-		}
-		return $as;
+		return $ret;
 	}
 
 
@@ -218,7 +336,6 @@ class Session {
 		}
 		if ( $res === false ) {
 			Logger::output( 'error', '(Session::_create) Cannot write the session file' );
-			$this->_errMsg = 'Cannot write the session file';
 		}
 		return $res;
 	}
@@ -235,7 +352,7 @@ class Session {
 		return true;
 	}
 
-	public function start(): bool {
+	public function start( bool $silent = false ): bool {
 		$ret = self::canStart();
 		if ( ! $ret ) {
 			$this->_doDestroySession();
@@ -243,7 +360,7 @@ class Session {
 		}
 		$this->_sessionId = $_SESSION['session_id'];
 		if ( ! empty( $_SESSION['lang'] ) ) $this->_lang = $_SESSION['lang'];
-		return $this->_checkTimestamp( $this->_sessionId );
+		return $this->_checkTimestamp( $this->_sessionId, $silent );
 	}
 
 	private function _stop(): void {
@@ -299,8 +416,8 @@ class Session {
 		return null;
 	}
 
-	private function _checkTimestamp( string $sid ): bool {
-		$sf = $this->_loadSessionFile( $sid );
+	private function _checkTimestamp( string $sid, bool $silent = false ): bool {
+		$sf = $this->_loadSessionFile( $sid, $silent );
 		if ( $sf === null ) return false;
 
 		$now  = time();
