@@ -5,7 +5,7 @@ namespace nt;
  * List
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-16
  *
  */
 
@@ -154,6 +154,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{/posts}}
 			</tbody>
 		</table>
+		<input id="nonce" type="hidden" value="{{nonce}}">
 <?php \nt\end( $view ); ?>
 
 <?php \nt\begin(); ?>

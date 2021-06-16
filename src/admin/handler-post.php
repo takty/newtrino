@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-16
  *
  */
 
@@ -37,24 +37,28 @@ function handle_query( array $q ): array {
 		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => 'lock' ] ) );
 		exit;
 	}
-	switch ( $q_mode ) {
-		case 'new':
-			$t_p = $nt_store->createNewPost( $query['type'] );
-			if ( ! $t_p ) break;
-			$nt_session->addTemporaryDirectory( $nt_store->getPostDir( $t_p->getId(), null ) );
-			$t_p->setDate();
-			break;
-		case 'update':
-			$p = $nt_store->getPost( $q_id );
-			if ( ! $p ) break;
-			$p->assign( $q );
-			$t_p = $nt_store->writePost( $p );
-			$msg = _ht( 'Update Complete' );
-			break;
-		default:
-			$t_p = $nt_store->getPost( $q_id );
-			break;
+	if ( $nt_session->checkNonce() ) {
+		switch ( $q_mode ) {
+			case 'new':
+				$t_p = $nt_store->createNewPost( $query['type'] );
+				if ( ! $t_p ) break;
+				$nt_session->addTemporaryDirectory( $nt_store->getPostDir( $t_p->getId(), null ) );
+				$t_p->setDate();
+				break;
+			case 'update':
+				$p = $nt_store->getPost( $q_id );
+				if ( ! $p ) break;
+				$p->assign( $q );
+				$t_p = $nt_store->writePost( $p );
+				$msg = _ht( 'Update Complete' );
+				break;
+			default:
+				$t_p = $nt_store->getPost( $q_id );
+				break;
+		}
 	}
+	$query['nonce'] = $nt_session->getNonce();
+
 	if ( ! isset( $t_p ) ) {
 		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => ( empty( $q_mode ) ? 'view' : $q_mode ) ] ) );
 		exit;

@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-10
+ * @version 2021-06-16
  *
  */
 
@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function setPostStatus(id, status, statSel) {
+		const n = document.getElementById('nonce');
+		const nonce = n ? n.value : '';
 		const req = new XMLHttpRequest();
 		req.addEventListener('load', (e) => {
 			const msg = e.currentTarget.responseText.match(/<result>([\s\S]*?)<\/result>/i);
@@ -112,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 		req.open('post', 'ajax.php', true);
 		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		req.send('mode=status' + '&id=' + id + '&val=' + status + '&cache=' + Date.now());
+		req.send('mode=status' + '&id=' + id + '&val=' + status + '&cache=' + Date.now() + '&nonce=' + nonce);
 	}
 });
 

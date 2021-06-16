@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-16
  *
  */
 
@@ -21,7 +21,7 @@ start_session( true );
 
 
 function handle_query(): array {
-	global $nt_config, $nt_store;
+	global $nt_config, $nt_store, $nt_session;
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
 
@@ -39,13 +39,16 @@ function handle_query(): array {
 	$error   = get_param( 'error',    null,      $query );
 	unset( $query['error'] );
 
-	if ( isset( $orig_query['remove_id'] ) ) {
-		$nt_store->removePost( $orig_query['remove_id'] );
-	} else if ( isset( $orig_query['restore_id'] ) ) {
-		$nt_store->restorePost( $orig_query['restore_id'] );
-	} else if ( isset( $orig_query['empty_trash'] ) ) {
-		$nt_store->emptyTrash( $type );
+	if ( $nt_session->checkNonce() ) {
+		if ( isset( $orig_query['remove_id'] ) ) {
+			$nt_store->removePost( $orig_query['remove_id'] );
+		} else if ( isset( $orig_query['restore_id'] ) ) {
+			$nt_store->restorePost( $orig_query['restore_id'] );
+		} else if ( isset( $orig_query['empty_trash'] ) ) {
+			$nt_store->emptyTrash( $type );
+		}
 	}
+	$query['nonce'] = $nt_session->getNonce();
 
 	$args = [ 'status' => $status, 'type' => $type, 'per_page' => $perPage ];
 	if ( $date ) $args += [ 'date_query' => [ [ 'date' => $date ] ] ];
@@ -86,6 +89,7 @@ function handle_query(): array {
 		'list_all'    => $is_trash ? create_canonical_url( $list_url, $query, [ 'status' => null ] ) : '#',
 		'empty_trash' => $is_trash ? create_canonical_url( $list_url, $query, [ 'empty_trash' => true, 'status' => null ] ) : '#',
 		'message'     => $msg,
+		'nonce'       => $nt_session->getNonce(),
 	];
 }
 

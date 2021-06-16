@@ -25,7 +25,7 @@ class Session {
 		return 'newtrino';
 	}
 
-	public static function getNonce(): string {
+	private static function _createNonce(): string {
 		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
 	}
 
@@ -84,12 +84,12 @@ class Session {
 		if ( $h = $this->_lock() ) {
 			$existingSession = $this->_cleanSessions( $user );
 
-			$nonce = $existingSession ?? self::getNonce();
-			$_SESSION['user']        = $user;
-			$_SESSION['session_id']  = $nonce;
-			$_SESSION['fingerprint'] = self::_getFingerprint( $nonce, $user );
+			$sid = $existingSession ?? self::_createNonce();
+			$_SESSION['sid']   = $sid;
+			$_SESSION['user']  = $user;
+			$_SESSION['nonce'] = self::_createNonce();
 
-			$this->_sessionId = $nonce;
+			$this->_sessionId = $sid;
 			if ( $lang ) $_SESSION['lang'] = $lang;
 
 			$res = $this->_saveSessionFile( $this->_sessionId, [ 'timestamp' => time(), 'user' => $user ] );
@@ -104,12 +104,9 @@ class Session {
 	public static function canStart(): bool {
 		if ( ! self::_sessionStart() ) return false;
 
-		if ( empty( $_SESSION['user'] ) )        return false;
-		if ( empty( $_SESSION['session_id'] ) )  return false;
-		if ( empty( $_SESSION['fingerprint'] ) ) return false;
-
-		$fp = self::_getFingerprint( $_SESSION['session_id'], $_SESSION['user'] );
-		if ( $fp !== $_SESSION['fingerprint'] ) return false;
+		if ( empty( $_SESSION['sid'] ) )   return false;
+		if ( empty( $_SESSION['user'] ) )  return false;
+		if ( empty( $_SESSION['nonce'] ) ) return false;
 		return true;
 	}
 
@@ -119,7 +116,7 @@ class Session {
 			$this->_doDestroy();
 			return false;
 		}
-		$this->_sessionId = $_SESSION['session_id'];
+		$this->_sessionId = $_SESSION['sid'];
 		if ( ! empty( $_SESSION['lang'] ) ) $this->_lang = $_SESSION['lang'];
 		return $this->_checkTimestamp( $this->_sessionId, $silent );
 	}
@@ -140,6 +137,19 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
+	public static function getNonce(): string {
+		return $_SESSION['nonce'];
+	}
+
+	public static function checkNonce(): bool {
+		if ( empty( $_REQUEST['nonce'] ) || empty( $_SESSION['nonce'] ) ) return false;
+		return $_REQUEST['nonce'] === $_SESSION['nonce'];
+	}
+
+
+	// ------------------------------------------------------------------------
+
+
 	private static function _sessionStart(): bool {
 		if ( ! session_start() ) return false;
 		if ( ! session_regenerate_id( true ) ) return false;
@@ -147,21 +157,11 @@ class Session {
 	}
 
 	private function _doDestroy() {
-		if ( isset( $_SESSION['session_id'] ) && $h = $this->_lock() ) {
-			Logger::output( 'info', '(Session::_doDestroy) Destroy the session file [' . $_SESSION['session_id'] . ']' );
-			$this->_removeSessionFile( $_SESSION['session_id'] );
+		if ( isset( $_SESSION['sid'] ) && $h = $this->_lock() ) {
+			Logger::output( 'info', '(Session::_doDestroy) Destroy the session file [' . $_SESSION['sid'] . ']' );
+			$this->_removeSessionFile( $_SESSION['sid'] );
 			$this->_unlock( $h );
 		}
-	}
-
-	private static function _getFingerprint( $sid, $user ): string {
-		$fp  = self::getAuthKey();
-		$fp .= $sid . $user;
-		$fp .= $_SERVER['HTTP_USER_AGENT'] ?? '';
-		$fp .= $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
-		$fp .= $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-		$fp .= $_SERVER['REMOTE_ADDR'] ?? '';
-		return hash( self::HASH_ALGO, $fp );
 	}
 
 	private function _cleanSessions( string $user ): ?string {

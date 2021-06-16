@@ -5,7 +5,7 @@ namespace nt;
  * Ajax
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2021-06-16
  *
  */
 
@@ -19,7 +19,7 @@ $q_id   = $q['id']   ?? null;
 
 $res = 'failure';
 if ( $q_mode === 'status' ) {
-	if ( start_ajax_session( true ) ) {
+	if ( start_ajax_session( true ) && $nt_session->checkNonce()) {
 		$p = $nt_store->getPost( $q_id );
 		if ( $p ) {
 			$q_val = $q['val'] ?? '';
