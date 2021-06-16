@@ -5,14 +5,14 @@ namespace nt;
  * Function for Sending Files
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-16
  *
  */
 
 
 function sendFile( string $path, ?string $mimeType = null, bool $isDownload = false ): void {
 	if ( ! is_file( $path ) || ! is_readable( $path ) ) {
-		header( $_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );
+		http_response_code( 404 );
 		die( 1 );
 	}
 	$mime = $mime ?? ( new \finfo( FILEINFO_MIME_TYPE ) )->file( $path );
@@ -39,11 +39,11 @@ function sendFile( string $path, ?string $mimeType = null, bool $isDownload = fa
 	while ( ob_get_level() ) ob_end_clean();
 
 	if ( 0 < $from || $to < $size - 1 ) {
-		header( $_SERVER['SERVER_PROTOCOL'] . ' 206 Partial Content' );
+		http_response_code( 206 );  // Partial Content
 		header( "Content-Range: bytes $from-$to/$size" );
 		header( 'Content-Length: ' . ( $to - $from + 1 ) );
 	} else {
-		header( $_SERVER['SERVER_PROTOCOL'] . ' 200 OK' );
+		http_response_code( 200 );  // OK
 		header( "Content-Length: $size" );
 	}
 
