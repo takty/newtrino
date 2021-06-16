@@ -3,7 +3,7 @@
  * Media Dialog (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-16
  *
  */
 
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		msgMaxFileSize.hidden = true;
 		if (upfile.value !== '') {
-			window.parent.reopenDialog();
+			window.parent.reopenDialogLater();
 			setTimeout(() => { document.getElementById('form-upload').submit(); }, 100);
 		}
 	});
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const file_name = p.querySelector('.file-name').value;
 
 		document.getElementById('delete-file').value = file_name;
-		window.parent.reopenDialog();
+		window.parent.reopenDialogLater();
 		setTimeout(() => { document.getElementById('form-delete').submit(); }, 100);
 	}
 
