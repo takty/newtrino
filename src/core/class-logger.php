@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-17
  *
  */
 
@@ -18,7 +18,7 @@ class Logger {
 
 	static public $debug = false;
 
-	static public function info( string $where, string $msg, string $additional = '' ): void {
+	static public function info( string $where, $msg, string $additional = '' ): void {
 		if ( ! is_string( $msg ) ) {
 			$msg = var_export( $msg, true );
 		}
@@ -28,7 +28,7 @@ class Logger {
 		self::output( 'info', "($where) $msg$additional" );
 	}
 
-	static public function error( string $where, string $msg, string $additional = '' ): void {
+	static public function error( string $where, $msg, string $additional = '' ): void {
 		if ( ! is_string( $msg ) ) {
 			$msg = var_export( $msg, true );
 		}
