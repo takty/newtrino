@@ -18,24 +18,22 @@ class Logger {
 
 	static public $debug = false;
 
-	static public function info( string $where, $msg, string $additional = '' ): void {
-		if ( ! is_string( $msg ) ) {
-			$msg = var_export( $msg, true );
+	static public function info( string $where, $msg, $added = '' ): void {
+		$msg = is_string( $msg ) ? $msg : var_export( $msg, true );
+		if ( ! empty( $added ) ) {
+			$added = is_string( $added ) ? $added : var_export( $added, true );
+			$added = " [$added]";
 		}
-		if ( ! empty( $additional ) ) {
-			$additional = " [$additional]";
-		}
-		self::output( 'info', "($where) $msg$additional" );
+		self::output( 'info', "($where) $msg$added" );
 	}
 
-	static public function error( string $where, $msg, string $additional = '' ): void {
-		if ( ! is_string( $msg ) ) {
-			$msg = var_export( $msg, true );
+	static public function error( string $where, $msg, $added = '' ): void {
+		$msg = is_string( $msg ) ? $msg : var_export( $msg, true );
+		if ( ! empty( $added ) ) {
+			$added = is_string( $added ) ? $added : var_export( $added, true );
+			$added = " [$added]";
 		}
-		if ( ! empty( $additional ) ) {
-			$additional = " [$additional]";
-		}
-		self::output( 'error', "($where) $msg$additional" );
+		self::output( 'error', "($where) $msg$added" );
 	}
 
 	static public function output( string $type, $msg ): void {
