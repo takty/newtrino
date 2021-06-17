@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-17
  *
  */
 
@@ -106,10 +106,10 @@ class Session {
 		return $res;
 	}
 
-	public static function canStart(): bool {
+	public static function canStart( $deleteOld = true ): bool {
 		global $nt_session;
 		if ( ! isset( $nt_session ) ) self::_setCookieParams();
-		if ( ! self::_sessionStart() ) return false;
+		if ( ! self::_sessionStart( $deleteOld ) ) return false;
 
 		if ( empty( $_SESSION['sid'] ) )   return false;
 		if ( empty( $_SESSION['user'] ) )  return false;
@@ -157,9 +157,9 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private static function _sessionStart(): bool {
+	private static function _sessionStart( $deleteOld = true ): bool {
 		if ( ! session_start() ) return false;
-		if ( ! session_regenerate_id( true ) ) return false;
+		if ( ! session_regenerate_id( $deleteOld ) ) return false;
 		return true;
 	}
 
