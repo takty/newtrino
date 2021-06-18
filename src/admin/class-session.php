@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-17
+ * @version 2021-06-18
  *
  */
 
@@ -91,13 +91,12 @@ class Session {
 
 			$sid = $existingSession ?? self::_createNonce();
 			$_SESSION['sid']   = $sid;
-			$_SESSION['user']  = $user;
 			$_SESSION['nonce'] = self::_createNonce();
 
 			$this->_sessionId = $sid;
 			if ( $lang ) $_SESSION['lang'] = $lang;
 
-			$res = $this->_saveSessionFile( $this->_sessionId, [ 'timestamp' => time(), 'user' => $user ] );
+			$res = $this->_saveSessionFile( $this->_sessionId, [ 'timestamp' => time(), 'user' => $user, 'ip' => $_SERVER['REMOTE_ADDR'] ] );
 			$this->_unlock( $h );
 		}
 		if ( $res === false ) {
@@ -112,7 +111,6 @@ class Session {
 		if ( ! self::_sessionStart( $deleteOld ) ) return false;
 
 		if ( empty( $_SESSION['sid'] ) )   return false;
-		if ( empty( $_SESSION['user'] ) )  return false;
 		if ( empty( $_SESSION['nonce'] ) ) return false;
 		return true;
 	}
@@ -184,7 +182,7 @@ class Session {
 			}
 		}
 		foreach ( $sfs as $sid => $sf ) {
-			if ( $sf['user'] === $user ) return $sid;
+			if ( $sf['user'] === $user && $sf['ip'] === $_SERVER['REMOTE_ADDR'] ) return $sid;
 		}
 		return null;
 	}
