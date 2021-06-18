@@ -81,34 +81,31 @@ class Session {
 
 
 	public function create( string $user, ?string $lang ): bool {
-		if ( ! self::_sessionStart() ) {
-			$this->_doDestroy();
-			return false;
-		}
+		if ( ! self::_sessionStart() ) return false;
+
 		$res = false;
 		if ( $h = $this->_lock() ) {
-			$existingSession = $this->_cleanSessions( $user );
+			$existingSession = $this->_cleanSessions( $user, $_SERVER['REMOTE_ADDR'] );
+			$this->_sid = $existingSession ?? self::_createNonce();
 
-			$sid = $existingSession ?? self::_createNonce();
-			$_SESSION['sid']   = $sid;
+			$_SESSION['sid']   = $this->_sid;
 			$_SESSION['nonce'] = self::_createNonce();
-
-			$this->_sid = $sid;
-			if ( $lang ) $_SESSION['lang'] = $lang;
+			if ( ! empty( $lang ) ) $_SESSION['lang'] = $lang;
 
 			$res = $this->_saveSessionFile( $this->_sid, [ 'timestamp' => time(), 'user' => $user, 'ip' => $_SERVER['REMOTE_ADDR'] ] );
+			if ( ! $res ) {
+				Logger::error( __METHOD__, 'Cannot write the session file' );
+			}
 			$this->_unlock( $h );
 		}
-		if ( $res === false ) {
-			Logger::error( __METHOD__, 'Cannot write the session file' );
-		}
+		Logger::info( __METHOD__, 'Creating session ' . ( $res ? 'succeeded' : 'failed' ) );
 		return $res;
 	}
 
-	public static function canStart( $deleteOld = true ): bool {
+	public static function canStart(): bool {
 		global $nt_session;
 		if ( ! isset( $nt_session ) ) self::_setCookieParams();
-		if ( ! self::_sessionStart( $deleteOld ) ) return false;
+		if ( ! self::_sessionStart() ) return false;
 
 		if ( empty( $_SESSION['sid'] ) )   return false;
 		if ( empty( $_SESSION['nonce'] ) ) return false;
@@ -116,14 +113,20 @@ class Session {
 	}
 
 	public function start( bool $silent = false ): bool {
-		$ret = self::canStart();
-		if ( ! $ret ) {
-			$this->_doDestroy();
+		if ( ! self::canStart() ) {
+			Logger::info( __METHOD__, 'Starting session failed (canStart)' );
 			return false;
 		}
 		$this->_sid = $_SESSION['sid'];
 		if ( ! empty( $_SESSION['lang'] ) ) $this->_lang = $_SESSION['lang'];
-		return $this->_checkTimestamp( $this->_sid, $silent );
+
+		$res = false;
+		if ( $h = $this->_lock() ) {
+			$res = $this->_checkTimestamp( $this->_sid, $silent );
+			$this->_unlock( $h );
+		}
+		Logger::info( __METHOD__, 'Starting session ' . ( $res ? 'succeeded' : 'failed' ) );
+		return $res;
 	}
 
 	public function destroy(): void {
@@ -147,17 +150,25 @@ class Session {
 	}
 
 	public static function checkNonce(): bool {
-		if ( empty( $_REQUEST['nonce'] ) || empty( $_SESSION['nonce'] ) ) return false;
-		return $_REQUEST['nonce'] === $_SESSION['nonce'];
+		if ( empty( $_REQUEST['nonce'] ) || empty( $_SESSION['nonce'] ) ) {
+			Logger::info( __METHOD__, 'Nonce does not exist' );
+			return false;
+		}
+		$res = ( $_REQUEST['nonce'] === $_SESSION['nonce'] );
+		if ( ! $res ) Logger::info( __METHOD__, 'Nonce does not match' );
+		return $res;
 	}
 
 
 	// ------------------------------------------------------------------------
 
 
-	private static function _sessionStart( $deleteOld = true ): bool {
+	private static function _sessionStart(): bool {
 		if ( ! session_start() ) return false;
-		if ( ! session_regenerate_id( $deleteOld ) ) return false;
+		if ( isset( $_SESSION['sts'] ) && 1 < time() - $_SESSION['sts'] ) {  // For avoiding session lost
+			if ( ! session_regenerate_id( true ) ) return false;
+		}
+		$_SESSION['sts'] = time();
 		return true;
 	}
 
@@ -169,7 +180,7 @@ class Session {
 		}
 	}
 
-	private function _cleanSessions( string $user ): ?string {
+	private function _cleanSessions( string $user, string $ip ): ?string {
 		$now = time();
 		$sfs = [];
 
@@ -182,7 +193,7 @@ class Session {
 			}
 		}
 		foreach ( $sfs as $sid => $sf ) {
-			if ( $sf['user'] === $user && $sf['ip'] === $_SERVER['REMOTE_ADDR'] ) return $sid;
+			if ( $sf['user'] === $user && $sf['ip'] === $ip ) return $sid;
 		}
 		return null;
 	}
@@ -208,7 +219,7 @@ class Session {
 
 
 	public function lock( string $pid ): bool {
-		$ret = false;
+		$res = false;
 		if ( $h = $this->_lock() ) {
 			foreach ( $this->_loadSessionFileAll() as $sid => $sf ) {
 				$sf = $this->_cleanLock( $sf );
@@ -219,28 +230,28 @@ class Session {
 				$sf = $this->_loadSessionFile( $this->_sid );
 				if ( $sf !== null ) {
 					$sf = $this->_updateLock( $sf, $pid );
-					$ret = $this->_saveSessionFile( $this->_sid, $sf );
+					$res = $this->_saveSessionFile( $this->_sid, $sf );
 				}
 			}
 			$this->_unlock( $h );
 		}
-		Logger::info( __METHOD__, 'Post locking ' . ( $ret ? 'succeeded' : 'failed' ), $pid );
-		return $ret;
+		Logger::info( __METHOD__, 'Locking post ' . ( $res ? 'succeeded' : 'failed' ), $pid );
+		return $res;
 	}
 
 	public function receivePing( ?string $pid ): bool {
-		$ret = false;
+		$res = false;
 		if ( $h = $this->_lock() ) {
 			$sf = $this->_loadSessionFile( $this->_sid );
 			if ( $sf !== null ) {
 				if ( $this->_isLockValid( $sf, $pid ) ||  ! $this->_getLockingSession( $pid ) ) {
 					$sf = $this->_updateLock( $sf, $pid );
-					$ret  = $this->_saveSessionFile( $this->_sid, $sf );
+					$res  = $this->_saveSessionFile( $this->_sid, $sf );
 				}
 			}
 			$this->_unlock( $h );
 		}
-		return $ret;
+		return $res;
 	}
 
 
@@ -270,13 +281,14 @@ class Session {
 
 	private function _cleanLock( array $sf ): array {
 		if ( ! isset( $sf['lock'] ) ) return $sf;
-		$lock = $sf['lock'];
+		$lock = [];
 
 		$now = time();
-		foreach ( $lock as $pid => $time ) {
+		foreach ( $sf['lock'] as $pid => $time ) {
 			if ( self::TIMEOUT_LOCK < $now - $time ) {
-				unset( $lock[ $pid ] );
-				Logger::info( __METHOD__, 'Post unlocking succeeded', $pid );
+				Logger::info( __METHOD__, 'Unlocking post succeeded', $pid );
+			} else {
+				$lock[ $pid ] = $time;
 			}
 		}
 		if ( empty( $lock ) ) {
