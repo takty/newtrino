@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida
- * @version 2021-06-17
+ * @version 2021-06-18
  *
  */
 
@@ -47,13 +47,18 @@ class Logger {
 
 		flock( $fp, LOCK_EX );
 		set_file_buffer( $fp, 0 );
-		$line = join( ' ', [ date( '[Y-m-d H:i:s]' ), $_SERVER['REMOTE_ADDR'], ucfirst( strtolower( $type ) ), $msg ] );
+		$line = join( ' ', [ date( '[Y-m-d H:i:s]' ), self::_createTimeHash(), $_SERVER['REMOTE_ADDR'], ucfirst( strtolower( $type ) ), $msg ] );
 		if ( self::$debug && $type !== 'info' ) {
 			print( str_replace( "\n", "<br>\n", htmlspecialchars( $line, ENT_HTML5 ) ) . "<br>\n" );
 		}
 		fputs( $fp, "$line\n" );
 		flock( $fp, LOCK_UN );
 		fclose( $fp );
+	}
+
+	static private function _createTimeHash() {
+		$hash = hash( 'crc32b', $_SERVER['REQUEST_TIME_FLOAT'], true );
+		return rtrim( base64_encode( $hash ), '=' );
 	}
 
 	static private function _ensureFile( string $path ): void {
