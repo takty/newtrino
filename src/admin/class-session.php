@@ -5,12 +5,15 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-22
+ * @version 2021-06-23
  *
  */
 
 
 require_once( __DIR__ . '/../core/class-logger.php' );
+require_once( __DIR__ . '/util/session.php' );
+require_once( __DIR__ . '/util/nonce.php' );
+require_once( __DIR__ . '/util/file.php' );
 
 
 class Session {
@@ -26,10 +29,6 @@ class Session {
 		return 'newtrino';
 	}
 
-	private static function _createNonce(): string {
-		return bin2hex( openssl_random_pseudo_bytes( 16 ) );
-	}
-
 	private static function _setCookieParams(): void {
 		ini_set( 'session.name', 'newtrino' );
 		ini_set( 'session.use_cookies', 1 );  // PHP default
@@ -40,7 +39,7 @@ class Session {
 
 		session_set_cookie_params([
 			'samesite' => 'Strict',
-			'path'     => get_url_from_path( NT_DIR ),
+			'path'     => \nt\get_url_from_path( NT_DIR ),
 		]);
 	}
 
@@ -88,10 +87,10 @@ class Session {
 		$res = false;
 		if ( $h = $this->_lockSession() ) {
 			$existingSession = $this->_cleanSessions( $user, $_SERVER['REMOTE_ADDR'] );
-			$this->_sid = $existingSession ?? self::_createNonce();
+			$this->_sid = $existingSession ?? \nt\create_nonce( 16 );
 
 			$_SESSION['sid']   = $this->_sid;
-			$_SESSION['nonce'] = self::_createNonce();
+			$_SESSION['nonce'] = \nt\create_nonce( 16 );
 			if ( ! empty( $lang ) ) $_SESSION['lang'] = $lang;
 
 			$res = $this->_saveSessionFile( $this->_sid, [ 'timestamp' => time(), 'user' => $user, 'ip' => $_SERVER['REMOTE_ADDR'] ] );
@@ -166,38 +165,9 @@ class Session {
 
 
 	private static function _startSession( $regenerate = true ): bool {
-		if ( ! self::_sessionStart() ) return false;
-		if ( $regenerate && ! self::_sessionRegenerateId( true ) ) return false;
+		if ( ! \nt\session_start( self::TIMEOUT_RESTORE ) ) return false;
+		if ( $regenerate && ! \nt\session_regenerate_id() ) return false;
 		return true;
-	}
-
-	private static function _sessionStart() {
-		$ret = session_start();
-		if ( isset( $_SESSION['_del'] ) ) {
-			if ( $_SESSION['_del'] < time() - self::TIMEOUT_RESTORE ) return false;
-			if ( isset( $_SESSION['_new'] ) ) {
-				session_write_close();
-				ini_set( 'session.use_strict_mode', 0 );  // For assigning session IDs
-				session_id( $_SESSION['_new'] );
-				$ret = session_start();
-			}
-		}
-		return $ret;
-	}
-
-	private static function _sessionRegenerateId() {
-		$s = $_SESSION;  // Saving current session
-
-		$new = session_create_id();
-		$_SESSION['_new'] = $new;
-		$_SESSION['_del'] = time();
-		session_write_close();
-		ini_set( 'session.use_strict_mode', 0 );  // For assigning session IDs
-		session_id( $new );
-		$res = session_start();
-
-		if ( $res ) $_SESSION = $s;  // Restoring session information
-		return $res;
 	}
 
 	private function _doDestroy() {
@@ -334,7 +304,10 @@ class Session {
 
 	private function _lockSession() {
 		if ( ! is_dir( $this->_dirSession ) ) {
-			if ( ! self::_ensureDir( $this->_dirSession ) ) return null;
+			if ( ! \nt\ensure_dir( $this->_dirSession, NT_MODE_DIR ) ) {
+				Logger::error( __METHOD__, 'The session directory is not usable', $path );
+				return null;
+			}
 		}
 		if ( $h = opendir( $this->_dirSession ) ) {
 			flock( $h, LOCK_EX );
@@ -389,7 +362,10 @@ class Session {
 		if ( $sf ) {
 			if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
 				foreach ( $sf['temp_dir'] as $dir ) {
-					self::_deleteAllIn( $dir );
+					\nt\delete_all_in(
+						$dir,
+						function ( $dir ) { Logger::info( __METHOD__, 'The directory does not exist', $dir ); }
+					);
 				}
 			}
 		}
@@ -405,7 +381,10 @@ class Session {
 	}
 
 	private function _saveSessionFile( string $sid, array $sf ): bool {
-		if ( ! self::_ensureDir( $this->_dirSession ) ) return false;
+		if ( ! \nt\ensure_dir( $this->_dirSession, NT_MODE_DIR ) ) {
+			Logger::error( __METHOD__, 'The session directory is not usable', $path );
+			return false;
+		}
 		$path = $this->_dirSession . $sid;
 		$json = json_encode( $sf, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		$res = file_put_contents( $path, $json, LOCK_EX );
@@ -415,38 +394,6 @@ class Session {
 		}
 		@chmod( $path, NT_MODE_FILE );
 		return true;
-	}
-
-	private static function _deleteAllIn( string $dir ): void {
-		$dir = rtrim( $dir, '/' );
-		if ( ! is_dir( $dir ) ) {
-			Logger::info( __METHOD__, 'The directory does not exist', $dir );
-			return;
-		}
-		foreach ( scandir( $dir ) as $fn ) {
-			if ( $fn === '.' || $fn === '..' ) continue;
-			if ( is_dir( "$dir/$fn" ) ) {
-				self::_deleteAllIn( "$dir/$fn" );
-			} else {
-				unlink( "$dir/$fn" );
-			}
-		}
-		rmdir( $dir );
-	}
-
-	private static function _ensureDir( string $path ): bool {
-		if ( is_dir( $path ) ) {
-			if ( NT_MODE_DIR !== ( fileperms( $path ) & 0777 ) ) {
-				@chmod( $path, NT_MODE_DIR );
-			}
-			return true;
-		}
-		if ( mkdir($path, NT_MODE_DIR, true ) ) {
-			@chmod( $path, NT_MODE_DIR );
-			return true;
-		}
-		Logger::error( __METHOD__, 'The session directory is not usable', $path );
-		return false;
 	}
 
 }

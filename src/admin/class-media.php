@@ -5,12 +5,13 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
 
 require_once( __DIR__ . '/../core/class-store.php' );
+require_once( __DIR__ . '/util/file.php' );
 
 
 class Media {
@@ -81,7 +82,7 @@ class Media {
 		$tmpFile      = $file['tmp_name'];
 		$origFileName = $file['name'];
 
-		$fileName = $this->_getUniqueFileName( $origFileName );
+		$fileName = \nt\get_unique_file_name( $this->_dir, $origFileName );
 		if ( empty( $fileName ) ) {
 			Logger::error( __METHOD__, 'File uploading failed', $fileName );
 			return false;
@@ -113,33 +114,6 @@ class Media {
 				Logger::error( __METHOD__, 'Cannot remove the file', $path );
 			}
 		}
-	}
-
-	private function _getUniqueFileName( string $fileName, string $postFix = '' ): string {
-		$pi   = pathinfo( $fileName );
-		$ext  = '.' . $pi['extension'];
-		$name = self::_sanitizeFileName( $pi['filename'] ) . $postFix;
-
-		$nfn = "$name$ext";
-		if ( ! $this->_isFileExist( $nfn ) ) return $nfn;
-
-		for ( $num = 1; $num <= 256; $num += 1 ) {
-			$nfn = $name . '[' . $num . ']' . $ext;
-			if ( ! $this->_isFileExist( $nfn ) ) return $nfn;
-		}
-		return '';
-	}
-
-	private function _isFileExist( string $fileName ): bool {
-		return is_dir( $this->_dir ) && is_file( $this->_dir . $fileName );
-	}
-
-	static private function _sanitizeFileName( $name ) {
-		$scs  = [ '/', '\\', ':', '*', '?', '"', '<', '>', '|', chr( 0 ) ];
-		$name = str_replace( $scs, '_', $name );
-		$name = preg_replace( '/[\r\n\t]+/u', '_', $name );
-		$name = preg_replace( '/^\./u', '_', $name );
-		return $name;
 	}
 
 
@@ -255,7 +229,7 @@ class Media {
 		$div = 8;
 		imageconvolution( $newImg, $mat, $div, 0 );
 
-		$newFn = $this->_getUniqueFileName( $fn, "-$size" );
+		$newFn = \nt\get_unique_file_name( $this->_dir, $fn, "-$size" );
 		$this->_saveImage( $newFn, $mime, $newImg );
 		$ret = [ $newFn, imagesx( $newImg ), imagesy( $newImg ) ];
 		imagedestroy( $newImg );

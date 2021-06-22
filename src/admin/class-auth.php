@@ -5,7 +5,7 @@ namespace nt;
  * User Authentication
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
@@ -31,10 +31,6 @@ class Auth {
 		$time += $step;
 		$seed = strval( getlastmod() );
 		return hash( self::HASH_ALGO, $seed . $time );
-	}
-
-	private static function _createCode(): string {
-		return bin2hex( openssl_random_pseudo_bytes( 12 ) );
 	}
 
 
@@ -110,7 +106,7 @@ class Auth {
 
 	public function issueInvitation( array $params ): ?string {
 		if ( ! $this->signIn( $params ) ) return null;
-		$code = self::_createCode();
+		$code = \nt\create_nonce( 12 );
 		$limit = time() + self::TIMEOUT_INVITATION;
 
 		$res = false;

@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
@@ -34,7 +34,7 @@ function handle_query( array $q ): array {
 	$query = _rearrange_query( $query );
 
 	if ( $q_id && ! $nt_session->lock( $q_id ) ) {
-		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => 'lock' ] ) );
+		header( 'Location: ' . \nt\create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => 'lock' ] ) );
 		exit;
 	}
 	if ( $nt_session->checkNonce() ) {
@@ -60,14 +60,14 @@ function handle_query( array $q ): array {
 	$query['nonce'] = $nt_session->getNonce();
 
 	if ( ! isset( $t_p ) ) {
-		header( 'Location: ' . create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => ( empty( $q_mode ) ? 'view' : $q_mode ) ] ) );
+		header( 'Location: ' . \nt\create_canonical_url( $list_url, $query, [ 'id' => null, 'error' => ( empty( $q_mode ) ? 'view' : $q_mode ) ] ) );
 		exit;
 	}
 	return [
-		'list_url'    => create_canonical_url( $list_url, $query, [ 'id' => null ] ),
-		'update_url'  => create_canonical_url( $post_url, $query, [ 'mode' => 'update', 'id' => $t_p->getId() ] ),
-		'preview_url' => create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview', 'id' => $t_p->getId() ] ),
-		'media_url'   => create_canonical_url( 'media.php', [ 'id' => $t_p->getId() ] ),
+		'list_url'    => \nt\create_canonical_url( $list_url, $query, [ 'id' => null ] ),
+		'update_url'  => \nt\create_canonical_url( $post_url, $query, [ 'mode' => 'update', 'id' => $t_p->getId() ] ),
+		'preview_url' => \nt\create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview', 'id' => $t_p->getId() ] ),
+		'media_url'   => \nt\create_canonical_url( 'media.php', [ 'id' => $t_p->getId() ] ),
 
 		'message' => $msg,
 		'lang'    => $lang,
@@ -107,7 +107,7 @@ function get_editor_option( string $lang ): string {
 
 
 function _rearrange_query( array $query ): array {
-	return get_query_vars( $query, [
+	return \nt\get_query_vars( $query, [
 		'id'       => 'int',
 		'page'     => 'int',
 		'per_page' => 'int',
@@ -247,7 +247,7 @@ function echo_metabox_text( Post $post, array $m, string $label, bool $internal 
 function echo_metabox_date( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$val  = $post->getMetaValue( $key );
-	$date = ( $val === null ) ? '' : parseDate( $val );
+	$date = ( $val === null ) ? '' : \nt\parseDate( $val );
 
 	$cls = $internal ? '' : ' frame frame-sub';
 ?>
@@ -288,7 +288,7 @@ function echo_metabox_media( Post $post, array $m, string $label, bool $internal
 	$json = is_string( $json ) ? $json : '';
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 
-	$md   = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
+	$md   = \nt\create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
 	$cls  = $internal ? '' : ' frame frame-sub';
 	$attr = empty( $name ) ? ' disabled' : '';
 ?>
@@ -313,7 +313,7 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('background-image:url("' . $mv['minUrl'] . '")') : '';
 
-	$md   = create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
+	$md   = \nt\create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
 	$cls  = $internal ? '' : ' frame frame-sub';
 	$attr = empty( $name ) ? ' disabled' : '';
 ?>
