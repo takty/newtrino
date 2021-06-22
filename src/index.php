@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2021-06-18
+ * @version 2021-06-22
  *
  */
 
@@ -65,7 +65,7 @@ function query_media( array $req ): void {
 		$ok = false;
 		if ( file_exists( __DIR__ . '/admin/class-session.php' ) ) {
 			require_once( __DIR__ . '/admin/class-session.php' );
-			if ( Session::canStart() ) $ok = true;
+			if ( Session::canStart( false ) ) $ok = true;
 		}
 		if ( ! $ok ) {
 			http_response_code( 404 );

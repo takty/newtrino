@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-18
+ * @version 2021-06-22
  *
  */
 
@@ -15,8 +15,9 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Session {
 
-	const TIMEOUT_SESSION = 1800;    // 1800 = 30 minutes * 60 seconds
-	const TIMEOUT_LOCK    = 60;      //   60 =  1 minutes * 60 seconds
+	const TIMEOUT_SESSION = 1800;  // 1800 = 30 minutes * 60 seconds
+	const TIMEOUT_RESTORE = 300;   //  300 =  5 minutes * 60 seconds
+	const TIMEOUT_LOCK    = 60;    //   60 =  1 minutes * 60 seconds
 
 	const HASH_ALGO = 'sha256';
 
@@ -31,9 +32,10 @@ class Session {
 
 	private static function _setCookieParams(): void {
 		ini_set( 'session.name', 'newtrino' );
+		ini_set( 'session.use_cookies', 1 );  // PHP default
+		ini_set( 'session.use_only_cookies', 1 );  // PHP default
 		ini_set( 'session.use_strict_mode', 1 );
-		ini_set( 'session.use_cookies', 1 );
-		ini_set( 'session.use_only_cookies', 1 );
+		ini_set( 'session.cookie_httponly', 1 );
 		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
 
 		session_set_cookie_params([
@@ -81,7 +83,7 @@ class Session {
 
 
 	public function create( string $user, ?string $lang ): bool {
-		if ( ! self::_sessionStart() ) return false;
+		if ( ! self::_startSession() ) return false;
 
 		$res = false;
 		if ( $h = $this->_lock() ) {
@@ -102,10 +104,10 @@ class Session {
 		return $res;
 	}
 
-	public static function canStart(): bool {
+	public static function canStart( $regenerate = true ): bool {
 		global $nt_session;
 		if ( ! isset( $nt_session ) ) self::_setCookieParams();
-		if ( ! self::_sessionStart() ) return false;
+		if ( ! self::_startSession( $regenerate ) ) return false;
 
 		if ( empty( $_SESSION['sid'] ) )   return false;
 		if ( empty( $_SESSION['nonce'] ) ) return false;
@@ -130,7 +132,7 @@ class Session {
 	}
 
 	public function destroy(): void {
-		self::_sessionStart();
+		self::_startSession();
 
 		$this->_doDestroy();
 		if ( isset( $_COOKIE[ session_name() ] ) ) {
@@ -163,13 +165,39 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private static function _sessionStart(): bool {
-		if ( ! session_start() ) return false;
-		if ( isset( $_SESSION['sts'] ) && 1 < time() - $_SESSION['sts'] ) {  // For avoiding session lost
-			if ( ! session_regenerate_id( true ) ) return false;
-		}
-		$_SESSION['sts'] = time();
+	private static function _startSession( $regenerate = true ): bool {
+		if ( ! self::_sessionStart() ) return false;
+		if ( $regenerate && ! self::_sessionRegenerateId( true ) ) return false;
 		return true;
+	}
+
+	private static function _sessionStart() {
+		$ret = session_start();
+		if ( isset( $_SESSION['_del'] ) ) {
+			if ( $_SESSION['_del'] < time() - self::TIMEOUT_RESTORE ) return false;
+			if ( isset( $_SESSION['_new'] ) ) {
+				session_write_close();
+				ini_set( 'session.use_strict_mode', 0 );  // For assigning session IDs
+				session_id( $_SESSION['_new'] );
+				$ret = session_start();
+			}
+		}
+		return $ret;
+	}
+
+	private static function _sessionRegenerateId() {
+		$s = $_SESSION;  // Saving current session
+
+		$new = session_create_id();
+		$_SESSION['_new'] = $new;
+		$_SESSION['_del'] = time();
+		session_write_close();
+		ini_set( 'session.use_strict_mode', 0 );  // For assigning session IDs
+		session_id( $new );
+		$res = session_start();
+
+		if ( $res ) $_SESSION = $s;  // Restoring session information
+		return $res;
 	}
 
 	private function _doDestroy() {
@@ -207,6 +235,7 @@ class Session {
 
 		if ( self::TIMEOUT_SESSION < $now - $time ) {
 			$this->_removeSessionFile( $sid, $sf );
+			Logger::info( __METHOD__, 'Session timeout' );
 			return false;
 		}
 		$sf['timestamp'] = $now;
