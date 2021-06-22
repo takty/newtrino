@@ -86,7 +86,7 @@ class Session {
 		if ( ! self::_startSession() ) return false;
 
 		$res = false;
-		if ( $h = $this->_lock() ) {
+		if ( $h = $this->_lockSession() ) {
 			$existingSession = $this->_cleanSessions( $user, $_SERVER['REMOTE_ADDR'] );
 			$this->_sid = $existingSession ?? self::_createNonce();
 
@@ -98,7 +98,7 @@ class Session {
 			if ( ! $res ) {
 				Logger::error( __METHOD__, 'Cannot write the session file' );
 			}
-			$this->_unlock( $h );
+			$this->_unlockSession( $h );
 		}
 		Logger::info( __METHOD__, 'Creating session ' . ( $res ? 'succeeded' : 'failed' ) );
 		return $res;
@@ -123,9 +123,9 @@ class Session {
 		if ( ! empty( $_SESSION['lang'] ) ) $this->_lang = $_SESSION['lang'];
 
 		$res = false;
-		if ( $h = $this->_lock() ) {
+		if ( $h = $this->_lockSession() ) {
 			$res = $this->_checkTimestamp( $this->_sid, $silent );
-			$this->_unlock( $h );
+			$this->_unlockSession( $h );
 		}
 		Logger::info( __METHOD__, 'Starting session ' . ( $res ? 'succeeded' : 'failed' ) );
 		return $res;
@@ -201,10 +201,10 @@ class Session {
 	}
 
 	private function _doDestroy() {
-		if ( isset( $_SESSION['sid'] ) && $h = $this->_lock() ) {
+		if ( isset( $_SESSION['sid'] ) && $h = $this->_lockSession() ) {
 			Logger::info( __METHOD__, 'Destroy the session file', $_SESSION['sid'] );
 			$this->_removeSessionFile( $_SESSION['sid'] );
-			$this->_unlock( $h );
+			$this->_unlockSession( $h );
 		}
 	}
 
@@ -249,7 +249,7 @@ class Session {
 
 	public function lock( string $pid ): bool {
 		$res = false;
-		if ( $h = $this->_lock() ) {
+		if ( $h = $this->_lockSession() ) {
 			foreach ( $this->_loadSessionFileAll() as $sid => $sf ) {
 				$sf = $this->_cleanLock( $sf );
 				$this->_saveSessionFile( $sid, $sf );
@@ -262,7 +262,7 @@ class Session {
 					$res = $this->_saveSessionFile( $this->_sid, $sf );
 				}
 			}
-			$this->_unlock( $h );
+			$this->_unlockSession( $h );
 		}
 		Logger::info( __METHOD__, 'Locking post ' . ( $res ? 'succeeded' : 'failed' ), $pid );
 		return $res;
@@ -270,7 +270,7 @@ class Session {
 
 	public function receivePing( ?string $pid ): bool {
 		$res = false;
-		if ( $h = $this->_lock() ) {
+		if ( $h = $this->_lockSession() ) {
 			$sf = $this->_loadSessionFile( $this->_sid );
 			if ( $sf !== null ) {
 				if ( $this->_isLockValid( $sf, $pid ) ||  ! $this->_getLockingSession( $pid ) ) {
@@ -278,7 +278,7 @@ class Session {
 					$res  = $this->_saveSessionFile( $this->_sid, $sf );
 				}
 			}
-			$this->_unlock( $h );
+			$this->_unlockSession( $h );
 		}
 		return $res;
 	}
@@ -332,7 +332,7 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private function _lock() {
+	private function _lockSession() {
 		if ( ! is_dir( $this->_dirSession ) ) {
 			if ( ! self::_ensureDir( $this->_dirSession ) ) return null;
 		}
@@ -343,7 +343,7 @@ class Session {
 		return null;
 	}
 
-	private function _unlock( $h ) {
+	private function _unlockSession( $h ) {
 		flock( $h, LOCK_UN );
 		closedir( $h );
 	}
