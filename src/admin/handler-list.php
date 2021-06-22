@@ -114,7 +114,7 @@ function _create_type_filter_view( array $query, array $types, string $list_url 
 	$cur = $query['type'] ?? '';
 	$as = [];
 	foreach ( $types as $slug => $d ) {
-		$url = create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null ] );
+		$url = create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null, 'page' => null ] );
 		$p = [ 'label' => $d['label'], 'url' => $url ];
 		if ( $slug === $cur ) $p['is_selected'] = true;
 		$as[] = $p;
@@ -140,7 +140,7 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 	$as[] = $p;
 
 	foreach ( $dates as $date ) {
-		$url = create_canonical_url( $list_url, $query, [ 'date' => $date['slug'] ] );
+		$url = create_canonical_url( $list_url, $query, [ 'date' => $date['slug'], 'page' => null ] );
 		$label = _format_date_label( $date['slug'], $df );
 		$p = [ 'label' => $label, 'url' => $url ];
 		if ( strval( $date['slug'] ) === $cur ) $p['is_selected'] = true;
@@ -162,7 +162,7 @@ function _create_per_page_filter_view( array $query, array $pers, string $list_u
 	$cur = $query['per_page'] ?? '';
 	$as = [];
 	foreach ( $pers as $per ) {
-		$url = create_canonical_url( $list_url, $query, [ 'per_page' => $per ] );
+		$url = create_canonical_url( $list_url, $query, [ 'per_page' => $per, 'page' => null ] );
 		$p = [ 'label' => $per, 'url' => $url ];
 		if ( $per == $cur ) $p['is_selected'] = true;
 		$as[] = $p;
