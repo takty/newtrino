@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-22
  *
  */
 
@@ -185,7 +185,7 @@ function _create_new_filter_view( array $query, array $types, string $post_url )
 
 
 function _create_pagination_view( array $query, int $page_count, string $list_url ): ?array {
-	$cur = isset( $query['page'] ) ? max( 1, min( $query['page'], $page_count ) ) : 1;
+	$cur = isset( $query['page'] ) ? max( 1, min( intval( $query['page'] ), $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
 		$url = create_canonical_url( $list_url, $query, [ 'page' => $i ] );
