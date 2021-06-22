@@ -30,7 +30,7 @@ function handle_query( array $q ): array {
 	$msg    = '';
 
 	$lang = $nt_config['lang_admin'];
-	$query = parse_query_string();
+	$query = \nt\parse_query_string();
 	$query = _rearrange_query( $query );
 
 	if ( $q_id && ! $nt_session->lock( $q_id ) ) {
@@ -247,7 +247,7 @@ function echo_metabox_text( Post $post, array $m, string $label, bool $internal 
 function echo_metabox_date( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$val  = $post->getMetaValue( $key );
-	$date = ( $val === null ) ? '' : \nt\parseDate( $val );
+	$date = ( $val === null ) ? '' : \nt\parse_date( $val );
 
 	$cls = $internal ? '' : ' frame frame-sub';
 ?>

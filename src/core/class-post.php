@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
@@ -124,7 +124,7 @@ class Post {
 		$this->setTitle( $vals['post_title'] );
 		$this->setStatus( $vals['post_status'] );
 
-		$date = empty( $vals['post_date'] ) ? 'now' : packDateTime( $vals['post_date'] );
+		$date = empty( $vals['post_date'] ) ? 'now' : pack_date_time( $vals['post_date'] );
 		$this->setDate( $date );
 		$this->setModified( 'now' );
 
@@ -167,14 +167,14 @@ class Post {
 				continue;
 			}
 			if ( $m['type'] === 'date' ) {
-				$vals["meta:$key"] = packDate( $vals["meta:$key"] );
+				$vals["meta:$key"] = \nt\pack_date( $vals["meta:$key"] );
 			}
 			if ( $m['type'] === 'date-range' ) {
 				$json = $vals["meta:$key"];
 				$d = json_decode( $json, true );
 				if ( $d !== null ) {
-					$d['from'] = packDate( $d['from'] );
-					$d['to']   = packDate( $d['to']   );
+					$d['from'] = \nt\pack_date( $d['from'] );
+					$d['to']   = \nt\pack_date( $d['to']   );
 					$vals["meta:$key"] = $d;
 				}
 			}
@@ -333,11 +333,11 @@ class Post {
 	}
 
 	public function getDate(): string {
-		return parseDateTime( $this->_date );
+		return \nt\parse_date_time( $this->_date );
 	}
 
 	public function getModified(): string {
-		return parseDateTime( $this->_modified );
+		return \nt\parse_date_time( $this->_modified );
 	}
 
 	public function getDateRaw(): string {

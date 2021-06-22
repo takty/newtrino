@@ -25,18 +25,18 @@ function handle_query(): array {
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
 
-	$orig_query = parse_query_string();
+	$orig_query = \nt\parse_query_string();
 
 	$query    = _rearrange_query( $orig_query );
 	$types    = $nt_store->type()->getTypeAll();
 	$def_type = array_keys( $types )[0];
 
-	$type    = get_param( 'type',     $def_type, $query );
-	$perPage = get_param( 'per_page', 10,        $query );
-	$date    = get_param( 'date',     null,      $query );
-	$page    = get_param( 'page',     null,      $query );
-	$status  = get_param( 'status',   null,      $query );
-	$error   = get_param( 'error',    null,      $query );
+	$type    = \nt\get_param( 'type',     $def_type, $query );
+	$perPage = \nt\get_param( 'per_page', 10,        $query );
+	$date    = \nt\get_param( 'date',     null,      $query );
+	$page    = \nt\get_param( 'page',     null,      $query );
+	$status  = \nt\get_param( 'status',   null,      $query );
+	$error   = \nt\get_param( 'error',    null,      $query );
 	unset( $query['error'] );
 
 	if ( $nt_session->checkNonce() ) {
@@ -55,7 +55,7 @@ function handle_query(): array {
 	if ( $page ) $args += [ 'page'       => $page ];
 
 	if ( ! empty( $query['taxonomy'] ) ) {
-		createTaxQueryFromTaxonomyToTerms( $query['taxonomy'], $args );
+		\nt\create_tax_query_from_taxonomy_to_terms( $query['taxonomy'], $args );
 	}
 	$ret = $nt_store->getPosts( $args );
 	$is_trash = $status === '_trash';
@@ -320,10 +320,10 @@ function _create_meta_cols( Post $p ): array {
 			$_lab = '';
 		} else {
 			if ( $type === 'date' ) {
-				$_lab = _h( \nt\parseDate( $val ) );
+				$_lab = _h( \nt\parse_date( $val ) );
 			} else if ( $type === 'date-range' ) {
-				$_bgn = isset( $val['from'] ) ? _h( \nt\parseDate( $val['from'] ) ) : '';
-				$_end = isset( $val['to']   ) ? _h( \nt\parseDate( $val['to']   ) ) : '';
+				$_bgn = isset( $val['from'] ) ? _h( \nt\parse_date( $val['from'] ) ) : '';
+				$_end = isset( $val['to']   ) ? _h( \nt\parse_date( $val['to']   ) ) : '';
 				if ( $_bgn === $_end ) {
 					$_lab = "<span>$_bgn</span>";
 				} else {
@@ -353,7 +353,7 @@ function _get_meta( Post $p, array &$cls ): array {
 
 		switch ( $type ) {
 			case 'date':
-				$ret[ $key ] = \nt\parseDate( $val );
+				$ret[ $key ] = \nt\parse_date( $val );
 				break;
 			case 'date-range':
 				$es = Post::DATE_STATUS_ONGOING;
@@ -364,8 +364,8 @@ function _get_meta( Post $p, array &$cls ): array {
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
 				$ret[ $key ] = [
-					'from' => \nt\parseDate( $val['from'] ),
-					'to'   => \nt\parseDate( $val['to']   ),
+					'from' => \nt\parse_date( $val['from'] ),
+					'to'   => \nt\parse_date( $val['to']   ),
 				];
 				break;
 		}

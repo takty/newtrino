@@ -5,23 +5,23 @@ namespace nt;
  * Function for Date Format
  *
  * @author Takuto Yanagida
- * @version 2020-08-04
+ * @version 2021-06-23
  *
  */
 
 
-function parseDate( string $date ): string {
+function parse_date( string $date ): string {
 	return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );
 }
 
-function packDate( string $date ): string {
+function pack_date( string $date ): string {
 	return preg_replace( '/(\d{4})-(\d{2})-(\d{2})/', '$1$2$3', $date );
 }
 
-function parseDateTime( string $dateTime ): string {
+function parse_date_time( string $dateTime ): string {
 	return preg_replace( '/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/', '$1-$2-$3 $4:$5:$6', $dateTime );
 }
 
-function packDateTime( string $dateTime ): string {
+function pack_date_time( string $dateTime ): string {
 	return preg_replace( '/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/', '$1$2$3$4$5$6', $dateTime );
 }

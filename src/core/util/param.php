@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Parameters
  *
  * @author Takuto Yanagida
- * @version 2020-07-31
+ * @version 2021-06-23
  *
  */
 
@@ -18,7 +18,7 @@ function get_query_vars( array $query, array $filters, ?string $collection = nul
 			$tcs[] = $key;
 			continue;
 		}
-		$fval = filter_param( $val, $filters[ $key ] );
+		$fval = \nt\filter_param( $val, $filters[ $key ] );
 		if ( $fval !== null ) $ret[ $key ] = $val;
 	}
 	if ( $collection ) {
@@ -75,7 +75,7 @@ function get_param( string $key, $default, array $assoc ) {
 	return $default;
 }
 
-function createTaxQueryFromTaxonomyToTerms( array $tt, array &$args ): void {
+function create_tax_query_from_taxonomy_to_terms( array $tt, array &$args ): void {
 	$tq = [];
 	foreach ( $tt as $tax => $ts ) {
 		$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];

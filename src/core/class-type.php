@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
@@ -103,12 +103,12 @@ class Type {
 		$ret = [];
 
 		foreach ( $data as $d ) {
-			normalize_label( $d, $this->_lang );
+			\nt\normalize_label( $d, $this->_lang );
 			if ( isset( $d['meta'] ) ) {
 				$ms = [];
 				foreach ( $d['meta'] as $m ) {
 					if ( empty( $m['type'] || ( empty( $m['key'] ) && $m['type'] !== 'gruop' ) ) ) continue;
-					normalize_label( $m, $this->_lang );
+					\nt\normalize_label( $m, $this->_lang );
 					$ms[] = $m;
 				}
 				$d['meta'] = $ms;

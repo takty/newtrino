@@ -5,7 +5,7 @@ namespace nt;
  * Taxonomy
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
@@ -103,10 +103,10 @@ class Taxonomy {
 		$ret = [];
 
 		foreach ( $data as $d ) {
-			normalize_label( $d, $this->_lang );
+			\nt\normalize_label( $d, $this->_lang );
 			$ti = [];
 			foreach ( $d['terms'] as $idx => &$t ) {
-				normalize_label( $t, $this->_lang );
+				\nt\normalize_label( $t, $this->_lang );
 				$ti[ $t['slug'] ] = $idx;
 			}
 			$ret[ $d['slug'] ] = $d;

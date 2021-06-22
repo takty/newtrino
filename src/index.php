@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2021-06-22
+ * @version 2021-06-23
  *
  */
 
@@ -81,7 +81,7 @@ function query_media( array $req ): void {
 		http_response_code( 404 );
 		exit;
 	}
-	sendFile( $postDir . 'media/' . $media );
+	\nt\send_file( $postDir . 'media/' . $media );
 }
 
 
@@ -94,7 +94,7 @@ function query( array $args = [] ): array {
 	$option   = $args['option']   ?? [];
 	$base_url = $args['base_url'] ?? null;
 
-	$query  += parse_query_string( 'id' );
+	$query  += \nt\parse_query_string( 'id' );
 	$filter += [ 'date' => 'year' ];
 
 	if ( ! $base_url ) {
@@ -205,7 +205,7 @@ function _create_pagination_view( array $msg, int $page_count, string $base_url 
 	$cur = max( 1, min( $c, $page_count ) );
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
-		$url = create_canonical_url( $base_url, $msg['query'], [ 'page' => $i ] );
+		$url = \nt\create_canonical_url( $base_url, $msg['query'], [ 'page' => $i ] );
 		$p = [ 'label' => $i, 'url' => $url ];
 		if ( $i === $cur ) $p['is_selected'] = true;
 		$pages[] = $p;
@@ -265,7 +265,7 @@ function _create_date_filter_view( array $msg, string $type, array $dates, strin
 	}
 	$as = [];
 	foreach ( $dates as $date ) {
-		$url = create_canonical_url( $base_url, [ 'date' => $date['slug'] ] );
+		$url = \nt\create_canonical_url( $base_url, [ 'date' => $date['slug'] ] );
 		$label = _format_date_label( $date['slug'], $df );
 		$p = [ 'label' => $label, 'url' => $url ];
 		if ( strval( $date['slug'] ) === $cur ) $p['is_selected'] = true;
@@ -287,7 +287,7 @@ function _create_taxonomy_filter_view( array $msg, string $tax, array $terms, st
 	$cur = $msg['query'][ $tax ] ?? '';
 	$as = [];
 	foreach ( $terms as $term ) {
-		$url = create_canonical_url( $base_url, [ $tax => $term['slug'] ] );
+		$url = \nt\create_canonical_url( $base_url, [ $tax => $term['slug'] ] );
 		$p = [ 'label' => $term['label'], 'url' => $url ];
 		if ( $term['slug'] === $cur ) $p['is_selected'] = true;
 		$as[] = $p;

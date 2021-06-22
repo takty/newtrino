@@ -5,12 +5,12 @@ namespace nt;
  * Function for Sending Files
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-23
  *
  */
 
 
-function sendFile( string $path, ?string $mimeType = null, bool $isDownload = false ): void {
+function send_file( string $path, ?string $mimeType = null, bool $isDownload = false ): void {
 	if ( ! is_file( $path ) || ! is_readable( $path ) ) {
 		http_response_code( 404 );
 		die( 1 );

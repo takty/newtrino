@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Query Strings
  *
  * @author Takuto Yanagida
- * @version 2020-09-05
+ * @version 2021-06-23
  *
  */
 
@@ -26,20 +26,8 @@ function parse_query_string( ?string $default_key = null ): array {
 	return $ps;
 }
 
-function create_query_string( array $params ): string {
-	$kvs = [];
-	foreach ( $params as $kv ) {
-		$_key = urlencode( $kv[0] );
-		$v = $kv[1];
-		if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-		$_val = urlencode( $v );
-		$kvs[] = $_key . '=' . $_val;
-	}
-	return implode( '&', $kvs );
-}
-
 function create_canonical_url( string $base_url, array $ps, array $overwrite = [] ): string {
-	$cq = create_canonical_query( $ps, $overwrite );
+	$cq = \nt\create_canonical_query( $ps, $overwrite );
 	return $base_url . ( empty( $cq ) ? '' : "?$cq" );
 }
 
@@ -60,5 +48,17 @@ function create_canonical_query( array $ps, array $overwrite = [] ): string {
 		$qs[] = [ $tax, $ts ];
 	}
 	if ( isset( $ps['page'] ) && 1 < $ps['page'] ) $qs[] = [ 'page', $ps['page'] ];
-	return create_query_string( $qs );
+	return \nt\create_query_string( $qs );
+}
+
+function create_query_string( array $params ): string {
+	$kvs = [];
+	foreach ( $params as $kv ) {
+		$_key = urlencode( $kv[0] );
+		$v = $kv[1];
+		if ( is_array( $v ) ) $v = json_encode( $v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		$_val = urlencode( $v );
+		$kvs[] = $_key . '=' . $_val;
+	}
+	return implode( '&', $kvs );
 }
