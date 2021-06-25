@@ -67,8 +67,8 @@ class Store {
 		return null;
 	}
 
-	private function _getSubPaths(): array {
-		$typeDirs = $this->_type->getTypeDirAll();
+	private function _getSubPaths( ?string $type = null ): array {
+		$typeDirs = $type ? [ "$type/" ] : $this->_type->getTypeDirAll();
 		if ( ! $this->_conf['archive_by_year'] ) return $typeDirs;
 
 		$ret = [];
@@ -356,6 +356,25 @@ class Store {
 		foreach ( $ps as $p ) {
 			$pd = $this->getPostDir( $p->getId(), null );
 			self::deleteAll( rtrim( $pd, '/' ) );
+		}
+	}
+
+	public function emptyTemporaryDirectories( string $type ): void {
+		global $nt_session;
+		$temps = $nt_session->listTemporaryDirectories();
+
+		$ds = $this->_getSubPaths( $type );
+		foreach ( $ds as $d ) {
+			$dir =  $this->_dirRoot . $d;
+			if ( ! is_dir( $dir ) ) continue;
+			foreach ( scandir( $dir ) as $fn ) {
+				if ( $fn !== '.' && $fn !== '..' && $fn[0] === '_' ) {
+					$t = "$dir$fn/";
+					if ( is_dir( $t ) && ! in_array( $t, $temps, true ) ) {
+						self::deleteAll( rtrim( $t, '/' ) );
+					}
+				}
+			}
 		}
 	}
 

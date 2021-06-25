@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-06-25
  *
  */
 
@@ -46,6 +46,7 @@ function handle_query(): array {
 			$nt_store->restorePost( $orig_query['restore_id'] );
 		} else if ( isset( $orig_query['empty_trash'] ) ) {
 			$nt_store->emptyTrash( $type );
+			$nt_store->emptyTemporaryDirectories( $type );
 		}
 	}
 	$query['nonce'] = $nt_session->getNonce();

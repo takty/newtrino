@@ -5,7 +5,7 @@ namespace nt;
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-06-25
  *
  */
 
@@ -75,6 +75,19 @@ class Session {
 		$sf['temp_dir'][] = $dir;
 		$this->_saveSessionFile( $this->_sid, $sf );
 		return true;
+	}
+
+	public function listTemporaryDirectories(): array {
+		$ret = [];
+		if ( $h = $this->_lockSession() ) {
+			foreach ( $this->_loadSessionFileAll() as $sid => $sf ) {
+				if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
+					$ret = array_merge( $ret, $sf['temp_dir'] );
+				}
+			}
+			$this->_unlockSession( $h );
+		}
+		return $ret;
 	}
 
 
