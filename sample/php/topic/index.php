@@ -55,7 +55,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			</div>
 			<div class="filter-search">
 				{{#filter.search}}
-				<form action="./" type="GET">
+				<form action="./" method="get">
 					<input type="text" name="search" value="{{keyword}}">
 					<input type="submit" value="Search">
 				</form>
