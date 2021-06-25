@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-25
  *
  */
 
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function startPing() {
 		const sp  = new URLSearchParams(document.location.search.substring(1));
-		const id  = sp.get('id');
+		const id  = sp.get('id') ?? '';
 		const dlg = document.getElementById('dialog-login');
 
 		function ping() {

@@ -256,7 +256,9 @@ class Session {
 		if ( $h = $this->_lockSession() ) {
 			$sf = $this->_loadSessionFile( $this->_sid );
 			if ( $sf !== null ) {
-				if ( $this->_isLockValid( $sf, $pid ) ||  ! $this->_getLockingSession( $pid ) ) {
+				if ( $pid === '' ) {
+					$res = true;
+				} else if ( $this->_isLockValid( $sf, $pid ) || ! $this->_getLockingSession( $pid ) ) {
 					$sf = $this->_updateLock( $sf, $pid );
 					$res  = $this->_saveSessionFile( $this->_sid, $sf );
 				}
