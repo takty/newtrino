@@ -21,7 +21,7 @@
 		"User name or password is not appropriate.": "ユーザー名かパスワードが適切ではありません。",
 		"Internal error occurred.": "内部エラーが発生しました。",
 		"Registration succeeded.": "登録に成功しました。",
-		"Do you want to issue an invitation code?": "招待コードを発行しますか？"
+		"Do you want to issue an invitation code?\n(You must enter an existing user name and password.)": "招待コードを発行しますか？\n（既存のユーザー名とパスワードが入力されている必要があります。）"
 	},
 	"list": {
 		"Post Type": "投稿タイプ",

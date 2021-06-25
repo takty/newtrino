@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-15
+ * @version 2021-06-25
  *
  */
 
@@ -75,7 +75,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <input type="hidden" id="key" value="{{key}}">
 <input type="hidden" id="nonce" value="{{nonce}}">
 <input type="hidden" id="url" value="{{url}}">
-<input type="hidden" id="msg-issue" value="<?= _ht( 'Do you want to issue an invitation code?' ) ?>">
+<input type="hidden" id="msg-issue" value="<?= _ht( "Do you want to issue an invitation code?\n(You must enter an existing user name and password.)" ) ?>">
 
 </body>
 <?php \nt\end( $view ); ?>
