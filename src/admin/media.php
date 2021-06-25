@@ -5,7 +5,7 @@ namespace nt;
  * Media Dialog
  *
  * @author Takuto Yanagida
- * @version 2021-06-07
+ * @version 2021-06-26
  *
  */
 
@@ -42,7 +42,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<button type="button" id="btn-close"><?= _ht( 'Close' ) ?></button>
 		</div>
 		<div class="message">{{message}}</div>
-		<div class="message" id="message-max-file-size" hidden><?= _ht( 'The uploaded file exceeds the max file size.' ) ?></div>
+		<div class="message" id="message-max-file-size"><?= _ht( 'The uploaded file exceeds the max file size.' ) ?></div>
 	</header>
 
 	<div class="container container-dialog">

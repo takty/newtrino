@@ -3,7 +3,7 @@
  * Media Dialog (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-06-26
  *
  */
 
@@ -99,6 +99,14 @@ body.media {
 	input:checked + label {
 		.thumbnail { box-shadow: 0 0 1px 2px $color-button-border-hover; }
 	}
+}
+
+#message-max-file-size {
+	display: none;
+	margin : 1rem 0;
+	padding: 0;
+
+	&.visible { display: block; }
 }
 
 select#image-size {
