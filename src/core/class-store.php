@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-25
  *
  */
 
@@ -86,18 +86,6 @@ class Store {
 		}
 		$ret = array_merge( $ret, $typeDirs );  // For option compatibility
 		return $ret;
-	}
-
-	private function _createSubPath( string $type, string $rawDate ): string {
-		$sp = 'post/';
-		if ( $this->_conf['archive_by_type'] ) {
-			$sp = "$type/";
-		}
-		if ( $this->_conf['archive_by_year'] ) {
-			$year = substr( $rawDate, 0, 4 );
-			$sp .= "$year/";
-		}
-		return $sp;
 	}
 
 
@@ -315,8 +303,8 @@ class Store {
 		$post->save();
 		$id = $post->getId();
 		if ( $id[0] === '_' ) {
-			$newId = substr( $id, 1 );
-			$subPath = $this->_createSubPath( $post->getType(), $post->getDateRaw() );
+			$newId   = substr( $id, 1 );
+			$subPath = $this->getSubPath( $id );
 			rename( $this->getPostDir( $id, $subPath ), $this->getPostDir( $newId, $subPath ) );
 			$post->save( $newId );
 		}
