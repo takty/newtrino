@@ -99,14 +99,15 @@ class Session {
 
 		$res = false;
 		if ( $h = $this->_lockSession() ) {
-			$existingSession = $this->_cleanSessions( $user, $_SERVER['REMOTE_ADDR'] );
-			$this->_sid = $existingSession ?? \nt\create_nonce( 16 );
+			[ $oldSid, $oldSf ] = $this->_cleanSessions( $user, $_SERVER['REMOTE_ADDR'] );
+			$this->_sid = $oldSid ?? \nt\create_nonce( 16 );
 
 			$_SESSION['sid']   = $this->_sid;
 			$_SESSION['nonce'] = \nt\create_nonce( 16 );
 			if ( ! empty( $lang ) ) $_SESSION['lang'] = $lang;
 
-			$res = $this->_saveSessionFile( $this->_sid, [ 'timestamp' => time(), 'user' => $user, 'ip' => $_SERVER['REMOTE_ADDR'] ] );
+			$sf = array_merge( $oldSf ?? [], [ 'timestamp' => time(), 'user' => $user, 'ip' => $_SERVER['REMOTE_ADDR'] ] );
+			$res = $this->_saveSessionFile( $this->_sid, $sf );
 			if ( ! $res ) {
 				Logger::error( __METHOD__, 'Cannot write the session file' );
 			}
@@ -191,7 +192,7 @@ class Session {
 		}
 	}
 
-	private function _cleanSessions( string $user, string $ip ): ?string {
+	private function _cleanSessions( string $user, string $ip ): array {
 		$now = time();
 		$sfs = [];
 
@@ -204,9 +205,9 @@ class Session {
 			}
 		}
 		foreach ( $sfs as $sid => $sf ) {
-			if ( $sf['user'] === $user && $sf['ip'] === $ip ) return $sid;
+			if ( $sf['user'] === $user && $sf['ip'] === $ip ) return [ $sid, $sf ];
 		}
-		return null;
+		return [ null, null ];
 	}
 
 	private function _checkTimestamp( string $sid, bool $silent = false ): bool {
