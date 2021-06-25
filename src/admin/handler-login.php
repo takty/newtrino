@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-26
  *
  */
 
@@ -31,20 +31,16 @@ function handle_query( array $q, array $q_get ): array {
 		'internal_error' => _ht( 'Internal error occurred.' ),
 	];
 	if ( $mode === 'login' ) {
-		if ( empty( $q['digest'] ) ) {  // First view
-			$nt_session->destroy();
-		} else {
-			$ul = $auth->signIn( $q );
-			if ( $ul && $nt_session->create( $ul['user'], $ul['lang'] ) ) {
-				if ( $is_dialog ) {
-					close_dialog_frame();
-				} else {
-					header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
-				}
-				exit;
+		$ul = $auth->signIn( $q );
+		if ( $ul && $nt_session->create( $ul['user'], $ul['lang'] ) ) {
+			if ( $is_dialog ) {
+				close_dialog_frame();
+			} else {
+				header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
 			}
-			$msg_log = _ht( 'User name or password is wrong.' );
+			exit;
 		}
+		$msg_log = _ht( 'User name or password is wrong.' );
 	} else if ( $mode === 'issue' ) {
 		$code = $auth->issueInvitation( $q );
 		if ( $code ) {
@@ -58,6 +54,8 @@ function handle_query( array $q, array $q_get ): array {
 		} else {
 			$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
 		}
+	} else if ( $mode === 'logout' ) {
+		$nt_session->destroy();
 	}
 
 	return [
