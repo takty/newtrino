@@ -3,7 +3,7 @@
  * Media Dialog (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-25
  *
  */
 
@@ -27,15 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	btnDelete.disabled = true;
 	btnInsert.disabled = true;
 
-	const upfile = document.getElementById('upload-file');
-	upfile.addEventListener('change', () => {
-		const f = upfile.files ? upfile.files[0] : null;
+	const upFile = document.getElementById('upload-file');
+	upFile.addEventListener('change', () => {
+		const f = upFile.files ? upFile.files[0] : null;
 		if (f && maxFileSize < f.size) {
 			msgMaxFileSize.hidden = false;
 			return;
 		}
 		msgMaxFileSize.hidden = true;
-		if (upfile.value !== '') {
+		if (upFile.value !== '') {
 			window.parent.reopenDialogLater();
 			setTimeout(() => { document.getElementById('form-upload').submit(); }, 100);
 		}
@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
 	for (let r of rs) r.addEventListener('change', onSelected);
+	window.parent.setMediaItemCount(rs.length);
 
 	const selAlign = document.getElementById('image-align');
 	const selSize  = document.getElementById('image-size');
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	function doAdd() {
-		upfile.click();
+		upFile.click();
 	}
 
 	function doClose() {

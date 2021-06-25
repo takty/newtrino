@@ -33,17 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	adjustEditorHeight();
 	startPing();
 
-	let isModified = false;
-
-	function onModified() {
-		if (isModified) return;
-		isModified = true;
-		const es = document.getElementsByClassName('message');
-		for (let e of es) e.style.display = '';
-		const um = document.getElementById('message-notification');
-		um.innerText = '';
-	}
-
 
 	// -------------------------------------------------------------------------
 
@@ -438,6 +427,24 @@ function closeDialog(doReLogin = false) {
 
 // -----------------------------------------------------------------------------
 
+
+let isModified = false;
+
+function onModified() {
+	if (isModified) return;
+	isModified = true;
+	const es = document.getElementsByClassName('message');
+	for (let e of es) e.style.display = '';
+	const um = document.getElementById('message-notification');
+	um.innerText = '';
+}
+
+function setMediaItemCount(count) {
+	const sp = new URLSearchParams(document.location.search.substring(1));
+	if (sp.get('mode') === 'new' && 0 < count) {
+		onModified();
+	}
+}
 
 function insertMediaToContent(data) {
 	closeDialog();
