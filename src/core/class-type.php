@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-06-25
  *
  */
 
@@ -51,7 +51,7 @@ class Type {
 			$ts = array_keys( $this->getTypeAll() );
 			return array_map( function ( $e ) { return "$e/"; }, $ts );
 		}
-		return ['post/'];
+		return [ 'post/' ];
 	}
 
 
