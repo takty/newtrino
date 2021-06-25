@@ -34,7 +34,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<h1>Newtrino</h1>
 		<span class="spacer"></span>
 		<form action="login.php" method="post">
-			<button type="submit"><?= _ht( 'Log Out' ) ?></button>
+			<button><?= _ht( 'Log Out' ) ?></button>
 			<input type="hidden" name="mode" value="logout">
 		</form>
 	</div>
