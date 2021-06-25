@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-06-25
  *
  */
 
@@ -56,7 +56,7 @@ class Media {
 			} else if ( $filter === 'image' ) continue;
 			$item['file_name'] = $m['file_name'];
 			$item['url']       = $this->_mediaUrl( $m['file_name'] );
-			$item['ext']       = $ext;
+			$item['ext']       = strtoupper( $ext );
 			$list[] = $item;
 		}
 		return $list;
