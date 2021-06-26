@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-06-26
  *
  */
 
@@ -13,7 +13,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
 	const header = document.getElementsByTagName('h1')[0];
-	header.addEventListener('click', (e) => {
+	header.addEventListener('click', () => {
 		const formL = document.querySelector('form.log');
 		const formR = document.querySelector('form.reg');
 		formL.classList.toggle('hidden');
@@ -30,19 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function initLoginDialog() {
 		const btn = document.getElementById('btn-log');
-		btn.addEventListener('click', doLogin);
-		if (!document.body.classList.contains('dialog')) {
-			btn.addEventListener('contextmenu', (e) => { doLogin(e, true); });
-		}
+		addLongPressListener(btn, doLogin, () => { doLogin(true); });
+
 		const iptUsr = document.getElementById('user');
 		const iptPwd = document.getElementById('pw');
 
-		let count = 1;
-		let last  = 0;
-
-		function doLogin(e, showAcct = false) {
-			e.preventDefault();
-			e.stopPropagation();
+		function doLogin(showCode = false) {
+			if (showCode && document.body.classList.contains('dialog')) return;
 
 			const usr = iptUsr.value;
 			const pwd = iptPwd.value;
@@ -55,11 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const uph    = hash(usr + ':' + key + ':' + pwd);
 			const digest = hash(uph + ':' + nonce + ':' + cnonce + ':' + hash(url));
 
-			if (showAcct) {
-				count = (Date.now() - last < 250) ? (count + 1) : 1;
-				last  = Date.now();
-				if (count === 1) return;
-
+			if (showCode) {
 				if (usr && pwd) {
 					if (!confirm(document.getElementById('msg-issue').value)) return;
 					document.getElementById('mode').value = 'issue';
@@ -165,5 +155,49 @@ document.addEventListener('DOMContentLoaded', () => {
 		const sha256 = new jsSHA('SHA-256', 'TEXT');
 		sha256.update(str);
 		return sha256.getHash('HEX');
+	}
+
+
+	// -------------------------------------------------------------------------
+
+
+	function addLongPressListener(elm, fnNorm, fnLong) {
+		let longClk = false;
+		let longTap = false;
+		let touch   = false;
+		let st;
+
+		elm.addEventListener('touchstart', () => {
+			touch = true;
+			longTap = false;
+			st = setTimeout(() => {
+				longTap = true;
+				fnLong();
+			}, 500);
+		});
+		elm.addEventListener('touchend', () => {
+			if (!longTap) {
+				clearTimeout(st);
+				fnNorm();
+			} else {
+				touch = false;
+			}
+		});
+		elm.addEventListener('mousedown', () => {
+			if (touch) return;
+			longClk = false;
+			st = setTimeout(() => {
+				longClk = true;
+				setTimeout(fnLong, 0);
+			}, 500);
+		});
+		elm.addEventListener('click', () => {
+			if (touch) {
+				touch = false;
+			} else if (!longClk) {
+				clearTimeout(st);
+				fnNorm();
+			}
+		});
 	}
 });
