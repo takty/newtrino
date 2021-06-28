@@ -16,12 +16,34 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 class Auth {
 
 	const TIMEOUT_INVITATION = 604800;  // 7 days * 24 hours * 60 minutes * 60 seconds
+	const TIMEOUT_TOKEN      = 300;     // 5 minutes * 60 seconds
 	const AUTH_NONCE_GL      = 300;     // 5 minutes * 60 seconds (Expires in 10 minutes max.)
 
-	const ACCT_FILE_NAME  = 'account';
-	const NONCE_FILE_NAME = 'nonce';
+	const FILE_NAME_ACCT  = 'account';
 	const FILE_NAME_INV   = 'invitation';
-	const HASH_ALGO       = 'sha256';
+	const FILE_NAME_TOKEN = 'token';
+	const HASH_ALGO       = 'sha256';  // Hashes written in the account file depend on this
+
+	private $_url;
+	private $_pathAcct;
+	private $_pathInv;
+	private $_pathToken;
+	private $_errCode = '';
+
+	public function __construct( string $urlAdmin, string $dirAcct, string $dirAuth ) {
+		$this->_url       = $urlAdmin;
+		$this->_pathAcct  = $dirAcct . self::FILE_NAME_ACCT;
+		$this->_pathInv   = $dirAuth . self::FILE_NAME_INV;
+		$this->_pathToken = $dirAuth . self::FILE_NAME_TOKEN;
+	}
+
+	public function getErrorCode(): string {
+		return $this->_errCode;
+	}
+
+
+	// ------------------------------------------------------------------------
+
 
 	public static function getAuthKey(): string {
 		if ( defined( 'NT_AUTH_KEY' ) ) return NT_AUTH_KEY;
@@ -29,28 +51,15 @@ class Auth {
 	}
 
 	public static function getAuthNonce( int $step = 1 ): string {
-		$time = intval( ceil( time() / self::AUTH_NONCE_GL ) );
-		$time += $step;
-		$seed = strval( getlastmod() );
-		return hash( self::HASH_ALGO, $seed . $time );
+		return \nt\get_nonce( self::AUTH_NONCE_GL );
 	}
 
-
-	// ------------------------------------------------------------------------
-
-
-	private $_url;
-	private $_path;
-	private $_errCode = '';
-
-	public function __construct( string $urlAdmin, string $dirAcct, string $dirAuth ) {
-		$this->_url     = $urlAdmin;
-		$this->_path    = $dirAcct . self::ACCT_FILE_NAME;
-		$this->_pathInv = $dirAuth . self::FILE_NAME_INV;
+	public function issueToken(): string {
+		return \nt\issue_token( $this->_pathToken, self::TIMEOUT_TOKEN );
 	}
 
-	public function getErrorCode(): string {
-		return $this->_errCode;
+	public function checkToken( $token ): bool {
+		return \nt\check_token( $this->_pathToken, $token );
 	}
 
 
@@ -76,14 +85,14 @@ class Auth {
 	private function _verify( string $user, string $digest, string $cnonce, ?string &$out_lang ): bool {
 		$as = null;
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read( $this->_path );
+			$as = $this->_read( $this->_pathAcct );
 			$this->_cleanInvitation();
 			$this->_unlock( $h );
 		}
 		if ( $as === null ) return false;
 
 		$a2 = hash( self::HASH_ALGO, $this->_url );
-		$ns = [ self::getAuthNonce( 0 ), self::getAuthNonce( 1 ) ];
+		$ns = \nt\get_possible_nonce( self::AUTH_NONCE_GL );
 
 		foreach ( $as as $a ) {
 			$a = trim( $a );
@@ -162,12 +171,12 @@ class Auth {
 
 		$res = false;
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read( $this->_path );
+			$as = $this->_read( $this->_pathAcct );
 			if ( in_array( $user, $this->_getUsers( $as ), true ) ) {
 				$this->_errCode = 'invalid_param';
 			} else if ( $this->_checkInvitation( $code ) ) {
 				$as[] = $rec;
-				$res = $this->_write( $this->_path, $as );
+				$res = $this->_write( $this->_pathAcct, $as );
 			}
 			$this->_unlock( $h );
 		}
@@ -222,10 +231,10 @@ class Auth {
 
 
 	private function _lock() {
-		if ( ! is_file( $this->_path ) ) {
+		if ( ! is_file( $this->_pathAcct ) ) {
 			return null;
 		}
-		if ( $h = opendir( pathinfo( $this->_path, PATHINFO_DIRNAME ) ) ) {
+		if ( $h = opendir( pathinfo( $this->_pathAcct, PATHINFO_DIRNAME ) ) ) {
 			flock( $h, LOCK_EX );
 			return $h;
 		}

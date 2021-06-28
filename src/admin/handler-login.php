@@ -19,7 +19,8 @@ function handle_query( array $q, array $q_get ): array {
 	global $nt_session;
 	$auth = new Auth( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_AUTH );
 
-	$mode      = $q['mode'] ?? '';
+	$mode      = $q['mode']  ?? '';
+	$token     = $q['token'] ?? '';
 	$is_dialog = isset( $q['dialog'] ) || isset( $q_get['dialog'] );
 	$msg_log   = '';
 	$msg_reg   = '';
@@ -30,37 +31,41 @@ function handle_query( array $q, array $q_get ): array {
 		'expired_code'   => _ht( 'Your invitation code is expired.' ),
 		'internal_error' => _ht( 'Internal error occurred.' ),
 	];
-	if ( $mode === 'login' ) {
-		$ul = $auth->signIn( $q );
-		if ( $ul && $nt_session->create( $ul['user'], $ul['lang'] ) ) {
-			if ( $is_dialog ) {
-				close_dialog_frame();
-			} else {
-				header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
+	if ( $auth->checkToken( $token ) ) {
+		if ( $mode === 'login' ) {
+			$ul = $auth->signIn( $q );
+			if ( $ul && $nt_session->create( $ul['user'], $ul['lang'] ) ) {
+				if ( $is_dialog ) {
+					close_dialog_frame();
+				} else {
+					header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
+				}
+				exit;
 			}
-			exit;
+			$msg_log = _ht( 'User name or password is wrong.' );
+		} else if ( $mode === 'issue' ) {
+			$code = $auth->issueInvitation( $q );
+			if ( $code ) {
+				$msg_log = $code;
+			} else {
+				$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
+			}
+		} else if ( $mode === 'register' ) {
+			if ( $auth->signUp( $q ) ) {
+				$msg_log = _ht( 'Registration succeeded.' );
+			} else {
+				$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
+			}
 		}
-		$msg_log = _ht( 'User name or password is wrong.' );
-	} else if ( $mode === 'issue' ) {
-		$code = $auth->issueInvitation( $q );
-		if ( $code ) {
-			$msg_log = $code;
-		} else {
-			$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
-		}
-	} else if ( $mode === 'register' ) {
-		if ( $auth->signUp( $q ) ) {
-			$msg_log = _ht( 'Registration succeeded.' );
-		} else {
-			$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
-		}
-	} else if ( $mode === 'logout' ) {
+	}
+	if ( $mode === 'logout' ) {
 		$nt_session->destroy();
 	}
 
 	return [
 		'key'       => Auth::getAuthKey(),
 		'nonce'     => Auth::getAuthNonce(),
+		'token'     => $auth->issueToken(),
 		'url'       => NT_URL_ADMIN,
 		'msg_log'   => $msg_log,
 		'msg_reg'   => $msg_reg,

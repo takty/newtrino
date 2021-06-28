@@ -5,7 +5,7 @@ namespace nt;
  * Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-06-28
  *
  */
 
@@ -42,6 +42,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		<input type="hidden" name="cnonce" id="cnonce">
 		<input type="hidden" name="digest" id="digest">
 		<input type="hidden" name="mode" id="mode" value="login">
+		<input type="hidden" name="token" value="{{token}}">
 {{#is_dialog}}
 		<input type="hidden" name="dialog" value="">
 {{/is_dialog}}
@@ -62,6 +63,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</dl>
 		<input type="hidden" name="hash" id="hash">
 		<input type="hidden" name="mode" value="register">
+		<input type="hidden" name="token" value="{{token}}">
 {{#msg_reg}}
 		<p id="msg-reg">{{.}}</p>
 {{/msg_reg}}
