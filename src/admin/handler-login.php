@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-26
+ * @version 2021-06-28
  *
  */
 
@@ -17,7 +17,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 function handle_query( array $q, array $q_get ): array {
 	global $nt_session;
-	$auth = new Auth( NT_URL_ADMIN, NT_DIR_DATA );
+	$auth = new Auth( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_AUTH );
 
 	$mode      = $q['mode'] ?? '';
 	$is_dialog = isset( $q['dialog'] ) || isset( $q_get['dialog'] );

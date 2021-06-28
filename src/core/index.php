@@ -5,7 +5,7 @@ namespace nt;
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida
- * @version 2021-06-11
+ * @version 2021-06-28
  *
  */
 
@@ -29,6 +29,7 @@ define( 'NT_URL_POST', NT_URL_HOST . get_url_from_path( NT_DIR_POST ) . '/' );
 if ( defined( 'NT_ADMIN' ) ) {
 	define( 'NT_DIR_ADMIN', NT_DIR . 'admin/' );
 	define( 'NT_DIR_ADMIN_RES', NT_DIR . 'admin/res/' );
+	define( 'NT_DIR_AUTH', NT_DIR_ADMIN . 'var/auth/' );
 	define( 'NT_DIR_SESSION', NT_DIR_ADMIN . 'var/session/' );
 
 	define( 'NT_URL_ADMIN', NT_URL_HOST . get_url_from_path( NT_DIR_ADMIN ) . '/' );

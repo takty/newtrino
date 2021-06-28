@@ -5,7 +5,7 @@ namespace nt;
  * User Authentication
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-06-28
  *
  */
 
@@ -18,8 +18,10 @@ class Auth {
 	const TIMEOUT_INVITATION = 604800;  // 7 days * 24 hours * 60 minutes * 60 seconds
 	const AUTH_NONCE_GL      = 300;     // 5 minutes * 60 seconds (Expires in 10 minutes max.)
 
-	const ACCT_FILE_NAME = 'account';
-	const HASH_ALGO      = 'sha256';
+	const ACCT_FILE_NAME  = 'account';
+	const NONCE_FILE_NAME = 'nonce';
+	const FILE_NAME_INV   = 'invitation';
+	const HASH_ALGO       = 'sha256';
 
 	public static function getAuthKey(): string {
 		if ( defined( 'NT_AUTH_KEY' ) ) return NT_AUTH_KEY;
@@ -41,9 +43,10 @@ class Auth {
 	private $_path;
 	private $_errCode = '';
 
-	public function __construct( string $urlAdmin, string $dirAcct ) {
-		$this->_url  = $urlAdmin;
-		$this->_path = $dirAcct . self::ACCT_FILE_NAME;
+	public function __construct( string $urlAdmin, string $dirAcct, string $dirAuth ) {
+		$this->_url     = $urlAdmin;
+		$this->_path    = $dirAcct . self::ACCT_FILE_NAME;
+		$this->_pathInv = $dirAuth . self::FILE_NAME_INV;
 	}
 
 	public function getErrorCode(): string {
@@ -73,8 +76,8 @@ class Auth {
 	private function _verify( string $user, string $digest, string $cnonce, ?string &$out_lang ): bool {
 		$as = null;
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read();
-			$as = $this->_cleanInvitation( $as );
+			$as = $this->_read( $this->_path );
+			$this->_cleanInvitation();
 			$this->_unlock( $h );
 		}
 		if ( $as === null ) return false;
@@ -100,6 +103,21 @@ class Auth {
 		return false;
 	}
 
+	private function _cleanInvitation(): void {
+		$is  = $this->_read( $this->_pathInv, true );
+		$new = [];
+		$now = time();
+
+		foreach ( $is as $i ) {
+			$i = trim( $i );
+			if ( empty( $i ) ) continue;
+			[ $limit, $code ] = explode( "\t", $i );
+			if ( intval( $limit ) < $now ) continue;
+			$new[] = $i;
+		}
+		if ( count( $is ) !== count( $new ) ) $this->_write( $this->_pathInv, $new );
+	}
+
 
 	// ------------------------------------------------------------------------
 
@@ -112,9 +130,9 @@ class Auth {
 		$res = false;
 
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read();
-			$as[] = "*$limit\t$code";
-			$res = $this->_write( $as );
+			$as   = $this->_read( $this->_pathInv, true );
+			$as[] = "$limit\t$code";
+			$res  = $this->_write( $this->_pathInv, $as );
 			$this->_unlock( $h );
 		}
 		return $res ? $code : null;
@@ -135,81 +153,57 @@ class Auth {
 			return false;
 		}
 		[ 'user' => $user, 'code' => $code, 'hash' => $hash ] = $params;
-		$ca = explode( '|', $code );
-		$code = $ca[0];
-		$lang = $ca[1] ?? null;
+		$cl   = explode( '|', $code );
+		$code = $cl[0];
+		$lang = $cl[1] ?? null;
+
+		$rec = "$user\t$hash";
+		if ( $lang ) $rec .= "\t$lang";
 
 		$res = false;
-		$now = time();
-
 		if ( $h = $this->_lock() ) {
-			$as = $this->_read();
-
-			$users = $this->_getUsers( $as );
-			if ( in_array( $user, $users, true ) ) {
-				$this->_unlock( $h );
+			$as = $this->_read( $this->_path );
+			if ( in_array( $user, $this->_getUsers( $as ), true ) ) {
 				$this->_errCode = 'invalid_param';
-				return false;
-			}
-
-			$new = [];
-			$mod = false;
-			foreach ( $as as $a ) {
-				$a = trim( $a );
-				if ( empty( $a ) || $a[0] === '#' ) {
-					$new[] = $a;
-					continue;
-				}
-				$cs = explode( "\t", $a );
-				$us = $cs[0];
-
-				if ( $us[0] === '*' ) {
-					if ( $cs[1] === $code ) {
-						if ( $now <= intval( substr( $us, 1 ) ) ) {
-							$cs[0] = $user;
-							$cs[1] = $hash;
-							if ( $lang ) $cs[2] = $lang;
-							$mod = true;
-						} else {
-							Logger::info( __METHOD__, 'The invitation code has expired' );
-							$this->_errCode = 'expired_code';
-							break;
-						}
-					}
-				}
-				$new[] = implode( "\t", $cs );
-			}
-			if ( $mod ) {
-				$res = $this->_write( $new );
-			} else {
-				Logger::info( __METHOD__, 'The invitation code is invalid' );
-				$this->_errCode = 'invalid_code';
+			} else if ( $this->_checkInvitation( $code ) ) {
+				$as[] = $rec;
+				$res = $this->_write( $this->_path, $as );
 			}
 			$this->_unlock( $h );
 		}
 		return $res;
 	}
 
-	private function _cleanInvitation( array $as ): array {
-		$new = [];
-		$mod = false;
-		$now = time();
-		foreach ( $as as $a ) {
-			$a = trim( $a );
-			if ( empty( $a ) || $a[0] === '#' ) {
-				$new[] = $a;
-				continue;
-			}
-			$cs = explode( "\t", $a );
+	private function _checkInvitation( $code ): bool {
+		$is    = $this->_read( $this->_pathInv, true );
+		$new   = [];
+		$now   = time();
+		$found = false;
+		$valid = false;
 
-			if ( $cs[0][0] === '*' && intval( substr( $cs[0], 1 ) ) < $now ) {
-				$mod = true;
+		foreach ( $is as $i ) {
+			$i = trim( $i );
+			if ( empty( $i ) ) continue;
+			[ $l, $c ] = explode( "\t", $i );
+
+			if ( $c === $code ) {
+				$found = true;
+				if ( $now <= intval( $l ) ) $valid = true;
 				continue;
 			}
-			$new[] = implode( "\t", $cs );
+			$new[] = $i;
 		}
-		if ( $mod ) $this->_write( $new );
-		return $new;
+		if ( ! $found && ! $valid ) {
+			Logger::info( __METHOD__, 'The invitation code is invalid' );
+			$this->_errCode = 'invalid_code';
+			return false;
+		} else if ( $found && ! $valid ) {
+			Logger::info( __METHOD__, 'The invitation code has expired' );
+			$this->_errCode = 'expired_code';
+			return false;
+		}
+		$res = $this->_write( $this->_pathInv, $new );
+		return $found && $valid && $res;
 	}
 
 	private function _getUsers( array $as ): array {
@@ -218,7 +212,6 @@ class Auth {
 			$a = trim( $a );
 			if ( empty( $a ) || $a[0] === '#' ) continue;
 			[ $user ] = explode( "\t", $a );
-			if ( $user[0] === '*' ) continue;
 			$ret[] = $user;
 		}
 		return $ret;
@@ -248,25 +241,34 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
-	private function _read(): array {
-		if ( is_file( $this->_path ) === false ) {
-			Logger::error( __METHOD__, 'The account file does not exist' );
-			$this->_errCode = 'internal_error';
+	private function _read( string $path, bool $silent = false ): array {
+		if ( is_file( $path ) === false ) {
+			if ( ! $silent ) {
+				Logger::error( __METHOD__, 'The file does not exist', $path );
+				$this->_errCode = 'internal_error';
+			}
 			return [];
 		}
-		$as = file( $this->_path, FILE_IGNORE_NEW_LINES );
+		$as = file( $path, FILE_IGNORE_NEW_LINES );
 		if ( $as === false ) {
-			Logger::error( __METHOD__, 'Cannot open the account file' );
+			Logger::error( __METHOD__, 'Cannot open the file', $path );
 			$this->_errCode = 'internal_error';
 			return [];
 		}
 		return $as;
 	}
 
-	private function _write( array $ac ): bool {
-		$res = file_put_contents( $this->_path, implode( "\n", $ac ) );
+	private function _write( string $path, array $ac ): bool {
+		$dir = pathinfo( $path, PATHINFO_DIRNAME );
+		if ( ! is_dir( $dir ) ) {
+			if ( ! \nt\ensure_dir( $dir, NT_MODE_DIR ) ) {
+				Logger::error( __METHOD__, 'The directory is not usable', $dir );
+				return false;
+			}
+		}
+		$res = file_put_contents( $path, implode( "\n", $ac ) );
 		if ( $res === false ) {
-			Logger::error( __METHOD__, 'Cannot write the account file' );
+			Logger::error( __METHOD__, 'Cannot write the file', $path );
 			$this->_errCode = 'internal_error';
 			return false;
 		}
