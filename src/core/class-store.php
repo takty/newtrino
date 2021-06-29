@@ -99,9 +99,9 @@ class Store {
 		return $p;
 	}
 
-	public function getPostWithNextAndPrevious( ?string $id, array $cond = [] ): ?array {
+	public function getPostWithNextAndPrevious( ?string $id, array $args = [] ): ?array {
 		if ( $id === null ) return null;
-		$posts = $this->_getPosts( $cond );
+		$posts = $this->_getPosts( $args );
 		$idIndex = null;
 		for ($i = 0; $i < count( $posts ); $i += 1 ) {
 			$p = $posts[ $i ];
@@ -117,14 +117,14 @@ class Store {
 		return [ $prev, $posts[ $idIndex ], $next ];
 	}
 
-	public function getPosts( array $cond = [] ): array {
-		$page = $cond['page'] ?? 1;
+	public function getPosts( array $args = [] ): array {
+		$page = $args['page'] ?? 1;
 
-		$posts = $this->_getPosts( $cond );
+		$posts = $this->_getPosts( $args );
 
 		$size    = count( $posts );
 		$pageIdx = intval( $page ) - 1;
-		$perPage = intval( $cond['per_page'] ?? $this->_conf['per_page'] );
+		$perPage = intval( $args['per_page'] ?? $this->_conf['per_page'] );
 		$offset  = $perPage * $pageIdx;
 
 		if ( $size < $offset ) {
