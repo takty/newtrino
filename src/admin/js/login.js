@@ -186,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				touch = false;
 			}
 		});
-		elm.addEventListener('mousedown', () => {
+		elm.addEventListener('mousedown', (e) => {
+			if (e.button !== 0) return;
 			if (touch) return;
 			longClk = false;
 			st = setTimeout(() => {
