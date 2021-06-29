@@ -5,7 +5,7 @@ namespace nt;
  * Function for Nonce and Tokens
  *
  * @author Takuto Yanagida
- * @version 2021-06-28
+ * @version 2021-06-29
  *
  */
 
@@ -20,8 +20,9 @@ function issue_token( $path, $timeout ): string {
 	$rs    = is_file( $path ) ? file( $path, FILE_IGNORE_NEW_LINES ) : [];
 
 	foreach( $rs as $r ) {
-		[ $l, $t ] = explode( "\t", $r );
-		if ( $now < $l ) continue;
+		if ( empty( trim( $r ) ) ) continue;
+		[ $l ] = explode( "\t", $r );
+		if ( $now < intval( $l ) ) continue;
 		$new[] = $r;
 	}
 	$limit = $now + $timeout;
@@ -43,7 +44,7 @@ function check_token( $path, $token ): bool {
 	foreach( $rs as $r ) {
 		if ( empty( trim( $r ) ) ) continue;
 		[ $l, $t ] = explode( "\t", $r );
-		if ( $l < $now ) continue;
+		if ( intval( $l ) < $now ) continue;
 		if ( $token === $t ) {
 			$valid = true;
 			continue;
