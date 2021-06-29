@@ -11,8 +11,9 @@
 $color-text: #222;
 $color-line: hsl(0, 0%, 80%, 90%);
 
-$color-frame-border    : #fff;
-$color-frame-background: rgba(#fff, 0.8);
+$color-frame-border-light: rgba(#fff, 0.85);
+$color-frame-border-dark : rgba(#fff, 0.65);
+$color-frame-background  : rgba(#fff, 0.75);
 
 $radius-frame: 9px;
 
