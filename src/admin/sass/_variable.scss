@@ -3,7 +3,7 @@
  * Variables for Style
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-29
  *
  */
 
@@ -11,10 +11,8 @@
 $color-text: #222;
 $color-line: hsl(0, 0%, 80%, 90%);
 
-$color-frame-border           : transparent;
-$color-frame-border-dialog    : $color-line;
-$color-frame-background       : rgba(#fff, 0.85);
-$color-frame-background-dialog: rgba(#fff, 0.80);
+$color-frame-border    : #fff;
+$color-frame-background: rgba(#fff, 0.8);
 
 $radius-frame: 9px;
 

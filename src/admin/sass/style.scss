@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-06-29
  *
  */
 
@@ -33,7 +33,7 @@ body:not(.dialog) {
 	padding: { top: 0.75rem; bottom: 0.75rem; }
 	@include for-tl { padding-bottom: 1rem; }
 
-	background-size  : 12px 12px, 100% 100%;
+	background-size  : 18px 18px, 100% 100%;
 	background-repeat: repeat, no-repeat;
 	background-image :
 		linear-gradient(-45deg,
@@ -156,28 +156,17 @@ a {
 // -----------------------------------------------------------------------------
 
 
-@mixin floating-shadow {
-	box-shadow:
-		0 1px  2px rgba(#000, 0.12),
-		0 2px  4px rgba(#000, 0.10),
-		0 3px  6px rgba(#000, 0.08),
-		0 4px  8px rgba(#000, 0.06),
-		0 5px 10px rgba(#000, 0.04);
-}
-
 .frame {
-	border          : 1px solid $color-frame-border;
-	border-radius   : $radius-frame;
-	background-color: $color-frame-background;
-	backdrop-filter : blur(2px);
-
+	@include frame;
+	@include frame-edge;
 	@include floating-shadow;
+	backdrop-filter: blur(2px);
+
 	.dialog &,
 	&.dialog {
-		box-shadow: 0 1px 2px rgba(#000, 0.08);
-		border: 1px solid $color-frame-border-dialog;
-		background-color: $color-frame-background-dialog;
 		overflow: hidden;
+		box-shadow: 0 1px 2px rgba(#000, 0.08);
+		backdrop-filter: blur(4px);
 	}
 
 	padding: 1rem;
@@ -349,7 +338,8 @@ input[type='button'],
 
 	body > .header & {
 		@include floating-shadow;
-		border-color: transparent;
+		@include frame-edge;
+
 		&:hover { border-color: $color-button-border-hover; }
 	}
 }
@@ -448,30 +438,30 @@ label.select.accent {
 	padding-right: 1.25rem;
 
 	& + *::after {
-		pointer-events: none;
 		left : -0.75rem;
 		right: unset;
 		@include for-ta {
 			left : -0.75rem;
 			right: unset;
 		}
+		pointer-events: none;
 	}
 }
 
 button,
 input[type=button],
 .button {
-	display: inline-flex;
-	align-items: center;
+	display        : inline-flex;
+	align-items    : center;
+	justify-content: center;
 
 	min-width: 1.5rem;
 	@include for-tl { min-width: 2rem; }
 
 	max-height: 2rem;
-	height: 2rem;
-	padding: { top: 0.25rem; bottom: 0.25rem; }
+	height    : 2rem;
 
-	padding: { left: 0.5rem; right: 0.5rem; }
+	padding: 0.25rem 0.5rem;
 	@include for-tp { padding: { left: 0.75rem; right: 0.75rem; } }
 
 	text-align: center;
@@ -546,6 +536,13 @@ input[type=button],
 	}
 }
 
+.button,
+.button-row > button,
+label.select select {
+	min-width: 2rem;
+	@include for-tl { min-width: 3.5rem; }
+}
+
 input[type='text'],
 input[type='password'] {
 	&:not(.flatpickr-input) {
@@ -553,7 +550,7 @@ input[type='password'] {
 		& + input[type=button],
 		& + .button {
 			max-height: 2.5rem;
-			height: 2.5rem;
+			height    : 2.5rem;
 		}
 	}
 }

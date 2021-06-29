@@ -3,7 +3,7 @@
  * List (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-09
+ * @version 2021-06-29
  *
  */
 
@@ -67,7 +67,10 @@ body.list {
 		text-align: center;
 		white-space: nowrap;
 
-		&:not(:last-child) { min-width: 5rem; }
+		&:not(:last-child) { min-width: 4rem; }
+		@include for-tl {
+			&:not(:last-child) { min-width: 5rem; }
+		}
 	}
 	&:first-child th {
 		padding-top: 0.5rem;

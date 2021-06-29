@@ -3,7 +3,7 @@
  * Query Mix-ins for Responsive and Browsers (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-01
+ * @version 2021-06-29
  *
  * https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
  *
@@ -42,3 +42,28 @@
 @mixin for-de-o { @include for-size-only(1200px, 1800px, 297, 420) { @content; } }
 @mixin for-bd   { @include for-size-up(1800px, 420) { @content; } }
 @mixin for-bd-o { @include for-bd { @content; } }
+
+
+// -----------------------------------------------------------------------------
+
+
+@mixin floating-shadow {
+	box-shadow:
+		0 1px  2px rgba(#000, 0.12),
+		0 2px  4px rgba(#000, 0.10),
+		0 3px  6px rgba(#000, 0.08),
+		0 4px  8px rgba(#000, 0.06),
+		0 5px 10px rgba(#000, 0.04);
+}
+
+@mixin frame {
+	border-radius   : $radius-frame;
+	background-color: $color-frame-background;
+}
+
+@mixin frame-edge {
+	border             : 1px solid rgba($color-frame-border, 0.85);
+	border-right-color : rgba($color-frame-border, 0.75);
+	border-bottom-color: rgba($color-frame-border, 0.75);
+	background-clip    : padding-box;
+}

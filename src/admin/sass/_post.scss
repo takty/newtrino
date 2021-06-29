@@ -3,7 +3,7 @@
  * Post (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2021-06-29
  *
  */
 
@@ -227,9 +227,10 @@
 
 .metabox-media-image {
 	.open-media-dialog {
-		display: inline-flex;
+		display    : inline-flex;
 		user-select: none;
-		width: 5.25rem;
+		width      : 5.25rem;
+		overflow   : hidden;
 
 		border          : 1px solid $color-button-border;
 		border-radius   : $radius-button;
@@ -245,13 +246,15 @@
 		position: relative;
 		> div {
 			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background-size: contain;
-			background-position: center;
+			top     : 0;
+			left    : 0;
+			right   : 0;
+			bottom  : 0;
+
 			pointer-events: none;
+
+			background-size    : contain;
+			background-position: center;
 
 			&[style=''] {
 				background: {
@@ -260,7 +263,7 @@
 						linear-gradient(-45deg, rgba(#000, 0.25) 25%, transparent 25%),
 						linear-gradient( 45deg, transparent 75%, rgba(#000, 0.25) 75%),
 						linear-gradient(-45deg, transparent 75%, rgba(#000, 0.25) 75%);
-					position: 0 0, 0 6px, 6px -6px, -6px 0;
+					position: -1px -2px,-1px 4px,5px -8px,-7px -2px;
 					size    : 12px 12px;
 					repeat  : repeat;
 				}
@@ -386,10 +389,10 @@ body.post {
 	}
 
 	.tox .tox-dialog {
-		background-color: $color-frame-background;
-		border-color    : $color-frame-border-dialog;
-		border-radius   : $radius-frame;
-		backdrop-filter : blur(4px);
+		@include frame;
+		@include frame-edge;
+		box-shadow: 0 1px 2px rgba(#000, 0.08);
+		backdrop-filter: blur(4px);
 
 		max-height: calc(var(--vh, 1vh) * 90);
 	}
