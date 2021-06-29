@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				longTap = true;
 				fnLong();
 			}, 500);
+			e.preventDefault();
 		});
 		elm.addEventListener('touchend', () => {
 			if (!longTap) {
@@ -195,13 +196,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				setTimeout(fnLong, 0);
 			}, 500);
 		});
-		elm.addEventListener('click', () => {
+		elm.addEventListener('click', (e) => {
 			if (touch) {
 				touch = false;
 			} else if (!longClk) {
 				clearTimeout(st);
 				fnNorm();
 			}
+			e.preventDefault();  // for Safari to enable to cancel confirm dialog
 		});
 	}
 });
