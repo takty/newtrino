@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-06-29
  *
  */
 
@@ -136,6 +136,7 @@ class Store {
 	}
 
 	public function getCountByDate( string $type = 'year', array $args ): array {
+		$args += [ 'status' => Post::STATUS_PUBLISH ];
 		$paths = $this->_getPostTypeSubDirs( $args );
 		$ms = [];
 		$this->_loadMatchedInfoAll( $this->_dirRoot, $paths, $args, $ms );
@@ -153,6 +154,7 @@ class Store {
 			if ( ! isset( $count[ $key ] ) ) $count[ $key ] = 0;
 			$count[ $key ] += 1;
 		}
+		krsort( $count );
 		$ret = [];
 		foreach ( $count as $key => $val ) {
 			$ret[] = [ 'slug' => $key, 'count' => $val ];
