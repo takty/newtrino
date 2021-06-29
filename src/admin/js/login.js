@@ -3,12 +3,15 @@
  * Login (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-26
+ * @version 2021-06-29
  *
  */
 
 
 // @include _common.js
+
+history.pushState(null, null, location.href);
+window.addEventListener('popstate', () => { history.go(-1); });
 
 document.addEventListener('DOMContentLoaded', () => {
 
