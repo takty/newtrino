@@ -28,8 +28,8 @@
 		"not dead"
 	],
 	"dependencies": {
-		"@babel/core": "^7.14.6",
-		"@babel/preset-env": "^7.14.7",
+		"@babel/core": "^7.15.0",
+		"@babel/preset-env": "^7.15.0",
 		"current-git-branch": "^1.1.0",
 		"flatpickr": "^4.6.9",
 		"gulp": "^4.0.2",
