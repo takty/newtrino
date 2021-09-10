@@ -5,7 +5,7 @@ namespace nt;
  * Type
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-09-11
  *
  */
 
@@ -105,15 +105,28 @@ class Type {
 		foreach ( $data as $d ) {
 			\nt\normalize_label( $d, $this->_lang );
 			if ( isset( $d['meta'] ) ) {
-				$ms = [];
-				foreach ( $d['meta'] as $m ) {
-					if ( empty( $m['type'] || ( empty( $m['key'] ) && $m['type'] !== 'gruop' ) ) ) continue;
-					\nt\normalize_label( $m, $this->_lang );
-					$ms[] = $m;
-				}
-				$d['meta'] = $ms;
+				$d['meta'] = $this->_normalizeMetaLabels( $d['meta'] );
 			}
 			$ret[ $d['slug'] ] = $d;
+		}
+		return $ret;
+	}
+
+	private function _normalizeMetaLabels( array $ms ): array {
+		$ret = [];
+
+		foreach ( $ms as $m ) {
+			if ( empty( $m['type'] ) ) {
+				continue;
+			}
+			if ( 'group' !== $m['type'] && empty( $m['key'] ) ) {
+				continue;
+			}
+			\nt\normalize_label( $m, $this->_lang );
+			if ( 'group' === $m['type'] && isset( $m['items'] ) && is_array( $m['items'] ) ) {
+				$m['items'] = $this->_normalizeMetaLabels( $m['items'] );
+			}
+			$ret[] = $m;
 		}
 		return $ret;
 	}
