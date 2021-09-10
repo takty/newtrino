@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-09-11
  *
  */
 
@@ -192,7 +192,9 @@ function echo_meta_metaboxes( Post $post ): void {
 function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = false ): void {
 	foreach ( $ms as $m ) {
 		$label = $m['label'] ?? '';
-		if ( empty( $label ) ) continue;
+		if ( 'group' !== $m['type'] && empty( $label ) ) {
+			continue;
+		}
 		switch ( $m['type'] ) {
 			case 'group':
 				echo_metabox_group( $post, $m, $label );
@@ -220,7 +222,9 @@ function echo_metabox_group( Post $post, array $m, string $label ): void {
 	$items = $m['items'];
 ?>
 	<div class="frame frame-sub metabox-group">
+<?php if ( ! empty( $label ) ) : ?>
 		<div class="title"><?= _ht( $label ) ?></div>
+<?php endif; ?>
 		<div class="group-inner">
 <?php
 	echo_meta_metaboxes_internal( $post, $items, true );
