@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-29
+ * @version 2021-09-11
  *
  */
 
@@ -355,17 +355,21 @@ input[type='text'],
 input[type='datetime-local'],
 input[type='password'] {
 	max-height: 2.5rem;
-	height: 2.5rem;
+	height    : 2.5rem;
 
-	padding: 0.5rem 0.5rem;
+	padding   : 0.5rem 0.5rem;
 	text-align: left;
 
 	&[readonly] {
-		cursor: default;
-		color: #777;
-		height: 2rem;
-		font-size: 0.75rem;
+		height : 2rem;
 		padding: { top: 0; bottom: 0; }
+		cursor : default;
+
+		color    : #777;
+		font-size: 0.75rem;
+	}
+	&:not(.flatpickr-input)[readonly] {
+		background-color: rgba($color-button-background, 0.5);
 	}
 }
 
