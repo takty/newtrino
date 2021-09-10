@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-09-11
  *
  */
 
@@ -277,7 +277,12 @@ class Post {
 		global $nt_store;
 		$ms = $nt_store->type()->getMetaAll( $type );
 		foreach ( $ms as $m ) {
-			if ( empty( $meta[ $m['key'] ] ) || ! is_array( $meta[ $m['key'] ] ) ) continue;
+			if ( empty( $m['key'] ) ) {
+				continue;
+			}
+			if ( empty( $meta[ $m['key'] ] ) || ! is_array( $meta[ $m['key'] ] ) ) {
+				continue;
+			}
 			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
 				$meta[ $m['key'] ] = self::_convertMediaUrl( $meta[ $m['key'] ], $fn );
 			}
