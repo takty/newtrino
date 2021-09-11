@@ -166,6 +166,9 @@ class Post {
 				$this->setMetaValue( $key, null );
 				continue;
 			}
+			if ( $m['type'] === 'checkbox' ) {
+				$vals["meta:$key"] = (bool) $vals["meta:$key"];
+			}
 			if ( $m['type'] === 'date' ) {
 				$vals["meta:$key"] = \nt\pack_date( $vals["meta:$key"] );
 			}

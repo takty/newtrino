@@ -202,6 +202,9 @@ function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = f
 			case 'text':
 				echo_metabox_text( $post, $m, $label, $internal );
 				break;
+			case 'checkbox':
+				echo_metabox_checkbox( $post, $m, $label, $internal );
+				break;
 			case 'date':
 				echo_metabox_date( $post, $m, $label, $internal );
 				break;
@@ -244,6 +247,22 @@ function echo_metabox_text( Post $post, array $m, string $label, bool $internal 
 	<div class="metabox-text<?= $cls ?>">
 		<div class="title"><?= _ht( $label ) ?></div>
 		<div><input type="text" name="meta:<?= _h( $key ) ?>" value="<?= _h( $text ) ?>"></div>
+	</div>
+<?php
+}
+
+function echo_metabox_checkbox( Post $post, array $m, string $label, bool $internal ): void {
+	$key   = $m['key'];
+	$val   = $post->getMetaValue( $key );
+	$state = ( $val === null ) ? '' : ' checked';
+
+	$cls = $internal ? '' : ' frame frame-sub';
+?>
+	<div class="metabox-checkbox<?= $cls ?>">
+		<label class="checkbox">
+			<input type="checkbox" name="meta:<?= _h( $key ) ?>"<?= _h( $state ) ?>>
+			<?= _ht( $label ) ?>
+		</label>
 	</div>
 <?php
 }
