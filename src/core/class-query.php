@@ -5,7 +5,7 @@ namespace nt;
  * Query
  *
  * @author Takuto Yanagida
- * @version 2020-07-28
+ * @version 2021-09-15
  *
  */
 
@@ -42,7 +42,7 @@ class Query {
 			$this->_initializeDateQuery( $args['date_query'] );
 		}
 		if ( ! empty( $args['meta_query'] ) ) {
-			$this->_initializeDateQuery( $args['meta_query'] );
+			$this->_initializeMetaQuery( $args['meta_query'] );
 		}
 	}
 
@@ -89,18 +89,29 @@ class Query {
 	private function _initializeMetaQuery( array $query ): void {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
-			if ( ! is_numeric( $idx ) ) continue;
+			if ( ! is_numeric( $idx ) ) {
+				continue;
+			}
+			if ( ! isset( $ai['key'] ) ) {
+				continue;
+			}
 			$q = [];
-			if ( ! isset( $ai['key'] ) ) continue;
-			$q['key'] = $ai['key'];
-			$q['compare'] = isset( $ai['compare'] ) ? strtolower( $ai['compare'] ) : '=';
-			$q['type'] = isset( $ai['type'] ) ? strtolower( $ai['type'] ) : 'string';
+
+			$q['key']     = $ai['key'];
+			$q['val']     = $ai['val'] ?? null;
+			$q['type']    = strtolower( $ai['type'] ?? 'string' );
+			$q['compare'] = strtolower( $ai['compare'] ?? '=' );
+			if ( ! isset( $ai['val'] ) && ! isset( $ai['compare'] ) ) {
+				$q['compare'] = 'exist';
+			}
 			$qs[] = $q;
 		}
 		if ( ! empty( $qs ) ) {
 			$meta = [];
+
 			$meta['rel'] = empty( $query['relation'] ) ? 'AND' : $query['relation'];
 			$meta['qs']  = $qs;
+
 			$this->_meta = $meta;
 		}
 	}
@@ -219,18 +230,34 @@ class Query {
 		$v  = $ms[ $key ];
 		$qv = $q['val'];
 
-		if ( $type === 'date' ) {
-			$v  = substr( $v,  0, 8 );
-			$qv = substr( $qv, 0, 8 );
-		} else if ( $type === 'time' ) {
-			$v  = substr( $v,  8, 14 );
-			$qv = substr( $qv, 8, 14 );
-		} else if ( $type === 'datetime' ) {
-			// Do nothing
+		switch ( $type ) {
+			case 'bool':
+				$v  = (bool) $v;
+				$qv = (bool) $qv;
+				break;
+			case 'int':
+				$v  = (int) $v;
+				$qv = (int) $qv;
+				break;
+			case 'float':
+				$v  = (float) $v;
+				$qv = (float) $qv;
+				break;
+			case 'string':
+				// Do nothing
+				break;
+			case 'datetime':
+				// Do nothing
+				break;
+			case 'date':
+				$v  = (int) substr( $v,  0, 8 );
+				$qv = (int) substr( $qv, 0, 8 );
+				break;
+			case 'time':
+				$v  = (int) substr( $v,  8, 14 );
+				$qv = (int) substr( $qv, 8, 14 );
+				break;
 		}
-		$v  = intval( $v );
-		$qv = intval( $qv );
-
 		switch ( $comp ) {
 			case '=':  return $v === $qv;
 			case '!=': return $v !== $qv;
