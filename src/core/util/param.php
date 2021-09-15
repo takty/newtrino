@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Parameters
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-09-16
  *
  */
 
@@ -18,8 +18,10 @@ function get_query_vars( array $query, array $filters, ?string $collection = nul
 			$tcs[] = $key;
 			continue;
 		}
-		$fval = \nt\filter_param( $val, $filters[ $key ] );
-		if ( $fval !== null ) $ret[ $key ] = $val;
+		$fv = \nt\filter_param( $val, $filters[ $key ] );
+		if ( $fv !== null ) {
+			$ret[ $key ] = $val;
+		}
 	}
 	if ( $collection ) {
 		global $nt_store;
@@ -31,7 +33,9 @@ function get_query_vars( array $query, array $filters, ?string $collection = nul
 				$cs[ $tc ] = $ts;
 			}
 		}
-		if ( ! empty( $cs ) ) $ret[ $collection ] = $cs;
+		if ( ! empty( $cs ) ) {
+			$ret[ $collection ] = $cs;
+		}
 	}
 	return $ret;
 }
@@ -39,40 +43,49 @@ function get_query_vars( array $query, array $filters, ?string $collection = nul
 function filter_param( $val, string $type ) {
 	switch ( $type ) {
 		case 'string':
-			return $val;
+			if ( is_string( $val ) ) {
+				return $val;
+			}
+			break;
 		case 'slug':
-			if ( preg_match( '/[^a-zA-Z0-9-_]/', $val ) ) break;
-			return $val;
+			if ( is_string( $val ) && preg_match( '/^[-\w]+$/', $val ) ) {
+				return $val;
+			}
+			break;
 		case 'int':
-			if ( preg_match( '/[^0-9]/', $val ) ) break;
-			return intval( $val );
+			if ( is_int( $val ) || ( is_string( $val ) && preg_match( '/^[\d]+$/', $val ) ) ) {
+				return (int) $val;
+			}
+			break;
 		case 'string_array':
-			return is_array( $val ) ? $val : [ $val ];
+			$fvs  = [];
+			$vals = is_array( $val ) ? $val : [ $val ];
+			foreach ( $vals as $v ) {
+				if ( is_string( $val ) ) {
+					$fvs[] = $v;
+				}
+			}
+			return $fvs;
 		case 'slug_array':
-			$fval = [];
+			$fvs  = [];
 			$vals = is_array( $val ) ? $val : [ $val ];
 			foreach ( $vals as $v ) {
-				if ( preg_match( '/[^a-zA-Z0-9-_]/', $v ) ) continue;
-				$fval[] = $v;
+				if ( is_string( $v ) && preg_match( '/^[-\w]+$/', $val ) ) {
+					$fvs[] = $v;
+				}
 			}
-			return $fval;
+			return $fvs;
 		case 'int_array':
-			$fval = [];
+			$fvs  = [];
 			$vals = is_array( $val ) ? $val : [ $val ];
 			foreach ( $vals as $v ) {
-				if ( preg_match( '/[^0-9]/', $v ) ) continue;
-				$fval[] = intval( $v );
+				if ( is_int( $v ) || ( is_string( $v ) && preg_match( '/^[\d]+$/', $val ) ) ) {
+					$fvs[] = (int) $v;
+				}
 			}
-			return $fval;
+			return $fvs;
 	}
 	return null;
-}
-
-function get_param( string $key, $default, array $assoc ) {
-	if ( isset( $assoc[ $key ] ) ) {
-		return $assoc[ $key ];
-	}
-	return $default;
 }
 
 function create_tax_query_from_taxonomy_to_terms( array $tt, array &$args ): void {
@@ -80,5 +93,7 @@ function create_tax_query_from_taxonomy_to_terms( array $tt, array &$args ): voi
 	foreach ( $tt as $tax => $ts ) {
 		$tq[] = [ 'taxonomy' => $tax, 'terms' => $ts ];
 	}
-	if ( ! empty( $tq ) ) $args['tax_query'] = $tq;
+	if ( ! empty( $tq ) ) {
+		$args['tax_query'] = $tq;
+	}
 }

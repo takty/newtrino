@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Query Strings
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-09-15
  *
  */
 
@@ -43,6 +43,7 @@ function create_canonical_query( array $ps, array $overwrite = [] ): string {
 	$keys = [ 'id', 'type', 'date', 'search', 'per_page', 'page', 'taxonomy' ];
 	foreach ( $ps as $tax => $terms ) {  // Taxonomies
 		if ( in_array( $tax, $keys, true ) ) continue;
+		$terms = \nt\is_string_array( $terms );
 		if ( empty( $terms ) ) continue;
 		$ts = is_array( $terms ) ? implode( ',', $terms ) : $terms;
 		$qs[] = [ $tax, $ts ];
@@ -61,4 +62,15 @@ function create_query_string( array $params ): string {
 		$kvs[] = $_key . '=' . $_val;
 	}
 	return implode( '&', $kvs );
+}
+
+function is_string_array( $val ) {
+	$fvs  = [];
+	$vals = is_array( $val ) ? $val : [ $val ];
+	foreach ( $vals as $v ) {
+		if ( is_string( $val ) ) {
+			$fvs[] = $v;
+		}
+	}
+	return $fvs;
 }
