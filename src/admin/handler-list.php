@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-09-15
  *
  */
 
@@ -31,12 +31,12 @@ function handle_query(): array {
 	$types    = $nt_store->type()->getTypeAll();
 	$def_type = array_keys( $types )[0];
 
-	$type    = \nt\get_param( 'type',     $def_type, $query );
-	$perPage = \nt\get_param( 'per_page', 10,        $query );
-	$date    = \nt\get_param( 'date',     null,      $query );
-	$page    = \nt\get_param( 'page',     null,      $query );
-	$status  = \nt\get_param( 'status',   null,      $query );
-	$error   = \nt\get_param( 'error',    null,      $query );
+	$type    = $query['type']     ?? $def_type;
+	$perPage = $query['per_page'] ?? 10;
+	$date    = $query['date']     ?? null;
+	$page    = $query['page']     ?? null;
+	$status  = $query['status']   ?? null;
+	$error   = $query['error']    ?? null;
 	unset( $query['error'] );
 
 	if ( $nt_session->checkNonce() ) {
