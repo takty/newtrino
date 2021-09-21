@@ -8,13 +8,28 @@
 <script src="../nt/index.min.js"></script>
 <title>Newtrino Sample</title>
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
-		NT.queryRecentPosts('../nt/', (view) => {
-			NT.renderTemplate('#post[type="text/html"]', view);
-		}, { count: 2, base_url: './topic/', query: { type: 'post' },  option: { date_format: 'Y-MM-DD' } });
-		NT.queryRecentPosts('../nt/', (view) => {
-			NT.renderTemplate('#event[type="text/html"]', view);
-		}, { count: 2, base_url: './topic/', query: { type: 'event' }, option: { date_format: 'Y-MM-DD' } });
+	document.addEventListener('DOMContentLoaded', async () => {
+		const vp = await new Promise(res => NT.queryRecentPosts('../nt/', view => res(view),
+			{
+				base_url: './topic/',
+				query: [
+					{
+						per_page  : -1,
+						type      : 'post',
+						meta_query: [ { key: 'sticky' } ]
+					},
+					{
+						per_page  : 10,
+						type      : 'post',
+						meta_query: [ { key: 'sticky', compare: 'not exist' } ]
+					},
+				],
+				option: { date_format: 'Y-MM-DD' }
+			}
+		));
+		NT.renderTemplate('#post[type="text/html"]', vp);
+		const ve = await new Promise(res => NT.queryRecentPosts('../nt/', view => res(view), { count: 2, base_url: './topic/', query: { type: 'event' }, option: { date_format: 'Y-MM-DD' } }));
+		NT.renderTemplate('#event[type="text/html"]', ve);
 	});
 </script>
 </head>
@@ -28,7 +43,7 @@
 			<script type="text/html" id="post">
 				<ul id="list-item-post">
 {{#posts}}
-					<li class="{{class@joined}}">
+					<li class="{{class@joined}}{{#meta.sticky}} sticky{{/meta.sticky}}">
 						<a href="{{url}}">
 							{{#taxonomy.category}}
 							<span class="category">{{label}}</span>

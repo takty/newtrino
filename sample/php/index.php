@@ -1,6 +1,23 @@
 <?php
 require_once( __DIR__ . '/../nt/index.php' );
-$view_post  = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'query' => [ 'type' => 'post' ],  'option' => [ 'date_format' => 'Y-m-d' ] ] );
+$view_post = \nt\query_recent_posts(
+	[
+		'base_url' => './topic/',
+		'query'    => [
+			[
+				'per_page'   => -1,
+				'type'       => 'post',
+				'meta_query' => [ [ 'key' => 'sticky' ] ]
+			],
+			[
+				'per_page'   => 10,
+				'type'       => 'post',
+				'meta_query' => [ [ 'key' => 'sticky', 'compare' => 'not exist' ] ]
+			],
+		],
+		'option'   => [ 'date_format' => 'Y-m-d' ],
+	]
+);
 $view_event = \nt\query_recent_posts( [ 'count' => 2, 'base_url' => './topic/', 'query' => [ 'type' => 'event' ], 'option' => [ 'date_format' => 'Y-m-d' ] ] );
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
@@ -21,7 +38,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<?php \nt\begin(); ?>
 				<ul id="list-item-post">
 {{#posts}}
-					<li class="{{class@joined}}">
+					<li class="{{class@joined}}{{#meta.sticky}} sticky{{/meta.sticky}}">
 						<a href="{{url}}">
 							{{#taxonomy.category}}
 							<span class="category">{{label}}</span>

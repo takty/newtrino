@@ -6,6 +6,12 @@
 		"taxonomy": [ "category", "lang" ],
 		"meta": [
 			{
+				"key": "sticky",
+				"type": "checkbox",
+				"label": "Stick this post to the front page",
+				"label@ja": "この投稿を先頭に固定表示"
+			},
+			{
 				"key": "thumbnail",
 				"type": "media-image",
 				"label": "Featured Image",
