@@ -5,7 +5,7 @@ namespace nt;
  * Functions for Parameters
  *
  * @author Takuto Yanagida
- * @version 2021-09-16
+ * @version 2021-09-21
  *
  */
 
@@ -61,7 +61,7 @@ function filter_param( $val, string $type ) {
 			$fvs  = [];
 			$vals = is_array( $val ) ? $val : [ $val ];
 			foreach ( $vals as $v ) {
-				if ( is_string( $val ) ) {
+				if ( is_string( $v ) ) {
 					$fvs[] = $v;
 				}
 			}
@@ -70,7 +70,7 @@ function filter_param( $val, string $type ) {
 			$fvs  = [];
 			$vals = is_array( $val ) ? $val : [ $val ];
 			foreach ( $vals as $v ) {
-				if ( is_string( $v ) && preg_match( '/^[-\w]+$/', $val ) ) {
+				if ( is_string( $v ) && preg_match( '/^[-\w]+$/', $v ) ) {
 					$fvs[] = $v;
 				}
 			}
@@ -79,7 +79,7 @@ function filter_param( $val, string $type ) {
 			$fvs  = [];
 			$vals = is_array( $val ) ? $val : [ $val ];
 			foreach ( $vals as $v ) {
-				if ( is_int( $v ) || ( is_string( $v ) && preg_match( '/^[\d]+$/', $val ) ) ) {
+				if ( is_int( $v ) || ( is_string( $v ) && preg_match( '/^[\d]+$/', $v ) ) ) {
 					$fvs[] = (int) $v;
 				}
 			}
