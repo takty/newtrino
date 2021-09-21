@@ -5,7 +5,7 @@ namespace nt;
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-09-21
  *
  */
 
@@ -119,22 +119,33 @@ function query_recent_posts( array $args = [] ): array {
 	$option   = $args['option']   ?? [];
 	$base_url = $args['base_url'] ?? null;
 
-	if ( ! $base_url ) $base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-
-	if ( ! isset( $query['per_page'] ) ) $query['per_page'] = $count;
+	if ( ! $base_url ) {
+		$base_url = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+	}
+	if ( isset( $query[0] ) ) {
+		foreach ( $query as &$q ) {
+			if ( ! isset( $q['per_page'] ) ) {
+				$q['per_page'] = $count;
+			}
+		}
+	} else {
+		if ( ! isset( $query['per_page'] ) ) {
+			$query['per_page'] = $count;
+		}
+	}
 	$msg = [
 		'query'  => $query,
 		'filter' => [],
 		'option' => $option
 	];
-	return _create_view_archive( $msg, $base_url );
+	return _create_view_archive( $msg, $base_url, $count );
 }
 
 
 // -----------------------------------------------------------------------------
 
 
-function _create_view_archive( array $msg, string $base_url ): array {
+function _create_view_archive( array $msg, string $base_url, int $count = -1 ): array {
 	$res = create_response_archive( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['posts'] = [];
 	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
@@ -144,6 +155,10 @@ function _create_view_archive( array $msg, string $base_url ): array {
 	$view['navigation'] = [];
 	$view['navigation']['pagination'] = _create_pagination_view( $msg, $res['page_count'], $base_url );
 	$view['filter'] = _create_filter_view( $msg, $res, $base_url );
+
+	if ( 0 < $count && $count < count( $view['posts'] ) ) {
+		$view['posts'] = array_slice( $view['posts'], 0, $count );
+	}
 	return $view;
 }
 

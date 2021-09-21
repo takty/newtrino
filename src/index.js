@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida
- * @version 2020-09-05
+ * @version 2021-09-21
  *
  */
 
@@ -43,25 +43,36 @@ window.NT = window['NT'] || {};
 		const count   = args.count    ? args.count    : 10;
 		const query   = args.query    ? args.query    : {};
 		const option  = args.option   ? args.option   : {};
-		let   baseUrl = args.base_url ? args.base_url : false;
+		let   baseUrl = args.base_url ? args.base_url : null;
 
 		url += (url.endsWith('/') ? '' : '/') + AJAX_API;
-		if (!baseUrl) baseUrl = window.location.origin + window.location.pathname;
-
-		if (!query['per_page']) query['per_page'] = count;
+		if (!baseUrl) {
+			baseUrl = window.location.origin + window.location.pathname;
+		}
+		if (Array.isArray(query)) {
+			for (const q of query) {
+				if (!q['per_page']) {
+					q['per_page'] = count;
+				}
+			}
+		} else {
+			if (!query['per_page']) {
+				query['per_page'] = count;
+			}
+		}
 		const msg = {
 			query : query,
 			filter: {},
 			option: option
 		};
-		_createViewArchive(url, callback, msg, baseUrl);
+		_createViewArchive(url, callback, msg, baseUrl, count);
 	}
 
 
 	// -------------------------------------------------------------------------
 
 
-	function _createViewArchive(url, callback, msg, baseUrl) {
+	function _createViewArchive(url, callback, msg, baseUrl, count = -1) {
 		sendRequest(url, msg, (res) => {
 			if (!res || res.status !== 'success') res.posts = [];
 			const df = (msg.option && msg.option.date_format) ? msg.option.date_format : null;
@@ -72,6 +83,9 @@ window.NT = window['NT'] || {};
 			view.navigation.pagination = _createPaginationView(msg, res.page_count, baseUrl);
 			view.filter = _createFilterView(msg, res, baseUrl);
 
+			if (0 < count && count < view.posts.length) {
+				view.posts.length = count;
+			}
 			callback(view);
 		});
 	}

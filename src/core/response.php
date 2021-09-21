@@ -5,7 +5,7 @@ namespace nt;
  * Response
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-09-21
  *
  */
 
@@ -26,34 +26,21 @@ function create_response_archive( array $query, array $filter, array $option = [
 	$nt_config += $option;
 	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 
-	$query  = _rearrange_query( $query );
-	$filter = _rearrange_filter( $filter );
-
-	$type    = \nt\get_param( 'type',     null, $query );
-	$page    = \nt\get_param( 'page',     null, $query );
-	$perPage = \nt\get_param( 'per_page', null, $query );
-	$date    = \nt\get_param( 'date',     null, $query );
-	$search  = \nt\get_param( 'search',   null, $query );
-
-	$args = [];
-	if ( $type )    $args['type']       = $type;
-	if ( $page )    $args['page']       = $page;
-	if ( $search )  $args['search']     = $search;
-	if ( $perPage ) $args['per_page']   = $perPage;
-	if ( $date )    $args['date_query'] = [ [ 'date' => $date ] ];
-
-	if ( ! empty( $query['taxonomy'] ) ) {
-		\nt\create_tax_query_from_taxonomy_to_terms( $query['taxonomy'], $args );
+	if ( ! isset( $query[0] ) ) {
+		$query = [ $query ];
 	}
-	$ret = $nt_store->getPosts( $args );
-	$posts = array_map( '\nt\_create_post_data', $ret['posts'] );
-
+	$posts = [];
+	foreach ( $query as $q ) {
+		$args  = _create_args( $q );
+		$ret   = $nt_store->getPosts( $args );
+		$posts = array_merge( $posts, array_map( '\nt\_create_post_data', $ret['posts'] ) );
+	}
 	$res = [
 		'status'     => 'success',
 		'posts'      => $posts,
 		'page_count' => $ret['page_count'],
 	];
-	$res += _create_archive_data( $filter );
+	$res += _create_archive_data( _rearrange_filter( $filter ) );
 	return $res;
 }
 
@@ -62,18 +49,15 @@ function create_response_single( array $query, array $filter, array $option = []
 	$nt_config += $option;
 	$nt_store  = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 
-	$query  = _rearrange_query( $query );
-	$filter = _rearrange_filter( $filter );
+	$args  = [];
+	$query = _rearrange_query( $query );
 
-	$id   = \nt\get_param( 'id',   null, $query );
-	$type = \nt\get_param( 'type', null, $query );
+	if ( isset( $query['type'] ) ) $args['type'] = $query['type'];
 
-	$args = [];
-	if ( $type ) $args['type'] = $type;
 	if ( ! empty( $query['taxonomy'] ) ) {
 		\nt\create_tax_query_from_taxonomy_to_terms( $query['taxonomy'], $args );
 	}
-	$ret = $nt_store->getPostWithNextAndPrevious( $id, $args );
+	$ret = $nt_store->getPostWithNextAndPrevious( $query['id'] ?? null, $args );
 
 	$res = [
 		'status' => 'success',
@@ -83,13 +67,34 @@ function create_response_single( array $query, array $filter, array $option = []
 			'next'     => _create_post_data( $ret ? $ret[2] : null ),
 		]
 	];
-	$res += _create_archive_data( $filter );
+	$res += _create_archive_data( _rearrange_filter( $filter ) );
 	return $res;
 }
 
 
 // -----------------------------------------------------------------------------
 
+
+function _create_args( array $query ): array {
+	$args = [];
+
+	if ( isset( $query['tax_query'] ) )  $args['tax_query']  = $query['tax_query'];
+	if ( isset( $query['date_query'] ) ) $args['date_query'] = $query['date_query'];
+	if ( isset( $query['meta_query'] ) ) $args['meta_query'] = $query['meta_query'];
+
+	$query = _rearrange_query( $query );
+
+	if ( isset( $query['type'] ) )    $args['type']       = $query['type'];
+	if ( isset( $query['search'] ) )  $args['search']     = $query['search'];
+	if ( isset( $query['page'] ) )    $args['page']       = $query['page'];
+	if ( isset( $query['perPage'] ) ) $args['per_page']   = $query['perPage'];
+	if ( isset( $query['date'] ) )    $args['date_query'] = [ [ 'date' => $query['date'] ] ];
+
+	if ( ! empty( $query['taxonomy'] ) ) {
+		\nt\create_tax_query_from_taxonomy_to_terms( $query['taxonomy'], $args );
+	}
+	return $args;
+}
 
 function _rearrange_query( array $query ): array {
 	return \nt\get_query_vars( $query, [
@@ -228,11 +233,11 @@ function _create_archive_data( array $filter ): array {
 	if ( empty( $filter ) ) return [];
 	$res = [];
 	if ( isset( $filter['date'] ) ) {
-		$_date = \nt\get_param( 'date', '', $filter );
+		$_date = $filter['date'];
 		$res += [ 'date' => _get_date_archive( $_date, $filter ) ];
 	}
 	if ( isset( $filter['taxonomy'] ) ) {
-		$_taxes = \nt\get_param( 'taxonomy', [], $filter );
+		$_taxes = $filter['taxonomy'];
 		$res += [ 'taxonomy' => _get_taxonomy_archive( $_taxes ) ];
 	}
 	return $res;
