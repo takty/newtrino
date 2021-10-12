@@ -5,7 +5,7 @@ namespace nt;
  * Function for Sending Files
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2021-10-12
  *
  */
 
@@ -56,7 +56,10 @@ function send_file( string $path, ?string $mimeType = null, bool $isDownload = f
 	if ( 0 < $from || $to < $size - 1 ) {
 		$fp = fopen( $path, 'rb' );
 		fseek( $fp, $from );
-		echo fread( $fp, $to - $from + 1 );
+		$cont = fread( $fp, $to - $from + 1 );
+		if ( false !== $cont ) {
+			echo $cont;
+		}
 		fclose( $fp );
 	} else {
 		readfile( $path );
