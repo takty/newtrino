@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2021-10-12
  *
  */
 
@@ -160,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			'link lists media nonbreaking noneditable paste print searchreplace table textpattern visualblocks visualchars',
 		];
 		const toolbars = [
-			'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat',
-			'formatselect | bullist numlist | blockquote | alignleft aligncenter alignright | styleselect',
+			'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat |',
+			'formatselect | bullist numlist | blockquote | alignleft aligncenter alignright | styleselect |',
 		];
 		const formats = [
 			'Paragraph=p',
