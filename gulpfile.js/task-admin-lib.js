@@ -3,7 +3,7 @@
  * Gulpfile - Tasks for copying libraries
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
+ * @version 2021-10-12
  *
  */
 
@@ -58,7 +58,7 @@ const makeTaskCopyTinymce = () => {
 	const ups = [  // Unused plugins
 		'autoresize', 'autosave', 'bbcode', 'codesample', 'colorpicker', 'contextmenu', 'emoticons',
 		'fullpage', 'fullscreen', 'help', 'importcss', 'legacyoutput', 'pagebreak',
-		'preview', 'save', 'tabfocus', 'textcolor', 'toc', 'template', 'wordcount'
+		'preview', 'save', 'spellchecker', 'tabfocus', 'textcolor', 'toc', 'template', 'wordcount'
 	];
 	const f = gulp.parallel(
 		makeCopyTask(dir + '/tinymce.min.js', DIST_ADMIN + 'js/tinymce/'),
