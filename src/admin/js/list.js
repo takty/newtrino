@@ -3,7 +3,7 @@
  * List (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2021-12-01
  *
  */
 
@@ -19,10 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const msgDelPer = document.getElementById('message-delete-permanently').value;
 	const msgEmpty  = document.getElementById('message-empty-trash').value;
 
-	for (let btn of btnsRemove) {
+	for (const btn of btnsRemove) {
 		btn.addEventListener('click', onRemoveClicked);
 	}
-	for (let btn of btnsRestore) {
+	for (const btn of btnsRestore) {
 		btn.addEventListener('click', onRestoreClicked);
 	}
 	btnEmpty.addEventListener('click', onEmptyTrashClicked);

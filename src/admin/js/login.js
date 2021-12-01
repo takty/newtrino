@@ -3,7 +3,7 @@
  * Login (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-29
+ * @version 2021-12-01
  *
  */
 
@@ -148,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		window.crypto.getRandomValues(rands);
 
 		let ret = '';
-		for (let i = 0; i < rands.length; i += 1) {
-			ret += str.charAt(rands[i] % len);
+		for (const r of rands) {
+			ret += str.charAt(r % len);
 		}
 		return ret;
 	}

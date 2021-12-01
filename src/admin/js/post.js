@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-10-12
+ * @version 2021-12-01
  *
  */
 
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const es = document.querySelectorAll('.flatpickr.date');
 		if (es.length === 0) return;
 		flatpickr('.flatpickr.date', { wrap: true, locale: lang });
-		for (let e of es) {
+		for (const e of es) {
 			e.addEventListener('change', () => {
 				const f = document.getElementsByName('meta:' + e.dataset.key)[0];
 				const ds = e._flatpickr.selectedDates;
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const es = document.querySelectorAll('.flatpickr.date-range');
 		if (es.length === 0) return;
 		flatpickr('.flatpickr.date-range', { wrap: true, mode: 'range', locale: lang });
-		for (let e of es) {
+		for (const e of es) {
 			e.addEventListener('change', () => {
 				const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
 				const ds = e._flatpickr.selectedDates;
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function initMediaMetabox() {
 		const ms = document.querySelectorAll('.metabox-media');
 		addBtnEvent('.metabox-media .open-media-dialog', openMediaDialog);
-		for (let m of ms) {
+		for (const m of ms) {
 			const btnDel = m.querySelector('.button.delete');
 			if (!btnDel) continue;
 			btnDel.addEventListener('click', (e) => {
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			table_advtab            : false,
 			table_resize_bars       : false,
 		}, opt)
-		for (let f of window.NT.tiny_mce_before_init) args = f(args, lang, assetsUrl);
+		for (const f of window.NT.tiny_mce_before_init) args = f(args, lang, assetsUrl);
 		tinymce.init(args);
 
 		let st = null
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			st = setTimeout(() => {
 				if (e.target.value !== '') {
 					const es = document.getElementsByClassName('message');
-					for (let e of es) e.style.display = '';
+					for (const e of es) e.style.display = '';
 				}
 				onModified();
 			}, 100);
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function addBtnEvent(sel, fn = null) {
 		const btns = document.querySelectorAll(sel);
-		for (let btn of btns) {
+		for (const btn of btns) {
 			btn.addEventListener('mouseup', (e) => {
 				if (e.button === 0) {
 					e.preventDefault();
@@ -434,7 +434,7 @@ function onModified() {
 	if (isModified) return;
 	isModified = true;
 	const es = document.getElementsByClassName('message');
-	for (let e of es) e.style.display = '';
+	for (const e of es) e.style.display = '';
 	const um = document.getElementById('message-notification');
 	um.innerText = '';
 }

@@ -3,7 +3,7 @@
  * Media Dialog (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-06-26
+ * @version 2021-12-01
  *
  */
 
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	const rs = document.querySelectorAll('.item-media input[type="radio"]');
-	for (let r of rs) r.addEventListener('change', onSelected);
+	for (const r of rs) r.addEventListener('change', onSelected);
 	window.parent.setMediaItemCount(rs.length);
 
 	const selAlign = document.getElementById('image-align');
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		btnInsert.disabled = false;
 
 		const url = e.target.parentElement.querySelector('.file-url').value;
-		if (url.indexOf('/?.') === -1) {
+		if (!url.includes('/?.')) {
 			mediaUrl.value = url;
 		} else {
 			mediaUrl.value = '';
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const sizes = JSON.parse(ss.value);
 			const sizeCls = Object.keys(sizes);
 			selSize.className = sizeCls.join(' ');
-			if (sizeCls.indexOf(selSize.value) === -1) {
+			if (!sizeCls.includes(selSize.value)) {
 				if (sizeCls.length === 1) selSize.value = sizeCls[sizeCls.length - 1];
 				else selSize.value = sizeCls[sizeCls.length - 2];
 			}
