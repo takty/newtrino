@@ -5,7 +5,7 @@ namespace nt;
  * Function for Nonce and Tokens
  *
  * @author Takuto Yanagida
- * @version 2021-06-29
+ * @version 2021-12-01
  *
  */
 
@@ -49,7 +49,7 @@ function check_token( $path, $token ): bool {
 			$valid = true;
 			continue;
 		}
-		$new[] = $t;
+		$new[] = $r;
 	}
 	if ( count( $rs ) !== count( $new ) ) {
 		$dir = pathinfo( $path, PATHINFO_DIRNAME );
