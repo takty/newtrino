@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-09-21
+ * @version 2021-12-01
  *
  */
 
@@ -110,15 +110,13 @@ window.NT = window['NT'] || {};
 
 
 	function _processPostsForView(items, dateFormat, baseUrl) {
-		for (let i = 0; i < items.length; i += 1) {
-			const p = items[i];
+		for (const p of items) {
 			if (!p) continue;
 			if (p['taxonomy']) {
 				const tax = Object.entries(p['taxonomy']);
-				for (let i = 0; i < tax.length; i += 1) {
-					const [tax_slug, terms] = tax[i];
+				for (const [tax_slug, terms] of tax) {
 					const a = {};
-					for (let j = 0; j < terms.length; j += 1) a[terms[j].slug] = true;
+					for (const t of terms) a[t.slug] = true;
 					p['taxonomy']['$' + tax_slug] = a;
 				}
 			}
@@ -128,18 +126,16 @@ window.NT = window['NT'] || {};
 				p['modified'] = moment(p['modified']).format(dateFormat);
 			}
 			if (p['meta']) {
-				const meta = Object.entries(p['meta']);
-				for (let i = 0; i < meta.length; i += 1) {
-					const [key, val] = meta[i];
-					if (key.indexOf('@') === -1) continue;
-					if (!p['meta'] && p['meta'][key + '@type']) continue;
+				for (const [key, val] of Object.entries(p['meta'])) {
+					if (key.includes('@')) continue;
 					if (p['meta'][key + '@type'] === 'date') {
 						val = moment(val).format(dateFormat);
 					}
 					if (p['meta'][key + '@type'] === 'date-range') {
-						val[0] = moment(val[0]).format(dateFormat);
-						val[1] = moment(val[1]).format(dateFormat);
+						val['from'] = val['from'] !== undefined ? moment(val['from']).format(dateFormat) : '';
+						val['to']   = val['to']   !== undefined ? moment(val['to']  ).format(dateFormat) : '';
 					}
+					p['meta'][key] = val;
 				}
 			}
 			if (p['class']) {
@@ -189,9 +185,8 @@ window.NT = window['NT'] || {};
 		}
 		v.taxonomy = {};
 		if (res.taxonomy) {
-			const tes = Object.entries(res.taxonomy);
-			for (let i = 0; i < tes.length; i += 1) {
-				Object.assign(v.taxonomy, _createTaxonomyFilterView(msg, tes[i][0], tes[i][1], baseUrl));
+			for (const [tax, terms] of Object.entries(res.taxonomy)) {
+				Object.assign(v.taxonomy, _createTaxonomyFilterView(msg, tax, terms, baseUrl));
 			}
 		}
 		v.search = {
@@ -213,11 +208,11 @@ window.NT = window['NT'] || {};
 			}
 		}
 		const as = [];
-		for (let i = 0; i < dates.length; i += 1) {
-			const url = createCanonicalUrl(baseUrl, { date: dates[i].slug });
-			const label = _format_date_label('' + dates[i].slug, df);
-			const p = { label: label, url: url };
-			if (dates[i].slug == cur /* == */) p['is_selected'] = true;
+		for (const d of dates) {
+			const label = _format_date_label('' + d.slug, df);
+			const url   = createCanonicalUrl(baseUrl, { date: d.slug });
+			const p     = { label, url };
+			if (d.slug == cur /* == */) p['is_selected'] = true;
 			as.push(p);
 		}
 		return { [type]: as };
@@ -237,10 +232,11 @@ window.NT = window['NT'] || {};
 	function _createTaxonomyFilterView(msg, tax, terms, baseUrl) {
 		const cur = (msg.query && msg.query[tax]) ? msg.query[tax] : '';
 		const as = [];
-		for (let i = 0; i < terms.length; i += 1) {
-			const url = createCanonicalUrl(baseUrl, { [tax]: terms[i].slug });
-			const p = { label: terms[i].label, url: url };
-			if (terms[i].slug === cur) p['is_selected'] = true;
+		for (const t of terms) {
+			const label = t.label;
+			const url   = createCanonicalUrl(baseUrl, { [tax]: t.slug });
+			const p     = { label, url };
+			if (t.slug === cur) p['is_selected'] = true;
 			as.push(p);
 		}
 		return { [tax]: as };
@@ -254,8 +250,7 @@ window.NT = window['NT'] || {};
 		function isEmptyArray(a) { return (Array.isArray(a) && a.length === 0); }
 
 		const ts = document.querySelectorAll(tmplSel);
-		for (let i = 0; i < ts.length; i += 1) {
-			const tmpl = ts[i];
+		for (const tmpl of ts) {
 			const sec = tmpl.dataset.section;
 			if (sec && 0 < sec.length) {
 				const k = sec.substring(1);
@@ -293,7 +288,7 @@ window.NT = window['NT'] || {};
 		t.innerHTML = Mustache.render(tmpl.innerHTML, view);
 
 		const cs = [].slice.call(t.childNodes, 0);
-		for (let c of cs) {
+		for (const c of cs) {
 			frag.appendChild(c);
 		}
 		return frag;
@@ -311,11 +306,11 @@ window.NT = window['NT'] || {};
 		const ps = {};
 		while (m = regex.exec(str)) ps[decodeQueryParam(m[1])] = decodeQueryParam(m[2]);
 
-		const es = Object.entries(ps);
 		let defaultVal = '';
-		for (let i = 0; i < es.length; ++i) {
-			const [key, val] = es[i];
-			if (defaultKey && !val && !str.includes(key + '=')) defaultVal = key;
+		for (const [key, val] of Object.entries(ps)) {
+			if (defaultKey && !val && !str.includes(key + '=')) {
+				defaultVal = key;
+			}
 		}
 		if (defaultVal) ps[defaultKey] = defaultVal;
 
@@ -324,22 +319,15 @@ window.NT = window['NT'] || {};
 
 	function createQueryString(params) {
 		const kvs = [];
-		if (Array.isArray(params)) {
-			for (let i = 0; i < params.length; i += 1) {
-				const _key = encodeQueryParam(params[i][0]);
-				let v = params[i][1];
-				if (v.constructor.name === 'Array' || v.constructor.name === 'Object') v = JSON.stringify(v);
-				const _val = encodeQueryParam(v);
-				kvs.push(_key + '=' + _val);
+		params = Array.isArray(params) ? params : Object.entries(params);
+		for (const p of params) {
+			const _key = encodeQueryParam(p[0]);
+			let v = p[1];
+			if (v.constructor.name === 'Array' || v.constructor.name === 'Object') {
+				v = JSON.stringify(v);
 			}
-		} else {
-			for (let key in params) {
-				const _key = encodeQueryParam(key);
-				let v = params[key];
-				if (v.constructor.name === 'Array' || v.constructor.name === 'Object') v = JSON.stringify(v);
-				const _val = encodeQueryParam(v);
-				kvs.push(_key + '=' + _val);
-			}
+			const _val = encodeQueryParam(v);
+			kvs.push(_key + '=' + _val);
 		}
 		return kvs.join('&');
 	}
@@ -359,9 +347,9 @@ window.NT = window['NT'] || {};
 		if (ps['per_page']) qs.push(['per_page', ps.per_page]);
 
 		const keys = ['id', 'type', 'date', 'search', 'per_page', 'page', 'taxonomy'];
-		for (let tax in ps) {  // taxonomy
-			if (keys.indexOf(tax) !== -1) continue;
-			const ts = Array.isArray(ps[tax]) ? ps[tax].join(',') : ps[tax];
+		for (const [tax, v] of Object.entries(ps)) {  // taxonomy
+			if (keys.includes(tax)) continue;
+			const ts = Array.isArray(v) ? v.join(',') : v;
 			if (ts.length === 0) continue;
 			qs.push([tax, ts]);
 		}
