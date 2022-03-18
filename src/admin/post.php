@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida
- * @version 2021-06-08
+ * @version 2022-03-18
  *
  */
 
@@ -27,7 +27,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="stylesheet" href="css/style.min.css">
 <link rel="apple-touch-icon" type="image/png" href="css/logo-180x180.png">
 <link rel="icon" type="image/png" href="css/logo.png">
-<script src="js/moment/moment.min.js"></script>
+<script src="js/luxon/luxon.min.js"></script>
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>

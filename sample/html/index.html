@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@2.3.1/build/global/luxon.min.js"></script>
 <script src="../nt/index.min.js"></script>
 <title>Newtrino Sample</title>
 <script>
@@ -24,11 +24,11 @@
 						meta_query: [ { key: 'sticky', compare: 'not exist' } ]
 					},
 				],
-				option: { date_format: 'Y-MM-DD' }
+				option: { date_format: 'yyyy-MM-dd' }
 			}
 		));
 		NT.renderTemplate('#post[type="text/html"]', vp);
-		const ve = await new Promise(res => NT.queryRecentPosts('../nt/', view => res(view), { count: 2, base_url: './topic/', query: { type: 'event' }, option: { date_format: 'Y-MM-DD' } }));
+		const ve = await new Promise(res => NT.queryRecentPosts('../nt/', view => res(view), { count: 2, base_url: './topic/', query: { type: 'event' }, option: { date_format: 'yyyy-MM-dd' } }));
 		NT.renderTemplate('#event[type="text/html"]', ve);
 	});
 </script>

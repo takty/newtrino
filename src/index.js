@@ -3,7 +3,7 @@
  * Index (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-12-01
+ * @version 2022-03-18
  *
  */
 
@@ -122,18 +122,18 @@ window.NT = window['NT'] || {};
 			}
 			p.url = baseUrl + '?' + encodeQueryParam(p.id);
 			if (dateFormat) {
-				p['date']     = moment(p['date']).format(dateFormat);
-				p['modified'] = moment(p['modified']).format(dateFormat);
+				p['date']     = formatDate(p['date'], dateFormat);
+				p['modified'] = formatDate(p['modified'], dateFormat);
 			}
 			if (p['meta']) {
 				for (const [key, val] of Object.entries(p['meta'])) {
 					if (key.includes('@')) continue;
 					if (p['meta'][key + '@type'] === 'date') {
-						val = moment(val).format(dateFormat);
+						val = formatDate(val, dateFormat);
 					}
 					if (p['meta'][key + '@type'] === 'date-range') {
-						val['from'] = val['from'] !== undefined ? moment(val['from']).format(dateFormat) : '';
-						val['to']   = val['to']   !== undefined ? moment(val['to']  ).format(dateFormat) : '';
+						val['from'] = val['from'] !== undefined ? formatDate(val['from'], dateFormat) : '';
+						val['to']   = val['to']   !== undefined ? formatDate(val['to'], dateFormat) : '';
 					}
 					p['meta'][key] = val;
 				}
@@ -202,14 +202,14 @@ window.NT = window['NT'] || {};
 			df = msg.filter.date_format;
 		} else {
 			switch (type) {
-				case 'year':  df = 'Y'; break;
-				case 'month': df = 'Y-m'; break;
-				case 'day':   df = 'Y-m-d'; break;
+				case 'year':  df = 'yyyy'; break;
+				case 'month': df = 'yyyy-MM'; break;
+				case 'day':   df = 'yyyy-MM-dd'; break;
 			}
 		}
 		const as = [];
 		for (const d of dates) {
-			const label = _format_date_label('' + d.slug, df);
+			const label = _formatDateLabel('' + d.slug, df);
 			const url   = createCanonicalUrl(baseUrl, { date: d.slug });
 			const p     = { label, url };
 			if (d.slug == cur /* == */) p['is_selected'] = true;
@@ -218,15 +218,11 @@ window.NT = window['NT'] || {};
 		return { [type]: as };
 	}
 
-	function _format_date_label( slug, df ) {
-		let y = slug.substring(0, 4);
-		let m = slug.substring(4, 2);
-		let d = slug.substring(6, 2);
-		if (!y) y = '1970';
-		if (!m) m = '01';
-		if (!d) d = '01';
-		const date = new Date(parseInt(y), parseInt(m), parseInt(d));
-		return moment(date).format(df);
+	function _formatDateLabel(slug, df) {
+		const y = 3 < slug.length ? slug.substring(0, 4) : '1970';
+		const m = 5 < slug.length ? slug.substring(4, 2) : '01';
+		const d = 7 < slug.length ? slug.substring(6, 2) : '01';
+		return formatDate(`${y}-${m}-${d}`, df);
 	}
 
 	function _createTaxonomyFilterView(msg, tax, terms, baseUrl) {
@@ -389,6 +385,11 @@ window.NT = window['NT'] || {};
 	function unescapeHtml(str) {
 		str = str.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?(\/)?>|<\/\w+>/gi, '');
 		return str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+	}
+
+	function formatDate(d, format) {
+		format = format.replaceAll('Y', 'y');  // Convert moment.js to luxon.
+		return luxon.DateTime.fromSQL(d).toFormat(format);
 	}
 
 

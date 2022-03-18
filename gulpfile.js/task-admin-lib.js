@@ -3,7 +3,7 @@
  * Gulpfile - Tasks for copying libraries
  *
  * @author Takuto Yanagida
- * @version 2022-03-17
+ * @version 2022-03-18
  *
  */
 
@@ -22,8 +22,9 @@ const DIST_ADMIN = './dist/admin/';
 
 const makeTaskCopyNacssReset = () => {
 	const dir = pkgDir('nacss-reset');
-	const f = makeCopyTask(dir + '/dist/reset.min.css*(.map)', DIST_ADMIN + 'css/');
+	const f = makeCopyTask(dir + '/dist/css/reset.min.css*(.map)', DIST_ADMIN + 'css/');
 	f.displayName = 'adminLibCopyNacssReset';
+	console.log(dir + '/dist/reset.min.css*(.map)', DIST_ADMIN + 'css/');
 	return f;
 };
 
@@ -34,10 +35,10 @@ const makeTaskCopyJssha = () => {
 	return f;
 };
 
-const makeTaskCopyMoment = () => {
-	const dir = pkgDir('moment');
-	const f = makeCopyTask(dir + '/min/moment.min.js*(.map)', DIST_ADMIN + 'js/moment/');
-	f.displayName = 'adminLibCopyMoment';
+const makeTaskCopyLuxon = () => {
+	const dir = pkgDir('luxon');
+	const f = makeCopyTask(dir + '/build/global/luxon.min.js*(.map)', DIST_ADMIN + 'js/luxon/');
+	f.displayName = 'adminLibCopyLuxon';
 	return f;
 };
 
@@ -76,6 +77,6 @@ exports.taskAdminLib = gulp.parallel(
 	makeTaskCopyNacssReset(),
 	makeTaskCopyJssha(),
 	makeTaskCopyFlatpickr(),
-	makeTaskCopyMoment(),
+	makeTaskCopyLuxon(),
 	makeTaskCopyTinymce(),
 );

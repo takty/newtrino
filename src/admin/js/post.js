@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2021-12-01
+ * @version 2022-03-18
  *
  */
 
@@ -37,6 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	// -------------------------------------------------------------------------
 
 
+	function formatDate(d, format) {
+		return (d ? luxon.DateTime.fromSQL(d) : luxon.DateTime.now()).toFormat(format);
+	}
+
+	function toDate(d) {
+		return luxon.DateTime.fromSQL(d).toJSDate();
+	}
+
+
+	// -------------------------------------------------------------------------
+
+
 	function initPublishingMetabox() {
 		const postDate = document.getElementById('post-date');
 		const postStatus = document.getElementById('post-status');
@@ -48,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			locale       : lang,
 			onChange     : function (dateObj, dateStr, instance) {
 				if (postStatus.value === 'draft') return;
-				const dn = parseInt(moment(dateStr).format('YYYYMMDDhhmmss'));
-				const cn = parseInt(moment().format('YYYYMMDDhhmmss'));
+				const dn = parseInt(formatDate(dateStr, 'yyyyMMddhhmmss'));
+				const cn = parseInt(formatDate(null, 'yyyyMMddhhmmss'));
 				if (dn <= cn) {
 					document.getElementById('post-status-publish').selected = true;
 				} else {
@@ -60,10 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		postStatus.addEventListener('change', () => {
 			const s = postStatus.value;
 			if (s === 'draft') return;
-			const dn = parseInt(moment(postDate.value).format('YYYYMMDDhhmmss'));
-			const cn = parseInt(moment().format('YYYYMMDDhhmmss'));
+			const dn = parseInt(formatDate(postDate.value, 'yyyyMMddhhmmss'));
+			const cn = parseInt(formatDate(null, 'yyyyMMddhhmmss'));
 			if (s === 'publish' && dn > cn) {
-				postDate.value = moment().format('YYYY-MM-DD hh:mm:ss');
+				postDate.value = formatDate(null, 'yyyy-MM-dd hh:mm:ss');  // SQL format
 			}
 			if (s === 'future' && dn <= cn) {
 				setTimeout(() => { fp.open(); }, 100);
@@ -82,14 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				const f = document.getElementsByName('meta:' + e.dataset.key)[0];
 				const ds = e._flatpickr.selectedDates;
 				if (ds.length) {
-					f.value = moment(ds[0]).format('YYYY-MM-DD');
+					f.value = formatDate(ds[0], 'yyyy-MM-dd');
 				} else {
 					f.value = '';
 				}
 			});
 			const f = document.getElementsByName('meta:' + e.dataset.key)[0];
 			if (!f.value) continue;
-			const d = moment(f.value).toDate();
+			const d = toDate(f.value);
 			e._flatpickr.setDate(d);
 		}
 	}
@@ -104,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				const ds = e._flatpickr.selectedDates;
 				if (ds.length) {
 					fs.value = JSON.stringify({
-						from: moment(ds[0]).format('YYYY-MM-DD'),
-						to  : moment(ds[1]).format('YYYY-MM-DD'),
+						from: formatDate(ds[0], 'yyyy-MM-dd'),
+						to  : formatDate(ds[1], 'yyyy-MM-dd'),
 					});
 				} else {
 					fs.value = '';
@@ -115,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (!fs.value) continue;
 			const m = JSON.parse(fs.value);
 			if (m === null) continue;
-			const from = moment(m.from).toDate();
-			const to   = moment(m.to  ).toDate();
+			const from = toDate(m.from);
+			const to   = toDate(m.to);
 			e._flatpickr.setDate([from, to]);
 		}
 	}
