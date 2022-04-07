@@ -28,7 +28,7 @@
 		"not dead"
 	],
 	"dependencies": {
-		"@babel/core": "^7.17.7",
+		"@babel/core": "^7.17.9",
 		"@babel/preset-env": "^7.16.11",
 		"current-git-branch": "^1.1.0",
 		"flatpickr": "^4.6.11",
