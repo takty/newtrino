@@ -3,7 +3,7 @@
  * Common functions for gulp process
  *
  * @author Takuto Yanagida
- * @version 2021-06-17
+ * @version 2022-08-18
  *
  */
 
@@ -12,11 +12,8 @@
 
 const SASS_OUTPUT_STYLE = 'compressed';  // 'expanded' or 'compressed'
 
-
-const path = require('path');
-
 function pkgDir(name) {
-	return path.dirname(require.resolve(name + '/package.json'));
+	return `node_modules/${name}`;
 }
 
 function verStr(devPostfix = ' [dev]') {
