@@ -47,7 +47,7 @@
 		"jssha": "^3.2.0",
 		"luxon": "^3.0.1",
 		"nacss-reset": "git+https://github.com/takty/nacss-reset.git",
-		"tinymce": "^5.10.3",
-		"tinymce-i18n": "^22.2.11"
+		"tinymce": "^5.10.5",
+		"tinymce-i18n": "^22.5.2"
 	}
 }
