@@ -173,7 +173,7 @@
 	}
 	.flatpickr-input {
 		@include for-tl {
-			padding: { left: 0.45rem; right: 0.45rem; }
+			padding-inline: 0.45rem;
 		}
 	}
 	.flatpickr.date-range input {
@@ -246,10 +246,7 @@
 		position: relative;
 		> div {
 			position: absolute;
-			top     : 0;
-			left    : 0;
-			right   : 0;
-			bottom  : 0;
+			inset   : 0;
 
 			pointer-events: none;
 
