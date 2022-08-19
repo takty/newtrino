@@ -3,7 +3,7 @@
  * Post (JS)
  *
  * @author Takuto Yanagida
- * @version 2022-03-18
+ * @version 2022-08-19
  *
  */
 
@@ -37,12 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	// -------------------------------------------------------------------------
 
 
-	function formatDate(d, format) {
-		return (d ? luxon.DateTime.fromSQL(d) : luxon.DateTime.now()).toFormat(format);
+	function dateToFormat(d, format) {
+		return (d ? luxon.DateTime.fromJSDate(d) : luxon.DateTime.now()).toFormat(format);
 	}
 
-	function toDate(d) {
-		return luxon.DateTime.fromSQL(d).toJSDate();
+	function sqlToInt(sql = null) {
+		return parseInt((sql ? luxon.DateTime.fromSQL(sql) : luxon.DateTime.now()).toFormat('yyyyMMddhhmmss'), 10);
+	}
+
+	function sqlToDate(sql) {
+		return luxon.DateTime.fromSQL(sql).toJSDate();
 	}
 
 
@@ -50,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	function initPublishingMetabox() {
-		const postDate = document.getElementById('post-date');
+		const postDate   = document.getElementById('post-date');
 		const postStatus = document.getElementById('post-status');
 
 		const fp = flatpickr('#post-date', {
@@ -60,8 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			locale       : lang,
 			onChange     : function (dateObj, dateStr, instance) {
 				if (postStatus.value === 'draft') return;
-				const dn = parseInt(formatDate(dateStr, 'yyyyMMddhhmmss'));
-				const cn = parseInt(formatDate(null, 'yyyyMMddhhmmss'));
+				const dn = sqlToInt(dateStr);
+				const cn = sqlToInt();
 				if (dn <= cn) {
 					document.getElementById('post-status-publish').selected = true;
 				} else {
@@ -72,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		postStatus.addEventListener('change', () => {
 			const s = postStatus.value;
 			if (s === 'draft') return;
-			const dn = parseInt(formatDate(postDate.value, 'yyyyMMddhhmmss'));
-			const cn = parseInt(formatDate(null, 'yyyyMMddhhmmss'));
+			const dn = sqlToInt(postDate.value);
+			const cn = sqlToInt();
 			if (s === 'publish' && dn > cn) {
-				postDate.value = formatDate(null, 'yyyy-MM-dd hh:mm:ss');  // SQL format
+				postDate.value = dateToFormat(null, 'yyyy-MM-dd hh:mm:ss');  // SQL format
 			}
 			if (s === 'future' && dn <= cn) {
 				setTimeout(() => { fp.open(); }, 100);
@@ -94,14 +98,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				const f = document.getElementsByName('meta:' + e.dataset.key)[0];
 				const ds = e._flatpickr.selectedDates;
 				if (ds.length) {
-					f.value = formatDate(ds[0], 'yyyy-MM-dd');
+					f.value = dateToFormat(ds[0], 'yyyy-MM-dd');  // SQL format
 				} else {
 					f.value = '';
 				}
 			});
 			const f = document.getElementsByName('meta:' + e.dataset.key)[0];
 			if (!f.value) continue;
-			const d = toDate(f.value);
+			const d = sqlToDate(f.value);
 			e._flatpickr.setDate(d);
 		}
 	}
@@ -116,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				const ds = e._flatpickr.selectedDates;
 				if (ds.length) {
 					fs.value = JSON.stringify({
-						from: formatDate(ds[0], 'yyyy-MM-dd'),
-						to  : formatDate(ds[1], 'yyyy-MM-dd'),
+						from: dateToFormat(ds[0], 'yyyy-MM-dd'),  // SQL format
+						to  : dateToFormat(ds[1], 'yyyy-MM-dd'),  // SQL format
 					});
 				} else {
 					fs.value = '';
@@ -127,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (!fs.value) continue;
 			const m = JSON.parse(fs.value);
 			if (m === null) continue;
-			const from = toDate(m.from);
-			const to   = toDate(m.to);
+			const from = sqlToDate(m.from);
+			const to   = sqlToDate(m.to);
 			e._flatpickr.setDate([from, to]);
 		}
 	}

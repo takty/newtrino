@@ -5,7 +5,7 @@ namespace nt;
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2021-09-11
+ * @version 2022-08-19
  *
  */
 
@@ -288,8 +288,12 @@ function echo_metabox_date( Post $post, array $m, string $label, bool $internal 
 function echo_metabox_date_range( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
-	$json = ( $mv ) ? json_encode( $mv ) : '';
-	$json = is_string( $json ) ? $json : '';
+	$date = '';
+	if ( $mv && isset( $mv['from'] ) && isset( $mv['to'] ) ) {
+		$mv   = [ 'from' => \nt\parse_date( $mv['from'] ), 'to' => \nt\parse_date( $mv['to'] ) ];
+		$json = json_encode( $mv );
+		$date = is_string( $json ) ? $json : '';
+	}
 
 	$cls = $internal ? '' : ' frame frame-sub';
 ?>
@@ -299,7 +303,7 @@ function echo_metabox_date_range( Post $post, array $m, string $label, bool $int
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>
 		</div>
-		<input type="hidden" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
+		<input type="hidden" name="meta:<?= _h( $key ) ?>" value="<?= _h( $date ) ?>">
 	</div>
 <?php
 }
