@@ -31,7 +31,7 @@ export const taskAdminSrc = makeCopyTask([
 ], './dist', './src');
 taskAdminSrc.displayName = 'adminMakeCopySrc';
 
-export const taskAdminCss = makeCopyTask('./src/admin/sass/*.{css,svg,png}', './dist/admin/css');
+export const taskAdminCss = makeCopyTask('./src/admin/sass/*.{css,svg,png,woff2}', './dist/admin/css');
 taskAdminCss.displayName = 'adminMakeCopyCss';
 
 export const taskAdminJs = makeJsTask([
