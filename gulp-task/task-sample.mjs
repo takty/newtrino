@@ -2,7 +2,7 @@
  * Gulpfile - Tasks for building sample
  *
  * @author Takuto Yanagida
- * @version 2022-08-18
+ * @version 2022-08-19
  */
 
 import gulp from 'gulp';
@@ -14,44 +14,38 @@ import { makeJsTask } from './_task-js.mjs';
 // -----------------------------------------------------------------------------
 
 
-const copyNt = makeCopyTask([
+export const taskSampleNt = makeCopyTask([
 	'./dist/**/*',
 	'./dist/**/.htaccess'
 ], './sample/nt');
-copyNt.displayName = 'sampleCopyNt';
+taskSampleNt.displayName = 'sampleCopyNt';
 
-const copyData = makeCopyTask([
+export const taskSampleData = makeCopyTask([
 	'./src/data/**/*',
 	'./src/data/**/.htaccess',
 	'!./src/data/*.js'
 ], './sample/nt', './src');
-copyData.displayName = 'sampleCopyData';
+taskSampleData.displayName = 'sampleCopyData';
 
-const minifyDataJs = makeJsTask('./src/data/*.js', './sample/nt/data');
-minifyDataJs.displayName = 'sampleMinifyDataJs';
-
-export const taskSampleNt   = copyNt;
-export const taskSampleData = copyData;
-export const taskSampleJs   = minifyDataJs;
+export const taskSampleJs = makeJsTask('./src/data/*.js', './sample/nt/data');
+taskSampleJs.displayName = 'sampleMinifyDataJs';
 
 
 // -----------------------------------------------------------------------------
 
 
-const watch = () => {
+export const watchSample = () => {
 	const opt = { delay: 1000 };
 	gulp.watch([
 		'./dist/**/*',
 		'./dist/**/.htaccess'
-	], opt, copyNt);
+	], opt, taskSampleNt);
 	gulp.watch([
 		'./src/data/**/*',
 		'./src/data/**/.htaccess',
 		'!./src/data/*.js'
-	], opt, copyData);
+	], opt, taskSampleData);
 	gulp.watch([
 		'./src/data/*.js'
-	], opt, minifyDataJs);
+	], opt, taskSampleJs);
 };
-
-export const watchSample = watch;

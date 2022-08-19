@@ -16,7 +16,6 @@ export function pkgDir(name) {
 	} catch (e) {
 		r = require.resolve(name);
 	}
-	console.log(r);
 	return path.dirname(r);
 }
 

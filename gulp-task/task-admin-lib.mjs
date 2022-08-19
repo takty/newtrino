@@ -19,7 +19,6 @@ const DIST_ADMIN = './dist/admin/';
 const makeTaskCopyNacssReset = () => {
 	const dir = pkgDir('nacss-reset');
 	const f = makeCopyTask(dir + '/dist/css/reset.min.css*(.map)', DIST_ADMIN + 'css/');
-	console.log(dir + '/dist/css/reset.min.css*(.map)');
 	f.displayName = 'adminLibCopyNacssReset';
 	return f;
 };

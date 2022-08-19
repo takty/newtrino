@@ -21,7 +21,7 @@ const VERSION     = verStr(' [dev]');
 // -----------------------------------------------------------------------------
 
 
-const copySrc = makeCopyTask([
+export const taskAdminSrc = makeCopyTask([
 	'./src/login.php',
 	'./src/admin/**/*',
 	'./src/admin/**/.htaccess',
@@ -29,16 +29,16 @@ const copySrc = makeCopyTask([
 	'!./src/admin/js/**/*',
 	'!./src/admin/sass/**/*',
 ], './dist', './src');
-copySrc.displayName = 'adminMakeCopySrc';
+taskAdminSrc.displayName = 'adminMakeCopySrc';
 
-const copyCss = makeCopyTask('./src/admin/sass/*.{css,svg,png}', './dist/admin/css');
-copyCss.displayName = 'adminMakeCopyCss';
+export const taskAdminCss = makeCopyTask('./src/admin/sass/*.{css,svg,png}', './dist/admin/css');
+taskAdminCss.displayName = 'adminMakeCopyCss';
 
-const minifyJs = makeJsTask([
+export const taskAdminJs = makeJsTask([
 	'./src/admin/js/**/[^_]*.js',
 	'!./src/admin/js/tinymce/langs/*.js'
 ], './dist', './src');
-minifyJs.displayName = 'adminMakeMinifyJs';
+taskAdminJs.displayName = 'adminMakeMinifyJs';
 
 const sass = makeSassTask('./src/admin/sass/style.scss', './dist/admin/css/');
 sass.displayName = 'adminMakeSass';
@@ -48,16 +48,13 @@ const replaceVer = () => gulp.src('./dist/admin/css/style.min.css')
 	.pipe(replace(REP_VERSION, VERSION))
 	.pipe(gulp.dest('./dist/admin/css/'));
 
-export const taskAdminSrc  = copySrc;
-export const taskAdminCss  = copyCss;
-export const taskAdminJs   = minifyJs;
 export const taskAdminSass = gulp.series(sass, replaceVer);
 
 
 // -----------------------------------------------------------------------------
 
 
-const watch = () => {
+export const watchAdmin = () => {
 	const opt = { delay: 1000 };
 	gulp.watch([
 		'./src/login.php',
@@ -66,17 +63,15 @@ const watch = () => {
 		'./src/admin/js/tinymce/langs/*.js',
 		'!./src/admin/js/**/*',
 		'!./src/admin/sass/**/*',
-	], opt, copySrc);
+	], opt, taskAdminSrc);
 	gulp.watch([
 		'./src/admin/sass/*.{css,svg,png}'
-	], opt, copyCss);
+	], opt, taskAdminCss);
 	gulp.watch([
 		'./src/admin/js/**/*.js',
 		'!./src/admin/js/tinymce/langs/*.js'
-	], opt, minifyJs);
+	], opt, taskAdminJs);
 	gulp.watch([
 		'./src/admin/sass/*.scss'
-	], opt, sass);
+	], opt, taskAdminSass);
 };
-
-export const watchAdmin = watch;

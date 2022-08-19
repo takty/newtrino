@@ -2,7 +2,7 @@
  * Gulpfile - Tasks for copying libraries
  *
  * @author Takuto Yanagida
- * @version 2022-08-18
+ * @version 2022-08-19
  */
 
 import gulp from 'gulp';
