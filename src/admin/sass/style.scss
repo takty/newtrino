@@ -3,7 +3,7 @@
  * Style for Private Area (SCSS)
  *
  * @author Takuto Yanagida
- * @version 2021-09-11
+ * @version 2022-08-19
  *
  */
 
@@ -17,6 +17,12 @@
 @import 'media';
 
 
+@font-face {
+	font-family: 'SourceHanSansJP-VF';
+	font-weight: 100 900;
+	src        : url('SourceHanSansJP-VF.ttf.woff2') format('woff2-variations');
+}
+
 html, body {
 	min-height: calc(var(--vh, 1vh) * 100);
 	margin: 0;
@@ -26,7 +32,7 @@ body {
 	display       : flex;
 	flex-direction: column;
 
-	font-family: "BIZ UDPGothic", -apple-system, sans-serif;
+	font-family: 'SourceHanSansJP-VF', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 body:not(.dialog) {
@@ -46,7 +52,7 @@ body:not(.dialog) {
 			hsla(70, 30%, 70%, 0.0) 75%,
 			hsla(70, 30%, 70%, 0.0)
 		),
-		linear-gradient(to right bottom, hsl(190, 40%, 70%), hsl(205, 40%, 65%), hsl(220, 40%, 60%));
+		linear-gradient(to right bottom, hsl(190, 20%, 60%), hsl(205, 20%, 60%), hsl(220, 20%, 60%));
 }
 
 a {
@@ -161,13 +167,13 @@ a {
 	@include frame;
 	@include frame-edge;
 	@include floating-shadow;
-	backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px) saturate(180%);
 
 	.dialog &,
 	&.dialog {
 		overflow: hidden;
 		box-shadow: 0 1px 2px rgba(#000, 0.08);
-		backdrop-filter: blur(4px);
+		backdrop-filter: blur(4px) saturate(180%);
 	}
 
 	padding: 1rem;
