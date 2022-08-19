@@ -1,18 +1,14 @@
 /**
- *
  * Gulpfile - Tasks for building sample
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
- *
+ * @version 2022-08-18
  */
 
+import gulp from 'gulp';
 
-'use strict';
-
-const gulp = require('gulp');
-
-const { makeJsTask, makeCopyTask } = require('./common');
+import { makeCopyTask } from './_task-copy.mjs';
+import { makeJsTask } from './_task-js.mjs';
 
 
 // -----------------------------------------------------------------------------
@@ -34,9 +30,9 @@ copyData.displayName = 'sampleCopyData';
 const minifyDataJs = makeJsTask('./src/data/*.js', './sample/nt/data');
 minifyDataJs.displayName = 'sampleMinifyDataJs';
 
-exports.taskSampleNt   = copyNt;
-exports.taskSampleData = copyData;
-exports.taskSampleJs   = minifyDataJs;
+export const taskSampleNt   = copyNt;
+export const taskSampleData = copyData;
+export const taskSampleJs   = minifyDataJs;
 
 
 // -----------------------------------------------------------------------------
@@ -58,4 +54,4 @@ const watch = () => {
 	], opt, minifyDataJs);
 };
 
-exports.watchSample = watch;
+export const watchSample = watch;

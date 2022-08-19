@@ -1,19 +1,18 @@
 /**
- *
  * Gulpfile - Tasks for making system
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
- *
+ * @version 2022-08-19
  */
 
+import gulp from 'gulp';
+import plumber from 'gulp-plumber';
+import replace from 'gulp-replace';
 
-'use strict';
-
-const gulp = require('gulp');
-const $    = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
-
-const { verStr, makeJsTask, makeCopyTask } = require('./common');
+import { verStr } from './_common.mjs';
+import { makeCopyTask } from './_task-copy.mjs';
+import { makeJsTask } from './_task-js.mjs';
+import { makeSassTask } from './_task-sass.mjs';
 
 const REP_VERSION = '%VERSION%';
 const VERSION     = verStr(' [dev]');
@@ -41,19 +40,18 @@ const minifyJs = makeJsTask([
 ], './dist', './src');
 minifyJs.displayName = 'adminMakeMinifyJs';
 
-const sass = () => gulp.src('./src/admin/sass/style.scss', { sourcemaps: true })
-	.pipe($.plumber())
-	.pipe($.dartSass({ outputStyle: 'compressed' }))
-	.pipe($.autoprefixer({ remove: false }))
-	.pipe($.replace(REP_VERSION, VERSION))
-	.pipe($.rename({ extname: '.min.css' }))
-	.pipe(gulp.dest('./dist/admin/css/', { sourcemaps: '.' }));
+const sass = makeSassTask('./src/admin/sass/style.scss', './dist/admin/css/');
 sass.displayName = 'adminMakeSass';
 
-exports.taskAdminSrc  = copySrc;
-exports.taskAdminCss  = copyCss;
-exports.taskAdminJs   = minifyJs;
-exports.taskAdminSass = sass;
+const replaceVer = () => gulp.src('./dist/admin/css/style.min.css')
+	.pipe(plumber())
+	.pipe(replace(REP_VERSION, VERSION))
+	.pipe(gulp.dest('./dist/admin/css/'));
+
+export const taskAdminSrc  = copySrc;
+export const taskAdminCss  = copyCss;
+export const taskAdminJs   = minifyJs;
+export const taskAdminSass = gulp.series(sass, replaceVer);
 
 
 // -----------------------------------------------------------------------------
@@ -81,4 +79,4 @@ const watch = () => {
 	], opt, sass);
 };
 
-exports.watchAdmin = watch;
+export const watchAdmin = watch;

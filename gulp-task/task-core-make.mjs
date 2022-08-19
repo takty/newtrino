@@ -1,18 +1,14 @@
 /**
- *
  * Gulpfile - Tasks for making system
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
- *
+ * @version 2022-08-18
  */
 
+import gulp from 'gulp';
 
-'use strict';
-
-const gulp = require('gulp');
-
-const { makeJsTask, makeCopyTask } = require('./common');
+import { makeCopyTask } from './_task-copy.mjs';
+import { makeJsTask } from './_task-js.mjs';
 
 
 // -----------------------------------------------------------------------------
@@ -30,8 +26,8 @@ const minifyJs = makeJsTask([
 ], './dist', './src');
 minifyJs.displayName = 'coreMakeMinifyJs';
 
-exports.taskCoreSrc = copySrc;
-exports.taskCoreJs  = minifyJs;
+export const taskCoreSrc = copySrc;
+export const taskCoreJs  = minifyJs;
 
 
 // -----------------------------------------------------------------------------
@@ -49,4 +45,4 @@ const watch = () => {
 	], opt, minifyJs);
 };
 
-exports.watchCore = watch;
+export const watchCore = watch;

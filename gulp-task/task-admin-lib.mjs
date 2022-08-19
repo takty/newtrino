@@ -1,18 +1,14 @@
 /**
- *
  * Gulpfile - Tasks for copying libraries
  *
  * @author Takuto Yanagida
- * @version 2022-03-18
- *
+ * @version 2022-08-19
  */
 
+import gulp from 'gulp';
 
-'use strict';
-
-const gulp = require('gulp');
-
-const { pkgDir, makeCopyTask } = require('./common');
+import { pkgDir } from './_common.mjs';
+import { makeCopyTask } from './_task-copy.mjs';
 
 const DIST_ADMIN = './dist/admin/';
 
@@ -23,8 +19,8 @@ const DIST_ADMIN = './dist/admin/';
 const makeTaskCopyNacssReset = () => {
 	const dir = pkgDir('nacss-reset');
 	const f = makeCopyTask(dir + '/dist/css/reset.min.css*(.map)', DIST_ADMIN + 'css/');
+	console.log(dir + '/dist/css/reset.min.css*(.map)');
 	f.displayName = 'adminLibCopyNacssReset';
-	console.log(dir + '/dist/reset.min.css*(.map)', DIST_ADMIN + 'css/');
 	return f;
 };
 
@@ -37,7 +33,7 @@ const makeTaskCopyJssha = () => {
 
 const makeTaskCopyLuxon = () => {
 	const dir = pkgDir('luxon');
-	const f = makeCopyTask(dir + '/build/global/luxon.min.js*(.map)', DIST_ADMIN + 'js/luxon/');
+	const f = makeCopyTask(dir + '/../global/luxon.min.js*(.map)', DIST_ADMIN + 'js/luxon/');
 	f.displayName = 'adminLibCopyLuxon';
 	return f;
 };
@@ -55,7 +51,7 @@ const makeTaskCopyFlatpickr = () => {
 
 const makeTaskCopyTinymce = () => {
 	const dir      = pkgDir('tinymce');
-	const dir_i18n = pkgDir('tinymce-i18n');
+	const dir_i18n = pkgDir('tinymce') + '/../tinymce-i18n';  // pkgDir('tinymce-i18n');
 	const ups = [  // Unused plugins
 		'autoresize', 'autosave', 'bbcode', 'codesample', 'colorpicker', 'contextmenu', 'emoticons',
 		'fullpage', 'fullscreen', 'help', 'imagetools', 'importcss', 'legacyoutput', 'pagebreak',
@@ -73,7 +69,7 @@ const makeTaskCopyTinymce = () => {
 	return f;
 };
 
-exports.taskAdminLib = gulp.parallel(
+export const taskAdminLib = gulp.parallel(
 	makeTaskCopyNacssReset(),
 	makeTaskCopyJssha(),
 	makeTaskCopyFlatpickr(),
