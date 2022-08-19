@@ -1,52 +1,43 @@
 /**
- *
  * Gulpfile - Tasks for making system
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
- *
+ * @version 2022-08-19
  */
 
+import gulp from 'gulp';
 
-'use strict';
-
-const gulp = require('gulp');
-
-const { makeJsTask, makeCopyTask } = require('./common');
+import { makeCopyTask } from './_task-copy.mjs';
+import { makeJsTask } from './_task-js.mjs';
 
 
 // -----------------------------------------------------------------------------
 
 
-const copySrc = makeCopyTask([
+export const taskCoreSrc = makeCopyTask([
 	'./src/index.php',
 	'./src/core/**/*',
 	'./src/core/**/.htaccess',
 ], './dist', './src');
-copySrc.displayName = 'coreMakeCopySrc';
+taskCoreSrc.displayName = 'coreMakeCopySrc';
 
-const minifyJs = makeJsTask([
+export const taskCoreJs = makeJsTask([
 	'./src/index.js',
 ], './dist', './src');
-minifyJs.displayName = 'coreMakeMinifyJs';
-
-exports.taskCoreSrc = copySrc;
-exports.taskCoreJs  = minifyJs;
+taskCoreJs.displayName = 'coreMakeMinifyJs';
 
 
 // -----------------------------------------------------------------------------
 
 
-const watch = () => {
+export const watchCore = () => {
 	const opt = { delay: 1000 };
 	gulp.watch([
 		'./src/index.php',
 		'./src/core/**/*',
 		'./src/core/**/.htaccess',
-	], opt, copySrc);
+	], opt, taskCoreSrc);
 	gulp.watch([
 		'./src/index.js',
-	], opt, minifyJs);
+	], opt, taskCoreJs);
 };
-
-exports.watchCore = watch;

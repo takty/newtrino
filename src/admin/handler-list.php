@@ -5,7 +5,7 @@ namespace nt;
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2021-09-15
+ * @version 2022-04-13
  *
  */
 
@@ -217,7 +217,7 @@ function _create_header_meta_cols( string $type ): array {
 	$labs = [];
 	$ms = $nt_store->type()->getMetaAll( $type );
 	foreach ( $ms as $m ) {
-		if ( ! isset( $m['is_column_shown'] ) || ! $m['is_column_shown'] ) continue;
+		if ( ! ( $m['do_show_column'] ?? false ) ) continue;
 		$labs[] = [ 'label' => $m['label'] ];
 	}
 	return $labs;
@@ -313,7 +313,7 @@ function _create_meta_cols( Post $p ): array {
 	$cols = [];
 	$ms = $nt_store->type()->getMetaAll( $p->getType() );
 	foreach ( $ms as $m ) {
-		if ( ! isset( $m['is_column_shown'] ) || ! $m['is_column_shown'] ) continue;
+		if ( ! ( $m['do_show_column'] ?? false ) ) continue;
 		$key  = $m['key'];
 		$type = $m['type'];
 		$val  = $p->getMetaValue( $key );

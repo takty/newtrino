@@ -1,18 +1,13 @@
 /**
- *
  * Gulpfile - Tasks for copying libraries
  *
  * @author Takuto Yanagida
- * @version 2021-06-13
- *
+ * @version 2022-08-19
  */
 
+import gulp from 'gulp';
 
-'use strict';
-
-const gulp = require('gulp');
-
-const { makeCopyTask } = require('./common');
+import { makeCopyTask } from './_task-copy.mjs';
 
 const DIST_BASE  = './dist/';
 
@@ -27,6 +22,6 @@ const makeTaskCopyMustache = () => {
 	return f;
 };
 
-exports.taskCoreLib = gulp.parallel(
+export const taskCoreLib = gulp.parallel(
 	makeTaskCopyMustache()
 );
