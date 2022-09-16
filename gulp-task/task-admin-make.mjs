@@ -2,7 +2,7 @@
  * Gulpfile - Tasks for making system
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
+ * @version 2022-09-16
  */
 
 import gulp from 'gulp';
@@ -15,7 +15,7 @@ import { makeJsTask } from './_task-js.mjs';
 import { makeSassTask } from './_task-sass.mjs';
 
 const REP_VERSION = '%VERSION%';
-const VERSION     = verStr(' [dev]');
+const VERSION     = await verStr(' [dev]');
 
 
 // -----------------------------------------------------------------------------
