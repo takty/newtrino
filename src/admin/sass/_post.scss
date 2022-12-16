@@ -89,15 +89,17 @@
 		display: block;
 
 		width : 100vw;
-		height: calc(var(--vh, 1vh) * 99);
+		height: 99vh;
+		@supports (height: 1dvh) { height: 99dvh; }
 	}
 }
 
 #dialog-preview {
 	width     : 95vw;
 	max-width : 96rem;
-	height    : calc(var(--vh, 1vh) * 90);
 	max-height: 96rem;
+	height    : 90vh;
+	@supports (height: 1dvh) { height: 90dvh; }
 
 	flex-direction: column;
 
@@ -302,7 +304,8 @@ body.post {
 	}
 	.tox.tox-tinymce {
 		min-height: 20rem;
-		max-height: calc(var(--vh, 1vh) * 100);
+		max-height: 100vh;
+		@supports (max-height: 1dvh) { max-height: 100dvh; }
 	}
 	.tox,
 	.tox .tox-button,
@@ -391,7 +394,8 @@ body.post {
 		box-shadow: 0 1px 2px rgba(#000, 0.08);
 		backdrop-filter: blur(4px) saturate(180%);
 
-		max-height: calc(var(--vh, 1vh) * 90);
+		max-height: 90vh;
+		@supports (max-height: 1dvh) { max-height: 90dvh; }
 	}
 	.tox .tox-dialog__title {
 		font-family: unset;

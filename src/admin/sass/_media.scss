@@ -16,8 +16,9 @@ body.media {
 .frame-media {
 	width     : 95vw;
 	max-width : 96rem;
-	height    : calc(var(--vh, 1vh) * 90);
 	max-height: 48rem;
+	height    : 90vh;
+	@supports (height: 1dvh) { height: 90dvh; }
 
 	display: flex;
 	flex-direction: column;

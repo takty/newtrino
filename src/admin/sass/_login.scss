@@ -13,9 +13,10 @@ body.login {
 }
 
 .frame-login {
-	margin-bottom: calc(var(--vh, 1vh) * 10);
 	width        : calc(100% - 1rem);
 	max-width    : 20rem;
+	margin-bottom: 10vh;
+	@supports (margin-bottom: 1dvh) { margin-bottom: 10dvh; }
 
 	h1 {
 		text-align : center;
