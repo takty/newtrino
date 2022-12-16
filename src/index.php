@@ -17,7 +17,7 @@ require_once( __DIR__ . '/core/util/file-sender.php' );
 
 if ( $is_direct ) {
 	if ( ! empty( $_POST ) ) query_ajax( $_POST );
-	else if ( ! empty( $_GET ) ) query_media( $_GET );
+	elseif ( ! empty( $_GET ) ) query_media( $_GET );
 	else http_response_code( 404 );
 }
 

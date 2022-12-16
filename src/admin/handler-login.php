@@ -40,14 +40,14 @@ function handle_query( array $q, array $q_get ): array {
 				exit;
 			}
 			$msg_log = _ht( 'User name or password is wrong.' );
-		} else if ( $mode === 'issue' ) {
+		} elseif ( $mode === 'issue' ) {
 			$code = $auth->issueInvitation( $q );
 			if ( $code ) {
 				$msg_log = $code;
 			} else {
 				$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
 			}
-		} else if ( $mode === 'register' ) {
+		} elseif ( $mode === 'register' ) {
 			if ( $auth->signUp( $q ) ) {
 				$msg_log = _ht( 'Registration succeeded.' );
 			} else {

@@ -35,10 +35,10 @@ function handle_query( array $q ): array {
 			$err = $_FILES['upload_file']['error'];
 			if ( $err === UPLOAD_ERR_OK ) {
 				$media->upload( $_FILES['upload_file'] );
-			} else if ( $err === UPLOAD_ERR_NO_FILE ) {
+			} elseif ( $err === UPLOAD_ERR_NO_FILE ) {
 				Logger::error( __FUNCTION__, 'No file was uploaded [UPLOAD_ERR_NO_FILE]' );
 				$msg = _ht( 'No file was uploaded.' );
-			} else if ( $err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE ) {
+			} elseif ( $err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE ) {
 				Logger::error( __FUNCTION__, 'The uploaded file exceeds the max file size [UPLOAD_ERR_INI_SIZE or UPLOAD_ERR_FORM_SIZE]' );
 				$msg = _ht( 'The uploaded file exceeds the max file size.' );
 			} else {

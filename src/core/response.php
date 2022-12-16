@@ -206,7 +206,7 @@ function _get_date_status( string $bgn, string $end ): string {
 	$now = date( 'Ymd' );
 	$es = Post::DATE_STATUS_ONGOING;
 	if ( $now < $bgn ) $es = Post::DATE_STATUS_UPCOMING;
-	else if ( $end < $now ) $es = Post::DATE_STATUS_FINISHED;
+	elseif ( $end < $now ) $es = Post::DATE_STATUS_FINISHED;
 	return $es;
 }
 

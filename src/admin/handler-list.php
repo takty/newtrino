@@ -39,9 +39,9 @@ function handle_query(): array {
 	if ( $nt_session->checkNonce() ) {
 		if ( isset( $orig_query['remove_id'] ) ) {
 			$nt_store->removePost( $orig_query['remove_id'] );
-		} else if ( isset( $orig_query['restore_id'] ) ) {
+		} elseif ( isset( $orig_query['restore_id'] ) ) {
 			$nt_store->restorePost( $orig_query['restore_id'] );
-		} else if ( isset( $orig_query['empty_trash'] ) ) {
+		} elseif ( isset( $orig_query['empty_trash'] ) ) {
 			$nt_store->emptyTrash( $type );
 			$nt_store->emptyTemporaryDirectories( $type );
 		}
@@ -319,7 +319,7 @@ function _create_meta_cols( Post $p ): array {
 		} else {
 			if ( $type === 'date' ) {
 				$_lab = _h( \nt\parse_date( $val ) );
-			} else if ( $type === 'date-range' ) {
+			} elseif ( $type === 'date-range' ) {
 				$_bgn = isset( $val['from'] ) ? _h( \nt\parse_date( $val['from'] ) ) : '';
 				$_end = isset( $val['to']   ) ? _h( \nt\parse_date( $val['to']   ) ) : '';
 				if ( $_bgn === $_end ) {
@@ -358,7 +358,7 @@ function _get_meta( Post $p, array &$cls ): array {
 				$now = date( 'Ymd' );
 				if ( ! isset( $val['from'] ) || ! isset( $val['to'] ) ) break;
 				if ( $now < $val['from'] ) $es = Post::DATE_STATUS_UPCOMING;
-				else if ( $val['to'] < $now ) $es = Post::DATE_STATUS_FINISHED;
+				elseif ( $val['to'] < $now ) $es = Post::DATE_STATUS_FINISHED;
 				$ret[ "$key@status" ] = $es;
 				$cls[] = "$key-$es";
 				$ret[ $key ] = [

@@ -143,7 +143,7 @@ class Query {
 			foreach ( $qs as $tax => $ts ) {
 				if ( ! self::_matchTax( $tax, $ts, $info ) ) return false;
 			}
-		} else if ( $this->_tax['rel'] === 'OR' ) {
+		} elseif ( $this->_tax['rel'] === 'OR' ) {
 			$ok = false;
 			foreach ( $qs as $tax => $ts ) {
 				if ( self::_matchTax( $tax, $ts, $info ) ) {
@@ -163,7 +163,7 @@ class Query {
 			foreach ( $qs as $q ) {
 				if ( ! self::_matchDate( $q, $pd ) ) return false;
 			}
-		} else if ( $this->_date['rel'] === 'OR' ) {
+		} elseif ( $this->_date['rel'] === 'OR' ) {
 			$ok = false;
 			foreach ( $qs as $q ) {
 				if ( self::_matchDate( $q, $pd ) ) {
@@ -183,7 +183,7 @@ class Query {
 			foreach ( $qs as $q ) {
 				if ( ! self::_matchMeta( $q, $ms ) ) return false;
 			}
-		} else if ( $this->_meta['rel'] === 'OR' ) {
+		} elseif ( $this->_meta['rel'] === 'OR' ) {
 			$ok = false;
 			foreach ( $qs as $q ) {
 				if ( self::_matchMeta( $q, $ms ) ) {

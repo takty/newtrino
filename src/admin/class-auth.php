@@ -171,7 +171,7 @@ class Auth {
 			$as = $this->_read( $this->_pathAcct );
 			if ( in_array( $user, $this->_getUsers( $as ), true ) ) {
 				$this->_errCode = 'invalid_param';
-			} else if ( $this->_checkInvitation( $code ) ) {
+			} elseif ( $this->_checkInvitation( $code ) ) {
 				$as[] = $rec;
 				$res = $this->_write( $this->_pathAcct, $as );
 			}
@@ -203,7 +203,7 @@ class Auth {
 			Logger::info( __METHOD__, 'The invitation code is invalid' );
 			$this->_errCode = 'invalid_code';
 			return false;
-		} else if ( $found && ! $valid ) {
+		} elseif ( $found && ! $valid ) {
 			Logger::info( __METHOD__, 'The invitation code has expired' );
 			$this->_errCode = 'expired_code';
 			return false;

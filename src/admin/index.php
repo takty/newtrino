@@ -45,7 +45,7 @@ function start_session( bool $create_store, bool $is_dialog = false ) {
 			global $nt_store;
 			$nt_store = new Store( NT_URL, NT_DIR, NT_DIR_DATA, $nt_config );
 		}
-	} else if ( $is_dialog ) {
+	} elseif ( $is_dialog ) {
 		close_dialog_frame( true );
 		exit;
 	} else {
