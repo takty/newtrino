@@ -1,12 +1,9 @@
 /**
- *
- * Media Dialog (JS)
+ * Media Dialog
  *
  * @author Takuto Yanagida
- * @version 2021-12-01
- *
+ * @version 2022-12-16
  */
-
 
 document.addEventListener('DOMContentLoaded', () => {
 	const btnAdd    = document.getElementById('btn-add');

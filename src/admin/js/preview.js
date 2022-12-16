@@ -1,12 +1,9 @@
 /**
- *
- * Preview (JS)
+ * Preview
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
- *
+ * @version 2022-12-16
  */
-
 
 document.addEventListener('DOMContentLoaded', () => {
 	const as = document.getElementsByTagName('a');

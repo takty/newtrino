@@ -1,6 +1,6 @@
 /**
  *
- * Index (JS)
+ * Index
  *
  * @author Takuto Yanagida
  * @version 2022-03-18

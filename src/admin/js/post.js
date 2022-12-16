@@ -1,14 +1,9 @@
 /**
- *
- * Post (JS)
+ * Post
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
- *
+ * @version 2022-12-16
  */
-
-
-// @include _common.js
 
 window.NT = window['NT'] || {};
 window.NT.tiny_mce_before_init = window.NT['tiny_mce_before_init'] || [];
