@@ -107,18 +107,6 @@ body.media {
 	&.visible { display: block; }
 }
 
-select#image-size {
-	option { display: none; }
-	&.small        { option[value="small"]        { display: block; } }
-	&.medium-small { option[value="medium-small"] { display: block; } }
-	&.medium       { option[value="medium"]       { display: block; } }
-	&.medium-large { option[value="medium-large"] { display: block; } }
-	&.large        { option[value="large"]        { display: block; } }
-	&.extra-large  { option[value="extra-large"]  { display: block; } }
-	&.huge         { option[value="huge"]         { display: block; } }
-	&.full         { option[value="full"]         { display: block; } }
-}
-
 #media-url {
 	width    : 16rem;
 	max-width: 100%;

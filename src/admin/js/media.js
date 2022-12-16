@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	selSize.disabled  = true;
 	chkLink.disabled  = true;
 
+	const selSizeOpts = selSize.querySelectorAll('option');
+
 
 	// -------------------------------------------------------------------------
 
@@ -79,12 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			selSize.disabled  = false;
 			chkLink.disabled  = false;
 
-			const sizes = JSON.parse(ss.value);
+			const sizes   = JSON.parse(ss.value);
 			const sizeCls = Object.keys(sizes);
 			selSize.className = sizeCls.join(' ');
 			if (!sizeCls.includes(selSize.value)) {
 				if (sizeCls.length === 1) selSize.value = sizeCls[sizeCls.length - 1];
 				else selSize.value = sizeCls[sizeCls.length - 2];
+			}
+			for (const opt of selSizeOpts) {
+				opt.style.display = sizeCls.includes(opt.value) ? null : 'none';
 			}
 		} else {
 			selAlign.disabled = true;
