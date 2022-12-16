@@ -1,12 +1,12 @@
 /**
- *
- * Post (SCSS)
+ * Post
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
- *
+ * @version 2022-12-16
  */
 
+@use 'mixin' as *;
+@use 'variable' as *;
 
 #form-post {
 	display       : flex;

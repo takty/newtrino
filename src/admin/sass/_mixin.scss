@@ -1,16 +1,11 @@
 /**
- *
- * Query Mix-ins for Responsive and Browsers (SCSS)
+ * Mixins for Style
  *
  * @author Takuto Yanagida
- * @version 2021-06-29
- *
- * https://medium.freecodecamp.org/the-100-correct-way-to-do-css-breakpoints-88d6a5ba1862
- *
- * @import 'base';
- *
+ * @version 2022-12-16
  */
 
+@use 'variable' as *;
 
 @mixin for-size-down($high-px, $high-mm) {
 	@media screen and (max-width: #{$high-px - 0.5}), print and (max-width: #{base-to-px($high-mm) - 0.5}) {

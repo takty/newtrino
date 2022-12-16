@@ -1,21 +1,17 @@
 /**
- *
- * Style for Private Area (SCSS)
+ * Style for Admin
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
- *
+ * @version 2022-12-16
  */
 
+@use 'mixin' as *;
+@use 'variable' as *;
 
-@import 'mixin';
-@import 'variable';
-
-@import 'login';
-@import 'list';
-@import 'post';
-@import 'media';
-
+@use 'login';
+@use 'list';
+@use 'post';
+@use 'media';
 
 @font-face {
 	font-family: 'SourceHanSansJP-VF';
@@ -445,7 +441,8 @@ label.select.accent {
 
 .flatpickr-current-month .flatpickr-monthDropdown-months {
 	-webkit-appearance: none;
-	padding-right: 1.25rem;
+	appearance        : none;
+	padding-right     : 1.25rem;
 
 	& + *::after {
 		left : -0.75rem;
