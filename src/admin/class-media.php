@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2022-12-16
  *
  */
 
@@ -53,7 +53,9 @@ class Media {
 				} else {
 					$item['url@min'] = $this->_mediaUrl( $m['sizes']['full']['file_name'] );
 				}
-			} else if ( $filter === 'image' ) continue;
+			} else if ( $filter === 'image' ) {
+				continue;
+			}
 			$item['file_name'] = $m['file_name'];
 			$item['url']       = $this->_mediaUrl( $m['file_name'] );
 			$item['ext']       = strtoupper( $ext );
@@ -65,12 +67,16 @@ class Media {
 	private function _createSizesWithUrl( array $sizes ): array {
 		$ret = [];
 		foreach ( $sizes as $key => $vals ) {
-			$fn = $vals['file_name'];
-			$url = $this->_mediaUrl( $fn );
-			$vals['url'] = $url;
-			$ret[ $key ] = $vals;
+			$vals['url'] = $this->_mediaUrl( $vals['file_name'] );
+			// Replace underscores with hyphens for styles.
+			$ret[ str_replace( '_', '-', $key ) ] = $vals;
 		}
-		uasort( $ret, function ( $a, $b ) { return $a['width'] <=> $b['width']; } );
+		uasort(
+			$ret,
+			function ( $a, $b ) {
+				return $a['width'] <=> $b['width'];
+			}
+		);
 		return $ret;
 	}
 
@@ -210,11 +216,13 @@ class Media {
 		if ( $min < $width ) {
 			$img = $this->_loadImage( $fileName, $mime );
 			foreach ( $nt_config['image_sizes'] as $key => $d ) {
-				$key = str_replace( '_', '-', $key );
 				$px = intval( $d['width'] );
 				if ( $px < $width ) {
+					// Replace hyphens with underscores for JSON.
+					$key = str_replace( '-', '_', $key );
+
 					list( $fn, $w, $h ) = $this->_saveScaledImage( $img, $fileName, $mime, $px );
-					$sizes[ $key ] = [ 'file_name' => $fn, 'width' => $w, 'height' => $h ];
+					$sizes[ $key ]      = [ 'file_name' => $fn, 'width' => $w, 'height' => $h ];
 				}
 			}
 			imagedestroy( $img );
