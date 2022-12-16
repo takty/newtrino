@@ -2,7 +2,7 @@
  * Gulpfile
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
+ * @version 2022-12-16
  */
 
 import gulp from 'gulp';
@@ -27,11 +27,10 @@ export const build = gulp.parallel(admin, core);
 // -----------------------------------------------------------------------------
 
 
-const watch = (done) => {
+const watch = () => {
 	watchAdmin();
 	watchCore();
 	watchSample();
-	done();
 };
 
 export default gulp.series(build, sample, watch);

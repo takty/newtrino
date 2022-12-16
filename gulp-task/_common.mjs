@@ -2,7 +2,7 @@
  * Common functions for gulp process
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
+ * @version 2022-10-17
  */
 
 import { createRequire } from 'module';
@@ -19,12 +19,34 @@ export function pkgDir(name) {
 	return path.dirname(r);
 }
 
+export function getPkgJson() {
+	const req = createRequire(import.meta.url);
+	return req('../package.json');
+}
+
+export function getBranchName() {
+	const req = createRequire(import.meta.url);
+	const cgb = req('current-git-branch');
+	return cgb();
+}
+
 export async function verStr(devPostfix = ' [dev]') {
-	const require       = createRequire(import.meta.url);
-	const getBranchName = require('current-git-branch');
+	const isDev = getBranchName() === 'develop';
+	const pkg   = getPkgJson();
 
-	const bn  = getBranchName();
-	const pkg = require('../package.json');
+	return 'v' + pkg['version'] + (isDev ? devPostfix : '');
+}
 
-	return 'v' + pkg['version'] + ((bn === 'develop') ? devPostfix : '');
+export async function fullVerStr() {
+	const isDev = getBranchName() === 'develop';
+	const pkg   = getPkgJson();
+
+	const { DateTime } = await import('luxon');
+
+	const VER       = pkg['version'];
+	const VER_MAJOR = VER.split('.')[0];
+	const VER_PF    = (isDev ? '[dev]' : '') + DateTime.local().toFormat('yyMMdd');
+	const VER_FULL  = `${VER}-${VER_PF}`;
+
+	return [VER, VER_MAJOR, VER_FULL];
 }
