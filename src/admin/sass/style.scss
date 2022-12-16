@@ -36,19 +36,7 @@ body:not(.dialog) {
 	padding: { top: 0.75rem; bottom: 0.75rem; }
 	@include for-tl { padding-bottom: 1rem; }
 
-	background-size  : 12px 12px, 100% 100%;
-	background-repeat: repeat, no-repeat;
-	background-image :
-		linear-gradient(-45deg,
-			hsla(70, 30%, 70%, 0.2) 25%,
-			hsla(70, 30%, 70%, 0.0) 25%,
-			hsla(70, 30%, 70%, 0.0) 50%,
-			hsla(70, 30%, 70%, 0.2) 50%,
-			hsla(70, 30%, 70%, 0.2) 75%,
-			hsla(70, 30%, 70%, 0.0) 75%,
-			hsla(70, 30%, 70%, 0.0)
-		),
-		linear-gradient(to right bottom, hsl(190, 20%, 70%), hsl(205, 20%, 70%), hsl(220, 20%, 70%));
+	background-image: radial-gradient(hsl(135, 10%, 99%), hsl(135, 10%, 85%));
 }
 
 a {

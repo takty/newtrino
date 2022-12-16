@@ -10,9 +10,9 @@ $color-line: hsl(0, 0%, 80%, 90%);
 
 $color-frame-border-light: rgba(#fff, 0.85);
 $color-frame-border-dark : rgba(#fff, 0.65);
-$color-frame-background  : rgba(#fff, 0.75);
+$color-frame-background  : rgba(#fff, 0.90);
 
-$radius-frame: 9px;
+$radius-frame: 8px;
 
 $color-button-border        : hsla(  0,   0%, 80%, 0.95);
 $color-button-border-accent : hsla( 60,  80%, 40%, 0.95);
@@ -27,6 +27,6 @@ $color-button-text        : $color-text;
 $color-button-text-accent : $color-text;
 $color-button-text-caution: $color-text;
 
-$radius-button: 5px;
+$radius-button: 6px;
 
 $color-dialog-placeholder-background: rgba(#000, 0.65);
