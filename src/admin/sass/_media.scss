@@ -45,12 +45,12 @@ body.media {
 }
 
 .list-item-media {
-	display: flex;
+	display  : flex;
 	flex-wrap: wrap;
 }
 
 .item-media {
-	margin: 1rem;
+	margin    : 1rem;
 	text-align: center;
 
 	.thumbnail {
@@ -61,7 +61,7 @@ body.media {
 		width : 6rem;
 		height: 6rem;
 
-		box-shadow: 0 0 1px 1px $color-line inset;
+		box-shadow   : 0 0 1px 1px $color-line inset;
 		border-radius: 2px;
 
 		img {
@@ -85,10 +85,10 @@ body.media {
 
 	.caption {
 		margin-top: 0.5rem;
-		max-width: 6rem;
+		max-width : 6rem;
 
-		font-size: 0.75rem;
-		line-height: 1.35;
+		font-size    : 0.75rem;
+		line-height  : 1.35;
 		overflow-wrap: break-word;
 	}
 
@@ -120,6 +120,6 @@ select#image-size {
 }
 
 #media-url {
-	width: 16rem;
+	width    : 16rem;
 	max-width: 100%;
 }

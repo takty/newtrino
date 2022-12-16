@@ -24,7 +24,7 @@
 
 .frame .message {
 	display: none;
-	margin: 1rem;
+	margin : 1rem;
 }
 
 #dialog-placeholder {
@@ -48,7 +48,7 @@
 		width   : 8rem;
 		height  : 8rem;
 
-		opacity : 1;
+		opacity   : 1;
 		transition: opacity 0.4s ease;
 
 		border: {
@@ -65,8 +65,8 @@
 		}
 	}
 	&.active {
-		display: flex;
-		opacity: 0;
+		display   : flex;
+		opacity   : 0;
 		transition: opacity 0.05s ease;
 	}
 	&.visible { opacity: 1; }
@@ -77,7 +77,7 @@
 #dialog-preview {
 	display: none;
 	&.active {
-		opacity: 0;
+		opacity   : 0;
 		transition: opacity 0.1s ease;
 	}
 	&.visible { opacity: 1; }
@@ -108,10 +108,10 @@
 	}
 
 	iframe {
-		width: 100%;
+		width    : 100%;
 		flex-grow: 1;
 
-		opacity: 0;
+		opacity   : 0;
 		transition: opacity 0.1s ease 0.1s;
 
 		&.visible { opacity: 1; }
@@ -124,26 +124,26 @@
 
 .metabox-group {
 	.group-inner {
-		width: 100%;
+		width  : 100%;
 		padding: 0;
 
 		> * {
-			display: flex;
+			display       : flex;
 			flex-direction: row;
-			flex-wrap: wrap;
-			align-items: center;
+			flex-wrap     : wrap;
+			align-items   : center;
 
 			@include for-tl {
-				align-self: flex-start;
+				align-self    : flex-start;
 				flex-direction: column;
-				align-items: flex-start;
+				align-items   : flex-start;
 			}
 
 			padding: 0.25rem 0;
 			@include for-tl { padding: 0.5rem 0; }
 			> * {
-				padding: { top: 0.25rem; bottom: 0.25rem; }
-				max-width: 100%;
+				padding-block: 0.25rem;
+				max-width    : 100%;
 			}
 			> *:not(:last-child) { margin-right: 1rem; }
 			@include for-tl {
@@ -166,12 +166,13 @@
 .metabox-date,
 .metabox-date-range {
 	.flatpickr {
-		display: flex;
+		display    : flex;
+		align-items: flex-end;
+
 		@include for-tl {
 			flex-direction: column;
-			width: 100%;
+			width         : 100%;
 		}
-		align-items: flex-end;
 	}
 	.flatpickr-input {
 		@include for-tl {
@@ -184,11 +185,11 @@
 	}
 	.button.cross.delete {
 		@include for-tl {
-			width: 2.5rem;
-			min-width: 2.5rem;
-			height: 1rem;
+			width     : 2.5rem;
+			min-width : 2.5rem;
+			height    : 1rem;
 			min-height: 1rem;
-			padding: 0;
+			padding   : 0;
 		}
 	}
 }
@@ -196,7 +197,7 @@
 .metabox-media,
 .metabox-media-image {
 	.metabox-container {
-		display: flex;
+		display  : flex;
 		flex-wrap: wrap;
 
 		> * + * { margin-left: 0.5rem; }
@@ -204,25 +205,25 @@
 
 		.button.delete {
 			max-height: 2rem;
-			height: 2rem;
+			height    : 2rem;
 		}
 	}
 }
 
 .metabox-media {
 	.media-name {
-		width: 16rem;
+		width    : 16rem;
 		max-width: 100%;
 	}
 	@include for-tl {
 		.open-media-dialog {
-			order: 1;
+			order     : 1;
 			margin-top: 0.5rem;
 		}
 		.button.cross.delete {
-			order: 2;
+			order      : 2;
 			margin-left: auto;
-			margin-top: 0.5rem;
+			margin-top : 0.5rem;
 		}
 	}
 }
@@ -237,13 +238,14 @@
 		border          : 1px solid $color-button-border;
 		border-radius   : $radius-button;
 		background-color: $color-button-background;
-		&:hover { border-color: $color-button-border-hover; }
 
-		&::before {
-			content: '';
-			display: inline-block;
-			padding-bottom: 66.67%;
+		@media (hover: hover) {
+			&:hover {
+				border-color: $color-button-border-hover;
+			}
 		}
+
+		aspect-ratio: 4/3;
 
 		position: relative;
 		> div {
@@ -270,12 +272,12 @@
 		}
 	}
 	.open-media-dialog + * {
-		display: flex;
+		display       : flex;
 		flex-direction: column;
 
 		margin-left: 0.5rem;
-		width: 16rem;
-		max-width: calc(100% - 5.75rem);
+		width      : 16rem;
+		max-width  : calc(100% - 5.75rem);
 	}
 	.media-name {
 		width: 100%;
@@ -300,7 +302,7 @@
 body.post {
 	textarea[name='post_content'] {
 		min-height: 20rem;
-		opacity: 0;
+		opacity   : 0;
 	}
 	.tox.tox-tinymce {
 		min-height: 20rem;
@@ -323,14 +325,14 @@ body.post {
 	.tox .tox-textarea,
 	.tox .tox-textfield,
 	.tox .tox-listbox {
-		border-color: $color-button-border;
+		border-color : $color-button-border;
 		border-radius: $radius-button;
 	}
 	.tox .tox-button {
-		display: inline-flex;
+		display    : inline-flex;
 		align-items: center;
 
-		border-radius: $radius-button;
+		border-radius   : $radius-button;
 		border-color    : $color-button-border-accent;
 		background-color: $color-button-background-accent;
 		color           : $color-button-text-accent;
@@ -365,18 +367,18 @@ body.post {
 	.tox .tox-listbox {
 		&:hover { border-color: $color-button-border-hover; }
 		&:focus {
-			outline: 0;
+			outline     : 0;
 			border-color: $color-button-border-hover;
 		}
 	}
 
 	.tox .tox-form__group {
-		border: 1px solid transparent;
+		border       : 1px solid transparent;
 		border-radius: $radius-button;
-		overflow: hidden;
+		overflow     : hidden;
 
 		.tox-textarea {
-			border: none;
+			border     : none;
 			font-family: Consolas, Monaco, 'Courier New', Courier, 'Source Han Code JP', 'IPA Gothic', 'Osaka-Mono', monospace;
 		}
 	}
@@ -391,7 +393,7 @@ body.post {
 	.tox .tox-dialog {
 		@include frame;
 		@include frame-edge;
-		box-shadow: 0 1px 2px rgba(#000, 0.08);
+		box-shadow     : 0 1px 2px rgba(#000, 0.08);
 		backdrop-filter: blur(4px) saturate(180%);
 
 		max-height: 90vh;
@@ -403,14 +405,14 @@ body.post {
 		font-size  : 1.25rem;
 	}
 	.tox .tox-dialog__header {
-		padding: 1.25rem 1.25rem 0 1.25rem;
+		padding         : 1.25rem 1.25rem 0 1.25rem;
 		background-color: transparent;
 	}
 	.tox .tox-dialog__body-content {
 		padding: 1.25rem;
 	}
 	.tox .tox-dialog__footer {
-		padding: 1.25rem;
+		padding         : 1.25rem;
 		border-top-color: $color-line;
 		background-color: transparent;
 	}

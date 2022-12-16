@@ -13,10 +13,11 @@ body.login {
 }
 
 .frame-login {
-	width        : calc(100% - 1rem);
-	max-width    : 20rem;
-	margin-bottom: 10vh;
-	@supports (margin-bottom: 1dvh) { margin-bottom: 10dvh; }
+	margin-block-end: 10vh;
+	@supports (margin-block-end: 1dvh) { margin-block-end: 10dvh; }
+
+	width    : calc(100% - 1rem);
+	max-width: 20rem;
 
 	h1 {
 		text-align : center;
@@ -25,15 +26,15 @@ body.login {
 	}
 
 	dl, p, nav {
-		margin-top: 1.5rem;
+		margin-block-start: 1.5rem;
 	}
 
 	p {
 		line-height: 1.5;
 	}
 
-	dd + dt { margin-top: 1.25rem; }
-	dd { margin-top: 0.5rem; }
+	dd + dt { margin-block-start: 1.25rem; }
+	dd { margin-block-start: 0.5rem; }
 
 	form.hidden {
 		display: none;
@@ -54,7 +55,7 @@ body.login {
 }
 
 .cookie {
-	margin-top: -1rem;
+	margin-block-start: -1rem;
 
 	font-size  : 0.75rem;
 	line-height: 1.35;
@@ -65,5 +66,5 @@ body.login {
 		cursor     : default;
 		user-select: none;
 	}
-	div { margin-top: 1.25rem; }
+	div { margin-block-start: 1.25rem; }
 }

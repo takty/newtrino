@@ -37,17 +37,17 @@ body.list {
 }
 
 .list-taxonomy-cancel {
-	display: flex;
-	flex-wrap: wrap;
+	display       : flex;
+	flex-wrap     : wrap;
 	padding-bottom: 2px;
 }
 
 .list-item {
 	border-bottom: 1px solid $color-line;
-	width: 100%;
+	width        : 100%;
 
 	@include for-ph-o {
-		display: block;
+		display   : block;
 		overflow-x: scroll;
 	}
 
@@ -64,8 +64,8 @@ body.list {
 	}
 	th {
 		border-bottom: 1px solid $color-line;
-		text-align: center;
-		white-space: nowrap;
+		text-align   : center;
+		white-space  : nowrap;
 
 		&:not(:last-child) { min-width: 4rem; }
 		@include for-tl {
@@ -79,19 +79,21 @@ body.list {
 		line-height: 1.35;
 
 		&.title {
-			width: 100%;
+			width      : 100%;
 			white-space: normal;
-			min-width: 8rem;
+			min-width  : 8rem;
 		}
 		&.taxonomy {
 			a { white-space: nowrap; }
 		}
 		&.date {
-			font-size: 0.65rem;
+			font-size  : 0.65rem;
 			white-space: nowrap;
+
 			> span {
-				display: block;
+				display   : block;
 				text-align: right;
+
 				@include for-de {
 					display: inline-block;
 					padding: 0 0.15rem;
@@ -100,47 +102,48 @@ body.list {
 		}
 		&.meta-type-date,
 		&.meta-type-date-range {
-			font-size: 0.65rem;
+			font-size  : 0.65rem;
 			white-space: nowrap;
+
 			span {
-				display: block;
+				display   : block;
 				text-align: right;
 			}
 		}
 
 		.restore-post {
-			min-width: 4.25rem;
+			min-width      : 4.25rem;
 			justify-content: center;
 		}
 
 		a[href="#"] {
-			pointer-events: none;
+			pointer-events : none;
 			text-decoration: none;
-			color: initial;
+			color          : initial;
 		}
 	}
 }
 
 .pagination {
-    display: flex;
-	justify-content: center;
+	margin-block-start: 1.5rem;
 
-	margin-top: 1.5rem;
-	> * + * { margin-left: 0.5rem; }
+	display        : flex;
+	justify-content: center;
+	gap            : 0.5rem;
 }
 
 .button-row.bottom {
-	margin-top: 1rem;
+	margin-block-start: 1rem;
 
-	display: flex;
+	display  : flex;
 	flex-wrap: wrap;
+	gap      : 0.5rem;
 
-	> a:not(:last-child) { margin-right: 0.5rem; }
 	> a {
 		&[href="#"],
 		&[data-href="#"] {
 			display: none;
 		}
-		&.right { margin-left: auto; }
+		&.right { margin-inline-start: auto; }
 	}
 }
