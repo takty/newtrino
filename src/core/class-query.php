@@ -1,20 +1,17 @@
 <?php
-namespace nt;
 /**
- *
  * Query
  *
  * @author Takuto Yanagida
  * @version 2021-09-15
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/class-logger.php' );
 require_once( __DIR__ . '/class-indexer.php' );
 require_once( __DIR__ . '/class-post.php' );
 require_once( __DIR__ . '/class-taxonomy.php' );
-
 
 class Query {
 

@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * Media Manager
  *
  * @author Takuto Yanagida
  * @version 2022-12-16
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/../core/class-store.php' );
 require_once( __DIR__ . '/util/file.php' );
-
 
 class Media {
 

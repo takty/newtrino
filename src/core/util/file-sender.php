@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Function for Sending Files
  *
  * @author Takuto Yanagida
  * @version 2021-10-12
- *
  */
 
+namespace nt;
 
 function send_file( string $path, ?string $mimeType = null, bool $isDownload = false ): void {
 	if ( ! is_file( $path ) || ! is_readable( $path ) ) {

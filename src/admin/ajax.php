@@ -1,19 +1,17 @@
 <?php
-namespace nt;
 /**
- *
  * Ajax
  *
  * @author Takuto Yanagida
  * @version 2021-06-16
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
 
-$q = $_REQUEST;
+$q      = $_REQUEST;
 $q_mode = $q['mode'] ?? '';
 $q_id   = $q['id']   ?? null;
 
@@ -28,7 +26,7 @@ if ( $q_mode === 'status' ) {
 			$res = 'success';
 		}
 	}
-} else if ( $q_mode === 'ping' ) {
+} elseif ( $q_mode === 'ping' ) {
 	if ( start_ajax_session( false ) ) {
 		if ( $nt_session->receivePing( $q_id ) ) {
 			$res = 'success';

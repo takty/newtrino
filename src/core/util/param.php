@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Functions for Parameters
  *
  * @author Takuto Yanagida
  * @version 2021-09-21
- *
  */
 
+namespace nt;
 
 function get_query_vars( array $query, array $filters, ?string $collection = null ): array {
 	$ret = [];

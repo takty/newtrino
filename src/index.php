@@ -1,23 +1,19 @@
 <?php
-namespace nt;
 /**
- *
  * Index (PHP)
  *
  * @author Takuto Yanagida
  * @version 2021-09-21
- *
  */
 
+namespace nt;
 
 $is_direct = ( count( get_included_files() ) === 1 );
-
 
 require_once( __DIR__ . '/core/response.php' );
 require_once( __DIR__ . '/core/util/template.php' );
 require_once( __DIR__ . '/core/util/query-string.php' );
 require_once( __DIR__ . '/core/util/file-sender.php' );
-
 
 if ( $is_direct ) {
 	if ( ! empty( $_POST ) ) query_ajax( $_POST );

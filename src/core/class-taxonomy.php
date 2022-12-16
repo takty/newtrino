@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * Taxonomy
  *
  * @author Takuto Yanagida
  * @version 2021-06-23
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/class-logger.php' );
 require_once( __DIR__ . '/util/label.php' );
-
 
 class Taxonomy {
 

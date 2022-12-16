@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * Functions for Template Engine
  *
  * @author Takuto Yanagida
  * @version 2020-07-31
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/../lib/Mustache/Autoloader.php' );
 \Mustache_Autoloader::register();
-
 
 $mustache_engine = null;
 

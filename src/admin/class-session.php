@@ -1,20 +1,17 @@
 <?php
-namespace nt;
 /**
- *
  * Session
  *
  * @author Takuto Yanagida
  * @version 2021-06-25
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/../core/class-logger.php' );
 require_once( __DIR__ . '/util/session.php' );
 require_once( __DIR__ . '/util/nonce.php' );
 require_once( __DIR__ . '/util/file.php' );
-
 
 class Session {
 

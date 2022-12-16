@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * Login
  *
  * @author Takuto Yanagida
  * @version 2021-06-28
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/handler-login.php' );
 $view = handle_query( $_POST, $_GET );
-
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>

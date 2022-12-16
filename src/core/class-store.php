@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Store
  *
  * @author Takuto Yanagida
  * @version 2021-06-29
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/class-logger.php' );
 require_once( __DIR__ . '/class-indexer.php' );
@@ -16,7 +14,6 @@ require_once( __DIR__ . '/class-post.php' );
 require_once( __DIR__ . '/class-type.php' );
 require_once( __DIR__ . '/class-taxonomy.php' );
 require_once( __DIR__ . '/class-query.php' );
-
 
 class Store {
 

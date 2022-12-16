@@ -1,17 +1,14 @@
 <?php
-namespace nt;
 /**
- *
  * User Authentication
  *
  * @author Takuto Yanagida
  * @version 2021-06-28
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/../core/class-logger.php' );
-
 
 class Auth {
 

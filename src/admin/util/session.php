@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Function for Session
  *
  * @author Takuto Yanagida
  * @version 2021-06-23
- *
  */
 
+namespace nt;
 
 function session_start( int $timeout = 300 ): bool {
 	$ret = \session_start();

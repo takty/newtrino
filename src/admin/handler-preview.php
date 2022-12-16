@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Handler - Preview
  *
  * @author Takuto Yanagida
  * @version 2020-08-12
- *
  */
 
+namespace nt;
 
 define( 'NT_ADMIN_PREVIEW', true );
 
@@ -17,7 +15,6 @@ require_once( __DIR__ . '/../core/class-store.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true, true );
-
 
 function handle_query( array $q ): array {
 	$q_title   = $q['post_title']   ?? '';

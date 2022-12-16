@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Functions for Labels
  *
  * @author Takuto Yanagida
  * @version 2021-09-11
- *
  */
 
+namespace nt;
 
 function normalize_label( array &$d, string $l ): void {
 	if ( isset( $d[ "label@$l" ] ) ) {

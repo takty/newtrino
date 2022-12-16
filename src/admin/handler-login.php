@@ -1,19 +1,16 @@
 <?php
-namespace nt;
 /**
- *
  * Handler - Login
  *
  * @author Takuto Yanagida
  * @version 2021-06-28
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-auth.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
-
 
 function handle_query( array $q, array $q_get ): array {
 	global $nt_session;

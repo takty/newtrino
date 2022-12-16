@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * Type
  *
  * @author Takuto Yanagida
  * @version 2021-09-11
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/class-logger.php' );
 require_once( __DIR__ . '/util/label.php' );
-
 
 class Type {
 

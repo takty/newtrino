@@ -1,12 +1,9 @@
 /**
- *
  * Editor Commands for TinyMCE (Sample)
  *
  * @author Takuto Yanagida
  * @version 2021-06-02
- *
  */
-
 
 window.NT.tiny_mce_before_init.push(function (args, lang, urlAssets) {
 	const ls_ja = { column_2: '2段組', column_3: '3段組', column_4: '4段組' };

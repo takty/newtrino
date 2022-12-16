@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Logger
  *
  * @author Takuto Yanagida
  * @version 2021-06-18
- *
  */
 
+namespace nt;
 
 class Logger {
 

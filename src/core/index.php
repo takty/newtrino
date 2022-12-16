@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida
  * @version 2021-06-28
- *
  */
 
+namespace nt;
 
 error_reporting( E_ALL );
 ini_set( 'display_errors', 'On' );
@@ -16,7 +14,6 @@ setlocale( LC_ALL, 'en_US.UTF-8' );  // for pathinfo
 
 require_once( __DIR__ . '/util/url.php' );
 require_once( __DIR__ . '/class-logger.php' );
-
 
 define( 'NT_DIR', pathinfo( __DIR__, PATHINFO_DIRNAME ) . '/' );
 define( 'NT_DIR_DATA', NT_DIR . 'data/' );

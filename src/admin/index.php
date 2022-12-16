@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Init for Admin
  *
  * @author Takuto Yanagida
  * @version 2021-06-16
- *
  */
 
+namespace nt;
 
 define( 'NT_ADMIN', true );
 

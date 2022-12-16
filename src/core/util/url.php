@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Functions for URLs
  *
  * @author Takuto Yanagida
  * @version 2020-09-08
- *
  */
 
+namespace nt;
 
 function resolve_url( string $target, string $base ): string {
 	$target = trim( $target );

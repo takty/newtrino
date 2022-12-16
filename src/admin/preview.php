@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * Preview
  *
  * @author Takuto Yanagida
  * @version 2021-06-14
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/handler-preview.php' );
 $view = handle_query( $_REQUEST );
-
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>

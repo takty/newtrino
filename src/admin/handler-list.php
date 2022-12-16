@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Handler - List
  *
  * @author Takuto Yanagida
  * @version 2022-04-13
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/../core/class-store.php' );
@@ -18,7 +16,6 @@ require_once( __DIR__ . '/../core/util/query-string.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
-
 
 function handle_query(): array {
 	global $nt_config, $nt_store, $nt_session;

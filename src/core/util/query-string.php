@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Functions for Query Strings
  *
  * @author Takuto Yanagida
  * @version 2021-09-15
- *
  */
 
+namespace nt;
 
 function parse_query_string( ?string $default_key = null ): array {
 	$str = $_SERVER['QUERY_STRING'];

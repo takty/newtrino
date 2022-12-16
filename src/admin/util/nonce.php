@@ -1,17 +1,14 @@
 <?php
-namespace nt;
 /**
- *
  * Function for Nonce and Tokens
  *
  * @author Takuto Yanagida
  * @version 2021-12-01
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/file.php' );
-
 
 function issue_token( $path, $timeout ): string {
 	$token = \nt\create_nonce( 16 );

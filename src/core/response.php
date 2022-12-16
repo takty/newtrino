@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Response
  *
  * @author Takuto Yanagida
  * @version 2021-09-21
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-store.php' );

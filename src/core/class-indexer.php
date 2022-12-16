@@ -1,17 +1,14 @@
 <?php
-namespace nt;
 /**
- *
  * Indexer
  *
  * @author Takuto Yanagida
  * @version 2021-06-16
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/class-logger.php' );
-
 
 class Indexer {
 

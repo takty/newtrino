@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Handler - Media
  *
  * @author Takuto Yanagida
  * @version 2021-06-16
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-media.php' );
@@ -16,7 +14,6 @@ require_once( __DIR__ . '/../core/class-store.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true, true );
-
 
 function handle_query( array $q ): array {
 	$q_id   = $q['id']   ?? null;

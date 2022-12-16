@@ -1,20 +1,17 @@
 <?php
-namespace nt;
 /**
- *
  * Compatibility Utilities
  *
  * @author Takuto Yanagida
  * @version 2020-08-03
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 
 convert_category_file( NT_DIR_DATA );
 convert_post_file( NT_DIR_POST );
-
 
 function convert_category_file( $dir_data ) {
 	$in_path = $dir_data . 'category';

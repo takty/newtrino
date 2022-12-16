@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Function for Nonce
  *
  * @author Takuto Yanagida
  * @version 2021-06-23
- *
  */
 
+namespace nt;
 
 function ensure_dir( string $path, int $mode ): bool {
 	if ( is_dir( $path ) ) {

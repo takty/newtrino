@@ -1,20 +1,17 @@
 <?php
-namespace nt;
 /**
- *
  * Post
  *
  * @author Takuto Yanagida
  * @version 2021-09-11
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/class-indexer.php' );
 require_once( __DIR__ . '/class-logger.php' );
 require_once( __DIR__ . '/util/date-format.php' );
 require_once( __DIR__ . '/lib/simple_html_dom.php' );
-
 
 class Post {
 

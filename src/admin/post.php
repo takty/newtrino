@@ -1,19 +1,16 @@
 <?php
-namespace nt;
 /**
- *
  * Post
  *
  * @author Takuto Yanagida
  * @version 2022-03-18
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/handler-post.php' );
 $view = handle_query( $_REQUEST );
-$t_p = $view['t_p'];
-
+$t_p  = $view['t_p'];
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>

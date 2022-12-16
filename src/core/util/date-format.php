@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Function for Date Format
  *
  * @author Takuto Yanagida
  * @version 2021-06-23
- *
  */
 
+namespace nt;
 
 function parse_date( string $date ): string {
 	return preg_replace( '/(\d{4})(\d{2})(\d{2})/', '$1-$2-$3', $date );

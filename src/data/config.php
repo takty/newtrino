@@ -1,14 +1,12 @@
 <?php
-namespace nt;
 /**
- *
  * Newtrino Config (Sample)
  *
  * @author Takuto Yanagida
  * @version 2021-06-15
- *
  */
 
+namespace nt;
 
 /*
  * Overwriting Mode Settings

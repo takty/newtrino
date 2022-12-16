@@ -1,18 +1,15 @@
 <?php
-namespace nt;
 /**
- *
  * List
  *
  * @author Takuto Yanagida
  * @version 2021-06-26
- *
  */
 
+namespace nt;
 
 require_once( __DIR__ . '/handler-list.php' );
 $view = handle_query();
-
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
