@@ -3,7 +3,7 @@
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-19
  */
 
 namespace nt;
@@ -87,19 +87,23 @@ class Media {
 
 		$list = [];
 		foreach ( $meta as $m ) {
-			if ( 'image' === $filter && ! in_array( $m['extension'], self::IMG_EXTS, true ) ) {
+			$is_image = in_array( $m['extension'], self::IMG_EXTS, true );
+			if ( 'image' === $filter && ! $is_image ) {
 				continue;
 			}
-			$sn = isset( $m['sizes'][ self::SIZE_NAME_MIN ] ) ? self::SIZE_NAME_MIN : self::SIZE_NAME_ORIG;
-
-			$list[] = [
-				'is_image'   => true,
-				'sizes_json' => json_encode( $this->_createSizesWithUrl( $m['sizes'] ), self::JSON_OPTS ),
-				'file_name'  => $m['file_name'],
-				'ext'        => strtolower( $m['extension'] ),  // Lowercasing for just in case.
-				'url'        => $this->_mediaUrl( $m['file_name'] ),
-				'url@min'    => $this->_mediaUrl( $m['sizes'][ $sn ]['file_name'] ),
+			$it = [
+				'file_name' => $m['file_name'],
+				'ext'       => strtolower( $m['extension'] ),  // Lowercasing for just in case.
+				'url'       => $this->_mediaUrl( $m['file_name'] ),
 			];
+			if ( $is_image ) {
+				$sn = isset( $m['sizes'][ self::SIZE_NAME_MIN ] ) ? self::SIZE_NAME_MIN : self::SIZE_NAME_ORIG;
+
+				$it['is_image']   = true;
+				$it['sizes_json'] = json_encode( $this->_createSizesWithUrl( $m['sizes'] ), self::JSON_OPTS );
+				$it['url@min']    = $this->_mediaUrl( $m['sizes'][ $sn ]['file_name'] );
+			}
+			$list[] = $it;
 		}
 		return $list;
 	}
