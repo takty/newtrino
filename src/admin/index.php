@@ -3,7 +3,7 @@
  * Init for Admin
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2022-12-21
  */
 
 namespace nt;
@@ -20,6 +20,12 @@ $nt_session = new Session( NT_URL_ADMIN, NT_DIR_SESSION );
 
 // Functions for Initial Process -----------------------------------------------
 
+
+function nocache_headers(): void {
+	header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
+	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+	header_remove( 'Last-Modified' );
+}
 
 function load_resource( string $dirData, string $lang ): array {
 	$path = $dirData . $lang . '.json';
@@ -49,7 +55,8 @@ function start_session( bool $create_store, bool $is_dialog = false ) {
 		close_dialog_frame( true );
 		exit;
 	} else {
-		header( 'Location: ' . NT_URL_ADMIN . 'login.php' );
+		nocache_headers();
+		header( 'Location: ' . NT_URL_ADMIN . 'login.php', true, 302 );
 		exit;
 	}
 }

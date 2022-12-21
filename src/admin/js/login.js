@@ -2,61 +2,71 @@
  * Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-21
  */
 
-history.pushState(null, null, location.href);
-window.addEventListener('popstate', () => { history.go(-1); });
-
 document.addEventListener('DOMContentLoaded', () => {
+	const formL = document.querySelector('form.log');
+	const formR = document.querySelector('form.reg');
 
-	const header = document.getElementsByTagName('h1')[0];
-	header.addEventListener('click', () => {
-		const formL = document.querySelector('form.log');
-		const formR = document.querySelector('form.reg');
-		formL.classList.toggle('hidden');
-		formR.classList.toggle('hidden');
-	});
-	setTimeout(() => { location.reload(); }, 5 * 60 * 1000);  // For refreshing nonce
+	const isDlg = document.querySelector('.site.dialog');
 
-	initLoginDialog();
-	if (!document.body.classList.contains('dialog')) initRegistrationDialog();
+	initLoginDialog(isDlg);
+	if (!isDlg) {
+		initRegistrationDialog();
+
+		const header = document.querySelector('.site-title');
+		header.addEventListener('click', () => {
+			formL.classList.toggle('hidden');
+			formR.classList.toggle('hidden');
+		});
+	}
+	setTimeout(() => location.reload(), 5 * 60 * 1000);  // For refreshing nonce
 
 
 	// -------------------------------------------------------------------------
 
 
-	function initLoginDialog() {
-		const btn = document.getElementById('btn-log');
-		addLongPressListener(btn, doLogin, () => { doLogin(true); });
+	function initLoginDialog(isDialog) {
+		const btn = formL.querySelector('[type=\'submit\']');
+		addLongPressListener(btn, doLogin, () => doLogin(!isDialog));
 
-		const iptUsr = document.getElementById('user');
-		const iptPwd = document.getElementById('pw');
+		const iptUsr = formL.elements['user'];
+		const iptPwd = formL.querySelector('[type=\'password\']');
+
+		const notice = formL.querySelector('.notice');
+		if (notice) {
+			iptUsr.addEventListener('change', clearMessage);
+			iptPwd.addEventListener('change', clearMessage);
+		}
+		let st = null;
+		function clearMessage() {
+			clearTimeout(st);
+			st = setTimeout(() => (notice.innerHTML = ''), 2000);
+		}
 
 		function doLogin(showCode = false) {
-			if (showCode && document.body.classList.contains('dialog')) return;
-
-			const usr = iptUsr.value;
-			const pwd = iptPwd.value;
-
 			const key    = document.getElementById('key').value;
 			const nonce  = document.getElementById('nonce').value;
 			const url    = document.getElementById('url').value;
 			const cnonce = createNonce();
 
-			const uph    = hash(usr + ':' + key + ':' + pwd);
-			const digest = hash(uph + ':' + nonce + ':' + cnonce + ':' + hash(url));
+			const usr = iptUsr.value;
+			const pwd = iptPwd.value;
+			iptPwd.value = '';
+
+			const uph    = hash(`${usr}:${key}:${pwd}`);
+			const digest = hash(`${uph}:${nonce}:${cnonce}:${hash(url)}`);
 
 			if (showCode) {
 				if (usr && pwd) {
 					if (!confirm(document.getElementById('msg-issue').value)) return;
-					document.getElementById('mode').value = 'issue';
+					formL.elements['mode'].value = 'issue';
 				}
 			}
-			iptPwd.value = '';
-			document.getElementById('cnonce').value = cnonce;
-			document.getElementById('digest').value = digest;
-			document.forms[0].submit();
+			formL.elements['cnonce'].value = cnonce;
+			formL.elements['digest'].value = digest;
+			formL.submit();
 		}
 	}
 
@@ -65,12 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 	function initRegistrationDialog() {
-		const btn = document.getElementById('btn-reg');
+		const btn = formR.querySelector('[type=\'submit\']');
 		btn.addEventListener('click', doRegister);
 
-		const iptCode = document.getElementById('code');
-		const iptUsr  = document.getElementById('new-user');
-		const iptPwd  = document.getElementById('new-pw');
+		const iptCode = formR.elements['code'];
+		const iptUsr  = formR.elements['user'];
+		const iptPwd  = formR.querySelector('[type=\'password\']');
 
 		iptCode.value = '';
 		iptUsr.value  = '';
@@ -106,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 
 		function regChanged() {
-			const msg = document.getElementById('msg-reg');
-			if (msg) msg.innerHTML = '';
+			const notice = formR.querySelector('.notice');
+			if (notice) notice.innerHTML = '';
 			if (iptCode.hasAttribute('invalid') || iptUsr.hasAttribute('invalid') || iptPwd.hasAttribute('invalid')) {
 				btn.setAttribute('disabled', '');
 			} else {
@@ -121,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			const usr = iptUsr.value;
 			const pwd = iptPwd.value;
+			iptPwd.value = '';
 
 			const key = document.getElementById('key').value;
-			const uph = hash(usr + ':' + key + ':' + pwd);
+			const uph = hash(`${usr}:${key}:${pwd}`);
 
-			iptPwd.value = '';
-			document.getElementById('hash').value = uph;
-			document.querySelector('form.reg').submit();
+			formR.elements['hash'].value = uph;
+			formR.submit();
 		}
 	}
 

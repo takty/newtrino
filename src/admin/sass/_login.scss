@@ -2,30 +2,29 @@
  * Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-20
  */
 
 @use 'variable' as *;
 
-body.login {
+body.login .site {
     display    : grid;
     place-items: center;
 }
 
-.frame-login {
+.frame.login {
 	margin-block-end: 10vh;
 	@supports (margin-block-end: 1dvh) { margin-block-end: 10dvh; }
 
 	width    : calc(100% - 1rem);
 	max-width: 20rem;
 
-	h1 {
-		text-align : center;
+	.site-title {
 		cursor     : pointer;
 		user-select: none;
 	}
 
-	dl, p, nav {
+	:is(dl, p, nav) {
 		margin-block-start: 1.5rem;
 	}
 
@@ -33,24 +32,36 @@ body.login {
 		line-height: 1.5;
 	}
 
-	dd + dt { margin-block-start: 1.25rem; }
-	dd { margin-block-start: 0.5rem; }
+	dd {
+		margin-block-start: 0.5rem;
+	}
+
+	dd + dt {
+		margin-block-start: 1.25rem;
+	}
 
 	form.hidden {
 		display: none;
 	}
 
-	input[type=text],
-	input[type=password] {
+	:is(input[type=text], input[type=password]) {
 		width: 100%;
 	}
+
 	input[invalid] {
 		border-color: $color-button-border-caution;
 	}
+
 	nav {
 		display        : flex;
 		align-items    : center;
 		justify-content: flex-end;
+	}
+}
+
+body.login .site.dialog .frame.login {
+	h1 {
+		cursor: default;
 	}
 }
 
@@ -66,5 +77,8 @@ body.login {
 		cursor     : default;
 		user-select: none;
 	}
-	div { margin-block-start: 1.25rem; }
+
+	div {
+		margin-block-start: 1.25rem;
+	}
 }

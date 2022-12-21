@@ -3,13 +3,14 @@
  * Handler - Login
  *
  * @author Takuto Yanagida
- * @version 2021-06-28
+ * @version 2022-12-21
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-auth.php' );
+require_once( __DIR__ . '/util/tqs.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
 function handle_query( array $q, array $q_get ): array {
@@ -35,7 +36,8 @@ function handle_query( array $q, array $q_get ): array {
 				if ( $is_dialog ) {
 					close_dialog_frame();
 				} else {
-					header( 'Location: ' . NT_URL_ADMIN . 'list.php' );
+					nocache_headers();
+					header( 'Location: ' . NT_URL_ADMIN . 'list.php', true, 302 );
 				}
 				exit;
 			}
@@ -54,6 +56,8 @@ function handle_query( array $q, array $q_get ): array {
 				$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
 			}
 		}
+	} elseif ( ! empty( $token ) ) {
+		$msg_log = _ht( 'Please log in again.' );
 	}
 	if ( $mode === 'logout' ) {
 		$nt_session->destroy();

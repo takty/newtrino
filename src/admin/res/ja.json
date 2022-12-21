@@ -10,6 +10,7 @@
 		"Log In": "ログイン",
 		"Log Out": "ログアウト",
 		"User name or password is wrong.": "ユーザー名かパスワードが異なります。",
+		"Please log in again.": "もう一度ログインしてください。",
 		"Use of Cookies...": "クッキーの使用...",
 		"Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.": "Newtrino管理画面では、不正アクセスを防止し、セキュリティを確保するため、クッキーを利用しています。クッキーがブロックされている場合、ログインできません。なお、クッキーに個人情報は含まれません。",
 
