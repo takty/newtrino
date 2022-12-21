@@ -10,7 +10,6 @@ namespace nt;
 
 require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-auth.php' );
-require_once( __DIR__ . '/util/tqs.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
 function handle_query( array $q, array $q_get ): array {

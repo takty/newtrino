@@ -10,6 +10,7 @@ namespace nt;
 
 define( 'NT_ADMIN', true );
 
+require_once( __DIR__ . '/util/tqs.php' );
 require_once( __DIR__ . '/../core/index.php' );
 require_once( __DIR__ . '/class-session.php' );
 
