@@ -34,7 +34,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<div class="frame login">
 		<h1 class="site-title">Newtrino</h1>
 
-		<form action="login.php" method="post" class="log{{#msg_reg}} hidden{{/msg_reg}}">
+		<form action="login.php" method="post" class="log{{#ntc_reg}} hidden{{/ntc_reg}}">
 			<dl>
 				<dt><?= _ht( 'User Name:' ) ?></dt><dd><input type="text" name="user"></dd>
 				<dt><?= _ht( 'Password:' ) ?></dt><dd><input type="password"></dd>
@@ -47,9 +47,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{#is_dialog}}
 			<input type="hidden" name="dialog" value="">
 {{/is_dialog}}
-{{#msg_log}}
+{{#ntc_log}}
 			<p class="notice">{{.}}</p>
-{{/msg_log}}
+{{/ntc_log}}
 
 			<nav>
 				<button type="submit" class="accent"><?= _ht( 'Log In' ) ?></button>
@@ -62,7 +62,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</form>
 
 {{^is_dialog}}
-		<form action="login.php" method="post" class="reg{{^msg_reg}} hidden{{/msg_reg}}">
+		<form action="login.php" method="post" class="reg{{^ntc_reg}} hidden{{/ntc_reg}}">
 			<dl>
 				<dt><?= _ht( 'Invitation Code:' ) ?></dt><dd><input type="text" name="code" invalid required></dd>
 				<dt><?= _ht( 'New User Name:' ) ?></dt><dd><input type="text" name="user" invalid required></dd>
@@ -72,9 +72,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			<input type="hidden" name="mode" value="register">
 			<input type="hidden" name="hash">
 			<input type="hidden" name="token" value="{{token}}">
-{{#msg_reg}}
+{{#ntc_reg}}
 			<p class="notice">{{.}}</p>
-{{/msg_reg}}
+{{/ntc_reg}}
 
 			<nav>
 				<button type="submit" class="accent" disabled><?= _ht( 'Register' ) ?></button>

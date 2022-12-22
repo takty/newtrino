@@ -3,7 +3,7 @@
  * Handler - Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-21
+ * @version 2022-12-22
  */
 
 namespace nt;
@@ -19,10 +19,10 @@ function handle_query( array $q, array $q_get ): array {
 	$mode      = $q['mode']  ?? '';
 	$token     = $q['token'] ?? '';
 	$is_dialog = isset( $q['dialog'] ) || isset( $q_get['dialog'] );
-	$msg_log   = '';
-	$msg_reg   = '';
+	$ntc_log   = '';
+	$ntc_reg   = '';
 
-	$msgs = [
+	$c_ntc = [
 		'invalid_code'   => _ht( 'The invitation code is invalid.' ),
 		'invalid_param'  => _ht( 'User name or password is not appropriate.' ),
 		'expired_code'   => _ht( 'Your invitation code is expired.' ),
@@ -40,23 +40,23 @@ function handle_query( array $q, array $q_get ): array {
 				}
 				exit;
 			}
-			$msg_log = _ht( 'User name or password is wrong.' );
+			$ntc_log = _ht( 'User name or password is wrong.' );
 		} elseif ( $mode === 'issue' ) {
 			$code = $auth->issueInvitation( $q );
 			if ( $code ) {
-				$msg_log = $code;
+				$ntc_log = $code;
 			} else {
-				$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
+				$ntc_reg = $c_ntc[ $auth->getErrorCode() ] ?? '';
 			}
 		} elseif ( $mode === 'register' ) {
 			if ( $auth->signUp( $q ) ) {
-				$msg_log = _ht( 'Registration succeeded.' );
+				$ntc_log = _ht( 'Registration succeeded.' );
 			} else {
-				$msg_reg = $msgs[ $auth->getErrorCode() ] ?? '';
+				$ntc_reg = $c_ntc[ $auth->getErrorCode() ] ?? '';
 			}
 		}
 	} elseif ( ! empty( $token ) ) {
-		$msg_log = _ht( 'Please log in again.' );
+		$ntc_log = _ht( 'Please log in again.' );
 	}
 	if ( $mode === 'logout' ) {
 		$nt_session->destroy();
@@ -67,8 +67,8 @@ function handle_query( array $q, array $q_get ): array {
 		'nonce'     => Auth::getAuthNonce(),
 		'token'     => $auth->issueToken(),
 		'url'       => NT_URL_ADMIN,
-		'msg_log'   => $msg_log,
-		'msg_reg'   => $msg_reg,
+		'ntc_log'   => $ntc_log,
+		'ntc_reg'   => $ntc_reg,
 		'is_dialog' => $is_dialog,
 	];
 }
