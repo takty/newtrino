@@ -2,7 +2,7 @@
  * Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-21
+ * @version 2022-12-22
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,15 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		const iptUsr = formL.elements['user'];
 		const iptPwd = formL.querySelector('[type=\'password\']');
 
-		const notice = formL.querySelector('.notice');
-		if (notice) {
+		const ntc = formL.querySelector('.notice');
+		if (ntc) {
 			iptUsr.addEventListener('change', clearMessage);
 			iptPwd.addEventListener('change', clearMessage);
 		}
 		let st = null;
 		function clearMessage() {
 			clearTimeout(st);
-			st = setTimeout(() => (notice.innerHTML = ''), 2000);
+			st = setTimeout(() => (ntc.innerHTML = ''), 2000);
 		}
 
 		function doLogin(showCode = false) {
