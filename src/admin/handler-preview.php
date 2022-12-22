@@ -3,7 +3,7 @@
  * Handler - Preview
  *
  * @author Takuto Yanagida
- * @version 2020-08-12
+ * @version 2022-12-22
  */
 
 namespace nt;
@@ -22,19 +22,24 @@ function handle_query( array $q ): array {
 	$q_content = $q['post_content'] ?? '';
 
 	global $nt_store;
-	$taxes = array_keys( $nt_store->taxonomy()->getTaxonomyAll() );
+	$taxes   = array_keys( $nt_store->taxonomy()->getTaxonomyAll() );
 	$tax2tls = [];
+
 	foreach ( $taxes as $tax ) {
-		if ( ! isset( $q["taxonomy:$tax"] ) ) continue;
+		if ( ! isset( $q["taxonomy:$tax"] ) ) {
+			continue;
+		}
 		$ts = is_array( $q["taxonomy:$tax"] ) ? $q["taxonomy:$tax"] : [ $q["taxonomy:$tax"] ];
 		$ls = [];
 		foreach ( $ts as $t ) {
 			$ls[] = _h( $nt_store->taxonomy()->getTermLabel( $tax, $t ) );
 		}
-		if ( ! empty( $ls ) ) $tax2tls[] = [ 'taxonomy' => $tax, 'term_labels' => $ls ];
+		if ( ! empty( $ls ) ) {
+			$tax2tls[] = [ 'taxonomy' => $tax, 'term_labels' => $ls ];
+		}
 	}
 
-	$ret = [
+	return [
 		'title'      => $q_title,
 		'date'       => $q_date,
 		'content'    => $q_content,
@@ -42,5 +47,4 @@ function handle_query( array $q ): array {
 		'css'        => get_asset_url( [ 'preview.min.css', 'preview.css' ] ),
 		'js'         => get_asset_url( [ 'preview.min.js', 'preview.js' ] ),
 	];
-	return $ret;
 }

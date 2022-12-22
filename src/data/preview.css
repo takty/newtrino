@@ -2,15 +2,16 @@
  * Preview Styles (Sample)
  *
  * @author Takuto Yanagida
- * @version 2020-07-31
+ * @version 2022-12-22
  */
 
 body {
-	font-size: 16px;
+	font-size  : 16px;
+	font-family: sans-serif;
 }
 
 .entry-content {
-	font-size: 1rem;
+	font-size  : 1rem;
 	line-height: 1.8rem;
 }
 
@@ -19,19 +20,19 @@ body {
 
 
 .alignleft {
-	float: left;
+	float : left;
 	margin: 0 1rem 2rem 0;
 }
 
 .alignright {
-	float: right;
+	float : right;
 	margin: 0 0 2rem 1rem;
 }
 
 .aligncenter {
-	display: block;
-	width: 100%;
-	margin: 0 auto 2rem auto;
+	display   : block;
+	width     : fit-content;
+	margin    : 0 auto 2rem auto;
 	text-align: center;
 }
 
@@ -39,28 +40,9 @@ body {
 /* Image Sizes -------------------------------------------------------------- */
 
 
-.size-small,
-.size-medium-small,
-.size-medium,
-.size-medium-large,
-.size-large,
-.size-extra-large,
-.size-huge {
-	width: 100%;
-	height: auto;
-}
-
-.size-small        { max-width:  128px; }
-.size-medium-small { max-width:  256px; }
-.size-medium       { max-width:  384px; }
-.size-medium-large { max-width:  512px; }
-.size-large        { max-width:  768px; }
-.size-extra-large  { max-width: 1024px; }
-.size-huge         { max-width: 1536px; }
-
 .size-full {
-	width: auto;
-	height: auto;
+	width    : auto;
+	height   : auto;
 	max-width: 100%;
 }
 
@@ -77,21 +59,18 @@ a.button {
 	border : 1px solid #ccc;
 }
 
-div.frame,
-div.frame-alt {
-	clear: both;
-	margin: 1rem 0;
+div:is(.frame, .frame-alt) {
+	clear  : both;
+	margin : 1rem 0;
 	padding: 1rem;
 }
 
-div.frame > *:first-child,
-div.frame-alt > *:first-child {
-	margin-top: 0;
+div:is(.frame, .frame-alt) > *:first-child {
+	margin-block-start: 0;
 }
 
-div.frame > *:last-child,
-div.frame-alt > *:last-child {
-	margin-bottom: 0;
+div:is(.frame, .frame-alt) > *:last-child {
+	margin-block-end: 0;
 }
 
 div.frame {

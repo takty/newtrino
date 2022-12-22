@@ -3,7 +3,7 @@
  * Preview
  *
  * @author Takuto Yanagida
- * @version 2021-06-14
+ * @version 2022-12-22
  */
 
 namespace nt;
@@ -13,34 +13,39 @@ $view = handle_query( $_REQUEST );
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
-<?php \nt\begin(); ?>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="js/preview.min.js"></script>
+<?php \nt\begin( $view ); ?>
 {{#css}}<link rel="stylesheet" media="all" href="{{.}}" />{{/css}}
+<script src="<?= tqs( __DIR__, 'js/preview.min.js' ); ?>"></script>
 {{#js}}<script src="{{.}}"></script>{{/js}}
+<?php \nt\end(); ?>
 <title><?= _ht( 'Preview' ) ?> - Newtrino</title>
 </head>
 <body class="preview">
 
-<div class="container">
+<main>
+<?php \nt\begin( $view ); ?>
 	<header class="entry-header">
-		<h1>{{title}}</h1>
+		<h1 class="entry-title">{{title}}</h1>
 		<div class="date">{{date}}</div>
 {{#taxonomies}}
 		<ul class="taxonomy-{{taxonomy}}">
-			{{#term_labels}}<li>{{.}}</li>{{/term_labels}}
+{{#term_labels}}
+			<li>{{.}}</li>
+{{/term_labels}}
 		</ul>
 {{/taxonomies}}
 	</header>
-	<main class="entry-content">
+
+	<div class="entry-content">
 		{{{content}}}
-	</main>
-</div>
+	</div>
+<?php \nt\end(); ?>
+</main>
 
 </body>
 </html>
-<?php \nt\end( $view ); ?>
