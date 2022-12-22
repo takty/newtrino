@@ -1,0 +1,269 @@
+/**
+ * Form
+ *
+ * @author Takuto Yanagida
+ * @version 2022-12-22
+ */
+
+@use 'mixin' as *;
+@use 'variable' as *;
+
+input[type='text'],
+input[type='datetime-local'],
+input[type='password'],
+input[type='month'],
+select:not(.flatpickr-monthDropdown-months),
+button,
+input[type='button'],
+.button {
+	border          : 1px solid $color-button-border;
+	border-radius   : $radius-button;
+	background-color: $color-button-background;
+	color           : $color-text;
+
+	font           : inherit;
+	font-size      : 0.85rem;
+	text-decoration: none;
+	white-space    : nowrap;
+
+	&:hover { border-color: $color-button-border-hover; }
+	&:focus {
+		outline     : 0;
+		border-color: $color-button-border-hover;
+	}
+
+	&:disabled,
+	&[disabled] {
+		pointer-events: none;
+		opacity: 0.5;
+	}
+
+	body > .header & {
+		@include floating-shadow;
+		@include frame-edge;
+
+		&:hover { border-color: $color-button-border-hover; }
+	}
+}
+
+button,
+input[type='button'],
+.button {
+	line-height: 2rem;
+}
+
+input[type='text'],
+input[type='datetime-local'],
+input[type='password'] {
+	max-height: 2.5rem;
+	height    : 2.5rem;
+
+	padding   : 0.5rem 0.5rem;
+	text-align: left;
+
+	&[readonly] {
+		height       : 2rem;
+		padding-block: 0;
+		cursor       : default;
+
+		color    : #777;
+		font-size: 0.75rem;
+	}
+	&:not(.flatpickr-input)[readonly] {
+		background-color: rgba($color-button-background, 0.5);
+	}
+}
+
+input[type='checkbox'] {
+	&:hover { border-color: $color-button-border-hover; }
+	&:focus-visible {
+		outline-color : $color-button-border-hover;
+		outline-offset: 0;
+	}
+}
+
+input[type='month'],
+select:not(.flatpickr-monthDropdown-months) {
+	max-height: 2rem;
+	height    : 2rem;
+	padding   : 0.25rem;
+	@include for-tp { padding-inline: 0.5rem; }
+}
+
+select:not(.flatpickr-monthDropdown-months) {
+	padding-right: 1rem;
+	@include for-tp { padding-right: 1.25rem; }
+
+	&.accent {
+		border-color    : $color-button-border-accent;
+		background-color: $color-button-background-accent;
+		color           : $color-button-text-accent;
+		&:hover { border-color: $color-button-border-hover; }
+
+		> option { background-color: #fff; }
+	}
+}
+
+label.select,
+.flatpickr-monthDropdown-months + * {
+	display: inline-block;
+
+	position: relative;
+	&::after {
+		content  : '';
+		position : absolute;
+		top      : 50%;
+		transform: translateY(calc(-50% - 0.075rem)) rotate(-135deg);
+
+		right : 0.4rem;
+		width : 0.3rem;
+		height: 0.3rem;
+
+		border-top : 1px solid $color-text;
+		border-left: 1px solid $color-text;
+
+		@include for-ta {
+			right : 0.5rem;
+			width : 0.35rem;
+			height: 0.35rem;
+
+			border-top-width : 2px;
+			border-left-width: 2px;
+		}
+	}
+}
+
+label.select.accent {
+	&::after {
+		border-top-color : $color-button-text-accent;
+		border-left-color: $color-button-text-accent;
+	}
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+	-webkit-appearance: none;
+	appearance        : none;
+	padding-right     : 1.25rem;
+
+	& + *::after {
+		left : -0.75rem;
+		right: unset;
+		@include for-ta {
+			left : -0.75rem;
+			right: unset;
+		}
+		pointer-events: none;
+	}
+}
+
+button,
+input[type=button],
+.button {
+	display        : inline-flex;
+	align-items    : center;
+	justify-content: center;
+
+	min-width: 1.5rem;
+	@include for-tl { min-width: 2rem; }
+
+	max-height: 2rem;
+	height    : 2rem;
+
+	padding: 0.25rem 0.5rem;
+	@include for-tp { padding-inline: 0.75rem; }
+
+	text-align: center;
+	user-select: none;
+
+	&.accent {
+		border-color    : $color-button-border-accent;
+		background-color: $color-button-background-accent;
+		color           : $color-button-text-accent;
+		&:hover { border-color: $color-button-border-hover; }
+	}
+	&.delete {
+		border-color    : $color-button-border-caution;
+		background-color: $color-button-background-caution;
+		color           : $color-button-text-caution;
+		&:hover { border-color: $color-button-border-hover; }
+	}
+	&.mini {
+		min-width: 1.5rem;
+		padding: 0.5rem 0.25rem;
+	}
+	&.cross {
+		position: relative;
+		&::before,
+		&::after {
+			content : '';
+			position: absolute;
+			top     : calc(50% - 0.5rem / 2);
+			width   : 0;
+			height  : 0.5rem;
+
+			transform-origin: center center;
+
+			left       : calc(50% - 1px / 2);
+			border-left: 1px solid $color-text;
+			@include for-ta {
+				left             : calc(50% - 2px / 2);
+				border-left-width: 2px;
+			}
+		}
+		&::before { transform: rotate( 45deg); }
+		&::after  { transform: rotate(-45deg); }
+
+		&.delete {
+			&::before,
+			&::after {
+				border-left-color: $color-button-text-caution;
+			}
+			min-width     : 1.25rem;
+			width         : 1.25rem;
+			padding       : 0;
+			vertical-align: middle;
+		}
+	}
+	&.tag {
+		padding  : 0.25rem 0.35rem;
+		height   : 1.5rem;
+		font-size: 0.75rem;
+
+		&.cross {
+			padding-right: 1.15rem;
+			&::before,
+			&::after {
+				content : '';
+				position: absolute;
+				top     : calc(50% - 0.5rem / 2);
+				left    : calc(100% - 0.6rem - 1px / 2);
+				height  : 0.5rem;
+			}
+		}
+	}
+}
+
+.button,
+.button-row > button,
+label.select select {
+	min-width: 2rem;
+	@include for-tl { min-width: 3.5rem; }
+}
+
+input[type='text'],
+input[type='password'] {
+	&:not(.flatpickr-input) {
+		& + button,
+		& + input[type=button],
+		& + .button {
+			max-height: 2.5rem;
+			height    : 2.5rem;
+		}
+	}
+}
+
+label.checkbox {
+	display    : flex;
+	align-items: center;
+	input { margin-right: 0.25rem; }
+}

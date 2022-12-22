@@ -3,7 +3,7 @@
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2022-04-13
+ * @version 2022-12-22
  */
 
 namespace nt;
@@ -19,7 +19,6 @@ start_session( true );
 
 function handle_query(): array {
 	global $nt_config, $nt_store, $nt_session;
-	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';
 
 	$orig_query = \nt\parse_query_string();
@@ -38,7 +37,11 @@ function handle_query(): array {
 
 	if ( $nt_session->checkNonce() ) {
 		if ( isset( $orig_query['remove_id'] ) ) {
-			$nt_store->removePost( $orig_query['remove_id'] );
+			if ( $nt_session->lock( $orig_query['remove_id'] ) ) {
+				$nt_store->removePost( $orig_query['remove_id'] );
+			} else {
+				$error = 'lock';
+			}
 		} elseif ( isset( $orig_query['restore_id'] ) ) {
 			$nt_store->restorePost( $orig_query['restore_id'] );
 		} elseif ( isset( $orig_query['empty_trash'] ) ) {
@@ -46,44 +49,48 @@ function handle_query(): array {
 			$nt_store->emptyTemporaryDirectories( $type );
 		}
 	}
-	$query['nonce'] = $nt_session->getNonce();
-
 	$args = [ 'status' => $status, 'type' => $type, 'per_page' => $perPage ];
-	if ( $date ) $args += [ 'date_query' => [ [ 'date' => $date ] ] ];
-	if ( $page ) $args += [ 'page'       => $page ];
-
+	if ( $date ) {
+		$args += [ 'date_query' => [ [ 'date' => $date ] ] ];
+	}
+	if ( $page ) {
+		$args += [ 'page' => $page ];
+	}
 	if ( ! empty( $query['taxonomy'] ) ) {
 		\nt\create_tax_query_from_taxonomy_to_terms( $query['taxonomy'], $args );
 	}
 	$ret = $nt_store->getPosts( $args );
-	$is_trash = $status === '_trash';
-	$ps = array_map( function ( $p ) use ( $query, $list_url, $post_url, $is_trash ) {
-		return _process_post_for_view( $p, $query, $list_url, $post_url, $is_trash );
-	}, $ret['posts'] );
+	$ps  = array_map(
+		function ( $p ) use ( $query, $post_url, $status ) {
+			return _process_post_for_view( $p, $query, '', $post_url, $status === '_trash' );
+		},
+		$ret['posts']
+	);
 
-	$msgs = [
+	$ntc = [
 		'new'    => _ht( 'A new post could not be created.' ),
 		'update' => _ht( 'The post could not be updated.' ),
 		'view'   => _ht( 'The post could not be viewed.' ),
 		'lock'   => _ht( 'The post is being edited by another user.' ),
-	];
-	$msg = $msgs[ $error ] ?? '';
+	][ $error ] ?? '';
+
+	$is_trash = $status === '_trash';
 	return [
 		'posts'            => $ps,
-		'pagination'       => _create_pagination_view( $query, $ret['page_count'], $list_url ),
+		'pagination'       => _create_pagination_view( $query, $ret['page_count'], '' ),
 		'meta@cols'        => _create_header_meta_cols( $type ),
 		'taxonomy@cols'    => _create_header_taxonomy_cols( $type ),
-		'taxonomy@cancels' => _create_header_taxonomy_cancels( $query, $list_url ),
+		'taxonomy@cancels' => _create_header_taxonomy_cancels( $query, '' ),
 		'filter'           => [
-			'type'     => _create_type_filter_view( $query, $types, $list_url ),
-			'date'     => _create_date_filter_view( $query, $type, 'month', $list_url ),
-			'per_page' => _create_per_page_filter_view( $query, [10, 20, 50, 100], $list_url ),
+			'type'     => _create_type_filter_view( $query, $types, '' ),
+			'date'     => _create_date_filter_view( $query, $type, 'month', '' ),
+			'per_page' => _create_per_page_filter_view( $query, [10, 20, 50, 100], '' ),
 			'new'      => _create_new_filter_view( $query, $types, $post_url ),
 		],
-		'list_trash'  => $is_trash ? '#' : \nt\create_canonical_url( $list_url, $query, [ 'status' => '_trash' ] ),
-		'list_all'    => $is_trash ? \nt\create_canonical_url( $list_url, $query, [ 'status' => null ] ) : '#',
-		'empty_trash' => $is_trash ? \nt\create_canonical_url( $list_url, $query, [ 'empty_trash' => true, 'status' => null ] ) : '#',
-		'message'     => $msg,
+		'list_trash'  => $is_trash ? '#' : \nt\create_canonical_url( '', $query, [ 'status' => '_trash' ] ),
+		'list_all'    => $is_trash ? \nt\create_canonical_url( '', $query, [ 'status' => null ] ) : '#',
+		'empty_trash' => $is_trash ? \nt\create_canonical_url( '', $query, [ 'empty_trash' => true, 'status' => null ] ) : '#',
+		'ntc'         => $ntc,
 		'nonce'       => $nt_session->getNonce(),
 	];
 }
@@ -110,11 +117,13 @@ function _rearrange_query( array $query ): array {
 
 function _create_type_filter_view( array $query, array $types, string $list_url ): array {
 	$cur = $query['type'] ?? '';
-	$as = [];
+	$as  = [];
 	foreach ( $types as $slug => $d ) {
-		$url = \nt\create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null, 'page' => null ] );
-		$p = [ 'label' => $d['label'], 'url' => $url ];
-		if ( $slug === $cur ) $p['is_selected'] = true;
+		$url = \ nt\create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null, 'page' => null ] );
+		$p   = [ 'label' => $d['label'], 'url' => $url ];
+		if ( $slug === $cur ) {
+			$p['is_selected'] = true;
+		}
 		$as[] = $p;
 	}
 	return $as;
@@ -126,43 +135,49 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 
 	$cur = $query['date'] ?? '';
 	switch ( $dateType ) {
-		case 'year':  $df = 'Y';     break;
+		case 'year' : $df = 'Y';     break;
 		case 'month': $df = 'Y-m';   break;
-		case 'day':   $df = 'Y-m-d'; break;
+		case 'day'  : $df = 'Y-m-d'; break;
 	}
 	$as = [];
 
-	$url = \nt\create_canonical_url( $list_url, $query, [ 'date' => null ] );
-	$p = [ 'label' => translate( 'All' ), 'url' => $url ];
-	if ( $cur === '' ) $p['is_selected'] = true;
+	$url = \ nt\create_canonical_url( $list_url, $query, [ 'date' => null ] );
+	$p   = [ 'label' => translate( 'All' ), 'url' => $url ];
+	if ( $cur === '' ) {
+		$p['is_selected'] = true;
+	}
 	$as[] = $p;
 
 	foreach ( $dates as $date ) {
-		$url = \nt\create_canonical_url( $list_url, $query, [ 'date' => $date['slug'], 'page' => null ] );
+		$url   = \nt\create_canonical_url( $list_url, $query, [ 'date' => $date['slug'], 'page' => null ] );
 		$label = _format_date_label( $date['slug'], $df );
-		$p = [ 'label' => $label, 'url' => $url ];
-		if ( strval( $date['slug'] ) === $cur ) $p['is_selected'] = true;
+		$p     = [ 'label' => $label, 'url' => $url ];
+		if ( strval( $date['slug'] ) === $cur ) {
+			$p['is_selected'] = true;
+		}
 		$as[] = $p;
 	}
 	return [ $dateType => $as ];
 }
 
 function _format_date_label( string $slug, string $df ): string {
-	$y = substr( $slug, 0, 4 );
-	$m = substr( $slug, 4, 2 );
-	$d = substr( $slug, 6, 2 );
+	$y    = substr( $slug, 0, 4 );
+	$m    = substr( $slug, 4, 2 );
+	$d    = substr( $slug, 6, 2 );
 	$date = ( $y ? $y : '1970' ) . '-' . ( $m ? $m : '01' ) . '-' . ( $d ? $d : '01' );
 	$date = date_create( $date );
 	return $date->format( $df );
 }
 
-function _create_per_page_filter_view( array $query, array $pers, string $list_url ): array {
+function _create_per_page_filter_view( array $query, array $per_s, string $list_url ): array {
 	$cur = $query['per_page'] ?? '';
-	$as = [];
-	foreach ( $pers as $per ) {
+	$as  = [];
+	foreach ( $per_s as $per ) {
 		$url = \nt\create_canonical_url( $list_url, $query, [ 'per_page' => $per, 'page' => null ] );
-		$p = [ 'label' => $per, 'url' => $url ];
-		if ( $per == $cur ) $p['is_selected'] = true;
+		$p   = [ 'label' => $per, 'url' => $url ];
+		if ( $per == $cur ) {
+			$p['is_selected'] = true;
+		}
 		$as[] = $p;
 	}
 	return $as;
@@ -171,8 +186,8 @@ function _create_per_page_filter_view( array $query, array $pers, string $list_u
 function _create_new_filter_view( array $query, array $types, string $post_url ): array {
 	$as = [];
 	foreach ( $types as $slug => $d ) {
-		$url = \nt\create_canonical_url( $post_url, $query, [ 'type' => $slug, 'mode' => 'new' ] );
-		$p = [ 'label' => $d['label'], 'url' => $url ];
+		$url  = \nt\create_canonical_url( $post_url, $query, [ 'type' => $slug, 'mode' => 'new' ] );
+		$p    = [ 'label' => $d['label'], 'url' => $url ];
 		$as[] = $p;
 	}
 	return $as;
@@ -183,15 +198,19 @@ function _create_new_filter_view( array $query, array $types, string $post_url )
 
 
 function _create_pagination_view( array $query, int $page_count, string $list_url ): ?array {
-	$cur = isset( $query['page'] ) ? max( 1, min( intval( $query['page'] ), $page_count ) ) : 1;
+	$cur   = isset( $query['page'] ) ? max( 1, min( intval( $query['page'] ), $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
-		$url = \nt\create_canonical_url( $list_url, $query, [ 'page' => $i ] );
-		$p = [ 'label' => $i, 'url' => $url ];
-		if ( $i === $cur ) $p['is_selected'] = true;
+		$url = \ nt\create_canonical_url( $list_url, $query, [ 'page' => $i ] );
+		$p   = [ 'label' => $i, 'url' => $url ];
+		if ( $i === $cur ) {
+			$p['is_selected'] = true;
+		}
 		$pages[] = $p;
 	}
-	if ( count( $pages ) <= 1 ) return null;
+	if ( count( $pages ) <= 1 ) {
+		return null;
+	}
 	return [
 		'previous' => ( ( 1 < $cur ) ? $pages[ $cur - 2 ]['url'] : '' ),
 		'next'     => ( ( $cur < $page_count ) ? $pages[ $cur ]['url'] : '' ),
@@ -201,7 +220,7 @@ function _create_pagination_view( array $query, int $page_count, string $list_ur
 
 function _create_header_taxonomy_cols( string $type ): array {
 	global $nt_store;
-	$labs = [];
+	$labs  = [];
 	$taxes = $nt_store->type()->getTaxonomySlugAll( $type );
 	foreach ( $taxes as $tax ) {
 		$labs[] = [ 'label' => $nt_store->taxonomy()->getTaxonomy( $tax )['label'] ];
@@ -212,23 +231,26 @@ function _create_header_taxonomy_cols( string $type ): array {
 function _create_header_meta_cols( string $type ): array {
 	global $nt_store;
 	$labs = [];
-	$ms = $nt_store->type()->getMetaAll( $type );
+	$ms   = $nt_store->type()->getMetaAll( $type );
 	foreach ( $ms as $m ) {
-		if ( ! ( $m['do_show_column'] ?? false ) ) continue;
+		if ( ! ( $m['do_show_column'] ?? false ) ) {
+			continue;
+		}
 		$labs[] = [ 'label' => $m['label'] ];
 	}
 	return $labs;
 }
 
 function _create_header_taxonomy_cancels( array $query, string $list_url ): ?array {
-	if ( ! isset( $query['taxonomy'] ) ) return null;
-
+	if ( ! isset( $query['taxonomy'] ) ) {
+		return null;
+	}
 	global $nt_store;
 	$tts = [];
 	foreach ( $query['taxonomy'] as $tax => $ts ) {
 		foreach ( $ts as $slug ) {
-			$lab = $nt_store->taxonomy()->getTermLabel( $tax, $slug );
-			$url = \nt\create_canonical_url( $list_url, $query, [ $tax => null ] );
+			$lab   = $nt_store->taxonomy()->getTermLabel( $tax, $slug );
+			$url   = \nt\create_canonical_url( $list_url, $query, [ $tax => null ] );
 			$tts[] = [ 'label' => $lab, 'url' => $url ];
 		}
 	}
@@ -240,7 +262,9 @@ function _create_header_taxonomy_cancels( array $query, string $list_url ): ?arr
 
 
 function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url, bool $is_trash ): ?array {
-	if ( $p === null ) return null;
+	if ( $p === null ) {
+		return null;
+	}
 	$ret = [
 		'id'       => $p->getId(),
 		'type'     => $p->getType(),
@@ -274,15 +298,21 @@ function _create_status_select( Post $p ): array {
 	$ss = [];
 	if ( $p->canPublished() ) {
 		$s = [ 'slug' => 'publish', 'label' => translate( 'Published' ) ];
-		if ( $p->isStatus( 'publish' ) ) $s['is_selected'] = true;
+		if ( $p->isStatus( 'publish' ) ) {
+			$s['is_selected'] = true;
+		}
 		$ss[] = $s;
 	} else {
 		$s = [ 'slug' => 'future', 'label' => translate( 'Scheduled' ) ];
-		if ( $p->isStatus( 'future' ) ) $s['is_selected'] = true;
+		if ( $p->isStatus( 'future' ) ) {
+			$s['is_selected'] = true;
+		}
 		$ss[] = $s;
 	}
 	$s = [ 'slug' => 'draft', 'label' => translate( 'Draft' ) ];
-	if ( $p->isStatus( 'draft' ) ) $s['is_selected'] = true;
+	if ( $p->isStatus( 'draft' ) ) {
+		$s['is_selected'] = true;
+	}
 	$ss[] = $s;
 	return $ss;
 }
@@ -308,9 +338,11 @@ function _create_taxonomy_cols( Post $p, array $query, string $list_url ): array
 function _create_meta_cols( Post $p ): array {
 	global $nt_store;
 	$cols = [];
-	$ms = $nt_store->type()->getMetaAll( $p->getType() );
+	$ms   = $nt_store->type()->getMetaAll( $p->getType() );
 	foreach ( $ms as $m ) {
-		if ( ! ( $m['do_show_column'] ?? false ) ) continue;
+		if ( ! ( $m['do_show_column'] ?? false ) ) {
+			continue;
+		}
 		$key  = $m['key'];
 		$type = $m['type'];
 		$val  = $p->getMetaValue( $key );
@@ -347,20 +379,27 @@ function _get_meta( Post $p, array &$cls ): array {
 		$key  = $m['key'];
 		$type = $m['type'];
 		$val  = $p->getMetaValue( $key );
-		if ( $type !== 'group' && $val === null ) continue;
-
+		if ( $type !== 'group' && $val === null ) {
+			continue;
+		}
 		switch ( $type ) {
 			case 'date':
 				$ret[ $key ] = \nt\parse_date( $val );
 				break;
 			case 'date-range':
-				$es = Post::DATE_STATUS_ONGOING;
+				$es  = Post::DATE_STATUS_ONGOING;
 				$now = date( 'Ymd' );
-				if ( ! isset( $val['from'] ) || ! isset( $val['to'] ) ) break;
-				if ( $now < $val['from'] ) $es = Post::DATE_STATUS_UPCOMING;
-				elseif ( $val['to'] < $now ) $es = Post::DATE_STATUS_FINISHED;
+				if ( ! isset( $val['from'] ) || ! isset( $val['to'] ) ) {
+					break;
+				}
+				if ( $now < $val['from'] ) {
+					$es = Post::DATE_STATUS_UPCOMING;
+				} elseif ( $val['to'] < $now ) {
+					$es = Post::DATE_STATUS_FINISHED;
+				}
 				$ret[ "$key@status" ] = $es;
-				$cls[] = "$key-$es";
+
+				$cls[]       = "$key-$es";
 				$ret[ $key ] = [
 					'from' => \nt\parse_date( $val['from'] ),
 					'to'   => \nt\parse_date( $val['to']   ),

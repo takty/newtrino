@@ -3,7 +3,7 @@
  * Functions for Query Strings
  *
  * @author Takuto Yanagida
- * @version 2021-09-15
+ * @version 2022-12-22
  */
 
 namespace nt;
@@ -30,15 +30,15 @@ function create_canonical_url( string $base_url, array $ps, array $overwrite = [
 }
 
 function create_canonical_query( array $ps, array $overwrite = [] ): string {
+	$th_keys = [ 'id', 'type', 'date', 'search', 'per_page', 'empty_trash' ];
+
 	$ps = array_merge( [], $ps, $overwrite );
 	$qs = [];
-	if ( isset( $ps['id']       ) ) $qs[] = [ 'id',       $ps['id']       ];
-	if ( isset( $ps['type']     ) ) $qs[] = [ 'type',     $ps['type']     ];
-	if ( isset( $ps['date']     ) ) $qs[] = [ 'date',     $ps['date']     ];
-	if ( isset( $ps['search']   ) ) $qs[] = [ 'search',   $ps['search']   ];
-	if ( isset( $ps['per_page'] ) ) $qs[] = [ 'per_page', $ps['per_page'] ];
+	foreach ( $th_keys as $k ) {
+		if ( isset( $ps[ $k ] ) ) $qs[] = [ $k, $ps[ $k ] ];
+	}
 
-	$keys = [ 'id', 'type', 'date', 'search', 'per_page', 'page', 'taxonomy' ];
+	$keys = [ 'id', 'type', 'date', 'search', 'per_page', 'empty_trash', 'page', 'taxonomy' ];
 	foreach ( $ps as $tax => $terms ) {  // Taxonomies
 		if ( in_array( $tax, $keys, true ) ) continue;
 		$terms = \nt\is_string_array( $terms );

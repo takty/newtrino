@@ -2,7 +2,7 @@
  * Variables for Style
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-19
  */
 
 $color-text: #111;
@@ -10,7 +10,7 @@ $color-line: hsl(0, 0%, 80%, 90%);
 
 $color-frame-border-light: rgba(#fff, 0.85);
 $color-frame-border-dark : rgba(#fff, 0.65);
-$color-frame-background  : rgba(#fff, 0.90);
+$color-frame-background  : rgba(#fff, 0.95);
 
 $radius-frame: 8px;
 
@@ -30,3 +30,6 @@ $color-button-text-caution: $color-text;
 $radius-button: 6px;
 
 $color-dialog-placeholder-background: rgba(#000, 0.65);
+
+$font-family-sans: 'SourceHanSansJP-VF', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font-family-mono: Consolas, Monaco, 'Courier New', Courier, 'Source Han Code JP', 'IPA Gothic', 'Osaka-Mono', monospace;

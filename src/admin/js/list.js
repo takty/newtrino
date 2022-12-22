@@ -2,55 +2,67 @@
  * List
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-22
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-	const btnsRemove  = document.getElementsByClassName('remove-post');
-	const btnsRestore = document.getElementsByClassName('restore-post');
-	const btnEmpty    = document.getElementById('btn-empty-trash');
+	const nonce     = document.getElementById('nonce').value;
+	const msgTrash  = document.getElementById('msg-trash').value;
+	const msgDelPer = document.getElementById('msg-del-per').value;
+	const msgEmpty  = document.getElementById('msg-empty-trash').value;
 
-	const msgTrash  = document.getElementById('message-trash').value;
-	const msgDelPer = document.getElementById('message-delete-permanently').value;
-	const msgEmpty  = document.getElementById('message-empty-trash').value;
+	const elmsNav     = document.querySelectorAll('.do-navigate');
+	const btnsRemove  = document.getElementsByClassName('do-remove-post');
+	const btnsRestore = document.getElementsByClassName('do-restore-post');
+	const btnEmpty    = document.getElementById('do-empty-trash');
 
-	for (const btn of btnsRemove) {
-		btn.addEventListener('click', onRemoveClicked);
+	for (const elm of elmsNav)     elm.addEventListener('SELECT' === elm.tagName ? 'change' : 'click', doNavigate);
+	for (const btn of btnsRemove)  btn.addEventListener('click', doRemovePost);
+	for (const btn of btnsRestore) btn.addEventListener('click', doRestorePost);
+	btnEmpty.addEventListener('click', doEmptyTrash);
+
+	function doNavigate(e) {
+		const et = e.target;
+		const nc = et.classList.contains('nc');
+		setLocation('SELECT' === et.tagName ? et.value : et.dataset.href, nc);
 	}
-	for (const btn of btnsRestore) {
-		btn.addEventListener('click', onRestoreClicked);
-	}
-	btnEmpty.addEventListener('click', onEmptyTrashClicked);
 
-	function onRemoveClicked(e) {
-		const href = e.target.dataset.href;
-		const tr = e.target.parentElement.parentElement;
+	function doRemovePost(e) {
+		if (!confirmRemove(e.target)) return false;
+		setLocation(e.target.dataset.href, true);
+	}
+
+	function doRestorePost(e) {
+		setLocation(e.target.dataset.href, true);
+	}
+
+	function doEmptyTrash(e) {
+		if (!confirm(msgEmpty)) return false;
+		setLocation(e.target.dataset.href, true);
+	}
+
+	function confirmRemove(btn) {
+		const tr = btn.parentElement.parentElement;
 
 		const title = tr.getElementsByClassName('title')[0].innerText;
 		const date  = tr.getElementsByClassName('date')[0].innerHTML.replace('</span><span>', ' ').replace(/(<([^>]+)>)/ig, '')
 
-		if (e.target.classList.contains('delper')) {
+		if (btn.classList.contains('delete')) {
 			if (!confirm(`${msgDelPer}\n"${title}"\n${date}`)) return false;
 		} else {
 			if (!confirm(`${msgTrash}\n"${title}"\n${date}`)) return false;
 		}
-		window.location.href = href;
+		return true;
 	}
 
-	function onRestoreClicked(e) {
-		const href = e.target.dataset.href;
-		window.location.href = href;
-	}
-
-	function onEmptyTrashClicked(e) {
-		const href = e.target.dataset.href;
-		if (!confirm(msgEmpty)) return false;
-		window.location.href = href;
-	}
-
-	function clearErrorMessage() {
-		const mn = document.getElementById('message-error');
-		if (mn) mn.style.display = 'none';
+	function setLocation(href, nc) {
+		if ('' === href) {
+			const qs = nc ? `?nonce=${nonce}` : '';
+			document.location.href = location.pathname + qs;
+		} else {
+			const qs = nc ? `&nonce=${nonce}` : '';
+			document.location.href = href + qs;
+		}
 	}
 
 
@@ -78,25 +90,23 @@ document.addEventListener('DOMContentLoaded', () => {
 	// -------------------------------------------------------------------------
 
 
-	const statSels = document.getElementsByClassName('post-status');
+	const statSel_s = document.getElementsByClassName('post-status');
 
-	for (const statSel of statSels) {
-		statSel.addEventListener('focus', (e) => {
+	for (const statSel of statSel_s) {
+		statSel.addEventListener('focus', e => {
 			statSel.dataset.prev = e.target.selectedIndex;
 		});
-		statSel.addEventListener('change', (e) => {
-			const s = e.target.value;
-			const id = e.target.parentElement.parentElement.parentElement.dataset.id;
+		statSel.addEventListener('change', e => {
+			const s  = e.target.value;
+			const id = e.target.dataset.id;
 			setPostStatus(id, s, statSel);
-			clearErrorMessage();
+			clearNotice();
 		});
 	}
 
-	function setPostStatus(id, status, statSel) {
-		const n = document.getElementById('nonce');
-		const nonce = n ? n.value : '';
+	function setPostStatus(id, stat, statSel) {
 		const req = new XMLHttpRequest();
-		req.addEventListener('load', (e) => {
+		req.addEventListener('load', e => {
 			const msg = e.currentTarget.responseText.match(/<result>([\s\S]*?)<\/result>/i);
 			if (msg !== null && msg[1] === 'success') {
 				statSel.dataset.prev = statSel.selectedIndex;
@@ -109,7 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 		req.open('post', 'ajax.php', true);
 		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		req.send('mode=status' + '&id=' + id + '&val=' + status + '&cache=' + Date.now() + '&nonce=' + nonce);
+		req.send(`mode=status&id=${id}&val=${stat}&cache=${Date.now()}&nonce=${nonce}`);
+	}
+
+	function clearNotice() {
+		const ntc = document.querySelector('.site-header .notice');
+		if (ntc) ntc.style.display = 'none';
 	}
 });
 
@@ -119,6 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('load', () => {  // Must when 'load' event
 	const selNewPost = document.getElementById('sel-new-post');
-	const optFirst = selNewPost.querySelector('option:first-child');
+	const optFirst   = selNewPost.querySelector('option:first-child');
 	selNewPost.value = optFirst.value;
 });

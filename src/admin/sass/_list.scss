@@ -2,7 +2,7 @@
  * List
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-22
  */
 
 @use 'mixin' as *;
@@ -34,12 +34,17 @@ body.list {
 			font-size: 0.75rem;
 		}
 	}
+
+	.column-main {
+		display       : flex;
+		flex-direction: column;
+		gap           : var(--small-gap);;
+	}
 }
 
 .list-taxonomy-cancel {
-	display       : flex;
-	flex-wrap     : wrap;
-	padding-bottom: 2px;
+	display  : flex;
+	flex-wrap: wrap;
 }
 
 .list-item {
@@ -55,14 +60,17 @@ body.list {
 		tr:nth-of-type(2n + 1) { background-color: hsla(0, 0%, 100%, 0.9); }
 		tr:nth-of-type(2n)     { background-color: hsla(0, 0%, 97.5%, 0.9); }
 	}
-	th, td {
-		padding: 0.75rem 0.5rem;
-		@include for-tl { padding-inline: 0.75rem; }
 
-		&:first-child { padding-inline-start: 8px; }
-		&:last-child  { padding-inline-end  : 8px; }
+	:is(th, td) {
+		&:first-child { padding-inline-start: 0.5rem; }
+		&:last-child  { padding-inline-end  : 0.5rem; }
 	}
+
 	th {
+		height        : calc(2rem + var(--small-gap));
+		padding-block : 0 var(--small-gap);
+		padding-inline: 0.5rem;
+
 		border-bottom: 1px solid $color-line;
 		text-align   : center;
 		white-space  : nowrap;
@@ -72,20 +80,30 @@ body.list {
 			&:not(:last-child) { min-width: 5rem; }
 		}
 	}
-	&:first-child th {
-		padding-top: 0.5rem;
-	}
+
 	td {
+		height : calc(2rem + var(--small-gap) * 2);
+		padding: 0.5rem;
+		@include for-tl { padding-inline: 0.75rem; }
+
 		line-height: 1.35;
+
+		&:first-child {
+			button { width: 100%; }
+		}
 
 		&.title {
 			width      : 100%;
 			white-space: normal;
 			min-width  : 8rem;
+
+			a { cursor: pointer; }
 		}
+
 		&.taxonomy {
 			a { white-space: nowrap; }
 		}
+
 		&.date {
 			font-size  : 0.65rem;
 			white-space: nowrap;
@@ -100,6 +118,7 @@ body.list {
 				}
 			}
 		}
+
 		&.meta-type-date,
 		&.meta-type-date-range {
 			font-size  : 0.65rem;
@@ -110,40 +129,20 @@ body.list {
 				text-align: right;
 			}
 		}
-
-		.restore-post {
-			min-width      : 4.25rem;
-			justify-content: center;
-		}
-
-		a[href="#"] {
-			pointer-events : none;
-			text-decoration: none;
-			color          : initial;
-		}
 	}
 }
 
 .pagination {
-	margin-block-start: 1.5rem;
-
 	display        : flex;
 	justify-content: center;
-	gap            : 0.5rem;
+	gap            : var(--small-gap);
 }
 
 .button-row.bottom {
-	margin-block-start: 1rem;
-
 	display  : flex;
 	flex-wrap: wrap;
-	gap      : 0.5rem;
+	gap      : var(--small-gap);
 
-	> a {
-		&[href="#"],
-		&[data-href="#"] {
-			display: none;
-		}
-		&.right { margin-inline-start: auto; }
-	}
+	[data-href="#"] { display: none; }
+	.right { margin-inline-start: auto; }
 }
