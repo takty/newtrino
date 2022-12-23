@@ -2,7 +2,7 @@
  * Media Dialog
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-23
  */
 
 @use 'mixin' as *;
@@ -11,19 +11,21 @@
 body.media {
     display    : grid;
     place-items: center;
+
+	.notice:empty {
+		display: none;
+	}
 }
 
 .frame-media {
-	width     : 95vw;
-	max-width : 96rem;
 	max-height: 48rem;
 	height    : 90vh;
 	@supports (height: 1dvh) { height: 90dvh; }
 
-	display: flex;
+	display       : flex;
 	flex-direction: column;
 
-	h1 {
+	.dialog-title {
 		span:last-child:not(:empty) {
 			font-weight: normal;
 			white-space: nowrap;
@@ -34,7 +36,7 @@ body.media {
 			span:last-child { font-size: 0.85rem; }
 		}
 	}
-	.container-main { position: relative; }
+	.column-main { position: relative; }
 }
 
 .scroller {
@@ -47,35 +49,85 @@ body.media {
 .list-item-media {
 	display  : flex;
 	flex-wrap: wrap;
+	gap      : calc(var(--small-gap) * 2) var(--small-gap);
+
+	padding: var(--small-gap);
 }
 
 .item-media {
-	margin    : 1rem;
-	text-align: center;
+	.card {
+		display       : inline-flex;
+		flex-direction: column;
+		gap           : 0.5rem;
+
+		width     : 8rem;
+		min-width : unset;
+		max-height: unset;
+		height    : unset;
+		padding   : 0;
+		border    : none;
+
+		&:focus {
+			outline: none;
+
+			.thumbnail::after {
+				box-shadow: 0 0 1px 2px $color-button-border-hover;
+			}
+		}
+	}
+
+	&.selected .card {
+		position: relative;
+		&::after,
+		&::before {
+			content : '';
+			position: absolute;
+			inset   : -0.25rem auto auto -0.25rem;
+			width   : 1rem;
+			height  : 1rem;
+			z-index : 1;
+		}
+		&::before {
+			background-color: $color-button-background-accent;
+			border-radius   : 3px;
+		}
+		&::after {
+			box-shadow: 0 0 0 1rem $color-text inset;
+			clip-path : polygon(10% 48%, 32% 86%, 52% 86%, 90% 20%, 73% 10%, 42% 64%, 27% 38%);
+			scale     : 0.75 0.75;
+		}
+	}
 
 	.thumbnail {
 		display    : grid;
 		place-items: center;
 
-		margin: 0 auto;
-		width : 6rem;
-		height: 6rem;
+		width       : 100%;
+		aspect-ratio: 1/1;
 
-		box-shadow   : 0 0 1px 1px $color-line inset;
 		border-radius: 2px;
 
+		position: relative;
+		&::after {
+			content : '';
+			position: absolute;
+			inset   : 0;
+
+			box-shadow   : 0 0 1px 1px $color-line inset;
+			border-radius: 2px;
+		}
+
 		img {
-			z-index   : -1;
-			width     : 6rem;
-			height    : 6rem;
-			object-fit: contain;
+			width       : 100%;
+			aspect-ratio: 1/1;
+			object-fit  : contain;
 		}
 
 		span {
 			display      : inline-block;
 			padding      : 2px 6px;
-			border-radius: 3px;
 			border       : 1px solid #777;
+			border-radius: 3px;
 			color        : #666;
 			font-size    : 0.65rem;
 			font-weight  : bold;
@@ -84,30 +136,17 @@ body.media {
 	}
 
 	.caption {
-		margin-top: 0.5rem;
-		max-width : 6rem;
+		width: 100%;
 
-		font-size    : 0.75rem;
-		line-height  : 1.35;
+		font-size  : 0.75rem;
+		line-height: 1.35;
+		text-align : center;
+
 		overflow-wrap: break-word;
+		white-space  : normal;
 	}
-
-	input { display: none; }
-
-	input:checked + label {
-		.thumbnail { box-shadow: 0 0 1px 2px $color-button-border-hover; }
-	}
-}
-
-#message-max-file-size {
-	display: none;
-	margin : 1rem 0;
-	padding: 0;
-
-	&.visible { display: block; }
 }
 
 #media-url {
-	width    : 16rem;
-	max-width: 100%;
+	width: 100%;
 }

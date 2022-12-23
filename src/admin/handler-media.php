@@ -3,7 +3,7 @@
  * Handler - Media
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -18,13 +18,13 @@ start_session( true, true );
 function handle_query( array $q ): array {
 	$q_id   = $q['id']   ?? null;
 	$q_mode = $q['mode'] ?? '';
-	$msg	= '';
 
 	$q_filter = $q['filter'] ?? null;
 	$q_target = $q['target'] ?? '';
 	$q_size   = $q['size']   ?? '';
 
 	$media = new Media( $q_id, Post::MEDIA_DIR_NAME, NT_URL );
+	$ntc   = '';
 
 	switch ( $q_mode ) {
 		case 'upload':
@@ -37,13 +37,13 @@ function handle_query( array $q ): array {
 				$media->upload( $_FILES['upload_file'] );
 			} elseif ( $err === UPLOAD_ERR_NO_FILE ) {
 				Logger::error( __FUNCTION__, 'No file was uploaded [UPLOAD_ERR_NO_FILE]' );
-				$msg = _ht( 'No file was uploaded.' );
+				$ntc = _ht( 'No file was uploaded.' );
 			} elseif ( $err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE ) {
 				Logger::error( __FUNCTION__, 'The uploaded file exceeds the max file size [UPLOAD_ERR_INI_SIZE or UPLOAD_ERR_FORM_SIZE]' );
-				$msg = _ht( 'The uploaded file exceeds the max file size.' );
+				$ntc = _ht( 'The uploaded file exceeds the max file size.' );
 			} else {
 				Logger::error( __FUNCTION__, 'An unknown error occurred' );
-				$msg = _ht( 'An unknown error occurred.' );
+				$ntc = _ht( 'An unknown error occurred.' );
 			}
 			break;
 		case 'delete':
@@ -52,9 +52,6 @@ function handle_query( array $q ): array {
 			}
 			break;
 	}
-
-	$items = $media->getItemList( $q_filter );
-	foreach ( $items as $idx => &$it ) $it['index'] = $idx;
 
 	$ft = '';
 	switch ( $q_filter ) {
@@ -68,10 +65,10 @@ function handle_query( array $q ): array {
 
 	return [
 		'id'            => $q_id,
-		'items'         => $items,
+		'items'         => $media->getItemList( $q_filter ),
 		'aligns'        => _create_align_options(),
 		'sizes'         => _create_size_options(),
-		'message'       => $msg,
+		'ntc'           => $ntc,
 		'max_file_size' => _get_max_file_size(),
 		'button_label'  => translate( $q_target ? 'Select' : 'Insert Into Post' ),
 

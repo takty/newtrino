@@ -2,23 +2,22 @@
  * Media Dialog
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-23
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+	const metaTarget    = document.getElementById('meta-target').value;
+	const metaSizeWidth = document.getElementById('meta-size-width').value;
+	const maxFileSize   = parseInt(document.getElementById('max-file-size').value);
+	const ntcDel        = document.getElementById('ntc-delete').value;
+	const ntcFileSize   = document.getElementById('ntc-file-size').value;
+
 	const btnAdd    = document.getElementById('btn-add');
 	const btnClose  = document.getElementById('btn-close');
 	const btnDelete = document.getElementById('btn-delete');
 	const btnInsert = document.getElementById('btn-insert');
 
-	const maxFileSize    = parseInt(document.getElementById('max-file-size').value);
-	const msgMaxFileSize = document.getElementById('message-max-file-size');
-
-	const metaTarget    = document.getElementById('meta-target').value;
-	const metaSizeWidth = document.getElementById('meta-size-width').value;
-
-	btnAdd.addEventListener('click', doAdd);
-	btnClose.addEventListener('click', doClose);
+	btnClose.addEventListener('click', () => window.parent.closeDialog());
 	btnInsert.addEventListener('click', doInsert);
 	btnDelete.addEventListener('click', doDelete);
 	btnDelete.disabled = true;
@@ -26,21 +25,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const upFile = document.getElementById('upload-file');
 	upFile.addEventListener('change', () => {
-		const f = upFile.files ? upFile.files[0] : null;
+		const ntc = document.querySelector('.dialog-header .notice');
+		const f   = upFile?.files[0] ?? null;
 		if (f && maxFileSize < f.size) {
-			msgMaxFileSize.classList.add('visible');
-			return;
-		}
-		msgMaxFileSize.classList.remove('visible');
-		if (upFile.value !== '') {
-			window.parent.reopenDialogLater();
-			setTimeout(() => { document.getElementById('form-upload').submit(); }, 100);
+			ntc.innerHTML = ntcFileSize;
+		} else {
+			ntc.innerHTML = '';
+			if (upFile.value !== '') {
+				window.parent.reopenDialogLater();
+				setTimeout(() => { document.getElementById('form-upload').submit(); }, 100);
+			}
 		}
 	});
+	btnAdd.addEventListener('click', () => upFile.click());
 
-	const rs = document.querySelectorAll('.item-media input[type="radio"]');
-	for (const r of rs) r.addEventListener('change', onSelected);
-	window.parent.setMediaItemCount(rs.length);
+	const items = document.querySelectorAll('.item-media');
+	for (const r of items) r.addEventListener('click', e => onSelected(e.currentTarget));
+	window.parent.setMediaItemCount(items.length);
 
 	const selAlign = document.getElementById('image-align');
 	const selSize  = document.getElementById('image-size');
@@ -56,26 +57,23 @@ document.addEventListener('DOMContentLoaded', () => {
 	// -------------------------------------------------------------------------
 
 
-	function doAdd() {
-		upFile.click();
-	}
+	function onSelected(it) {
+		for (const i of items) {
+			i.classList.remove('selected');
+		}
+		it.classList.add('selected');
 
-	function doClose() {
-		window.parent.closeDialog();
-	}
-
-	function onSelected(e) {
 		btnDelete.disabled = false;
 		btnInsert.disabled = false;
 
-		const url = e.target.parentElement.querySelector('.file-url').value;
+		const url = it.querySelector('.file-url').value;
 		if (!url.includes('/?.')) {
 			mediaUrl.value = url;
 		} else {
 			mediaUrl.value = '';
 		}
 
-		const ss = e.target.parentElement.querySelector('.sizes');
+		const ss = it.querySelector('.sizes');
 		if (ss) {
 			selAlign.disabled = false;
 			selSize.disabled  = false;
@@ -85,8 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const sizeCls = Object.keys(sizes);
 			selSize.className = sizeCls.join(' ');
 			if (!sizeCls.includes(selSize.value)) {
-				if (sizeCls.length === 1) selSize.value = sizeCls[sizeCls.length - 1];
-				else selSize.value = sizeCls[sizeCls.length - 2];
+				selSize.value = (sizeCls.length === 1) ? sizeCls.at(-1) : sizeCls.at(-2);
 			}
 			for (const opt of selSizeOpts) {
 				opt.style.display = sizeCls.includes(opt.value) ? null : 'none';
@@ -99,19 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function doDelete() {
-		const msg = document.getElementById('msg-delete').value;
-		if (!confirm(msg)) return;
+		if (!confirm(ntcDel)) {
+			return;
+		}
+		const it = document.querySelector('.item-media.selected');
+		const fn = it.querySelector('.file-name').value;
 
-		const p = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
-		const file_name = p.querySelector('.file-name').value;
-
-		document.getElementById('delete-file').value = file_name;
+		document.getElementById('delete-file').value = fn;
 		window.parent.reopenDialogLater();
-		setTimeout(() => { document.getElementById('form-delete').submit(); }, 100);
+		setTimeout(() => document.getElementById('form-delete').submit(), 100);
 	}
 
 	function doInsert() {
-		const it   = document.querySelector('.item-media input[type="radio"]:checked').parentElement;
+		const it   = document.querySelector('.item-media.selected');
 		const ss   = it.querySelector('.sizes');
 		const url  = it.querySelector('.file-url').value;
 		const name = it.querySelector('.file-name').value;
@@ -155,20 +152,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function get2xUrl(sizes, width) {
 		for (const val of Object.values(sizes)) {
-			if (width * 2 === val.width) return val.url;
+			if (width * 2 === val.width) {
+				return val.url;
+			}
 		}
-		if (sizes.full.width !== width) return sizes.full.url;
+		if (sizes.full.width !== width) {
+			return sizes.full.url;
+		}
 		return null;
 	}
 
 	function getMinAndCeilSize(sizes, width) {
 		const kvs = [];
-		for (const key of Object.keys(sizes)) kvs.push([key, sizes[key]]);
-		kvs.sort((a, b) => { return a[1].width < b[1].width; });
+		for (const key of Object.keys(sizes)) {
+			kvs.push([key, sizes[key]]);
+		}
+		kvs.sort((a, b) => (a[1].width < b[1].width));
 		for (const kv of kvs) {
-			if (width <= kv[1].width) return [kvs[0][0], kv[0]];
+			if (width <= kv[1].width) {
+				return [kvs[0][0], kv[0]];
+			}
 		}
 		return [kvs[0][0], 'full'];
 	}
-
 });
