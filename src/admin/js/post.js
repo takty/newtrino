@@ -2,16 +2,20 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-23
  */
 
 window.NT = window['NT'] || {};
 window.NT.tiny_mce_before_init = window.NT['tiny_mce_before_init'] || [];
 
 document.addEventListener('DOMContentLoaded', () => {
-	const lang = document.getElementById('lang').value;
+	const ntcEnterTitle = document.getElementById('ntc-enter-title').value;
+	const lang          = document.getElementById('lang').value;
+	const editorCss     = document.getElementById('editor-css').value;
+	const editorOpts    = document.getElementById('editor-option').value;
+	const assetsUrl     = document.getElementById('assets-url').value;
 
-	window.addEventListener('beforeunload', (e) => {
+	window.addEventListener('beforeunload', e => {
 		if (isModified) {
 			e.preventDefault();
 			e.returnValue = '';
@@ -138,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		for (const m of ms) {
 			const btnDel = m.querySelector('.button.delete');
 			if (!btnDel) continue;
-			btnDel.addEventListener('click', (e) => {
+			btnDel.addEventListener('click', () => {
 				m.querySelector('.media-name').value = '';
 				m.querySelector('.media-json').value = '';
 				btnDel.setAttribute('disabled', true);
@@ -152,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		for (const m of ms) {
 			const btnDel = m.querySelector('.button.delete');
 			if (!btnDel) continue;
-			btnDel.addEventListener('click', (e) => {
+			btnDel.addEventListener('click', () => {
 				m.querySelector('.media-name').value = '';
 				m.querySelector('.media-json').value = '';
 				m.querySelector('.image > div').style.backgroundImage = null;
@@ -183,16 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			'Preformatted=pre',
 		].join(';');
 
-		const css       = document.getElementById('editor-css').value;
-		const json      = document.getElementById('editor-option').value;
-		const opt       = json ? JSON.parse(json) : {};
-		const assetsUrl = document.getElementById('assets-url').value;
-
 		let args = Object.assign({
 			// Integration and setup options
 			plugins : plugins,
 			selector: '#post-content',
-			setup   : (e) => { e.on('change', () => { isModified = true; }); },
+			setup   : e => { e.on('change', () => { isModified = true; }); },
 
 			// User interface options
 			block_formats    : formats,
@@ -201,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			toolbar2         : toolbars[1],
 
 			// Content appearance options
-			content_css       : css,
+			content_css       : editorCss,
 			visual_table_class: ' ',
 
 			// Content formatting options
@@ -229,17 +228,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			table_class_list        : [],
 			table_advtab            : false,
 			table_resize_bars       : false,
-		}, opt)
-		for (const f of window.NT.tiny_mce_before_init) args = f(args, lang, assetsUrl);
+		}, editorOpts ? JSON.parse(editorOpts) : {})
+		for (const f of window.NT.tiny_mce_before_init) {
+			args = f(args, lang, assetsUrl);
+		}
 		tinymce.init(args);
 
 		let st = null
-		document.getElementById('post-title').addEventListener('input', (e) => {
+		document.getElementById('post-title').addEventListener('input', e => {
 			if (st) clearTimeout(st);
 			st = setTimeout(() => {
 				if (e.target.value !== '') {
-					const es = document.getElementsByClassName('message');
-					for (const e of es) e.style.display = '';
+					const ntc = document.querySelector('.site-header .notice');
+					ntc.innerHTML = '';
 				}
 				onModified();
 			}, 100);
@@ -248,8 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function adjustEditorHeight() {
 		const onResize = () => {
-			const clm = document.querySelector('.container-main');
-			const ed  = document.querySelector('.container-main .tox-tinymce');
+			const clm = document.querySelector('.column.post > .column-main');
+			const ed  = clm.querySelector('.tox-tinymce');
 			if (ed) {
 				const clmStyle  = window.getComputedStyle(clm);
 				const innerH    = clm.clientHeight - parseInt(clmStyle.paddingTop) - parseInt(clmStyle.paddingBottom);
@@ -336,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function addBtnEvent(sel, fn = null) {
 		const btns = document.querySelectorAll(sel);
 		for (const btn of btns) {
-			btn.addEventListener('mouseup', (e) => {
+			btn.addEventListener('mouseup', e => {
 				if (e.button === 0) {
 					e.preventDefault();
 					if (fn) fn(e);
@@ -345,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					e.preventDefault();
 				}
 			});
-			btn.addEventListener('mousedown', (e) => {
+			btn.addEventListener('mousedown', e => {
 				if (e.button === 1) e.preventDefault();
 			});
 		}
@@ -353,8 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function update(e) {
 		if (document.getElementById('post-title').value === '') {
-			const elm = document.getElementById('message-enter-title');
-			elm.hidden = false;
+			const ntc = document.querySelector('.site-header .notice');
+			ntc.innerHTML = ntcEnterTitle;
 			return false;
 		}
 		isModified = false;
@@ -444,10 +445,8 @@ let isModified = false;
 function onModified() {
 	if (isModified) return;
 	isModified = true;
-	const es = document.getElementsByClassName('message');
-	for (const e of es) e.style.display = '';
-	const um = document.getElementById('message-notification');
-	um.innerText = '';
+	const ntc = document.querySelector('.site-header .notice');
+	ntc.innerHTML = '';
 }
 
 function setMediaItemCount(count) {
@@ -462,8 +461,11 @@ function insertMediaToContent(data) {
 	if (data['size']) {
 		const ss  = data.srcset ? ` srcset="${data.srcset}"` : '';
 		const cls = `size-${data.size}` + (data.linkUrl ? '' : ` ${data.align}`);
+
 		let str = `<img class="${cls}" src="${data.url}"${ss} alt="${data.name}" width="${data.width}" height="${data.height}" loading="lazy">`;
-		if (data.linkUrl) str = `<a href="${data.linkUrl}" class="${data.align}">${str}</a>`;
+		if (data.linkUrl) {
+			str = `<a href="${data.linkUrl}" class="${data.align}">${str}</a>`;
+		}
 		tinymce.execCommand('mceInsertContent', false, str);
 	} else {
 		const s = tinymce.activeEditor.selection.getContent();
@@ -480,13 +482,22 @@ function insertMediaToMeta(target, data) {
 	closeDialog();
 	const f = document.getElementById(target);
 	if (!f) return;
-	const jsonElm = f.querySelector('.media-json');
-	if (jsonElm) jsonElm.value = JSON.stringify(data);
 
+	const jsonElm = f.querySelector('.media-json');
 	const nameElm = f.querySelector('.media-name');
-	if (nameElm) nameElm.value = data.name;
-	const imgElm = f.querySelector('.image > div');
-	if (imgElm && data && data.minUrl) imgElm.style.backgroundImage = 'url("' + data.minUrl + '")';
-	const delBtn = f.querySelector('.button.delete');
-	if (delBtn) delBtn.removeAttribute('disabled');
+	const imgElm  = f.querySelector('.image > div');
+	const delBtn  = f.querySelector('.button.delete');
+
+	if (jsonElm) {
+		jsonElm.value = JSON.stringify(data);
+	}
+	if (nameElm) {
+		nameElm.value = data.name;
+	}
+	if (imgElm && data && data.minUrl) {
+		imgElm.style.backgroundImage = `url('${data.minUrl}')`;
+	}
+	if (delBtn) {
+		delBtn.removeAttribute('disabled');
+	}
 }
