@@ -2,7 +2,7 @@
  * Style for Admin
  *
  * @author Takuto Yanagida
- * @version 2022-12-19
+ * @version 2022-12-23
  */
 
 @use 'mixin' as *;
@@ -13,6 +13,7 @@
 @use 'login';
 @use 'list';
 @use 'post';
+@use 'editor';
 @use 'media';
 
 @font-face {
@@ -110,6 +111,11 @@ body {
 		.column-sub {
 			&[disabled] { display: none; }
 
+			@include for-tl {
+				flex-shrink: 0;
+				width      : 16.5rem;
+			}
+
 			> .frame + .frame {
 				margin-top: var(--small-gap);
 			}
@@ -167,23 +173,13 @@ body {
 	&.preview { padding: 0; }
 }
 
-.frame-sub,
-.frame-compact {
-	display  : flex;
-	flex-wrap: wrap;
-	gap      : var(--small-gap);
-	padding  : var(--small-gap);
+.frame-compact,
+.frame-box {
+	display: flex;
+	gap    : var(--small-gap);
+	padding: var(--small-gap);
 
-	flex-direction: row;
-	align-items   : center;
-
-	@include for-tl {
-		flex-direction: column;
-		align-self    : flex-start;
-		align-items   : stretch;
-		flex-shrink   : 0;
-		width         : 16.5rem;
-	}
+	break-inside: avoid;
 
 	.flatpickr-input {
 		min-width: 11rem;
@@ -194,48 +190,55 @@ body {
 		font-size: 0.75rem;
 	}
 
-	.button-row {
-		display        : flex;
-		justify-content: space-between;
-		flex-grow      : 1;
-		gap            : var(--small-gap);
-
-		@include for-tl { width: 100%; }
-
-		&.right {
-			margin-left    : auto;
-			justify-content: flex-end;
-		}
-	}
-
 	hr {
-		margin    : 0 calc(-1 * var(--small-gap));
+		margin   : 0 calc(-1 * var(--small-gap));
+		max-width: unset;
+
 		padding   : 0;
-		max-width : unset;
-		border-top: $color-line 1px solid;
+		border-top: 1px solid $color-line;
 
-		display: none;
-		@include for-tl { display: block; }
-	}
-}
-
-.frame-sub {
-	.title {
-		white-space: nowrap;
-		font-weight: bold;
+		opacity: 0.25;
+		@include for-ta {
+			opacity: 1;
+		}
 	}
 }
 
 .frame-compact {
+	flex-wrap  : wrap;
+	align-items: center;
+
+	@include for-tl {
+		flex-direction: column;
+		align-self    : flex-start;
+		align-items   : stretch;
+	}
+
 	> * {
 		display    : flex;
 		flex-wrap  : wrap;
 		align-items: center;
 		gap        : 0.25rem 0.5rem;
+
+		&.grow { flex-grow: 1; }
 	}
 
 	.heading {
 		font-weight: bold;
+	}
+}
+
+.frame-box {
+	flex-direction: column;
+
+	.title {
+		font-weight: bold;
+	}
+
+	.row-col {
+		display  : flex;
+		flex-wrap: wrap;
+		gap      : var(--small-gap);
 	}
 }
 
@@ -275,6 +278,16 @@ body {
 
 // -----------------------------------------------------------------------------
 
+
+.button-row {
+	display        : flex;
+	justify-content: space-between;
+	gap            : var(--small-gap);
+
+	&.end { justify-content: flex-end; }
+
+	[data-href="#"] { display: none; }
+}
 
 a {
 	color          : hsl(240, 80%, 50%);

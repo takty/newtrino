@@ -2,29 +2,26 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2022-12-16
+ * @version 2022-12-23
  */
 
 @use 'mixin' as *;
 @use 'variable' as *;
 
+body.post {
+	.notice:empty {
+		display: none;
+	}
+
+	.column-main {
+		display       : flex;
+		flex-direction: column;
+		gap           : var(--small-gap);
+	}
+}
+
 #form-post {
-	display       : flex;
-	flex-direction: column;
-	flex-grow     : 1;
-}
-
-.frame-post {
-	display       : flex;
-	flex-direction: column;
-
-	> * + *,
-	> .mce-container { margin-top: 1rem; }
-}
-
-.frame .message {
-	display: none;
-	margin : 1rem;
+	display: contents;
 }
 
 #dialog-placeholder {
@@ -69,22 +66,24 @@
 		opacity   : 0;
 		transition: opacity 0.05s ease;
 	}
-	&.visible { opacity: 1; }
+	&.visible {
+		opacity: 1;
+	}
 }
 
-#dialog-media,
-#dialog-login,
-#dialog-preview {
+:is(#dialog-media, #dialog-login, #dialog-preview) {
 	display: none;
+
 	&.active {
 		opacity   : 0;
 		transition: opacity 0.1s ease;
 	}
-	&.visible { opacity: 1; }
+	&.visible {
+		opacity: 1;
+	}
 }
 
-#dialog-media,
-#dialog-login {  // iframe
+:is(#dialog-media, #dialog-login) {  // iframe
 	&.active {
 		display: block;
 
@@ -95,8 +94,6 @@
 }
 
 #dialog-preview {
-	width     : 95vw;
-	max-width : 96rem;
 	max-height: 96rem;
 	height    : 90vh;
 	@supports (height: 1dvh) { height: 90dvh; }
@@ -114,7 +111,9 @@
 		opacity   : 0;
 		transition: opacity 0.1s ease 0.1s;
 
-		&.visible { opacity: 1; }
+		&.visible {
+			opacity: 1;
+		}
 	}
 }
 
@@ -124,30 +123,26 @@
 
 .metabox-group {
 	.group-inner {
-		width  : 100%;
-		padding: 0;
+		width         : 100%;
+		display       : flex;
+		flex-direction: column;
+		gap           : calc(var(--small-gap) + 0.25rem);
 
 		> * {
-			display       : flex;
-			flex-direction: row;
-			flex-wrap     : wrap;
-			align-items   : center;
+			width: 100%;
+		}
 
-			@include for-tl {
-				align-self    : flex-start;
-				flex-direction: column;
-				align-items   : flex-start;
-			}
+		.title {
+			display    : inline-flex;
+			align-items: center;
 
-			padding: 0.25rem 0;
-			@include for-tl { padding: 0.5rem 0; }
-			> * {
-				padding-block: 0.25rem;
-				max-width    : 100%;
-			}
-			> *:not(:last-child) { margin-right: 1rem; }
-			@include for-tl {
-				> *:not(:last-child) { margin-right: 0; }
+			&::before {
+				content   : '';
+				display   : inline-flex;
+				width     : 0.85rem;
+				height    : 0.85rem;
+				box-shadow: 0 0 0 1rem $color-text inset;
+				clip-path : polygon(20% 20%, 20% 80%, 70% 50%);
 			}
 		}
 	}
@@ -163,77 +158,80 @@
 	}
 }
 
+
+// ----
+
+
 .metabox-date,
 .metabox-date-range {
 	.flatpickr {
 		display    : flex;
 		align-items: flex-end;
+		gap        : 0.5rem;
 
 		@include for-tl {
 			flex-direction: column;
 			width         : 100%;
 		}
 	}
+
 	.flatpickr-input {
+		flex-grow: 1;
+
 		@include for-tl {
 			padding-inline: 0.45rem;
 		}
 	}
-	.flatpickr.date-range input {
-		min-width: 14rem;
-		@include for-tl { min-width: unset; }
-	}
+
 	.button.cross.delete {
 		@include for-tl {
-			width     : 2.5rem;
-			min-width : 2.5rem;
-			height    : 1rem;
-			min-height: 1rem;
-			padding   : 0;
+			width  : 2.5rem;
+			height : 1rem;
+			padding: 0;
 		}
 	}
 }
 
+
+// ----
+
+
 .metabox-media,
 .metabox-media-image {
+	display       : flex;
+	flex-direction: column;
+	gap           : var(--small-gap);
+
 	.metabox-container {
-		display  : flex;
-		flex-wrap: wrap;
+		flex-grow: 1;
 
-		> * + * { margin-left: 0.5rem; }
-		@include for-tl { > * + * { margin-left: 0; } }
+		display: flex;
+		gap    : 0.5rem;
+	}
 
-		.button.delete {
-			max-height: 2rem;
-			height    : 2rem;
-		}
+	input[type='text'] {
+		min-width: 6rem;
 	}
 }
 
 .metabox-media {
 	.media-name {
-		width    : 16rem;
-		max-width: 100%;
+		flex-grow: 1;
 	}
-	@include for-tl {
-		.open-media-dialog {
-			order     : 1;
-			margin-top: 0.5rem;
-		}
-		.button.cross.delete {
-			order      : 2;
-			margin-left: auto;
-			margin-top : 0.5rem;
-		}
+	button.cross.delete {
+		height : 2rem;
+		padding: 0;
 	}
 }
 
 .metabox-media-image {
 	.open-media-dialog {
-		display    : inline-flex;
-		user-select: none;
-		width      : 5.25rem;
-		overflow   : hidden;
+		display     : inline-flex;
+		width       : auto;
+		min-width   : 4.65rem;
+		height      : 3.5rem;
+		aspect-ratio: 4/3;
+		overflow    : hidden;
 
 		border          : 1px solid $color-button-border;
 		border-radius   : $radius-button;
@@ -244,8 +242,7 @@
 				border-color: $color-button-border-hover;
 			}
 		}
-
-		aspect-ratio: 4/3;
+		user-select: none;
 
 		position: relative;
 		> div {
@@ -271,149 +268,25 @@
 			}
 		}
 	}
-	.open-media-dialog + * {
-		display       : flex;
-		flex-direction: column;
 
-		margin-left: 0.5rem;
-		width      : 16rem;
-		max-width  : calc(100% - 5.75rem);
+	.open-media-dialog + * {
+		flex-grow: 1;
+
+		display        : flex;
+		flex-direction : column;
+		align-items    : flex-end;
+		justify-content: space-between;
+		gap            : 0.5rem;
 	}
+
 	.media-name {
 		width: 100%;
 	}
-	.button.cross.delete {
-		margin-left: auto;
-		margin-top : 0.5rem;
 
-		width     : 2.5rem;
-		min-width : 2.5rem;
-		height    : 1rem;
-		min-height: 1rem;
+	button.cross.delete {
+		width : 2.5rem;
+		height: 1rem;
 
 		padding: 0;
-	}
-}
-
-
-// -----------------------------------------------------------------------------
-
-
-body.post {
-	textarea[name='post_content'] {
-		min-height: 20rem;
-		opacity   : 0;
-	}
-	.tox.tox-tinymce {
-		min-height: 20rem;
-		max-height: 100vh;
-		@supports (max-height: 1dvh) { max-height: 100dvh; }
-	}
-	.tox,
-	.tox .tox-button,
-	.tox .tox-textarea,
-	.tox .tox-textfield,
-	.tox .tox-listbox,
-	.tox .tox-tinymce-aux,
-	.tox .tox-checkbox__label {
-		font-family: unset;
-		font-weight: normal;
-		font-size  : 0.85rem;
-	}
-	.tox.tox-tinymce,
-	.tox .tox-menu,
-	.tox .tox-textarea,
-	.tox .tox-textfield,
-	.tox .tox-listbox {
-		border-color : $color-button-border;
-		border-radius: $radius-button;
-	}
-	.tox .tox-button {
-		display    : inline-flex;
-		align-items: center;
-
-		border-radius   : $radius-button;
-		border-color    : $color-button-border-accent;
-		background-color: $color-button-background-accent;
-		color           : $color-button-text-accent;
-		&:active:not(:disabled),
-		&:focus:not(:disabled),
-		&:hover:not(:disabled) {
-			border-color    : $color-button-border-hover;
-			background-color: $color-button-background-accent;
-			color           : $color-button-text-accent;
-		}
-
-		&.tox-button--secondary {
-			border-color    : $color-button-border;
-			background-color: $color-button-background;
-			color           : $color-button-text;
-			&:active:not(:disabled),
-			&:focus:not(:disabled),
-			&:hover:not(:disabled) {
-				border-color    : $color-button-border-hover;
-				background-color: $color-button-background;
-				color           : $color-button-text;
-			}
-		}
-	}
-	.tox .tox-label {
-		color: $color-text;
-	}
-	.tox .tox-color-input span::before {
-		background-repeat: repeat;
-	}
-	.tox .tox-textfield,
-	.tox .tox-listbox {
-		&:hover { border-color: $color-button-border-hover; }
-		&:focus {
-			outline     : 0;
-			border-color: $color-button-border-hover;
-		}
-	}
-
-	.tox .tox-form__group {
-		border       : 1px solid transparent;
-		border-radius: $radius-button;
-		overflow     : hidden;
-
-		.tox-textarea {
-			border     : none;
-			font-family: Consolas, Monaco, 'Courier New', Courier, 'Source Han Code JP', 'IPA Gothic', 'Osaka-Mono', monospace;
-		}
-	}
-	.tox .tox-toolbar__group {
-		height: 39px;  // To display the ruled line
-	}
-
-	.tox .tox-dialog-wrap__backdrop {
-		background-color: $color-dialog-placeholder-background;
-	}
-
-	.tox .tox-dialog {
-		@include frame;
-		@include frame-edge;
-		box-shadow     : 0 1px 2px rgba(#000, 0.08);
-		backdrop-filter: blur(4px) saturate(180%);
-
-		max-height: 90vh;
-		@supports (max-height: 1dvh) { max-height: 90dvh; }
-	}
-	.tox .tox-dialog__title {
-		font-family: unset;
-		font-weight: bold;
-		font-size  : 1.25rem;
-	}
-	.tox .tox-dialog__header {
-		padding         : 1.25rem 1.25rem 0 1.25rem;
-		background-color: transparent;
-	}
-	.tox .tox-dialog__body-content {
-		padding: 1.25rem;
-	}
-	.tox .tox-dialog__footer {
-		padding         : 1.25rem;
-		border-top-color: $color-line;
-		background-color: transparent;
 	}
 }

@@ -60,7 +60,7 @@ body.media {
 		flex-direction: column;
 		gap           : 0.5rem;
 
-		width     : 8rem;
+		width     : clamp(6rem, 27vw, 8rem);
 		min-width : unset;
 		max-height: unset;
 		height    : unset;

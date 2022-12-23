@@ -137,12 +137,3 @@ body.list {
 	justify-content: center;
 	gap            : var(--small-gap);
 }
-
-.button-row.bottom {
-	display  : flex;
-	flex-wrap: wrap;
-	gap      : var(--small-gap);
-
-	[data-href="#"] { display: none; }
-	.right { margin-inline-start: auto; }
-}

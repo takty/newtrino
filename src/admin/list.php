@@ -85,7 +85,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 
 				<hr>
 
-				<div class="button-row right">
+				<div class="button-row grow end">
 					<label class="select accent">
 						<select id="sel-new-post" class="accent do-navigate nc">
 							<option value="#"><?= _ht( "New Post" ); ?></option>
@@ -178,10 +178,10 @@ header( 'Content-Type: text/html;charset=utf-8' );
 					<button type="button"{{#next}} data-href="{{.}}"{{/next}}{{^next}} disabled{{/next}} class="do-navigate"><?= _ht( 'Old' ); ?></button>
 				</div>
 {{/pagination}}
-				<div class="button-row bottom">
+				<div class="button-row">
 					<button type="button" data-href="{{list_all}}" class="tag do-navigate"><?= _ht( "All" ); ?></button>
 					<button type="button" data-href="{{list_trash}}" class="tag do-navigate"><?= _ht( "Trash" ); ?></button>
-					<button type="button" data-href="{{empty_trash}}" class="tag right delete" id="do-empty-trash"{{^posts}} disabled{{/posts}}><?= _ht( "Empty Trash" ); ?></button>
+					<button type="button" data-href="{{empty_trash}}" class="tag delete" id="do-empty-trash"{{^posts}} disabled{{/posts}}><?= _ht( "Empty Trash" ); ?></button>
 				</div>
 <?php \nt\end(); ?>
 			</div>

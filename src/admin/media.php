@@ -105,7 +105,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 						</label>
 					</div>
 
-					<div>
+					<div class="grow">
 						<input type="text" id="media-url" readonly>
 					</div>
 				</div>

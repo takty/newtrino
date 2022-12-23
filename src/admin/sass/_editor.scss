@@ -1,0 +1,169 @@
+/**
+ * Post - Editor
+ *
+ * @author Takuto Yanagida
+ * @version 2022-12-23
+ */
+
+@use 'mixin' as *;
+@use 'variable' as *;
+
+body.post {
+	textarea[name='post_content'] {
+		min-height: 20rem;
+		opacity   : 0;
+	}
+
+	.tox.tox-tinymce {
+		min-height: 20rem;
+		max-height: 100vh;
+		@supports (max-height: 1dvh) { max-height: 100dvh; }
+	}
+
+	.tox,
+	.tox .tox-button,
+	.tox .tox-textarea,
+	.tox .tox-textfield,
+	.tox .tox-listbox,
+	.tox .tox-tinymce-aux,
+	.tox .tox-checkbox__label {
+		font-family: unset;
+		font-weight: normal;
+		font-size  : 0.85rem;
+	}
+
+	.tox.tox-tinymce,
+	.tox .tox-menu,
+	.tox .tox-textarea,
+	.tox .tox-textfield,
+	.tox .tox-listbox {
+		border-color : $color-button-border;
+		border-radius: $radius-button;
+	}
+
+	.tox .tox-button {
+		display    : inline-flex;
+		align-items: center;
+
+		border-radius   : $radius-button;
+		border-color    : $color-button-border-accent;
+		background-color: $color-button-background-accent;
+		color           : $color-button-text-accent;
+		&:active:not(:disabled),
+		&:focus:not(:disabled),
+		&:hover:not(:disabled) {
+			border-color    : $color-button-border-hover;
+			background-color: $color-button-background-accent;
+			color           : $color-button-text-accent;
+		}
+
+		&.tox-button--secondary {
+			border-color    : $color-button-border;
+			background-color: $color-button-background;
+			color           : $color-button-text;
+			&:active:not(:disabled),
+			&:focus:not(:disabled),
+			&:hover:not(:disabled) {
+				border-color    : $color-button-border-hover;
+				background-color: $color-button-background;
+				color           : $color-button-text;
+			}
+		}
+	}
+
+	.tox .tox-label {
+		color: $color-text;
+	}
+
+	.tox .tox-color-input span::before {
+		background-repeat: repeat;
+	}
+
+	.tox .tox-textfield,
+	.tox .tox-listbox {
+		&:hover { border-color: $color-button-border-hover; }
+		&:focus {
+			outline     : 0;
+			border-color: $color-button-border-hover;
+		}
+	}
+
+	.tox .tox-form {
+		display       : flex;
+		flex-direction: column;
+		gap           : var(--small-gap);
+	}
+
+	.tox .tox-form__group {
+		border       : 1px solid transparent;
+		border-radius: $radius-button;
+		overflow     : hidden;
+		margin: 0;
+
+		.tox-textarea {
+			// border     : none;
+			font-family: $font-family-mono;
+		}
+	}
+
+	.tox .tox-toolbar__group {
+		height: 39px;  // To display the ruled line
+	}
+
+	.tox .tox-dialog-wrap__backdrop {
+		background-color: $color-dialog-placeholder-background;
+	}
+
+	.tox .tox-dialog {
+		@include frame;
+		@include frame-edge;
+		@include floating-shadow;
+		backdrop-filter: blur(4px);
+
+		max-height: 90vh;
+		@supports (max-height: 1dvh) { max-height: 90dvh; }
+	}
+
+	&:not(.tox-force-desktop) .tox .tox-dialog {
+		margin-block: var(--large-gap);
+		width       : calc(100vw - var(--large-gap) * 2);
+	}
+
+	.tox .tox-dialog__title {
+		font-family: unset;
+		font-weight: bold;
+		font-size  : 1.25rem;
+	}
+
+	.tox .tox-dialog__header {
+		padding-inline  : var(--small-gap);
+		padding-block   : var(--small-gap) 0;
+		background-color: transparent;
+	}
+
+	.tox .tox-dialog__body {
+		padding: var(--small-gap);
+	}
+
+	.tox .tox-dialog__body-content {
+		padding: 0;
+	}
+
+	.tox .tox-dialog__body-nav {
+		padding: 0 var(--small-gap) 0 0;
+	}
+
+	.tox .tox-dialog__footer {
+		padding         : var(--small-gap);
+		border-top-color: $color-line;
+		background-color: transparent;
+	}
+
+	.tox .tox-form__grid {
+		gap: var(--small-gap) 0;
+	}
+
+	.tox-icon .tox-lock-icon__lock svg {
+		width: 2rem;
+	}
+}
