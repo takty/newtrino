@@ -3,7 +3,7 @@
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -351,7 +351,7 @@ function _create_meta_cols( Post $p ): array {
 		} else {
 			if ( $type === 'date' ) {
 				$_lab = _h( \nt\parse_date( $val ) );
-			} elseif ( $type === 'date-range' ) {
+			} elseif ( $type === 'date_range' ) {
 				$_bgn = isset( $val['from'] ) ? _h( \nt\parse_date( $val['from'] ) ) : '';
 				$_end = isset( $val['to']   ) ? _h( \nt\parse_date( $val['to']   ) ) : '';
 				if ( $_bgn === $_end ) {
@@ -386,7 +386,7 @@ function _get_meta( Post $p, array &$cls ): array {
 			case 'date':
 				$ret[ $key ] = \nt\parse_date( $val );
 				break;
-			case 'date-range':
+			case 'date_range':
 				$es  = Post::DATE_STATUS_ONGOING;
 				$now = date( 'Ymd' );
 				if ( ! isset( $val['from'] ) || ! isset( $val['to'] ) ) {

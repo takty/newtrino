@@ -13,7 +13,7 @@
 			},
 			{
 				"key": "thumbnail",
-				"type": "media-image",
+				"type": "media_image",
 				"label": "Featured Image",
 				"label@ja": "アイキャッチ画像",
 				"option": {
@@ -30,7 +30,7 @@
 		"meta": [
 			{
 				"key": "thumbnail",
-				"type": "media-image",
+				"type": "media_image",
 				"label": "Featured Image",
 				"label@ja": "アイキャッチ画像",
 				"option": {
@@ -39,7 +39,7 @@
 			},
 			{
 				"key": "duration",
-				"type": "date-range",
+				"type": "date_range",
 				"label": "Event Duration",
 				"label@ja": "開催期間",
 				"do_show_column": true

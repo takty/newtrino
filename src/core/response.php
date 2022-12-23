@@ -3,7 +3,7 @@
  * Response
  *
  * @author Takuto Yanagida
- * @version 2021-09-21
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -171,7 +171,7 @@ function _get_meta( Post $p, array &$cls ): array {
 				$cls[]                = "$key-$es";
 				$ret[ $key ]          = \nt\parse_date( $val );
 				break;
-			case 'date-range':
+			case 'date_range':
 				if ( ! isset( $val['from'] ) || ! isset( $val['to'] ) ) break;
 				$es                   = _get_date_status( $val['from'], $val['to'] );
 				$ret[ "$key@status" ] = $es;

@@ -3,7 +3,7 @@
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2021-09-21
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -197,7 +197,7 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 				if ( $p['meta']["$key@type"] === 'date' ) {
 					$val = date_create( $val )->format( $date_format );
 				}
-				if ( $p['meta']["$key@type"] === 'date-range' ) {
+				if ( $p['meta']["$key@type"] === 'date_range' ) {
 					$val['from'] = isset( $val['from'] ) ? date_create( $val['from'] )->format( $date_format ) : '';
 					$val['to']   = isset( $val['to']   ) ? date_create( $val['to']   )->format( $date_format ) : '';
 				}

@@ -2,7 +2,7 @@
  * Index
  *
  * @author Takuto Yanagida
- * @version 2022-03-18
+ * @version 2022-12-23
  */
 
 window.NT = window['NT'] || {};
@@ -127,7 +127,7 @@ window.NT = window['NT'] || {};
 					if (p['meta'][key + '@type'] === 'date') {
 						val = formatDate(val, dateFormat);
 					}
-					if (p['meta'][key + '@type'] === 'date-range') {
+					if (p['meta'][key + '@type'] === 'date_range') {
 						val['from'] = val['from'] !== undefined ? formatDate(val['from'], dateFormat) : '';
 						val['to']   = val['to']   !== undefined ? formatDate(val['to'], dateFormat) : '';
 					}

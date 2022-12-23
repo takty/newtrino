@@ -3,7 +3,7 @@
  * Type
  *
  * @author Takuto Yanagida
- * @version 2021-09-11
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -102,26 +102,29 @@ class Type {
 		foreach ( $data as $d ) {
 			\nt\normalize_label( $d, $this->_lang );
 			if ( isset( $d['meta'] ) ) {
-				$d['meta'] = $this->_normalizeMetaLabels( $d['meta'] );
+				$d['meta'] = $this->_normalizeMetaDefinitions( $d['meta'] );
 			}
 			$ret[ $d['slug'] ] = $d;
 		}
 		return $ret;
 	}
 
-	private function _normalizeMetaLabels( array $ms ): array {
+	private function _normalizeMetaDefinitions( array $ms ): array {
 		$ret = [];
 
 		foreach ( $ms as $m ) {
 			if ( empty( $m['type'] ) ) {
 				continue;
 			}
+			// Replace hyphens with underscores.
+			$m['type'] = str_replace( '-', '_', $m['type'] );
+
 			if ( 'group' !== $m['type'] && empty( $m['key'] ) ) {
 				continue;
 			}
 			\nt\normalize_label( $m, $this->_lang );
 			if ( 'group' === $m['type'] && isset( $m['items'] ) && is_array( $m['items'] ) ) {
-				$m['items'] = $this->_normalizeMetaLabels( $m['items'] );
+				$m['items'] = $this->_normalizeMetaDefinitions( $m['items'] );
 			}
 			$ret[] = $m;
 		}

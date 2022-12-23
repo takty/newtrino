@@ -3,7 +3,7 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2021-09-11
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -169,7 +169,7 @@ class Post {
 			if ( $m['type'] === 'date' ) {
 				$vals["meta:$key"] = \nt\pack_date( $vals["meta:$key"] );
 			}
-			if ( $m['type'] === 'date-range' ) {
+			if ( $m['type'] === 'date_range' ) {
 				$json = $vals["meta:$key"];
 				$d = json_decode( $json, true );
 				if ( $d !== null ) {
@@ -178,7 +178,7 @@ class Post {
 					$vals["meta:$key"] = $d;
 				}
 			}
-			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
+			if ( $m['type'] === 'media' || $m['type'] === 'media_image' ) {
 				$json = $vals["meta:$key"];
 				$d = json_decode( $json, true );
 				if ( empty( $d ) || ! is_array( $d ) ) continue;
@@ -283,7 +283,7 @@ class Post {
 			if ( empty( $meta[ $m['key'] ] ) || ! is_array( $meta[ $m['key'] ] ) ) {
 				continue;
 			}
-			if ( $m['type'] === 'media' || $m['type'] === 'media-image' ) {
+			if ( $m['type'] === 'media' || $m['type'] === 'media_image' ) {
 				$meta[ $m['key'] ] = self::_convertMediaUrl( $meta[ $m['key'] ], $fn );
 			}
 		}
