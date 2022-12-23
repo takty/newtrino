@@ -3,7 +3,7 @@
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2022-08-19
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -66,8 +66,8 @@ function handle_query( array $q ): array {
 		'preview_url' => \nt\create_canonical_url( 'preview.php', $query, [ 'mode' => 'preview', 'id' => $t_p->getId() ] ),
 		'media_url'   => \nt\create_canonical_url( 'media.php', [ 'id' => $t_p->getId() ] ),
 
-		'message' => $msg,
-		'lang'    => $lang,
+		'ntc'  => $msg,
+		'lang' => $lang,
 
 		'editor_js'     => get_asset_url( [ "editor.$lang.min.js", "editor.$lang.js", 'editor.min.js', 'editor.js' ] ),
 		'editor_css'    => get_asset_url( [ 'editor.min.css', 'editor.css' ] ),
@@ -151,14 +151,14 @@ function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 	$tss = $post->getTermSlugs( $tax_slug );
 	$ts  = $nt_store->taxonomy()->getTermAll( $tax_slug, $tss );
 ?>
-	<div class="frame frame-sub">
-		<div class="title"><?= _h( $tax['label'] ) ?></div>
+	<div class="frame frame-box">
+		<div class="title"><?= _h( $tax['label'] ); ?></div>
 <?php if ( $is_exclusive ) : ?>
 		<div>
 			<label class="select">
 				<select form="form-post" name="taxonomy:<?= $tax_slug ?>[]" id="taxonomy:<?= $tax_slug ?>">
 <?php foreach( $ts as $t ): ?>
-					<option value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' selected' : '' ?>><?= _h( $t['label'] ) ?></option>
+					<option value="<?= _h( $t['slug'] ); ?>"<?= $t['is_selected'] ? ' selected' : '' ?>><?= _h( $t['label'] ); ?></option>
 <?php endforeach; ?>
 				</select>
 			</label>
@@ -166,8 +166,8 @@ function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 <?php else : ?>
 <?php foreach( $ts as $t ): ?>
 		<label class="checkbox">
-			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ) ?>"<?= $t['is_selected'] ? ' checked' : '' ?>>
-			<?= _h( $t['label'] ) ?>
+			<input name="taxonomy:<?= $tax_slug ?>[]" type="checkbox" value="<?= _h( $t['slug'] ); ?>"<?= $t['is_selected'] ? ' checked' : '' ?>>
+			<?= _h( $t['label'] ); ?>
 		</label>
 <?php endforeach; ?>
 <?php endif; ?>
@@ -205,13 +205,13 @@ function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = f
 			case 'date':
 				echo_metabox_date( $post, $m, $label, $internal );
 				break;
-			case 'date-range':
+			case 'date_range':
 				echo_metabox_date_range( $post, $m, $label, $internal );
 				break;
 			case 'media':
 				echo_metabox_media( $post, $m, $label, $internal );
 				break;
-			case 'media-image':
+			case 'media_image':
 				echo_metabox_media_image( $post, $m, $label, $internal );
 				break;
 		}
@@ -221,9 +221,9 @@ function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = f
 function echo_metabox_group( Post $post, array $m, string $label ): void {
 	$items = $m['items'];
 ?>
-	<div class="frame frame-sub metabox-group">
+	<div class="frame frame-box metabox-group">
 <?php if ( ! empty( $label ) ) : ?>
-		<div class="title"><?= _ht( $label ) ?></div>
+		<div class="title"><?= _ht( $label ); ?></div>
 <?php endif; ?>
 		<div class="group-inner">
 <?php
@@ -239,11 +239,11 @@ function echo_metabox_text( Post $post, array $m, string $label, bool $internal 
 	$val  = $post->getMetaValue( $key );
 	$text = ( $val === null ) ? '' : $val;
 
-	$cls = $internal ? '' : ' frame frame-sub';
+	$cls = $internal ? '' : ' frame frame-box';
 ?>
 	<div class="metabox-text<?= $cls ?>">
-		<div class="title"><?= _ht( $label ) ?></div>
-		<div><input type="text" name="meta:<?= _h( $key ) ?>" value="<?= _h( $text ) ?>"></div>
+		<div class="title"><?= _ht( $label ); ?></div>
+		<div><input type="text" name="meta:<?= _h( $key ); ?>" value="<?= _h( $text ); ?>"></div>
 	</div>
 <?php
 }
@@ -253,12 +253,12 @@ function echo_metabox_checkbox( Post $post, array $m, string $label, bool $inter
 	$val   = $post->getMetaValue( $key );
 	$state = ( $val === null ) ? '' : ' checked';
 
-	$cls = $internal ? '' : ' frame frame-sub';
+	$cls = $internal ? '' : ' frame frame-box';
 ?>
 	<div class="metabox-checkbox<?= $cls ?>">
 		<label class="checkbox">
-			<input type="checkbox" name="meta:<?= _h( $key ) ?>"<?= _h( $state ) ?>>
-			<?= _ht( $label ) ?>
+			<input type="checkbox" name="meta:<?= _h( $key ); ?>"<?= _h( $state ); ?>>
+			<?= _ht( $label ); ?>
 		</label>
 	</div>
 <?php
@@ -269,15 +269,15 @@ function echo_metabox_date( Post $post, array $m, string $label, bool $internal 
 	$val  = $post->getMetaValue( $key );
 	$date = ( $val === null ) ? '' : \nt\parse_date( $val );
 
-	$cls = $internal ? '' : ' frame frame-sub';
+	$cls = $internal ? '' : ' frame frame-box';
 ?>
 	<div class="metabox-date<?= $cls ?>">
-		<div class="title"><?= _ht( $label ) ?></div>
-		<div class="flatpickr date" data-key="<?= _h( $key ) ?>">
+		<div class="title"><?= _ht( $label ); ?></div>
+		<div class="flatpickr date" data-key="<?= _h( $key ); ?>">
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>
 		</div>
-		<input type="hidden" name="meta:<?= _h( $key ) ?>" value="<?= _h( $date ) ?>">
+		<input type="hidden" name="meta:<?= _h( $key ); ?>" value="<?= _h( $date ); ?>">
 	</div>
 <?php
 }
@@ -292,15 +292,15 @@ function echo_metabox_date_range( Post $post, array $m, string $label, bool $int
 		$date = is_string( $json ) ? $json : '';
 	}
 
-	$cls = $internal ? '' : ' frame frame-sub';
+	$cls = $internal ? '' : ' frame frame-box';
 ?>
 	<div class="metabox-date-range<?= $cls ?>">
-		<div class="title"><?= _ht( $label ) ?></div>
-		<div class="flatpickr date-range" data-key="<?= _h( $key ) ?>">
+		<div class="title"><?= _ht( $label ); ?></div>
+		<div class="flatpickr date-range" data-key="<?= _h( $key ); ?>">
 			<input type="text" readonly="readonly" data-input>
 			<a class="button delete cross" title="clear" data-clear></a>
 		</div>
-		<input type="hidden" name="meta:<?= _h( $key ) ?>" value="<?= _h( $date ) ?>">
+		<input type="hidden" name="meta:<?= _h( $key ); ?>" value="<?= _h( $date ); ?>">
 	</div>
 <?php
 }
@@ -313,17 +313,17 @@ function echo_metabox_media( Post $post, array $m, string $label, bool $internal
 	$name = ( $mv && isset( $mv['name'] ) ) ? $mv['name'] : '';
 
 	$md   = \nt\create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key" ] );
-	$cls  = $internal ? '' : ' frame frame-sub';
+	$cls  = $internal ? '' : ' frame frame-box';
 	$attr = empty( $name ) ? ' disabled' : '';
 ?>
-	<div class="metabox-media<?= $cls ?>" id="metabox:<?= _h( $key ) ?>">
-		<div class="title"><?= _ht( $label ) ?></div>
+	<div class="metabox-media<?= $cls ?>" id="metabox:<?= _h( $key ); ?>">
+		<div class="title"><?= _ht( $label ); ?></div>
 		<div class="metabox-container">
-			<a class="button open-media-dialog" data-src="<?= _h( $md ) ?>"><?= _ht( 'Select' ) ?></a>
-			<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">
-			<a class="button delete cross right"<?= $attr ?>></a>
+			<a class="button open-media-dialog" data-src="<?= _h( $md ); ?>"><?= _ht( 'Select' ); ?></a>
+			<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ); ?>">
+			<button type="button" class="delete cross right"<?= $attr ?>></button>
 		</div>
-		<input type="hidden" class="media-json" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
+		<input type="hidden" class="media-json" name="meta:<?= _h( $key ); ?>" value="<?= _h( $json ); ?>">
 	</div>
 <?php
 }
@@ -338,21 +338,21 @@ function echo_metabox_media_image( Post $post, array $m, string $label, bool $in
 	$bgi  = ( $mv && isset( $mv['minUrl'] ) ) ? ('background-image:url("' . $mv['minUrl'] . '")') : '';
 
 	$md   = \nt\create_canonical_url( 'media.php', [ 'id' => $post->getId(), 'target' => "metabox:$key", 'filter' => 'image', 'size' => $size ] );
-	$cls  = $internal ? '' : ' frame frame-sub';
+	$cls  = $internal ? '' : ' frame frame-box';
 	$attr = empty( $name ) ? ' disabled' : '';
 ?>
-	<div class="metabox-media-image<?= $cls ?>" id="metabox:<?= _h( $key ) ?>">
-		<div class="title"><?= _ht( $label ) ?></div>
+	<div class="metabox-media-image<?= $cls ?>" id="metabox:<?= _h( $key ); ?>">
+		<div class="title"><?= _ht( $label ); ?></div>
 		<div class="metabox-container">
-			<a class="image open-media-dialog" data-src="<?= _h( $md ) ?>" title="<?= _ht( 'Select' ) ?>">
-				<div style="<?= _h( $bgi ) ?>"></div>
+			<a class="image open-media-dialog" data-src="<?= _h( $md ); ?>" title="<?= _ht( 'Select' ); ?>">
+				<div style="<?= _h( $bgi ); ?>"></div>
 			</a>
 			<div>
-				<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ) ?>">
-				<a class="button delete cross right"<?= $attr ?>></a>
+				<input type="text" readonly="readonly" class="media-name" value="<?= _h( $name ); ?>">
+				<button type="button" class="delete cross right"<?= $attr ?>></button>
 			</div>
 		</div>
-		<input type="hidden" class="media-json" name="meta:<?= _h( $key ) ?>" value="<?= _h( $json ) ?>">
+		<input type="hidden" class="media-json" name="meta:<?= _h( $key ); ?>" value="<?= _h( $json ); ?>">
 	</div>
 <?php
 }
