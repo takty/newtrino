@@ -2,7 +2,7 @@
  * Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			formR.classList.toggle('hidden');
 		});
 	}
-	setTimeout(() => location.reload(), 5 * 60 * 1000);  // For refreshing nonce
+	setTimeout(() => window.location.reload(), 5 * 60 * 1000);  // For refreshing nonce
 
 
 	// -------------------------------------------------------------------------
@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		const ntc = formL.querySelector('.notice');
 		if (ntc) {
-			iptUsr.addEventListener('change', clearMessage);
-			iptPwd.addEventListener('change', clearMessage);
+			iptUsr.addEventListener('change', clearNotice);
+			iptPwd.addEventListener('change', clearNotice);
 		}
 		let st = null;
-		function clearMessage() {
+		function clearNotice() {
 			clearTimeout(st);
 			st = setTimeout(() => (ntc.innerHTML = ''), 2000);
 		}
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			if (showCode) {
 				if (usr && pwd) {
-					if (!confirm(document.getElementById('msg-issue').value)) return;
+					if (!confirm(document.getElementById('ntc-issue').value)) return;
 					formL.elements['mode'].value = 'issue';
 				}
 			}
@@ -160,9 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function hash(str) {
-		const sha256 = new jsSHA('SHA-256', 'TEXT');
-		sha256.update(str);
-		return sha256.getHash('HEX');
+		const sha = new jsSHA('SHA-256', 'TEXT');
+		sha.update(str);
+		return sha.getHash('HEX');
 	}
 
 
@@ -192,16 +192,15 @@ document.addEventListener('DOMContentLoaded', () => {
 				touch = false;
 			}
 		});
-		elm.addEventListener('mousedown', (e) => {
-			if (e.button !== 0) return;
-			if (touch) return;
+		elm.addEventListener('mousedown', e => {
+			if (e.button !== 0 || touch) return;
 			longClk = false;
 			st = setTimeout(() => {
 				longClk = true;
 				setTimeout(fnLong, 0);
 			}, 500);
 		});
-		elm.addEventListener('click', (e) => {
+		elm.addEventListener('click', e => {
 			if (touch) {
 				touch = false;
 			} else if (!longClk) {

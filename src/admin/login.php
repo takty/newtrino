@@ -3,7 +3,7 @@
  * Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -25,19 +25,19 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="stylesheet" href="<?= tqs( __DIR__, 'css/style.min.css' ); ?>">
 <script src="js/jssha/sha256.js"></script>
 <script src="<?= tqs( __DIR__, 'js/login.min.js' ); ?>"></script>
-<title><?= _ht( 'Log In' ) ?> - Newtrino</title>
+<title><?= _ht( 'Log In' ); ?> - Newtrino</title>
 </head>
 <body class="login">
-<?php \nt\begin( $view ); ?>
 
+<?php \nt\begin( $view ); ?>
 <div class="site{{#is_dialog}} dialog{{/is_dialog}}">
 	<div class="frame login">
 		<h1 class="site-title">Newtrino</h1>
 
 		<form action="login.php" method="post" class="log{{#ntc_reg}} hidden{{/ntc_reg}}">
 			<dl>
-				<dt><?= _ht( 'User Name:' ) ?></dt><dd><input type="text" name="user"></dd>
-				<dt><?= _ht( 'Password:' ) ?></dt><dd><input type="password"></dd>
+				<dt><?= _ht( 'User Name:' ); ?></dt><dd><input type="text" name="user"></dd>
+				<dt><?= _ht( 'Password:' ); ?></dt><dd><input type="password"></dd>
 			</dl>
 
 			<input type="hidden" name="mode" value="login">
@@ -52,21 +52,21 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{/ntc_log}}
 
 			<nav>
-				<button type="submit" class="accent"><?= _ht( 'Log In' ) ?></button>
+				<button type="submit" class="accent"><?= _ht( 'Log In' ); ?></button>
 			</nav>
 
 			<details class="cookie">
-				<summary><?= _ht( 'Use of Cookies...' ) ?></summary>
-				<div><?= _ht( 'Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.' ) ?></div>
+				<summary><?= _ht( 'Use of Cookies...' ); ?></summary>
+				<div><?= _ht( 'Newtrino admin screen uses a cookie to prevent unauthorized access and ensure security. If cookies are blocked, you cannot log in. Note that cookies do not contain personal information.' ); ?></div>
 			</details>
 		</form>
 
 {{^is_dialog}}
 		<form action="login.php" method="post" class="reg{{^ntc_reg}} hidden{{/ntc_reg}}">
 			<dl>
-				<dt><?= _ht( 'Invitation Code:' ) ?></dt><dd><input type="text" name="code" invalid required></dd>
-				<dt><?= _ht( 'New User Name:' ) ?></dt><dd><input type="text" name="user" invalid required></dd>
-				<dt><?= _ht( 'New Password:' ) ?></dt><dd><input type="password" autocomplete="new-password" invalid required></dd>
+				<dt><?= _ht( 'Invitation Code:' ); ?></dt><dd><input type="text" name="code" invalid required></dd>
+				<dt><?= _ht( 'New User Name:' ); ?></dt><dd><input type="text" name="user" invalid required></dd>
+				<dt><?= _ht( 'New Password:' ); ?></dt><dd><input type="password" autocomplete="new-password" invalid required></dd>
 			</dl>
 
 			<input type="hidden" name="mode" value="register">
@@ -77,18 +77,20 @@ header( 'Content-Type: text/html;charset=utf-8' );
 {{/ntc_reg}}
 
 			<nav>
-				<button type="submit" class="accent" disabled><?= _ht( 'Register' ) ?></button>
+				<button type="submit" class="accent" disabled><?= _ht( 'Register' ); ?></button>
 			</nav>
 		</form>
 {{/is_dialog}}
 	</div>
 </div>
+<?php \nt\end(); ?>
 
+<?php \nt\begin( $view ); ?>
 <input type="hidden" id="key" value="{{key}}">
 <input type="hidden" id="nonce" value="{{nonce}}">
 <input type="hidden" id="url" value="{{url}}">
-<input type="hidden" id="msg-issue" value="<?= _ht( "Do you want to issue an invitation code?\n(You must enter an existing user name and password.)" ) ?>">
-
+<input type="hidden" id="ntc-issue" value="<?= _ht( "Do you want to issue an invitation code?\n(You must enter an existing user name and password.)" ); ?>">
 <?php \nt\end(); ?>
+
 </body>
 </html>

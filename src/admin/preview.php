@@ -3,7 +3,7 @@
  * Preview
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -23,7 +23,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <script src="<?= tqs( __DIR__, 'js/preview.min.js' ); ?>"></script>
 {{#js}}<script src="{{.}}"></script>{{/js}}
 <?php \nt\end(); ?>
-<title><?= _ht( 'Preview' ) ?> - Newtrino</title>
+<title><?= _ht( 'Preview' ); ?> - Newtrino</title>
 </head>
 <body class="preview">
 
