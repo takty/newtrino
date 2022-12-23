@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const ms = document.querySelectorAll('.metabox-media');
 		addBtnEvent('.metabox-media .open-media-dialog', openMediaDialog);
 		for (const m of ms) {
-			const btnDel = m.querySelector('.button.delete');
+			const btnDel = m.querySelector('button.delete');
 			if (!btnDel) continue;
 			btnDel.addEventListener('click', () => {
 				m.querySelector('.media-name').value = '';
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const ms = document.querySelectorAll('.metabox-media-image');
 		addBtnEvent('.metabox-media-image .open-media-dialog', openMediaDialog);
 		for (const m of ms) {
-			const btnDel = m.querySelector('.button.delete');
+			const btnDel = m.querySelector('button.delete');
 			if (!btnDel) continue;
 			btnDel.addEventListener('click', () => {
 				m.querySelector('.media-name').value = '';
