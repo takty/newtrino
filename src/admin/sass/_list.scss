@@ -2,7 +2,7 @@
  * List
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 @use 'mixin' as *;
@@ -38,7 +38,7 @@ body.list {
 	.column-main {
 		display       : flex;
 		flex-direction: column;
-		gap           : var(--small-gap);;
+		gap           : var(--small-gap);
 	}
 }
 
