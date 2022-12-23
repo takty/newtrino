@@ -3,7 +3,7 @@
  * Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-25
+ * @version 2022-12-23
  */
 
 namespace nt;
@@ -176,8 +176,14 @@ class Session {
 
 
 	private static function _startSession( $regenerate = true ): bool {
-		if ( ! \nt\session_start( self::TIMEOUT_RESTORE ) ) return false;
-		if ( $regenerate && ! \nt\session_regenerate_id() ) return false;
+		if ( ! \nt\session_start( self::TIMEOUT_RESTORE ) ) {
+			Logger::error( __METHOD__, 'Cannot start session' );
+			return false;
+		}
+		if ( $regenerate && ! \nt\session_regenerate_id() ) {
+			Logger::error( __METHOD__, 'Cannot regenerate session ID' );
+			return false;
+		}
 		return true;
 	}
 
