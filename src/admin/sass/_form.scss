@@ -2,11 +2,15 @@
  * Form
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 @use 'mixin' as *;
 @use 'variable' as *;
+
+input {
+	accent-color: $color-accent-ui;
+}
 
 input[type='text'],
 input[type='datetime-local'],

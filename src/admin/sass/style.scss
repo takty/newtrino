@@ -290,6 +290,6 @@ body {
 }
 
 a {
-	color          : hsl(240, 80%, 50%);
+	color          : $color-accent-ui;
 	text-decoration: underline;
 }

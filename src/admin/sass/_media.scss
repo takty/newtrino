@@ -83,18 +83,17 @@ body.media {
 			content : '';
 			position: absolute;
 			inset   : -0.25rem auto auto -0.25rem;
-			width   : 1rem;
-			height  : 1rem;
+			width   : 14px;
+			height  : 14px;
 			z-index : 1;
 		}
 		&::before {
-			background-color: $color-button-background-accent;
-			border-radius   : 3px;
+			background-color: $color-accent-ui;
+			border-radius   : 2px;
 		}
 		&::after {
-			box-shadow: 0 0 0 1rem $color-text inset;
-			clip-path : polygon(10% 48%, 32% 86%, 52% 86%, 90% 20%, 73% 10%, 42% 64%, 27% 38%);
-			scale     : 0.75 0.75;
+			box-shadow: 0 0 0 1rem #fff inset;
+			clip-path : polygon(13% 56%, 40% 83%, 88% 26%, 74% 14%, 39% 56%, 26% 43%);
 		}
 	}
 
