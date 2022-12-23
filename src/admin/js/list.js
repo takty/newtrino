@@ -2,14 +2,14 @@
  * List
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2022-12-23
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 	const nonce     = document.getElementById('nonce').value;
-	const msgTrash  = document.getElementById('msg-trash').value;
-	const msgDelPer = document.getElementById('msg-del-per').value;
-	const msgEmpty  = document.getElementById('msg-empty-trash').value;
+	const ntcTrash  = document.getElementById('ntc-trash').value;
+	const ntcDelPer = document.getElementById('ntc-del-per').value;
+	const ntcEmpty  = document.getElementById('ntc-empty-trash').value;
 
 	const elmsNav     = document.querySelectorAll('.do-navigate');
 	const btnsRemove  = document.getElementsByClassName('do-remove-post');
@@ -28,8 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function doRemovePost(e) {
-		if (!confirmRemove(e.target)) return false;
-		setLocation(e.target.dataset.href, true);
+		if (confirmRemove(e.target)) {
+			setLocation(e.target.dataset.href, true);
+		}
 	}
 
 	function doRestorePost(e) {
@@ -37,8 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function doEmptyTrash(e) {
-		if (!confirm(msgEmpty)) return false;
-		setLocation(e.target.dataset.href, true);
+		if (confirm(ntcEmpty)) {
+			setLocation(e.target.dataset.href, true);
+		}
 	}
 
 	function confirmRemove(btn) {
@@ -48,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		const date  = tr.getElementsByClassName('date')[0].innerHTML.replace('</span><span>', ' ').replace(/(<([^>]+)>)/ig, '')
 
 		if (btn.classList.contains('delete')) {
-			if (!confirm(`${msgDelPer}\n"${title}"\n${date}`)) return false;
+			if (!confirm(`${ntcDelPer}\n"${title}"\n${date}`)) return false;
 		} else {
-			if (!confirm(`${msgTrash}\n"${title}"\n${date}`)) return false;
+			if (!confirm(`${ntcTrash}\n"${title}"\n${date}`)) return false;
 		}
 		return true;
 	}
@@ -58,10 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	function setLocation(href, nc) {
 		if ('' === href) {
 			const qs = nc ? `?nonce=${nonce}` : '';
-			document.location.href = location.pathname + qs;
+			window.location.href = window.location.pathname + qs;
 		} else {
 			const qs = nc ? `&nonce=${nonce}` : '';
-			document.location.href = href + qs;
+			window.location.href = href + qs;
 		}
 	}
 
