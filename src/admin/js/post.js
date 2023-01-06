@@ -2,7 +2,7 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-01-06
  */
 
 window.NT = window['NT'] || {};
@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	setButtonEvents();
 	initPublishingMetabox();
+	initTaxonomyMetabox();
+	initCheckboxMetabox();
 	initDateMetabox();
 	initDateRangeMetabox();
 	initMediaMetabox();
@@ -88,6 +90,30 @@ document.addEventListener('DOMContentLoaded', () => {
 		postStatus.addEventListener('change', onModified);
 	}
 
+	function initTaxonomyMetabox() {
+		const ms = document.querySelectorAll('.metabox-taxonomy');
+		for (const m of ms) {
+			const is = m.querySelectorAll('input');
+			for (const i of is) {
+				i.addEventListener('change', onModified);
+			}
+			const s = m.querySelector('select');
+			if (s) {
+				s.addEventListener('change', onModified);
+			}
+		}
+	}
+
+	function initCheckboxMetabox() {
+		const ms = document.querySelectorAll('.metabox-checkbox');
+		for (const m of ms) {
+			const is = m.querySelectorAll('input');
+			for (const i of is) {
+				i.addEventListener('change', onModified);
+			}
+		}
+	}
+
 	function initDateMetabox() {
 		const es = document.querySelectorAll('.flatpickr.date');
 		if (es.length === 0) return;
@@ -101,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else {
 					f.value = '';
 				}
+				onModified();
 			});
 			const f = document.getElementsByName('meta:' + e.dataset.key)[0];
 			if (!f.value) continue;
@@ -125,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else {
 					fs.value = '';
 				}
+				onModified();
 			});
 			const fs = document.getElementsByName('meta:' + e.dataset.key)[0];
 			if (!fs.value) continue;
@@ -146,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				m.querySelector('.media-name').value = '';
 				m.querySelector('.media-json').value = '';
 				btnDel.setAttribute('disabled', true);
+				onModified();
 			});
 		}
 	}
@@ -161,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				m.querySelector('.media-json').value = '';
 				m.querySelector('.image > div').style.backgroundImage = null;
 				btnDel.setAttribute('disabled', true);
+				onModified();
 			});
 		}
 	}
@@ -500,4 +530,5 @@ function insertMediaToMeta(target, data) {
 	if (delBtn) {
 		delBtn.removeAttribute('disabled');
 	}
+	onModified();
 }

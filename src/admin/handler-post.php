@@ -3,7 +3,7 @@
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-01-06
  */
 
 namespace nt;
@@ -151,7 +151,7 @@ function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 	$tss = $post->getTermSlugs( $tax_slug );
 	$ts  = $nt_store->taxonomy()->getTermAll( $tax_slug, $tss );
 ?>
-	<div class="frame frame-box">
+	<div class="metabox-taxonomy frame frame-box">
 		<div class="title"><?= _h( $tax['label'] ); ?></div>
 <?php if ( $is_exclusive ) : ?>
 		<div>
