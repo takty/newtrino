@@ -44,7 +44,7 @@
 		"gulp-sass": "^5.1.0",
 		"gulp-terser": "^2.1.0",
 		"jssha": "^3.3.0",
-		"luxon": "^3.1.1",
+		"luxon": "^3.2.1",
 		"nacss-reset": "git+https://github.com/takty/nacss-reset.git",
 		"sass": "^1.56.2",
 		"tinymce": "^5.10.7",
