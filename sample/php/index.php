@@ -35,7 +35,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	<main>
 		<div>
 			<h2>Posts</h2>
-			<?php \nt\begin(); ?>
+			<?php \nt\begin( $view_post ); ?>
 				<ul id="list-item-post">
 {{#posts}}
 					<li class="{{class@joined}}{{#meta.sticky}} sticky{{/meta.sticky}}">
@@ -53,11 +53,11 @@ header( 'Content-Type: text/html;charset=utf-8' );
 					</li>
 {{/posts}}
 				</ul>
-			<?php \nt\end( $view_post ); ?>
+			<?php \nt\end(); ?>
 		</div>
 		<div>
 			<h2>Events</h2>
-			<?php \nt\begin(); ?>
+			<?php \nt\begin( $view_event ); ?>
 				<ul id="list-item-event">
 {{#posts}}
 					<li class="{{class@joined}}">
@@ -78,7 +78,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 					</li>
 {{/posts}}
 				</ul>
-			<?php \nt\end( $view_event ); ?>
+			<?php \nt\end(); ?>
 		</div>
 		<nav>
 			<a href="topic/">Show More...</a>

@@ -11,7 +11,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<?php \nt\begin(); ?>
+<?php \nt\begin( $view, isset( $view['post'] ) ); ?>
 <meta property="og:type" content="article">
 <meta property="og:url" content="{{post.url}}">
 <meta property="og:title" content="{{post.title}}">
@@ -21,17 +21,17 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <meta property="og:image" content="{{url}}">
 {{/post.meta.thumbnail}}
 <title>{{post.title}} - Newtrino Sample</title>
-<?php \nt\end( $view, isset( $view['post'] ) ); ?>
-<?php \nt\begin(); ?>
+<?php \nt\end(); ?>
+<?php \nt\begin( $view, ! isset( $view['post'] ) ); ?>
 <title>Newtrino Sample</title>
-<?php \nt\end( $view, ! isset( $view['post'] ) ); ?>
+<?php \nt\end(); ?>
 </head>
 <body>
 	<header>
 		<h1><a href="../">Newtrino Sample</a></h1>
 	</header>
 <!-- ======================================================================= -->
-<?php \nt\begin(); ?>
+<?php \nt\begin( $view, empty( $view['post'] ) ); ?>
 	<main>
 		<header class="entry-header">
 			<h2>Topics</h2>
@@ -85,8 +85,8 @@ header( 'Content-Type: text/html;charset=utf-8' );
 			</ul>
 		</div>
 	</main>
-<?php \nt\end( $view, empty( $view['post'] ) ); ?>
-<?php \nt\begin(); ?>
+<?php \nt\end(); ?>
+<?php \nt\begin( $view, empty( $view['post'] ) ); ?>
 {{#navigation.pagination}}
 	<div class="aside aside-navigation">
 		<div class="pagination">
@@ -102,9 +102,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 	</div>
 </div>
 {{/navigation.pagination}}
-<?php \nt\end( $view, empty( $view['post'] ) ); ?>
+<?php \nt\end(); ?>
 <!-- ======================================================================= -->
-<?php \nt\begin(); ?>
+<?php \nt\begin( $view, ! empty( $view['post'] ) ); ?>
 {{#post}}
 	<main class="entry {{class@joined}}">
 		<header class="entry-header">
@@ -124,8 +124,8 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</div>
 	</main>
 {{/post}}
-<?php \nt\end( $view, ! empty( $view['post'] ) ); ?>
-<?php \nt\begin(); ?>
+<?php \nt\end(); ?>
+<?php \nt\begin( $view, ! empty( $view['post'] ) ); ?>
 {{#navigation.post_navigation}}
 	<div class="aside aside-navigation">
 		<div class="post_navigation">
@@ -138,7 +138,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 		</div>
 	</div>
 {{/navigation.post_navigation}}
-<?php \nt\end( $view, ! empty( $view['post'] ) ); ?>
+<?php \nt\end(); ?>
 <!-- ======================================================================= -->
 </body>
 </html>
