@@ -2,7 +2,7 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2023-01-06
+ * @version 2023-01-11
  */
 
 window.NT = window['NT'] || {};
@@ -22,7 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	setButtonEvents();
+	addBtnEvent('#btn-update', update);
+	addBtnEvent('#btn-dialog-media', openMediaDialog);
+	addBtnEvent('#btn-dialog-preview', openPreviewDialog);
+	addBtnEvent('#btn-close', () => closeDialog());  // Must call closeDialog with no argument.
+
 	initPublishingMetabox();
 	initTaxonomyMetabox();
 	initCheckboxMetabox();
@@ -354,31 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	// -------------------------------------------------------------------------
 
 
-	function setButtonEvents() {
-		const btnPreviewClose = document.querySelector('#btn-close');
-		btnPreviewClose.addEventListener('click', () => { closeDialog(); });
-
-		addBtnEvent('#btn-list');
-		addBtnEvent('#btn-update', update);
-		addBtnEvent('#btn-dialog-media', openMediaDialog);
-		addBtnEvent('#btn-dialog-preview', openPreviewDialog);
-	}
-
-	function addBtnEvent(sel, fn = null) {
-		const btns = document.querySelectorAll(sel);
-		for (const btn of btns) {
-			btn.addEventListener('mouseup', e => {
-				if (e.button === 0) {
-					e.preventDefault();
-					if (fn) fn(e);
-					else window.location.href = btn.href;
-				} else if (e.button === 1) {
-					e.preventDefault();
-				}
-			});
-			btn.addEventListener('mousedown', e => {
-				if (e.button === 1) e.preventDefault();
-			});
+	function addBtnEvent(sel, fn) {
+		for (const b of document.querySelectorAll(sel)) {
+			b.addEventListener('click', fn);
 		}
 	}
 
