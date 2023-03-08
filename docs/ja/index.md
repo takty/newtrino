@@ -383,6 +383,7 @@ a</head>
 
 記事の内容は、ビューの`post`キーの情報をもとにレンダリングするという点以外、一覧表示とそれ程違いないと思います。
 
+```html
 <body>
     <header>
         <h1><a href="../">Newtrino Sample</a></h1>
