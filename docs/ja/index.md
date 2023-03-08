@@ -446,42 +446,42 @@ a</head>
 #### `data/taxonomy.json`
 ```json
 [
-    {
-        "slug": "category",
-        "label": "Categories",
-        "label@ja": "カテゴリ",
-        "sg_label": "Category",
-        "is_exclusive": true,
-        "terms": [
-            {
-                "slug": "news",
-                "label": "News",
-                "label@ja": "ニュース"
-            },
-            {
-                "slug": "column",
-                "label": "Columns",
-                "label@ja": "コラム"
-            }
-        ]
-    },
-    {
-        "slug": "lang",
-        "label": "Languages",
-        "label@ja": "言語",
-        "terms": [
-            {
-                "slug": "ja",
-                "label": "Japanese",
-                "label@ja": "日本語"
-            },
-            {
-                "slug": "en",
-                "label": "English",
-                "label@ja": "英語"
-            }
-        ]
-    }
+	{
+		"slug"        : "category",
+		"label"       : "Categories",
+		"label@ja"    : "カテゴリ",
+		"sg_label"    : "Category",
+		"is_exclusive": true,
+		"terms"       : [
+			{
+				"slug"    : "news",
+				"label"   : "News",
+				"label@ja": "ニュース"
+			},
+			{
+				"slug"    : "column",
+				"label"   : "Columns",
+				"label@ja": "コラム"
+			}
+		]
+	},
+	{
+		"slug"    : "lang",
+		"label"   : "Languages",
+		"label@ja": "言語",
+		"terms"   : [
+			{
+				"slug"    : "ja",
+				"label"   : "Japanese",
+				"label@ja": "日本語"
+			},
+			{
+				"slug"    : "en",
+				"label"   : "English",
+				"label@ja": "英語"
+			}
+		]
+	}
 ]
 ```
 
@@ -515,53 +515,53 @@ a</head>
 #### `data/type.json`
 ```json
 [
-    {
-        "slug": "post",
-        "label": "Posts",
-        "label@ja": "投稿",
-        "taxonomy": [ "category", "lang" ],
-        "meta": [
-            {
-                "key": "sticky",
-                "type": "checkbox",
-                "label": "Stick this post to the front page",
-                "label@ja": "この投稿を先頭に固定表示"
-            },
-            {
-                "key": "thumbnail",
-                "type": "media_image",
-                "label": "Featured Image",
-                "label@ja": "アイキャッチ画像",
-                "option": {
-                    "size": "small"
-                }
-            }
-        ]
-    },
-    {
-        "slug": "event",
-        "label": "Events",
-        "label@ja": "イベント",
-        "taxonomy": [ "target", "lang" ],
-        "meta": [
-            {
-                "key": "thumbnail",
-                "type": "media_image",
-                "label": "Featured Image",
-                "label@ja": "アイキャッチ画像",
-                "option": {
-                    "size": "small"
-                }
-            },
-            {
-                "key": "duration",
-                "type": "date_range",
-                "label": "Event Duration",
-                "label@ja": "開催期間",
-                "do_show_column": true
-            }
-        ]
-    }
+	{
+		"slug"    : "post",
+		"label"   : "Posts",
+		"label@ja": "投稿",
+		"taxonomy": [ "category", "lang" ],
+		"meta"    : [
+			{
+				"key"     : "sticky",
+				"type"    : "checkbox",
+				"label"   : "Stick this post to the front page",
+				"label@ja": "この投稿を先頭に固定表示"
+			},
+			{
+				"key"     : "thumbnail",
+				"type"    : "media_image",
+				"label"   : "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option"  : {
+					"size": "small"
+				}
+			}
+		]
+	},
+	{
+		"slug"    : "event",
+		"label"   : "Events",
+		"label@ja": "イベント",
+		"taxonomy": [ "target", "lang" ],
+		"meta"    : [
+			{
+				"key"     : "thumbnail",
+				"type"    : "media_image",
+				"label"   : "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option"  : {
+					"size": "small"
+				}
+			},
+			{
+				"key"           : "duration",
+				"type"          : "date_range",
+				"label"         : "Event Duration",
+				"label@ja"      : "開催期間",
+				"do_show_column": true
+			}
+		]
+	}
 ]
 ```
 
@@ -590,28 +590,28 @@ a</head>
 
 ```json
 "meta": [
-    {
-        "type": "group",
-        "label": "Group",
-        "label@ja": "グループ",
-        "items": [
-            {
-                "key": "sticky",
-                "type": "checkbox",
-                "label": "Stick this post to the front page",
-                "label@ja": "この投稿を先頭に固定表示"
-            },
-            {
-                "key": "thumbnail",
-                "type": "media_image",
-                "label": "Featured Image",
-                "label@ja": "アイキャッチ画像",
-                "option": {
-                    "size": "small"
-                }
-            }
-        ]
-    }
+	{
+		"type"    : "group",
+		"label"   : "Group",
+		"label@ja": "グループ",
+		"items"   : [
+			{
+				"key"     : "sticky",
+				"type"    : "checkbox",
+				"label"   : "Stick this post to the front page",
+				"label@ja": "この投稿を先頭に固定表示"
+			},
+			{
+				"key"     : "thumbnail",
+				"type"    : "media_image",
+				"label"   : "Featured Image",
+				"label@ja": "アイキャッチ画像",
+				"option"  : {
+					"size": "small"
+				}
+			}
+		]
+	}
 ]
 ```
 
@@ -629,13 +629,13 @@ a</head>
 #### `data/config.json`
 ```json
 {
-    "lang": "ja",
-    "lang_admin": "ja",
-    "per_page": 10,
-    "new_arrival_period": 7,
-    "date_format": "Y-m-d",
-    "archive_by_year": true,
-    "archive_by_type": true,
+	"lang"              : "ja",
+	"lang_admin"        : "ja",
+	"per_page"          : 10,
+	"new_arrival_period": 7,
+	"date_format"       : "Y-m-d",
+	"archive_by_year"   : true,
+	"archive_by_type"   : true,
 	"image_sizes"       : {
 		"small"       : { "width":  128, "label": "Small" },
 		"medium_small": { "width":  256, "label": "Medium Small" },
