@@ -1,6 +1,50 @@
 # Newtrino開発者ガイド
 Takuto Yanagida
 
+- [Newtrino開発者ガイド](#newtrino開発者ガイド)
+	- [はじめに](#はじめに)
+	- [1. Newtrinoとは何か](#1-newtrinoとは何か)
+		- [1.1. CMSとしての特徴](#11-cmsとしての特徴)
+			- [■ フラット・ファイル](#-フラットファイル)
+			- [■ ウェブサイトの一部](#-ウェブサイトの一部)
+			- [■ ポータブル](#-ポータブル)
+		- [1.2. 動作要件](#12-動作要件)
+		- [1.3. サンプルを動かす](#13-サンプルを動かす)
+		- [1.4. アカウントの追加](#14-アカウントの追加)
+	- [2. Newtrinoの構成](#2-newtrinoの構成)
+		- [2.1. PHP版とJS版の違い](#21-php版とjs版の違い)
+		- [2.2. システムファイル](#22-システムファイル)
+		- [2.3. ウェブサイトによって異なるファイル](#23-ウェブサイトによって異なるファイル)
+		- [2.4. アップデートの方法](#24-アップデートの方法)
+	- [3. ウェブサイトに組み込む](#3-ウェブサイトに組み込む)
+		- [3.1. フロント・ページに新着記事を表示](#31-フロントページに新着記事を表示)
+		- [3.2. 一覧ページに記事の一覧を表示](#32-一覧ページに記事の一覧を表示)
+		- [3.3. 個別ページに記事の内容を表示](#33-個別ページに記事の内容を表示)
+	- [4. カスタマイズする](#4-カスタマイズする)
+		- [4.1. タクソノミーの定義](#41-タクソノミーの定義)
+			- [`data/taxonomy.json`](#datataxonomyjson)
+		- [4.2. 投稿タイプの定義](#42-投稿タイプの定義)
+			- [`data/type.json`](#datatypejson)
+			- [`media_image`](#media_image)
+		- [4.3. コンフィグファイル](#43-コンフィグファイル)
+			- [`data/config.json`](#dataconfigjson)
+			- [`data/config.php`](#dataconfigphp)
+		- [4.4. 管理画面のカスタマイズ](#44-管理画面のカスタマイズ)
+		- [4.5. 多言語化](#45-多言語化)
+	- [5. クエリの書き方](#5-クエリの書き方)
+		- [5.1. クエリの種類](#51-クエリの種類)
+			- [直接指定](#直接指定)
+			- [範囲指定](#範囲指定)
+		- [5.2. 複合クエリ](#52-複合クエリ)
+	- [6. APIリファレンス](#6-apiリファレンス)
+		- [6.1. PHP版API](#61-php版api)
+		- [6.2. JS版API](#62-js版api)
+		- [6.3. Mustacheの使い方](#63-mustacheの使い方)
+			- [Variables](#variables)
+			- [Section](#section)
+			- [Invert Sections](#invert-sections)
+
+
 ## はじめに
 
 Newtrinoはポータブルな組み込み用コンテンツ・マネジメント・システム（CMS）です。本ドキュメントでは、その特徴と仕組み、組み込み方について説明します。
@@ -784,15 +828,15 @@ PHP版の場合の`\nt\query()`関数や`\nt\query_recent_posts()`関数、JavaS
 ### 6.1. PHP版API
 
 ```php
-query( array $args = [] ): array
-query_recent_posts( array $args = [] ): array
+query( array $args = [] ): array { ... }
+query_recent_posts( array $args = [] ): array { ... }
 ```
 
 ### 6.2. JS版API
 
 ```js
-function query(url, callback, args = {})
-function queryRecentPosts(url, callback, args = {})
+function query(url, callback, args = {}) { ... }
+function queryRecentPosts(url, callback, args = {}) { ... }
 ```
 
 ### 6.3. Mustacheの使い方
