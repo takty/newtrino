@@ -244,7 +244,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 ?>
 ```
 
-データを取得出来たら、Mustacheでレンダリングします。PHP版のMustacheは、`begin()`関数と`end()`関数の間がテンプレートとなります。`end()`関数の一つ目の引数がデータ、二つ目の引数がレンダリングする条件（`true`ならばレンダリングする）です。
+データを取得出来たら、Mustacheでレンダリングします。PHP版のMustacheは、`begin()`関数と`end()`関数の間がテンプレートとなります。`begin()`関数の一つ目の引数がデータ、二つ目の引数がレンダリングする条件（`true`ならばレンダリングする）です。
 
 最初にフィルター部分をレンダリングします。ここでは、日付（年）、タクソノミー（`category`）の選択、そして自由検索欄を設けています。
 
@@ -261,7 +261,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
         <h1><a href="../">Newtrino Sample</a></h1>
     </header>
 
-<?php \nt\begin(); ?>
+<?php \nt\begin( $view, empty( $view['post'] ) ); ?>
     <main>
         <header class="entry-header">
             <h2>Topics</h2>
@@ -340,7 +340,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
     </div>
 </div>
 {{/navigation.pagination}}
-<?php \nt\end( $view, empty( $view['post'] ) ); ?>
+<?php \nt\end(); ?>
 </body>
 </html>
 ```
@@ -367,7 +367,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<?php \nt\begin(); ?>
+<?php \nt\begin( $view, isset( $view['post'] ) ); ?>
 <meta property="og:type" content="article">
 <meta property="og:url" content="{{post.url}}">
 <meta property="og:title" content="{{post.title}}">
@@ -377,7 +377,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <meta property="og:image" content="{{url}}">
 {{/post.meta.thumbnail}}
 <title>{{post.title}} - Newtrino Sample</title>
-<?php \nt\end( $view, isset( $view['post'] ) ); ?>
+<?php \nt\end(); ?>
 a</head>
 ```
 
@@ -388,7 +388,7 @@ a</head>
     <header>
         <h1><a href="../">Newtrino Sample</a></h1>
     </header>
-<?php \nt\begin(); ?>
+<?php \nt\begin( $view, ! empty( $view['post'] ) ); ?>
 {{#post}}
     <main class="entry {{class@joined}}">
         <header class="entry-header">
@@ -425,7 +425,7 @@ a</head>
         </div>
     </div>
 {{/navigation.post_navigation}}
-<?php \nt\end( $view, ! empty( $view['post'] ) ); ?>
+<?php \nt\end(); ?>
 </body>
 </html>
 ```
@@ -447,42 +447,42 @@ a</head>
 #### `data/taxonomy.json`
 ```json
 [
-	{
-		"slug"        : "category",
-		"label"       : "Categories",
-		"label@ja"    : "カテゴリ",
-		"sg_label"    : "Category",
-		"is_exclusive": true,
-		"terms"       : [
-			{
-				"slug"    : "news",
-				"label"   : "News",
-				"label@ja": "ニュース"
-			},
-			{
-				"slug"    : "column",
-				"label"   : "Columns",
-				"label@ja": "コラム"
-			}
-		]
-	},
-	{
-		"slug"    : "lang",
-		"label"   : "Languages",
-		"label@ja": "言語",
-		"terms"   : [
-			{
-				"slug"    : "ja",
-				"label"   : "Japanese",
-				"label@ja": "日本語"
-			},
-			{
-				"slug"    : "en",
-				"label"   : "English",
-				"label@ja": "英語"
-			}
-		]
-	}
+    {
+        "slug"        : "category",
+        "label"       : "Categories",
+        "label@ja"    : "カテゴリ",
+        "sg_label"    : "Category",
+        "is_exclusive": true,
+        "terms"       : [
+            {
+                "slug"    : "news",
+                "label"   : "News",
+                "label@ja": "ニュース"
+            },
+            {
+                "slug"    : "column",
+                "label"   : "Columns",
+                "label@ja": "コラム"
+            }
+        ]
+    },
+    {
+        "slug"    : "lang",
+        "label"   : "Languages",
+        "label@ja": "言語",
+        "terms"   : [
+            {
+                "slug"    : "ja",
+                "label"   : "Japanese",
+                "label@ja": "日本語"
+            },
+            {
+                "slug"    : "en",
+                "label"   : "English",
+                "label@ja": "英語"
+            }
+        ]
+    }
 ]
 ```
 
@@ -516,53 +516,53 @@ a</head>
 #### `data/type.json`
 ```json
 [
-	{
-		"slug"    : "post",
-		"label"   : "Posts",
-		"label@ja": "投稿",
-		"taxonomy": [ "category", "lang" ],
-		"meta"    : [
-			{
-				"key"     : "sticky",
-				"type"    : "checkbox",
-				"label"   : "Stick this post to the front page",
-				"label@ja": "この投稿を先頭に固定表示"
-			},
-			{
-				"key"     : "thumbnail",
-				"type"    : "media_image",
-				"label"   : "Featured Image",
-				"label@ja": "アイキャッチ画像",
-				"option"  : {
-					"size": "small"
-				}
-			}
-		]
-	},
-	{
-		"slug"    : "event",
-		"label"   : "Events",
-		"label@ja": "イベント",
-		"taxonomy": [ "target", "lang" ],
-		"meta"    : [
-			{
-				"key"     : "thumbnail",
-				"type"    : "media_image",
-				"label"   : "Featured Image",
-				"label@ja": "アイキャッチ画像",
-				"option"  : {
-					"size": "small"
-				}
-			},
-			{
-				"key"           : "duration",
-				"type"          : "date_range",
-				"label"         : "Event Duration",
-				"label@ja"      : "開催期間",
-				"do_show_column": true
-			}
-		]
-	}
+    {
+        "slug"    : "post",
+        "label"   : "Posts",
+        "label@ja": "投稿",
+        "taxonomy": [ "category", "lang" ],
+        "meta"    : [
+            {
+                "key"     : "sticky",
+                "type"    : "checkbox",
+                "label"   : "Stick this post to the front page",
+                "label@ja": "この投稿を先頭に固定表示"
+            },
+            {
+                "key"     : "thumbnail",
+                "type"    : "media_image",
+                "label"   : "Featured Image",
+                "label@ja": "アイキャッチ画像",
+                "option"  : {
+                    "size": "small"
+                }
+            }
+        ]
+    },
+    {
+        "slug"    : "event",
+        "label"   : "Events",
+        "label@ja": "イベント",
+        "taxonomy": [ "target", "lang" ],
+        "meta"    : [
+            {
+                "key"     : "thumbnail",
+                "type"    : "media_image",
+                "label"   : "Featured Image",
+                "label@ja": "アイキャッチ画像",
+                "option"  : {
+                    "size": "small"
+                }
+            },
+            {
+                "key"           : "duration",
+                "type"          : "date_range",
+                "label"         : "Event Duration",
+                "label@ja"      : "開催期間",
+                "do_show_column": true
+            }
+        ]
+    }
 ]
 ```
 
@@ -591,28 +591,28 @@ a</head>
 
 ```json
 "meta": [
-	{
-		"type"    : "group",
-		"label"   : "Group",
-		"label@ja": "グループ",
-		"items"   : [
-			{
-				"key"     : "sticky",
-				"type"    : "checkbox",
-				"label"   : "Stick this post to the front page",
-				"label@ja": "この投稿を先頭に固定表示"
-			},
-			{
-				"key"     : "thumbnail",
-				"type"    : "media_image",
-				"label"   : "Featured Image",
-				"label@ja": "アイキャッチ画像",
-				"option"  : {
-					"size": "small"
-				}
-			}
-		]
-	}
+    {
+        "type"    : "group",
+        "label"   : "Group",
+        "label@ja": "グループ",
+        "items"   : [
+            {
+                "key"     : "sticky",
+                "type"    : "checkbox",
+                "label"   : "Stick this post to the front page",
+                "label@ja": "この投稿を先頭に固定表示"
+            },
+            {
+                "key"     : "thumbnail",
+                "type"    : "media_image",
+                "label"   : "Featured Image",
+                "label@ja": "アイキャッチ画像",
+                "option"  : {
+                    "size": "small"
+                }
+            }
+        ]
+    }
 ]
 ```
 
@@ -630,22 +630,22 @@ a</head>
 #### `data/config.json`
 ```json
 {
-	"lang"              : "ja",
-	"lang_admin"        : "ja",
-	"per_page"          : 10,
-	"new_arrival_period": 7,
-	"date_format"       : "Y-m-d",
-	"archive_by_year"   : true,
-	"archive_by_type"   : true,
-	"image_sizes"       : {
-		"small"       : { "width":  128, "label": "Small" },
-		"medium_small": { "width":  256, "label": "Medium Small" },
-		"medium"      : { "width":  384, "label": "Medium" },
-		"medium_large": { "width":  512, "label": "Medium Large" },
-		"large"       : { "width":  768, "label": "Large" },
-		"extra_large" : { "width": 1024, "label": "Extra Large" },
-		"huge"        : { "width": 1536, "label": "Huge" }
-	}
+    "lang"              : "ja",
+    "lang_admin"        : "ja",
+    "per_page"          : 10,
+    "new_arrival_period": 7,
+    "date_format"       : "Y-m-d",
+    "archive_by_year"   : true,
+    "archive_by_type"   : true,
+    "image_sizes"       : {
+        "small"       : { "width":  128, "label": "Small" },
+        "medium_small": { "width":  256, "label": "Medium Small" },
+        "medium"      : { "width":  384, "label": "Medium" },
+        "medium_large": { "width":  512, "label": "Medium Large" },
+        "large"       : { "width":  768, "label": "Large" },
+        "extra_large" : { "width": 1024, "label": "Extra Large" },
+        "huge"        : { "width": 1536, "label": "Huge" }
+    }
 }
 ```
 
@@ -783,19 +783,23 @@ PHP版の場合の`\nt\query()`関数や`\nt\query_recent_posts()`関数、JavaS
 
 ### 6.1. PHP版API
 
-	query( array $args = [] ): array
-	query_recent_posts( array $args = [] ): array
+```php
+query( array $args = [] ): array
+query_recent_posts( array $args = [] ): array
+```
 
 ### 6.2. JS版API
 
-	function query(url, callback, args = {})
-	function queryRecentPosts(url, callback, args = {})
+```js
+function query(url, callback, args = {})
+function queryRecentPosts(url, callback, args = {})
+```
 
 ### 6.3. Mustacheの使い方
 
 #### Variables
 
-```mustache
+```
 {{key}}
 ```
 
@@ -803,7 +807,7 @@ PHP版の場合の`\nt\query()`関数や`\nt\query_recent_posts()`関数、JavaS
 
 #### Section
 
-```mustache
+```
 {{#key}} ~ {{/key}}
 ```
 
@@ -811,7 +815,7 @@ PHP版の場合の`\nt\query()`関数や`\nt\query_recent_posts()`関数、JavaS
 
 #### Invert Sections
 
-```mustache
+```
 {{^key}} ~ {{/key}}
 ```
 
