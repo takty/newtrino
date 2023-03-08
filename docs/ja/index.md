@@ -1,5 +1,5 @@
 # Newtrino開発者ガイド
-柳田拓人　v2022-04-20
+Takuto Yanagida
 
 ## はじめに
 
@@ -530,7 +530,7 @@ a</head>
             },
             {
                 "key": "thumbnail",
-                "type": "media-image",
+                "type": "media_image",
                 "label": "Featured Image",
                 "label@ja": "アイキャッチ画像",
                 "option": {
@@ -547,7 +547,7 @@ a</head>
         "meta": [
             {
                 "key": "thumbnail",
-                "type": "media-image",
+                "type": "media_image",
                 "label": "Featured Image",
                 "label@ja": "アイキャッチ画像",
                 "option": {
@@ -556,7 +556,7 @@ a</head>
             },
             {
                 "key": "duration",
-                "type": "date-range",
+                "type": "date_range",
                 "label": "Event Duration",
                 "label@ja": "開催期間",
                 "do_show_column": true
@@ -581,7 +581,7 @@ a</head>
 | キー             | 値                                                                                                                          |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `key`            | フィールドのキーを表す文字列。                                                                                              |
-| `type`           | フィールドの型を表す文字列。`text`、`checkbox`、`date`、`date-range`、`media`、`media-image`、`group`のいずれかを取ります。 |
+| `type`           | フィールドの型を表す文字列。`text`、`checkbox`、`date`、`date_range`、`media`、`media_image`、`group`のいずれかを取ります。 |
 | `label`          | フィールドのラベルを表す文字列。                                                                                            |
 | `label@ja`       | フィールドの言語ごとのラベルを表す文字列。ここでは`ja`（日本語）の意味。                                                    |
 | `do_show_column` | 管理画面の一覧表示にコラムとして表示するかを表す真偽値。デフォルトは`false`。                                               |
@@ -604,7 +604,7 @@ a</head>
             },
             {
                 "key": "thumbnail",
-                "type": "media-image",
+                "type": "media_image",
                 "label": "Featured Image",
                 "label@ja": "アイキャッチ画像",
                 "option": {
