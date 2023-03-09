@@ -22,3 +22,9 @@ Replace the following directories and files of your install to ones in ./dist.
 * index.min.js.map
 * index.php
 * login.php
+
+
+## Newtrino Developers' Guide
+
+- [English version](docs/index.md)
+- [Japanese version](docs/ja/index.md)

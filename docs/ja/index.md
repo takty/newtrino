@@ -210,7 +210,7 @@ Newtrinoをウェブサイトに組み込む例として、最新記事を一定
 
 フロント・ページは新着記事以外の内容も多く含まれるでしょうから、ここではJS版で作成してみましょう。
 
-まず、ヘッダーに次のように書いて、必要なスクリプトを読み込みます`。mustache.min.js`はMustacheというテンプレート・ライブラリ、`luxon.min.js`は時間や日付をフォーマットする関数を提供するライブラリです。`../nt/index.min.js`はNewtrinoのエントリー・ポイントとなるライブラリです。Newtrinoディレクトリへの相対URLで書いています。
+まず、ヘッダーに次のように書いて、必要なスクリプトを読み込みます。`mustache.min.js`はMustacheというテンプレート・ライブラリ、`luxon.min.js`は時間や日付をフォーマットする関数を提供するライブラリです。`../nt/index.min.js`はNewtrinoのエントリー・ポイントとなるライブラリです。Newtrinoディレクトリへの相対URLで書いています。
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.min.js"></script>
