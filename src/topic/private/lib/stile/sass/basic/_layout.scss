@@ -3,11 +3,14 @@
  * Layout Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-08-23
+ * @version 2021-09-05
  *
  * @import 'query';
  *
  */
+
+
+@use "sass:math";
 
 
 @mixin layout-side-margin($max-width, $side-margin: false) {
@@ -82,7 +85,7 @@
 	&:before {
 		content    : '';
 		display    : block;
-		padding-top: percentage($height / $width);
+		padding-top: percentage(math.div($height, $width));
 	}
 	position: relative;
 	> *:first-child { @include layout-fill-self; }
@@ -94,7 +97,7 @@
 		display: block;
 	}
 	&::before {
-		padding-top: percentage($height / $width);
+		padding-top: percentage(math.div($height, $width));
 		float      : right;
 	}
 	&::after { clear: both; }
@@ -175,9 +178,9 @@
 }
 
 @mixin _layout-wrap-responsive-equal($cont-width, $n, $gap_x: false) {
-	$mw: 100% / $n;
+	$mw: math.div(100%, $n);
 	@if $gap_x != false {
-		$cg: $gap_x * ($n - 1) / $n;
+		$cg: math.div($gap_x * ($n - 1), $n);
 		$mw: calc(#{$mw} - #{$cg});
 	}
 	> * {
@@ -189,13 +192,13 @@
 
 @mixin _layout-wrap-responsive-ratio($cont-width, $rn, $gap_x: false) {
 	$n  : length($rs);
-	$cg : if($gap_x == false, 0, $gap_x * ($n - 1) / $n);
+	$cg : if($gap_x == false, 0, math.div($gap_x * ($n - 1), $n));
 	$sum: 0;
 	@each $r in $rs { $sum: $sum + $r; }
 
 	@for $i from 1 through $n {
 		> *:nth-child(#{$i}) {
-			$mw: percentage(nth($rs, $i) / $sum);
+			$mw: percentage(math.div(nth($rs, $i), $sum));
 			@if $gap_x != false {
 				$mw: calc(#{$mw} - #{$cg});
 			}
@@ -228,9 +231,9 @@
 	flex-direction : row;
 	justify-content: space-between;
 
-	$mw: 100% / $n;
+	$mw: math.div(100%, $n);
 	@if $gap != false {
-		$cg: $gap * ($n - 1) / $n;
+		$cg: math.div($gap * ($n - 1), $n);
 		$mw: calc(#{$mw} - #{$cg});
 	}
 	> *:nth-child(n) {
@@ -250,13 +253,13 @@
 	> * { width: 100%; }
 
 	$n  : length($rs);
-	$cg : if($gap == false, 0, $gap * ($n - 1) / $n);
+	$cg : if($gap == false, 0, math.div($gap * ($n - 1), $n));
 	$sum: 0;
 	@each $r in $rs { $sum: $sum + $r; }
 
 	@for $i from 1 through $n {
 		> *:nth-child(#{$i}) {
-			$mw: percentage(nth($rs, $i) / $sum);
+			$mw: percentage(math.div(nth($rs, $i), $sum));
 			@if $gap != false {
 				$mw: calc(#{$mw} - #{$cg});
 			}
@@ -300,9 +303,9 @@
 		flex-flow: row wrap;
 	}
 
-	$mw: 100% / $n;
+	$mw: math.div(100%, $n);
 	@if $gap != false and 1 < $n {
-		$cg: $gap_x * ($n - 1) / $n;
+		$cg: math.div($gap_x * ($n - 1), $n);
 		$mw: calc(#{$mw} - #{$cg});
 	}
 
@@ -330,8 +333,8 @@
 }
 
 @mixin _layout-card-tail-margin($n, $gap: false) {
-	$cw: 100% / $n;
-	$cg: if($gap == false, 0, $gap * ($n - 1) / $n);
+	$cw: math.div(100%, $n);
+	$cg: if($gap == false, 0, math.div($gap * ($n - 1), $n));
 
 	@for $i from 1 through ($n - 1) {
 		> *:nth-child(#{$n}n+#{$i}):last-child {

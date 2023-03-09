@@ -4,7 +4,8 @@ const fs   = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const gulp = require('gulp');
-const $    = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
+const sass = require('gulp-sass')(require('sass'));
+const $    = require('gulp-load-plugins')({ pattern: ['gulp-*', '!gulp-sass'] });
 
 function copySync(from, to) {
 	const isToDir = to.endsWith('/');
@@ -117,7 +118,7 @@ gulp.task('js', () => {
 gulp.task('sass', () => {
 	return gulp.src([SRC_PRIVATE + 'sass/style.scss'])
 		.pipe($.plumber())
-		.pipe($.sass({ outputStyle: 'compressed' }))
+		.pipe(sass({ outputStyle: 'compressed' }))
 		.pipe($.autoprefixer({ remove: false }))
 		.pipe($.rename({ extname: '.min.css' }))
 		.pipe(gulp.dest(DIST_PRIVATE + 'css/'));

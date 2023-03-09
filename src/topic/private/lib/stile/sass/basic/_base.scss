@@ -3,9 +3,12 @@
  * Base Mixins (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-06-06
+ * @version 2021-09-05
  *
  */
+
+
+@use "sass:math";
 
 
 $stile-size-unit   : 0.9rem !default;
@@ -17,11 +20,11 @@ $stile-print-margin: 80 !default;  // The sum of the side margins of papers (mm)
 }
 
 @function base-strip-unit($value) {
-	@return $value / ($value * 0 + 1);
+	@return math.div($value, $value * 0 + 1);
 }
 
 @function base-to-px($v) {
-	@return round(($v - $stile-print-margin) / 25.4 * 72px);
+	@return round(math.div($v - $stile-print-margin, 25.4) * 72px);
 }
 
 

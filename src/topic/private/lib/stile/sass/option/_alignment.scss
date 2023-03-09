@@ -3,12 +3,15 @@
  * Alignment Classes (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-09-15
+ * @version 2021-09-05
  *
  * @import '../basic/base';
  * @import '../basic/query';
  *
  */
+
+
+@use "sass:math";
 
 
 $stile-alignment-size-min-text-width: 16rem !default;
@@ -115,7 +118,7 @@ $stile-alignment-size-width         : 72rem !default;
 
 	*[data-stile ~= 'alignleft'],
 	*[data-stile ~= 'alignright'] {
-		transform: translateY(#{(base-vr(2) - 1rem) / 2});
+		transform: translateY(#{math.div(base-vr(2) - 1rem, 2)});
 		max-width: calc(100% - #{$stile-alignment-size-min-text-width});
 	}
 	*[data-stile ~= 'alignleft'] {
@@ -149,7 +152,7 @@ $stile-alignment-size-width         : 72rem !default;
 @mixin stile-alignment-float {
 	&.alignleft,
 	&.alignright {
-		transform: translateY(#{(base-vr(2) - 1rem) / 2});
+		transform: translateY(#{math.div(base-vr(2) - 1rem, 2)});
 		clear    : none;
 	}
 	&.alignleft {
@@ -227,7 +230,7 @@ $stile-alignment-size-width         : 72rem !default;
 	}
 	.alignwide {
 		@media screen and (min-width: $wide-width) {
-			$m: #{($wide-width - $text-width) / -2};
+			$m: #{math.div($wide-width - $text-width, -2)};
 			margin   : { left: $m; right: $m; }
 			max-width: $wide-width;
 		}

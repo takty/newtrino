@@ -3,12 +3,15 @@
  * Font Mixins
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-11-09
+ * @version 2021-09-05
  *
  * @import 'base';
  * @import 'query';
  *
  */
+
+
+@use "sass:math";
 
 
 $stile-font-chrome-text-stroke-width: 0.28px !default;
@@ -193,7 +196,7 @@ $stile-font-serif-android     : $stile-font-serif-laten-fallback,           seri
 }
 
 @function font-line-height($font-size, $line-height-unit) {
-	$vr: ceil($font-size / $line-height-unit + 0.5);
+	$vr: ceil(math.div($font-size, $line-height-unit) + 0.5);
 	@return $vr * $line-height-unit;
 }
 

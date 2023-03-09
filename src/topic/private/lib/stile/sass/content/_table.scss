@@ -3,13 +3,16 @@
  * Table Style (SCSS)
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2020-12-28
+ * @version 2021-09-05
  *
  * @import '../basic/base';
  * @import '../basic/query';
  * @import '../basic/font';
  *
  */
+
+
+@use "sass:math";
 
 
 $stile-table-color-rule                  : rgba(#777, 0.35) !default;
@@ -177,11 +180,11 @@ $stile-table-align-caption               : center !default;
 		background-color: $stile-table-color-scrollbar-background;
 	}
 	div[data-stile ~= 'fixed-table-scroll-bar']::-webkit-scrollbar {
-		border-radius: base-vr(1) / 2;
+		border-radius: math.div(base-vr(1), 2);
 	}
 	table::-webkit-scrollbar-thumb,
 	div[data-stile ~= 'fixed-table-scroll-bar']::-webkit-scrollbar-thumb {
-		border-radius   : base-vr(1) / 2;
+		border-radius   : math.div(base-vr(1), 2);
 		background-color: $stile-table-color-scrollbar-thumb;
 	}
 	table, div[data-stile ~= 'fixed-table-scroll-bar'] {  // for IE11
