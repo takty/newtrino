@@ -3,13 +3,13 @@
  * Media Dialog
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/handler-media.php' );
-$view = handle_query( $_REQUEST );
+$view = handle_query_media( $_REQUEST );
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
@@ -19,8 +19,8 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/reset.min.css">
-<link rel="stylesheet" href="<?= tqs( __DIR__, 'css/style.min.css' ); ?>">
-<script src="<?= tqs( __DIR__, 'js/media.min.js' ); ?>"></script>
+<link rel="stylesheet" href="<?php tqs( __DIR__, 'css/style.min.css' ); ?>">
+<script src="<?php tqs( __DIR__, 'js/media.min.js' ); ?>"></script>
 </head>
 <body class="media">
 

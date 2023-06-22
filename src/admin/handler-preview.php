@@ -3,7 +3,7 @@
  * Handler - Preview
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -16,7 +16,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true, true );
 
-function handle_query( array $q ): array {
+function handle_query_preview( array $q ): array {
 	$q_title   = $q['post_title']   ?? '';
 	$q_date    = $q['post_date']    ?? '';
 	$q_content = $q['post_content'] ?? '';

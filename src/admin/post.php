@@ -3,13 +3,13 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/handler-post.php' );
-$view = handle_query( $_REQUEST );
+$view = handle_query_post( $_REQUEST );
 $t_p  = $view['t_p'];
 
 header( 'Content-Type: text/html;charset=utf-8' );
@@ -23,12 +23,12 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="apple-touch-icon" type="image/png" href="css/logo-180x180.png">
 <link rel="stylesheet" href="css/reset.min.css">
 <link rel="stylesheet" href="css/flatpickr/flatpickr.min.css">
-<link rel="stylesheet" href="<?= tqs( __DIR__, 'css/style.min.css' ); ?>">
+<link rel="stylesheet" href="<?php tqs( __DIR__, 'css/style.min.css' ); ?>">
 <script src="js/luxon/luxon.min.js"></script>
 <script src="js/flatpickr/flatpickr.min.js"></script>
 <script src="js/flatpickr/ja.js"></script>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="<?= tqs( __DIR__, 'js/post.min.js' ); ?>"></script>
+<script src="<?php tqs( __DIR__, 'js/post.min.js' ); ?>"></script>
 <title><?= _ht( 'Post Edit' ); ?> - Newtrino</title>
 </head>
 <body class="post">

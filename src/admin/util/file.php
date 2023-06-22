@@ -3,7 +3,7 @@
  * Function for Nonce
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -45,7 +45,7 @@ function delete_all_in( string $dir, $on_error ): void {
 
 function get_unique_file_name( string $dir, string $fileName, string $postFix = '' ): string {
 	$pi   = pathinfo( $fileName );
-	$ext  = '.' . $pi['extension'];
+	$ext  = isset( $pi['extension'] ) ? ( '.' . $pi['extension'] ) : '';
 	$name = \nt\sanitize_file_name( $pi['filename'] ) . $postFix;
 
 	$nfn = "$name$ext";

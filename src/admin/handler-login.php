@@ -3,7 +3,7 @@
  * Handler - Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-22
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -12,7 +12,7 @@ require_once( __DIR__ . '/index.php' );
 require_once( __DIR__ . '/class-auth.php' );
 require_once( __DIR__ . '/../core/util/template.php' );
 
-function handle_query( array $q, array $q_get ): array {
+function handle_query_login( array $q, array $q_get ): array {
 	global $nt_session;
 	$auth = new Auth( NT_URL_ADMIN, NT_DIR_DATA, NT_DIR_AUTH );
 

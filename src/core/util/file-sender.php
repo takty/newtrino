@@ -3,7 +3,7 @@
  * Function for Sending Files
  *
  * @author Takuto Yanagida
- * @version 2021-10-12
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -13,8 +13,8 @@ function send_file( string $path, ?string $mimeType = null, bool $isDownload = f
 		http_response_code( 404 );
 		die( 1 );
 	}
-	$mime = $mime ?? ( new \finfo( FILEINFO_MIME_TYPE ) )->file( $path );
-	if ( ! preg_match( '/\A\S+?\/\S+/', $mime ) ) {
+	$mime = $mimeType ?? ( new \finfo( \FILEINFO_MIME_TYPE ) )->file( $path );
+	if ( ! is_string( $mime ) || ! preg_match( '/\A\S+?\/\S+/', $mime ) ) {
 		$mime = 'application/octet-stream';
 	}
 	$size = filesize( $path );

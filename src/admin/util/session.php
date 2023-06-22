@@ -3,7 +3,7 @@
  * Function for Session
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -14,7 +14,7 @@ function session_start( int $timeout = 300 ): bool {
 		if ( $_SESSION['_del'] < time() - $timeout ) return false;
 		if ( isset( $_SESSION['_new'] ) ) {
 			session_write_close();
-			ini_set( 'session.use_strict_mode', 0 );  // For assigning session IDs
+			ini_set( 'session.use_strict_mode', '0' );  // For assigning session IDs
 			session_id( $_SESSION['_new'] );
 			$ret = \session_start();
 		}
@@ -29,7 +29,7 @@ function session_regenerate_id(): bool {
 	$_SESSION['_new'] = $new;
 	$_SESSION['_del'] = time();
 	session_write_close();
-	ini_set( 'session.use_strict_mode', 0 );  // For assigning session IDs
+	ini_set( 'session.use_strict_mode', '0' );  // For assigning session IDs
 	session_id( $new );
 	$res = \session_start();
 

@@ -3,7 +3,7 @@
  * Type
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -13,9 +13,10 @@ require_once( __DIR__ . '/util/label.php' );
 
 class Type {
 
-	private $_dir  = '';
-	private $_lang = '';
-	private $_data = '';
+	private $_dir    = '';
+	private $_lang   = '';
+	private $_byType = '';
+	private $_data   = array();
 
 	public function __construct( string $data_dir, array $args = [] ) {
 		$this->_dir = $data_dir;
@@ -100,6 +101,7 @@ class Type {
 		$ret = [];
 
 		foreach ( $data as $d ) {
+			if ( ! is_string( $d['slug'] ?? null ) ) continue;
 			\nt\normalize_label( $d, $this->_lang );
 			if ( isset( $d['meta'] ) ) {
 				$d['meta'] = $this->_normalizeMetaDefinitions( $d['meta'] );

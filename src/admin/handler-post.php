@@ -3,7 +3,7 @@
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2023-01-06
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -17,7 +17,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
 
-function handle_query( array $q ): array {
+function handle_query_post( array $q ): array {
 	global $nt_config, $nt_store, $nt_session;
 	$list_url = NT_URL_ADMIN . 'list.php';
 	$post_url = NT_URL_ADMIN . 'post.php';

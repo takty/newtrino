@@ -3,7 +3,7 @@
  * Session
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -28,11 +28,11 @@ class Session {
 
 	private static function _setCookieParams(): void {
 		ini_set( 'session.name', 'newtrino' );
-		ini_set( 'session.use_cookies', 1 );  // PHP default
-		ini_set( 'session.use_only_cookies', 1 );  // PHP default
-		ini_set( 'session.use_strict_mode', 1 );
-		ini_set( 'session.cookie_httponly', 1 );
-		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', 1 );
+		ini_set( 'session.use_cookies', '1' );  // PHP default
+		ini_set( 'session.use_only_cookies', '1' );  // PHP default
+		ini_set( 'session.use_strict_mode', '1' );
+		ini_set( 'session.cookie_httponly', '1' );
+		if ( isset( $_SERVER['HTTPS'] ) ) ini_set( 'session.cookie_secure', '1' );
 
 		session_set_cookie_params([
 			'samesite' => 'Strict',
@@ -260,7 +260,7 @@ class Session {
 		if ( $h = $this->_lockSession() ) {
 			$sf = $this->_loadSessionFile( $this->_sid );
 			if ( $sf !== null ) {
-				if ( $pid === '' ) {
+				if ( null === $pid ) {
 					$res = true;
 				} elseif ( $this->_isLockValid( $sf, $pid ) || ! $this->_getLockingSession( $pid ) ) {
 					$sf = $this->_updateLock( $sf, $pid );
@@ -324,7 +324,7 @@ class Session {
 	private function _lockSession() {
 		if ( ! is_dir( $this->_dirSession ) ) {
 			if ( ! \nt\ensure_dir( $this->_dirSession, NT_MODE_DIR ) ) {
-				Logger::error( __METHOD__, 'The session directory is not usable', $path );
+				Logger::error( __METHOD__, 'The session directory is not usable', $this->_dirSession );
 				return null;
 			}
 		}
@@ -380,10 +380,13 @@ class Session {
 		if ( ! $sf ) $sf = $this->_loadSessionFile( $sid, true );
 		if ( $sf ) {
 			if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
+				$method = __METHOD__;
 				foreach ( $sf['temp_dir'] as $dir ) {
 					\nt\delete_all_in(
 						$dir,
-						function ( $dir ) { Logger::info( __METHOD__, 'The directory does not exist', $dir ); }
+						function ( $dir ) use ( $method ) {
+							Logger::info( $method, 'The directory does not exist', $dir );
+						}
 					);
 				}
 			}
@@ -401,7 +404,7 @@ class Session {
 
 	private function _saveSessionFile( string $sid, array $sf ): bool {
 		if ( ! \nt\ensure_dir( $this->_dirSession, NT_MODE_DIR ) ) {
-			Logger::error( __METHOD__, 'The session directory is not usable', $path );
+			Logger::error( __METHOD__, 'The session directory is not usable', $this->_dirSession );
 			return false;
 		}
 		$path = $this->_dirSession . $sid;

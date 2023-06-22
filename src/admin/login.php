@@ -3,13 +3,13 @@
  * Login
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/handler-login.php' );
-$view = handle_query( $_POST, $_GET );
+$view = handle_query_login( $_POST, $_GET );
 
 nocache_headers();
 header( 'Content-Type: text/html;charset=utf-8' );
@@ -22,9 +22,9 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <link rel="icon" type="image/png" href="css/logo.png">
 <link rel="apple-touch-icon" type="image/png" href="css/logo-180x180.png">
 <link rel="stylesheet" href="css/reset.min.css">
-<link rel="stylesheet" href="<?= tqs( __DIR__, 'css/style.min.css' ); ?>">
+<link rel="stylesheet" href="<?php tqs( __DIR__, 'css/style.min.css' ); ?>">
 <script src="js/jssha/sha256.js"></script>
-<script src="<?= tqs( __DIR__, 'js/login.min.js' ); ?>"></script>
+<script src="<?php tqs( __DIR__, 'js/login.min.js' ); ?>"></script>
 <title><?= _ht( 'Log In' ); ?> - Newtrino</title>
 </head>
 <body class="login">

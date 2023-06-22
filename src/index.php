@@ -3,7 +3,7 @@
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -177,7 +177,7 @@ function _create_view_single( array $msg, string $base_url ): array {
 
 function _process_posts_for_view( array $items, ?string $date_format, string $base_url ): array {
 	foreach ( $items as &$p ) {
-		if ( ! $p ) continue;
+		if ( ! $p || ! is_string( $p['id'] ?? null ) ) continue;
 		if ( isset( $p['taxonomy'] ) ) {
 			foreach ( $p['taxonomy'] as $tax_slug => $terms ) {
 				$a = [];
@@ -194,12 +194,14 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 			foreach ( $p['meta'] as $key => &$val ) {
 				if ( strpos( $key, '@' ) !== false ) continue;
 				if ( ! isset( $p['meta']["$key@type"] ) ) continue;
-				if ( $p['meta']["$key@type"] === 'date' ) {
-					$val = date_create( $val )->format( $date_format );
-				}
-				if ( $p['meta']["$key@type"] === 'date_range' ) {
-					$val['from'] = isset( $val['from'] ) ? date_create( $val['from'] )->format( $date_format ) : '';
-					$val['to']   = isset( $val['to']   ) ? date_create( $val['to']   )->format( $date_format ) : '';
+				if ( $date_format ) {
+					if ( $p['meta']["$key@type"] === 'date' ) {
+						$val = date_create( $val )->format( $date_format );
+					}
+					if ( $p['meta']["$key@type"] === 'date_range' ) {
+						$val['from'] = is_string( $val['from'] ?? null ) ? date_create( $val['from'] )->format( $date_format ) : '';
+						$val['to']   = is_string( $val['to']   ?? null ) ? date_create( $val['to']   )->format( $date_format ) : '';
+					}
 				}
 			}
 		}
@@ -268,6 +270,7 @@ function _create_date_filter_view( array $msg, string $type, array $dates, strin
 	if ( isset( $msg['filter']['date_format'] ) ) {
 		$df = $msg['filter']['date_format'];
 	} else {
+		$df = '';
 		switch ( $type ) {
 			case 'year':  $df = 'Y';     break;
 			case 'month': $df = 'Y-m';   break;

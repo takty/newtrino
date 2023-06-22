@@ -3,7 +3,7 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -51,10 +51,11 @@ class Post {
 	private $_taxonomy = [];
 	private $_meta     = [];
 
-	private $_content = null;
+	private $_indexScore = 0;
+	private $_content    = null;
 
 	public function __construct( string $id, string $subPath = '' ) {
-		$this->_id = $id;
+		$this->_id      = $id;
 		$this->_subPath = $subPath;
 	}
 

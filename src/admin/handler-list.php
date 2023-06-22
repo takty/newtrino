@@ -3,7 +3,7 @@
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -17,7 +17,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
 
-function handle_query(): array {
+function handle_query_list(): array {
 	global $nt_config, $nt_store, $nt_session;
 	$post_url = NT_URL_ADMIN . 'post.php';
 
@@ -134,6 +134,7 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 	$dates = $nt_store->getCountByDate( $dateType, [ 'type' => $type, 'status' => $query['status'] ?? null ] );
 
 	$cur = $query['date'] ?? '';
+	$df  = '';
 	switch ( $dateType ) {
 		case 'year' : $df = 'Y';     break;
 		case 'month': $df = 'Y-m';   break;
@@ -268,7 +269,7 @@ function _process_post_for_view( ?Post $p, array $query, string $list_url, strin
 	$ret = [
 		'id'       => $p->getId(),
 		'type'     => $p->getType(),
-		'title'    => $p->getTitle( true ),
+		'title'    => $p->getTitle(),
 		'status'   => $p->getStatus(),
 		'date'     => $p->getDate(),
 		'date@sep' => explode( ' ', $p->getDate() ),

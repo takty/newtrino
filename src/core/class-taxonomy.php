@@ -3,7 +3,7 @@
  * Taxonomy
  *
  * @author Takuto Yanagida
- * @version 2021-06-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -15,7 +15,7 @@ class Taxonomy {
 
 	private $_dir  = '';
 	private $_lang = '';
-	private $_data = '';
+	private $_data = array();
 
 	public function __construct( string $data_dir, array $args = [] ) {
 		$this->_dir = $data_dir;
@@ -100,9 +100,11 @@ class Taxonomy {
 		$ret = [];
 
 		foreach ( $data as $d ) {
+			if ( ! is_string( $d['slug'] ?? null ) ) continue;
 			\nt\normalize_label( $d, $this->_lang );
 			$ti = [];
 			foreach ( $d['terms'] as $idx => &$t ) {
+				if ( ! is_string( $t['slug'] ?? null ) ) continue;
 				\nt\normalize_label( $t, $this->_lang );
 				$ti[ $t['slug'] ] = $idx;
 			}

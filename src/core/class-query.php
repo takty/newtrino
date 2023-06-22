@@ -3,7 +3,7 @@
  * Query
  *
  * @author Takuto Yanagida
- * @version 2021-09-15
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -47,7 +47,7 @@ class Query {
 		$qs = [];
 		foreach ( $query as $idx => $ai ) {
 			if ( ! is_numeric( $idx ) ) continue;
-			if ( ! isset( $ai['taxonomy'] ) || empty( $ai['terms'] ) ) continue;
+			if ( ! is_string( $ai['taxonomy'] ?? null ) || empty( $ai['terms'] ) ) continue;
 			$qs[ $ai['taxonomy'] ] = is_array( $ai['terms'] ) ? $ai['terms'] : [ $ai['terms'] ];
 		}
 		if ( ! empty( $qs ) ) {
@@ -67,10 +67,10 @@ class Query {
 				$q['date'] = self::_normalizeDate( $ai, '' );
 			} else {
 				if ( ! empty( $ai['after'] ) ) {
-					$q['after'] = self::_normalizeDate( $ai['after'], 0 );
+					$q['after'] = self::_normalizeDate( $ai['after'], '0' );
 				}
 				if ( ! empty( $ai['before'] ) ) {
-					$q['before'] = self::_normalizeDate( $ai['before'], 9 );
+					$q['before'] = self::_normalizeDate( $ai['before'], '9' );
 				}
 			}
 			$qs[] = $q;

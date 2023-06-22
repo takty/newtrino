@@ -3,7 +3,7 @@
  * Response
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -124,7 +124,7 @@ function _create_post_data( ?Post $p, bool $include_content = false ): ?array {
 	$d = [
 		'id'       => $p->getId(),
 		'type'     => $p->getType(),
-		'title'    => $p->getTitle( true ),
+		'title'    => $p->getTitle(),
 		'status'   => $p->getStatus(),
 		'date'     => $p->getDate(),
 		'modified' => $p->getModified(),

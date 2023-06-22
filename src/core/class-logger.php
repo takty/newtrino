@@ -3,7 +3,7 @@
  * Logger
  *
  * @author Takuto Yanagida
- * @version 2023-02-28
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -79,10 +79,10 @@ class Logger {
 			if ( null !== error_get_last() ) {
 				return false;
 			}
-			$fsize = filesize( $path );
-			if ( self::MAX_SIZE < $fsize ) {
+			$fs = filesize( $path );
+			if ( self::MAX_SIZE < $fs ) {
 				$pi  = pathinfo( $path );
-				$ext = '.' . $pi['extension'];
+				$ext = isset( $pi['extension'] ) ? ( '.' . $pi['extension'] ) : '';
 				$fn  = $pi['filename'];
 				$dir = $pi['dirname'] . '/';
 				self::_rotateFile( $dir, $fn, $ext );

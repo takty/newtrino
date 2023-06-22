@@ -3,7 +3,7 @@
  * Functions for URLs
  *
  * @author Takuto Yanagida
- * @version 2020-09-08
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -13,6 +13,9 @@ function resolve_url( string $target, string $base ): string {
 	if ( strpos( $target, '#' ) === 0 ) return $target;
 
 	$comp = parse_url( $base );
+	if ( ! isset( $comp['scheme'] ) || ! isset( $comp['host'] ) ) return $target;
+
+	if ( ! isset( $comp['path'] ) ) $comp['path'] = '/';
 	$dir = preg_replace( '!/[^/]*$!', '/', $comp['path'] );
 
 	switch ( true ) {
@@ -22,28 +25,28 @@ function resolve_url( string $target, string $base ): string {
 			return $comp['scheme'] . ':' . $target;
 		case preg_match( '/^\/[^\/].+/', $target ):
 			return $comp['scheme'] . '://' . $comp['host'] . $target;
-		case preg_match( '/^\.\/(.+)/', $target, $maches ):
-			return $comp['scheme'] . '://' . $comp['host'] . $dir . $maches[1];
-		case preg_match( '/^([^\.\/]+)(.*)/', $target, $maches ):
-			return $comp['scheme'] . '://' . $comp['host'] . $dir . $maches[1] . $maches[2];
+		case preg_match( '/^\.\/(.+)/', $target, $ms ):
+			return $comp['scheme'] . '://' . $comp['host'] . $dir . $ms[1];
+		case preg_match( '/^([^\.\/]+)(.*)/', $target, $ms ):
+			return $comp['scheme'] . '://' . $comp['host'] . $dir . $ms[1] . $ms[2];
 		case preg_match( '/^\.\.\/.+/', $target ):
-			preg_match_all( '!\.\./!', $target, $matches );
-			$nest = count( $matches[0] );
+			preg_match_all( '!\.\./!', $target, $ms );
+			$nest = count( $ms[0] );
 
-			$dir = preg_replace( '!/[^/]*$!', '/', $comp['path'] ) . '\n';
+			$dir       = preg_replace( '!/[^/]*$!', '/', $comp['path'] ) . '\n';
 			$dir_array = explode( '/', $dir );
 			array_shift( $dir_array );
 			array_pop( $dir_array );
 			$dir_count = count( $dir_array );
-			$count = $dir_count - $nest;
-			$pathto = '';
-			$i = 0;
+			$count     = $dir_count - $nest;
+			$path_to   = '';
+			$i         = 0;
 			while ( $i < $count ) {
-				$pathto .= '/' . $dir_array[ $i ];
+				$path_to .= '/' . $dir_array[ $i ];
 				$i++;
 			}
 			$file = str_replace( '../', '', $target );
-			return $comp['scheme'] . '://' . $comp['host'] . $pathto . '/' . $file;
+			return $comp['scheme'] . '://' . $comp['host'] . $path_to . '/' . $file;
 	}
 	return $target;
 }
@@ -57,7 +60,7 @@ function get_url_from_path( string $target ): string {
 	$path = str_replace( DIRECTORY_SEPARATOR, '/', $path );
 	$url  = $_SERVER['SCRIPT_NAME'];
 
-	$len = mb_strlen( get_right_intersection( $url, $path ) );
+	$len      = mb_strlen( get_right_intersection( $url, $path ) );
 	$url_root = mb_substr( $url, 0, -$len );
 	$doc_root = mb_substr( $path, 0, -$len );
 	return str_replace( $doc_root, $url_root, $target );

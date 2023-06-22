@@ -3,13 +3,13 @@
  * Preview
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/handler-preview.php' );
-$view = handle_query( $_REQUEST );
+$view = handle_query_preview( $_REQUEST );
 
 header( 'Content-Type: text/html;charset=utf-8' );
 ?>
@@ -20,7 +20,7 @@ header( 'Content-Type: text/html;charset=utf-8' );
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <?php \nt\begin( $view ); ?>
 {{#css}}<link rel="stylesheet" media="all" href="{{.}}" />{{/css}}
-<script src="<?= tqs( __DIR__, 'js/preview.min.js' ); ?>"></script>
+<script src="<?php tqs( __DIR__, 'js/preview.min.js' ); ?>"></script>
 {{#js}}<script src="{{.}}"></script>{{/js}}
 <?php \nt\end(); ?>
 <title><?= _ht( 'Preview' ); ?> - Newtrino</title>

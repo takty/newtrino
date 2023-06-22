@@ -3,7 +3,7 @@
  * Handler - Media
  *
  * @author Takuto Yanagida
- * @version 2022-12-23
+ * @version 2023-06-22
  */
 
 namespace nt;
@@ -15,7 +15,7 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true, true );
 
-function handle_query( array $q ): array {
+function handle_query_media( array $q ): array {
 	$q_id   = $q['id']   ?? null;
 	$q_mode = $q['mode'] ?? '';
 
