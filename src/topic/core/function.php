@@ -5,7 +5,7 @@ namespace nt;
  * Functions
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-10-19
+ * @version 2023-06-22
  *
  */
 
@@ -28,10 +28,8 @@ function reject_direct_access($urlHost, $path, $depth = 1) {
 
 function set_locale_setting() {
 	date_default_timezone_set('Asia/Tokyo');
-	mb_language('Japanese');
 	mb_internal_encoding('utf-8');
 	mb_http_output('utf-8');
-	mb_http_input('utf-8');
 	mb_regex_encoding('utf-8');
 }
 
@@ -121,7 +119,7 @@ function resolve_url($target, $base) {
 		$file = str_replace('../', '', $target);
 		return $comp['scheme'] . '://' . $comp['host'] . $pathto . '/' . $file;
 	}
-	return $uri;
+	return $target;
 }
 
 

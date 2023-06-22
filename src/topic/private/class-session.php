@@ -5,7 +5,7 @@ namespace nt;
  * Session Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-11-02
+ * @version 2023-06-22
  *
  */
 
@@ -28,14 +28,20 @@ class Session {
 	const ACCOUNT_FILE_NAME  = 'account';
 	const HASH_ALGORITHM     = 'sha256';
 
+	private $_urlPrivate;
+	private $_dirPost;
+	private $_dirAccount;
+	private $_dirSession;
+	private $_sessionId;
+
 	function __construct($urlPrivate, $dirPost, $dirAccount, $dirSession) {
 		$this->_urlPrivate = $urlPrivate;
 		$this->_dirPost    = $dirPost;
 		$this->_dirAccount = $dirAccount;
 		$this->_dirSession = $dirSession;
 
-		ini_set('session.use_strict_mode', 1);
-		if (isset($_SERVER['HTTPS'])) ini_set('session.cookie_secure', 1);
+		ini_set('session.use_strict_mode', '1');
+		if (isset($_SERVER['HTTPS'])) ini_set('session.cookie_secure', '1');
 		Logger::output("Info (Session)");
 	}
 
@@ -90,15 +96,15 @@ class Session {
 		$fp = $this->getFingerprint();
 		if ($fp !== $_SESSION['fingerprint']) return false;
 
-		$this->sessionId = $sid;
+		$this->_sessionId = $sid;
 		return $this->checkTime($sid, true);
 	}
 
 	public function addTempPostId($pid) {
-		$lines = $this->loadSessionFile($this->sessionId);
+		$lines = $this->loadSessionFile($this->_sessionId);
 		if ($lines === false) return false;
 		$lines[] = $pid;
-		$this->saveSessionFile($this->sessionId, $lines);
+		$this->saveSessionFile($this->_sessionId, $lines);
 		return true;
 	}
 
@@ -134,10 +140,10 @@ class Session {
 
 	private function startNew(&$error) {
 		session_start();
-		$this->sessionId = session_id();
+		$this->_sessionId = session_id();
 		$_SESSION['fingerprint'] = $this->getFingerprint();
 
-		$res = $this->saveSessionFile($this->sessionId, [time()]);
+		$res = $this->saveSessionFile($this->_sessionId, [time()]);
 		if ($res === false) {
 			$error = 'Session file cannot be written.';
 			return false;
@@ -151,7 +157,7 @@ class Session {
 
 		$curTime = time();
 		$sessionTime = array_shift($lines);
-		if (self::SESSION_ALIVE_TIME < $curTime - $sessionTime) {
+		if (self::SESSION_ALIVE_TIME < $curTime - (int) $sessionTime) {
 			if ($this->_dirPost !== false && 0 < count($lines)) {
 				foreach ($lines as $id) {
 					$temp_post_path = $this->_dirPost . $id;

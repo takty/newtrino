@@ -5,7 +5,7 @@ namespace nt;
  * Store
  *
  * @author Space-Time Inc.
- * @version 2018-10-19
+ * @version 2023-06-22
  *
  */
 
@@ -53,6 +53,15 @@ class Store {
 
 	// ------------------------------------------------------------------------
 
+	private $_urlPost;
+	private $_dirPost;
+	private $_dirData;
+
+	private $_conf;
+	private $_urlPrivate;
+
+	private $_catData;
+
 	public function __construct($urlPost, $dirPost, $dirData, $conf, $urlPrivate = false) {
 		$this->_urlPost = $urlPost;
 		$this->_dirPost = $dirPost;
@@ -73,7 +82,7 @@ class Store {
 		if (!$post->load($this->_dirPost)) return false;
 		$post->setCategoryName($this->categorySlugToName($post->getCategory()));
 
-		$pd = date('YmdHis') - $post->getDateTimeNumber();
+		$pd = (int) date('YmdHis') - (int) $post->getDateTimeNumber();
 		if ($this->_conf['newly_arrived_day'] > 0) {
 			$post->setNewItem($pd < $this->_conf['newly_arrived_day'] * 1000000);
 		}
@@ -163,7 +172,7 @@ class Store {
 		if ($this->_conf['newly_arrived_day'] > 0) {
 			$now = date('YmdHis');
 			foreach ($posts as $p) {
-				$pd = $now - $p->getDateTimeNumber();
+				$pd = (int) $now - (int) $p->getDateTimeNumber();
 				$p->setNewItem($pd < $this->_conf['newly_arrived_day'] * 1000000);
 			}
 		}

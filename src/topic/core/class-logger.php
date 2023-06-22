@@ -5,7 +5,7 @@ namespace nt;
  * Logger
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-22
+ * @version 2023-06-22
  *
  */
 
@@ -36,7 +36,7 @@ class Logger {
 			$fsize = filesize( $path );
 			if ( self::MAX_SIZE < $fsize ) {
 				$pi  = pathinfo( $path );
-				$ext = '.' . $pi['extension'];
+				$ext = isset( $pi['extension'] ) ? ( '.' . $pi['extension'] ) : '';
 				$fn  = $pi['filename'];
 				$dir = $pi['dirname'] . '/';
 				self::rotateFile( $dir, $fn, $ext );

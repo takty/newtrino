@@ -5,7 +5,7 @@ namespace nt;
  * Index
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2018-11-02
+ * @version 2023-06-22
  *
  */
 
@@ -120,7 +120,7 @@ header('Content-Type: text/html;charset=utf-8');
 			<td class="category"><div><?= _ht($p->getCategoryName(), 'category') ?></div></td>
 <?php endif ?>
 			<td class="mod-date-time"><?= implode('', array_map(function ($e) {return '<span>'._h($e).'</span> ';}, explode(' ', $p->getModifiedDateTime()))) ?></td>
-			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDate()) ?>','<?= _h($p->getTitle(true)) ?>');"><?= _ht('Delete') ?></a></td>
+			<td><a class="btn btn-delete" href="#" onClick="deletePost(<?= _h($p->getId()) ?>, '<?= _h($p->getPublishedDate()) ?>','<?= _h($p->getTitle()) ?>');"><?= _ht('Delete') ?></a></td>
 		</tr>
 <?php endforeach ?>
 	</table>

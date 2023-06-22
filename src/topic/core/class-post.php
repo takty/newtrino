@@ -5,7 +5,7 @@ namespace nt;
  * Post
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-08-05
+ * @version 2023-06-22
  *
  */
 
@@ -45,8 +45,14 @@ class Post {
 
 	// ------------------------------------------------------------------------
 
-	private $_postPath = '';
 	private $_id;
+	private $_urlPost;
+	private $_urlPrivate;
+
+	private $_postPath = '';
+
+	private $_dateEventBgn;
+	private $_dateEventEnd;
 
 	function __construct($urlPost, $id, $urlPrivate = false) {
 		$this->_urlPost = $urlPost;
@@ -299,7 +305,7 @@ class Post {
 	private function _readContent() {
 		$contPath = $this->_postPath . self::CONT_FILE_NAME;
 		$contStr = @file_get_contents($contPath);
-		if ($contPath === false) {
+		if ($contStr === false) {
 			Logger::output('Error (Post::_readContent file_get_contents) [' . $contPath . ']');
 			return false;
 		}

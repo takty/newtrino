@@ -5,7 +5,7 @@ namespace nt;
  * Media Manager
  *
  * @author Takuto Yanagida @ Space-Time Inc.
- * @version 2019-07-22
+ * @version 2023-06-22
  *
  */
 
@@ -15,6 +15,10 @@ class Media {
 	const MODE_DIR       = 0755;
 	const MODE_FILE      = 0644;
 	const MEDIA_DIR_NAME = 'media';
+
+	private $_id;
+	private $_mediaPath;
+	private $_mediaUrl;
 
 	public function __construct( $postPath, $postUrl, $id ) {
 		$this->_id = $id;
@@ -65,7 +69,7 @@ class Media {
 			return $fileName;
 		}
 		$pi   = pathinfo( $fileName );
-		$ext  = '.' . $pi['extension'];
+		$ext  = isset( $pi['extension'] ) ? ( '.' . $pi['extension'] ) : '';
 		$name = $pi['filename'];
 
 		for ( $num = 1; $num <= 256; $num += 1 ) {

@@ -5,7 +5,7 @@ namespace nt;
  * Template Tags
  *
  * @author Space-Time Inc.
- * @version 2018-11-02
+ * @version 2023-06-22
  *
  */
 
@@ -38,7 +38,7 @@ function the_recent($count = 10, $cat = '', $omitFinishedEvent = false) {
 <?php if ($p->getCategory() === 'event'): ?>
 		<span class="nt-event-term"><?= _ht('Event Date: ') ?><?= _h($p->getEventDateBgn()) ?><?= _ht(' to ') ?><?= _h($p->getEventDateEnd()) ?></span>
 <?php endif ?>
-		<div class="nt-title"><?= _h($p->getTitle(true)) ?></div>
+		<div class="nt-title"><?= _h($p->getTitle()) ?></div>
 		<div class="nt-excerpt"><?= $p->getExcerpt(60) ?></div>
 		<div class="nt-date"><?= _ht('Updated: ') ?><?= _h($p->getPublishedDate()) ?></div>
 	</a>
@@ -114,9 +114,9 @@ function the_pagination($pgUrl = false, $size = false, $cur = false, $maxPg = 7)
 		$url = ($i === $cur) ? '' : str_replace('<>', $i, $pgUrl);
 		$t_pgs[] = ['page' => $i, 'href' => $url];
 	}
-	$t_prev = ($cur > 1) ?         str_replace('<>', $cur - 1, $pgUrl) : false;
-	$t_next = ($cur < $pageSize) ? str_replace('<>', $cur + 1, $pgUrl) : false;
-	$t_pg1 = (1 < $pgBgn) ? ['page' => 1, 'href' => str_replace('<>', 1, $pgUrl)] : false;
+	$t_prev = ($cur > 1) ?         str_replace('<>', (string) ($cur - 1), $pgUrl) : false;
+	$t_next = ($cur < $pageSize) ? str_replace('<>', (string) ($cur + 1), $pgUrl) : false;
+	$t_pg1 = (1 < $pgBgn) ? ['page' => 1, 'href' => str_replace('<>', '1', $pgUrl)] : false;
 	$t_el = (2 < $pgBgn);
 	$t_eh = ($pgEnd < $pageSize);
 ?>
