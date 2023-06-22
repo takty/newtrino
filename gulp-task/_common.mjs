@@ -2,7 +2,7 @@
  * Common functions for gulp process
  *
  * @author Takuto Yanagida
- * @version 2022-10-17
+ * @version 2023-06-21
  */
 
 import { createRequire } from 'module';
@@ -30,11 +30,11 @@ export function getBranchName() {
 	return cgb();
 }
 
-export async function verStr(devPostfix = ' [dev]') {
+export async function verStr(devSuffix = ' [dev]') {
 	const isDev = getBranchName() === 'develop';
 	const pkg   = getPkgJson();
 
-	return 'v' + pkg['version'] + (isDev ? devPostfix : '');
+	return 'v' + pkg['version'] + (isDev ? devSuffix : '');
 }
 
 export async function fullVerStr() {
