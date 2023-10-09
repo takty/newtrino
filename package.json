@@ -28,8 +28,8 @@
 		"not dead"
 	],
 	"dependencies": {
-		"@babel/core": "^7.22.5",
-		"@babel/preset-env": "^7.22.5",
+		"@babel/core": "^7.23.0",
+		"@babel/preset-env": "^7.22.20",
 		"current-git-branch": "^1.1.0",
 		"flatpickr": "^4.6.13",
 		"gulp": "^4.0.2",
@@ -43,11 +43,11 @@
 		"gulp-replace": "^1.1.4",
 		"gulp-sass": "^5.1.0",
 		"gulp-terser": "^2.1.0",
-		"jssha": "^3.3.0",
-		"luxon": "^3.3.0",
+		"jssha": "^3.3.1",
+		"luxon": "^3.4.3",
 		"nacss-reset": "git+https://github.com/takty/nacss-reset.git",
-		"sass": "^1.63.6",
+		"sass": "^1.69.0",
 		"tinymce": "^5.10.7",
-		"tinymce-i18n": "^23.1.9"
+		"tinymce-i18n": "^23.10.9"
 	}
 }
