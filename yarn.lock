@@ -3791,10 +3791,10 @@ tinymce-i18n@^23.10.9:
   resolved "https://registry.yarnpkg.com/tinymce-i18n/-/tinymce-i18n-23.10.9.tgz#1b686f6235e7053d8bc235a1f5a74be7c4998a87"
   integrity sha512-CwO5pbfhO+GzFXMkTxzV1G8JSSY9mu8lkXQ53nuGBB57m5YqN+jLDz2NZZiFIZ76OZauGf4hjrcIxyZlggpuZg==
 
-tinymce@^5.10.7:
-  version "5.10.7"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.7.tgz#d89d446f1962f2a1df6b2b70018ce475ec7ffb80"
-  integrity sha512-9UUjaO0R7FxcFo0oxnd1lMs7H+D0Eh+dDVo5hKbVe1a+VB0nit97vOqlinj+YwgoBDt6/DSCUoWqAYlLI8BLYA==
+tinymce@^5.10.9:
+  version "5.10.9"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.10.9.tgz#1dfacb3231c71a688d90ff44a0b3f2e91b3b9edf"
+  integrity sha512-5bkrors87X9LhYX2xq8GgPHrIgJYHl87YNs+kBcjQ5I3CiUgzo/vFcGvT3MZQ9QHsEeYMhYO6a5CLGGffR8hMg==
 
 to-absolute-glob@^2.0.0:
   version "2.0.2"
