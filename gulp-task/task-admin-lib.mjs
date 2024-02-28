@@ -32,7 +32,7 @@ const makeTaskCopyJssha = () => {
 
 const makeTaskCopyLuxon = () => {
 	const dir = pkgDir('luxon');
-	const f = makeCopyTask(dir + '/../global/luxon.min.js*(.map)', DIST_ADMIN + 'js/luxon/');
+	const f = makeCopyTask(dir + '/build/global/luxon.min.js*(.map)', DIST_ADMIN + 'js/luxon/');
 	f.displayName = 'adminLibCopyLuxon';
 	return f;
 };
