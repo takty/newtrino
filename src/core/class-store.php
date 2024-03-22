@@ -238,12 +238,8 @@ class Store {
 	private function _loadInfo( string $postDir, string $pid ): ?array {
 		$infoPath = $postDir . '/' . Post::INFO_FILE_NAME;
 		$json     = false;
-		try {
-			if ( file_exists( $infoPath ) ) {
-				$json = file_get_contents( $infoPath );
-			}
-		} catch ( Error $e ) {
-			// Do nothing
+		if ( file_exists( $infoPath ) ) {
+			$json = file_get_contents( $infoPath );
 		}
 		if ( $json === false ) {
 			Logger::error( __METHOD__, 'Cannot read the info data', $pid );
