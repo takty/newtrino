@@ -97,7 +97,7 @@ class Store {
 
 	public function getPost( ?string $id ): ?Post {
 		if ( $id === null ) return null;
-		$p = new Post( $id, $this->getSubPath( $id, null ) );
+		$p = new Post( $id, $this->getSubPath( $id ) );
 		if ( ! $p->load() ) return null;
 		return $p;
 	}
