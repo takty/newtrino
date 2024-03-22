@@ -3,7 +3,7 @@
  * Init for Admin
  *
  * @author Takuto Yanagida
- * @version 2022-12-21
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -16,7 +16,7 @@ require_once( __DIR__ . '/class-session.php' );
 
 $nt_config  = load_config( NT_DIR_DATA );
 $nt_res     = load_resource( NT_DIR_ADMIN_RES, $nt_config['lang_admin'] );
-$nt_session = new Session( NT_URL_ADMIN, NT_DIR_SESSION );
+$nt_session = new Session( NT_DIR_SESSION );
 
 
 // Functions for Initial Process -----------------------------------------------

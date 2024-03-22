@@ -24,7 +24,6 @@ class Media {
 
 	private $_id;
 	private $_dir;
-	private $_url;
 	private $_meta;
 	private $_data;
 	private $_ntUrl;
@@ -35,7 +34,6 @@ class Media {
 
 		$this->_id    = $id;
 		$this->_dir   = $nt_store->getPostDir( $id, null ) . $mediaDirName . '/';
-		$this->_url   = $nt_store->getPostUrl( $id, null ) . $mediaDirName . '/';
 		$this->_meta  = $nt_store->getPostDir( $id, null ) . 'media.json';
 		$this->_ntUrl = $ntUrl;
 		$this->_sizes = $nt_config['image_sizes'];

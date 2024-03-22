@@ -3,7 +3,7 @@
  * Session
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -44,14 +44,12 @@ class Session {
 	// ------------------------------------------------------------------------
 
 
-	private $_url;
 	private $_dirSession;
 
 	private $_lang = '';
 	private $_sid  = '';
 
-	public function __construct( string $urlAdmin, string $dirSession ) {
-		$this->_url        = $urlAdmin;
+	public function __construct( string $dirSession ) {
 		$this->_dirSession = $dirSession;
 
 		self::_setCookieParams();
