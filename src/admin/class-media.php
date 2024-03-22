@@ -3,7 +3,7 @@
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2022-12-19
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -267,7 +267,7 @@ class Media {
 		$w      = imagesx( $img );
 		$h      = imagesy( $img );
 		$newH   = $h * $newW / $w;
-		$newImg = imagecreatetruecolor( $newW, $newH );
+		$newImg = imagecreatetruecolor( (int) $newW, (int) $newH );
 
 		if ( 'image/png' === $mime || 'image/x-png' === $mime ) {
 			imagealphablending( $newImg, false );
