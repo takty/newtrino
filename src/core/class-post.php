@@ -3,7 +3,7 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -100,7 +100,7 @@ class Post {
 	}
 
 	private function _writeSearchIndex( string $postDir ): bool {
-		$text = strip_tags( $this->_title ) . ' ' . strip_tags( $this->_content );
+		$text = strip_tags( $this->_title ) . ' ' . strip_tags( $this->_content ?? '' );
 		$path = $postDir . self::BIGM_FILE_NAME;
 
 		$idx = Indexer::createSearchIndex( $text );
