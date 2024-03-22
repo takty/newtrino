@@ -3,7 +3,7 @@
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -249,7 +249,7 @@ function _create_filter_view( array $msg, array $res, string $base_url ): array 
 	if ( isset( $res['date'] ) ) {
 		$keys = array_keys( $res['date'] );
 		foreach ( $res['date'] as $type => $dates ) {
-			$v['date'] = _create_date_filter_view( $msg, $type, $dates, $base_url );
+			$v['date'] = _create_filter_view_date( $msg, $type, $dates, $base_url );
 			break;
 		}
 	}
@@ -265,7 +265,7 @@ function _create_filter_view( array $msg, array $res, string $base_url ): array 
 	return $v;
 }
 
-function _create_date_filter_view( array $msg, string $type, array $dates, string $base_url ): array {
+function _create_filter_view_date( array $msg, string $type, array $dates, string $base_url ): array {
 	$cur = $msg['query']['date'] ?? '';
 	if ( isset( $msg['filter']['date_format'] ) ) {
 		$df = $msg['filter']['date_format'];
