@@ -3,7 +3,7 @@
  * Ajax
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -14,6 +14,8 @@ require_once( __DIR__ . '/../core/class-store.php' );
 $q      = $_REQUEST;
 $q_mode = $q['mode'] ?? '';
 $q_id   = $q['id']   ?? null;
+
+global $nt_session, $nt_store;
 
 $res = 'failure';
 if ( $q_mode === 'status' ) {
