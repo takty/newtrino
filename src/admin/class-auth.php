@@ -3,7 +3,7 @@
  * User Authentication
  *
  * @author Takuto Yanagida
- * @version 2021-06-28
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -152,7 +152,7 @@ class Auth {
 		}
 		if (
 			empty( $params['user'] ) || empty( $params['hash'] ) ||
-			( isset( $params['user'] ) && ! preg_match( '/^(?=.*[a-z])[\-_a-z0-9]{4,32}$/i', $params['user'] ) )
+			! preg_match( '/^(?=.*[a-z])[\-_a-z0-9]{4,32}$/i', $params['user'] )
 		) {
 			Logger::info( __METHOD__, 'Parameters are invalid' );
 			$this->_errCode = 'invalid_param';
