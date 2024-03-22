@@ -3,7 +3,7 @@
  * Store
  *
  * @author Takuto Yanagida
- * @version 2021-06-29
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -16,6 +16,12 @@ require_once( __DIR__ . '/class-taxonomy.php' );
 require_once( __DIR__ . '/class-query.php' );
 
 class Store {
+
+	protected $_dirUrl;
+	protected $_dirRoot;
+	protected $_conf;
+	protected $_type;
+	protected $_taxonomy;
 
 	public function __construct( string $ntUrl, string $ntDir, string $dataDir, array $conf ) {
 		$this->_dirUrl  = $ntUrl;
@@ -132,7 +138,7 @@ class Store {
 		return ['posts' => $ret, 'size' => $size, 'page' => $pageIdx + 1, 'page_count' => ceil( $size / $perPage ) ];
 	}
 
-	public function getCountByDate( string $type = 'year', array $args ): array {
+	public function getCountByDate( string $type, array $args ): array {
 		$args += [ 'status' => Post::STATUS_PUBLISH ];
 		$paths = $this->_getPostTypeSubDirs( $args );
 		$ms = [];
