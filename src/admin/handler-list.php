@@ -3,7 +3,7 @@
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -119,7 +119,7 @@ function _create_type_filter_view( array $query, array $types, string $list_url 
 	$cur = $query['type'] ?? '';
 	$as  = [];
 	foreach ( $types as $slug => $d ) {
-		$url = \ nt\create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null, 'page' => null ] );
+		$url = \nt\create_canonical_url( $list_url, $query, [ 'type' => $slug, 'date' => null, 'page' => null ] );
 		$p   = [ 'label' => $d['label'], 'url' => $url ];
 		if ( $slug === $cur ) {
 			$p['is_selected'] = true;
@@ -142,7 +142,7 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 	}
 	$as = [];
 
-	$url = \ nt\create_canonical_url( $list_url, $query, [ 'date' => null ] );
+	$url = \nt\create_canonical_url( $list_url, $query, [ 'date' => null ] );
 	$p   = [ 'label' => translate( 'All' ), 'url' => $url ];
 	if ( $cur === '' ) {
 		$p['is_selected'] = true;
@@ -202,7 +202,7 @@ function _create_pagination_view( array $query, int $page_count, string $list_ur
 	$cur   = isset( $query['page'] ) ? max( 1, min( intval( $query['page'] ), $page_count ) ) : 1;
 	$pages = [];
 	for ( $i = 1; $i <= $page_count; $i += 1 ) {
-		$url = \ nt\create_canonical_url( $list_url, $query, [ 'page' => $i ] );
+		$url = \nt\create_canonical_url( $list_url, $query, [ 'page' => $i ] );
 		$p   = [ 'label' => $i, 'url' => $url ];
 		if ( $i === $cur ) {
 			$p['is_selected'] = true;
