@@ -3,7 +3,7 @@
  * Response
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -27,16 +27,23 @@ function create_response_archive( array $query, array $filter, array $option = [
 	if ( ! isset( $query[0] ) ) {
 		$query = [ $query ];
 	}
-	$posts = [];
+	$posts   = [];
+	$size    = 0;
+	$perPage = intval( $nt_config['per_page'] );
+
 	foreach ( $query as $q ) {
 		$args  = _create_args( $q );
 		$ret   = $nt_store->getPosts( $args );
 		$posts = array_merge( $posts, array_map( '\nt\_create_post_data', $ret['posts'] ) );
+		$size  = $size + $ret['size'];
+		if ( isset( $args['per_page'] ) ) {
+			$perPage = intval( $args['per_page'] );
+		}
 	}
 	$res = [
 		'status'     => 'success',
 		'posts'      => $posts,
-		'page_count' => $ret['page_count'],
+		'page_count' => ceil( $size / $perPage ),
 	];
 	$res += _create_archive_data( _rearrange_filter( $filter ) );
 	return $res;
