@@ -3,7 +3,7 @@
  * Indexer
  *
  * @author Takuto Yanagida
- * @version 2021-06-16
+ * @version 2024-03-22
  */
 
 namespace nt;
@@ -91,19 +91,12 @@ class Indexer {
 	}
 
 	static private function _splitTerm( string $term, array &$bis ): void {
-		$chs = preg_split( "//u", $term, -1, PREG_SPLIT_NO_EMPTY );
+		$len = mb_strlen( $term, 'UTF-8' );
+		$ng  = 2;
 
-		$temp = '';
-		foreach ( $chs as $i => $ch ) {
-			if ( $temp !== '' ) {
-				$bis[] = $temp;
-				$temp = '';
-			}
-			if ( isset( $chs[ $i + 1 ] ) ) {
-				$bis[] = $ch . $chs[ $i + 1 ];
-			}
+		for ( $i = 0; $i < $len - $ng + 1; $i += 1 ) {
+			$bis[] = mb_substr( $term, $i, $ng, 'UTF-8' );
 		}
-		if ( $temp !== '' ) $bis[] = $temp;
-    }
+	}
 
 }
