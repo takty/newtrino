@@ -63,7 +63,7 @@ class Post {
 		return $this->_id;
 	}
 
-	public function load( array $info = null ): bool {
+	public function load( ?array $info = null ): bool {
 		global $nt_store;
 		$path = $nt_store->getPostDir( $this->_id, $this->_subPath );
 
@@ -72,7 +72,7 @@ class Post {
 		return $ret;
 	}
 
-	public function save( string $id = null ): void {
+	public function save( ?string $id = null ): void {
 		if ( ! defined( 'NT_ADMIN' ) ) exit;
 		if ( ! empty( $id ) ) $this->_id = $id;
 

@@ -47,7 +47,7 @@ class Taxonomy {
 		return null;
 	}
 
-	public function getTermAll( string $tax_slug, array $current_term_slugs = null ): array {
+	public function getTermAll( string $tax_slug, ?array $current_term_slugs = null ): array {
 		$tax = $this->getTaxonomy( $tax_slug );
 		if ( empty( $tax ) ) return [];
 

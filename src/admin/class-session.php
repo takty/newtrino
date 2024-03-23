@@ -374,7 +374,7 @@ class Session {
 		return $data;
 	}
 
-	private function _removeSessionFile( string $sid, array $sf = null ): void {
+	private function _removeSessionFile( string $sid, ?array $sf = null ): void {
 		if ( ! $sf ) $sf = $this->_loadSessionFile( $sid, true );
 		if ( $sf ) {
 			if ( isset( $sf['temp_dir'] ) && is_array( $sf['temp_dir'] ) ) {
