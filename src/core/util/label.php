@@ -3,11 +3,17 @@
  * Functions for Labels
  *
  * @author Takuto Yanagida
- * @version 2021-09-11
+ * @version 2024-03-26
  */
 
 namespace nt;
 
+/**
+ * Normalizes the labels in the given array.
+ *
+ * @param array<string, string> $d The array to normalize. This is passed by reference.
+ * @param string                $l The suffix for language.
+ */
 function normalize_label( array &$d, string $l ): void {
 	if ( isset( $d[ "label@$l" ] ) ) {
 		$d['label'] = $d[ "label@$l" ];

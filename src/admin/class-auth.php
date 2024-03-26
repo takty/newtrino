@@ -3,7 +3,7 @@
  * User Authentication
  *
  * @author Takuto Yanagida
- * @version 2024-03-22
+ * @version 2024-03-26
  */
 
 namespace nt;
@@ -12,21 +12,100 @@ require_once( __DIR__ . '/../core/class-logger.php' );
 
 class Auth {
 
-	const TIMEOUT_INVITATION = 604800;  // 7 days * 24 hours * 60 minutes * 60 seconds
-	const TIMEOUT_TOKEN      = 300;     // 5 minutes * 60 seconds
-	const AUTH_NONCE_GL      = 300;     // 5 minutes * 60 seconds (Expires in 10 minutes max.)
+	/**
+	 * The invitation timeout in seconds (7 days)
+	 * 604800 = 7 days * 24 hours * 60 minutes * 60 seconds.
+	 *
+	 * @const int
+	 */
+	const TIMEOUT_INVITATION = 604800;
 
+	/**
+	 * The token timeout in seconds (5 minutes)
+	 * 300 = 5 minutes * 60 seconds.
+	 *
+	 * @const int
+	 */
+	const TIMEOUT_TOKEN = 300;
+
+	/**
+	 * The nonce timeout in seconds (5 minutes)
+	 * 300 = 5 minutes * 60 seconds (Expires in 10 minutes max).
+	 *
+	 * @const int
+	 */
+	const AUTH_NONCE_GL = 300;
+
+	/**
+	 * The account file name
+	 *
+	 * @const string
+	 */
 	const FILE_NAME_ACCT  = 'account';
+
+	/**
+	 * The invitation file name
+	 *
+	 * @const string
+	 */
 	const FILE_NAME_INV   = 'invitation';
+
+	/**
+	 * The token file name
+	 *
+	 * @const string
+	 */
 	const FILE_NAME_TOKEN = 'token';
+
+	/**
+	 * The hash algorithm used for the account file
+	 *
+	 * @const string
+	 */
 	const HASH_ALGO       = 'sha256';  // Hashes written in the account file depend on this
 
+	/**
+	 * The admin URL
+	 *
+	 * @var string
+	 */
 	private $_url;
+
+	/**
+	 * The account directory path
+	 *
+	 * @var string
+	 */
 	private $_pathAcct;
+
+	/**
+	 * The invitation directory path
+	 *
+	 * @var string
+	 */
 	private $_pathInv;
+
+	/**
+	 * The token directory path
+	 *
+	 * @var string
+	 */
 	private $_pathToken;
+
+	/**
+	 * The error code
+	 *
+	 * @var string
+	 */
 	private $_errCode = '';
 
+	/**
+	 * Auth constructor.
+	 *
+	 * @param string $urlAdmin The admin URL
+	 * @param string $dirAcct  The account directory
+	 * @param string $dirAuth  The auth directory
+	 */
 	public function __construct( string $urlAdmin, string $dirAcct, string $dirAuth ) {
 		$this->_url       = $urlAdmin;
 		$this->_pathAcct  = $dirAcct . self::FILE_NAME_ACCT;
@@ -34,6 +113,11 @@ class Auth {
 		$this->_pathToken = $dirAuth . self::FILE_NAME_TOKEN;
 	}
 
+	/**
+	 * Gets the error code.
+	 *
+	 * @return string The error code
+	 */
 	public function getErrorCode(): string {
 		return $this->_errCode;
 	}
@@ -42,20 +126,42 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
+	/**
+	 * Gets the auth key.
+	 *
+	 * @return string The auth key
+	 */
 	public static function getAuthKey(): string {
 		if ( defined( 'NT_AUTH_KEY' ) ) return NT_AUTH_KEY;
 		return 'newtrino';
 	}
 
+	/**
+	 * Gets the auth nonce.
+	 *
+	 * @param int $step The step
+	 * @return string The auth nonce
+	 */
 	public static function getAuthNonce( int $step = 1 ): string {
 		return \nt\get_nonce( self::AUTH_NONCE_GL );
 	}
 
+	/**
+	 * Issues a token.
+	 *
+	 * @return string The issued token
+	 */
 	public function issueToken(): string {
 		return \nt\issue_token( $this->_pathToken, self::TIMEOUT_TOKEN );
 	}
 
-	public function checkToken( $token ): bool {
+	/**
+	 * Checks a token.
+	 *
+	 * @param string $token The token to check
+	 * @return bool True if the token is valid, false otherwise
+	 */
+	public function checkToken( string $token ): bool {
 		return \nt\check_token( $this->_pathToken, $token );
 	}
 
@@ -63,6 +169,12 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
+	/**
+	 * Signs in.
+	 *
+	 * @param array<string, mixed> $params The parameters for signing in
+	 * @return array<string, mixed>|null The user and language if sign-in succeeded, null otherwise
+	 */
 	public function signIn( array $params ): ?array {
 		if ( empty( $params['user'] ) || empty( $params['digest'] ) || empty( $params['cnonce'] ) ) {
 			Logger::info( __METHOD__, 'Parameters are invalid' );
@@ -79,6 +191,15 @@ class Auth {
 		return null;
 	}
 
+	/**
+	 * Verifies a user.
+	 *
+	 * @param string      $user     The user to verify
+	 * @param string      $digest   The digest
+	 * @param string      $cnonce   The cnonce
+	 * @param string|null $out_lang The output language
+	 * @return bool True if the user is verified, false otherwise
+	 */
 	private function _verify( string $user, string $digest, string $cnonce, ?string &$out_lang ): bool {
 		$as = null;
 		if ( $h = $this->_lock() ) {
@@ -109,6 +230,9 @@ class Auth {
 		return false;
 	}
 
+	/**
+	 * Cleans the invitation.
+	 */
 	private function _cleanInvitation(): void {
 		$is  = $this->_read( $this->_pathInv, true );
 		$new = [];
@@ -128,6 +252,12 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
+	/**
+	 * Issues an invitation.
+	 *
+	 * @param array<string, mixed> $params The parameters for issuing an invitation
+	 * @return string|null The issued invitation code if successful, null otherwise
+	 */
 	public function issueInvitation( array $params ): ?string {
 		if ( ! $this->signIn( $params ) ) return null;
 		$code = \nt\create_nonce( 12 );
@@ -144,6 +274,12 @@ class Auth {
 		return $res ? $code : null;
 	}
 
+	/**
+	 * Signs up a new user.
+	 *
+	 * @param array<string, mixed> $params The parameters for signing up
+	 * @return bool True if sign-up succeeded, false otherwise
+	 */
 	public function signUp( array $params ): bool {
 		if ( empty( $params['code'] ) ) {
 			Logger::info( __METHOD__, 'The invitation code is empty' );
@@ -180,6 +316,12 @@ class Auth {
 		return $res;
 	}
 
+	/**
+	 * Checks an invitation code.
+	 *
+	 * @param string $code The invitation code to check
+	 * @return bool True if the invitation code is valid, false otherwise
+	 */
 	private function _checkInvitation( $code ): bool {
 		$is    = $this->_read( $this->_pathInv, true );
 		$new   = [];
@@ -212,6 +354,12 @@ class Auth {
 		return $found && $valid && $res;
 	}
 
+	/**
+	 * Gets all users.
+	 *
+	 * @param string[] $as The account information
+	 * @return string[] The list of users
+	 */
 	private function _getUsers( array $as ): array {
 		$ret = [];
 		foreach ( $as as $a ) {
@@ -227,6 +375,11 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
+	/**
+	 * Locks the account file.
+	 *
+	 * @return resource|null The file handle if the file exists, null otherwise
+	 */
 	private function _lock() {
 		if ( ! is_file( $this->_pathAcct ) ) {
 			return null;
@@ -238,6 +391,11 @@ class Auth {
 		return null;
 	}
 
+	/**
+	 * Unlocks the account file.
+	 *
+	 * @param resource $h The file handle
+	 */
 	private function _unlock( $h ): void {
 		flock( $h, LOCK_UN );
 		closedir( $h );
@@ -247,6 +405,13 @@ class Auth {
 	// ------------------------------------------------------------------------
 
 
+	/**
+	 * Reads a file.
+	 *
+	 * @param string $path   The path of the file to read
+	 * @param bool   $silent Whether to suppress error messages
+	 * @return string[] The content of the file as an array of lines
+	 */
 	private function _read( string $path, bool $silent = false ): array {
 		if ( is_file( $path ) === false ) {
 			if ( ! $silent ) {
@@ -264,6 +429,13 @@ class Auth {
 		return $as;
 	}
 
+	/**
+	 * Writes to a file.
+	 *
+	 * @param string   $path The path of the file to write
+	 * @param string[] $ac   The content to write
+	 * @return bool True if the write operation succeeded, false otherwise
+	 */
 	private function _write( string $path, array $ac ): bool {
 		$dir = pathinfo( $path, PATHINFO_DIRNAME );
 		if ( ! is_dir( $dir ) ) {

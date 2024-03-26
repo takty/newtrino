@@ -3,11 +3,19 @@
  * Functions for Parameters
  *
  * @author Takuto Yanagida
- * @version 2021-09-21
+ * @version 2024-03-26
  */
 
 namespace nt;
 
+/**
+ * Filters a query array based on a filters array and optionally groups certain keys into a collection.
+ *
+ * @param array<string, mixed>  $query      The query array to filter.
+ * @param array<string, string> $filters    The filters array to use for filtering.
+ * @param string|null           $collection The key to use for grouping certain keys.
+ * @return array<string, mixed> The filtered query array.
+ */
 function get_query_vars( array $query, array $filters, ?string $collection = null ): array {
 	$ret = [];
 	$tcs = [];
@@ -38,6 +46,13 @@ function get_query_vars( array $query, array $filters, ?string $collection = nul
 	return $ret;
 }
 
+/**
+ * Filters a value based on a specified type.
+ *
+ * @param mixed  $val  The value to filter.
+ * @param string $type The type to use for filtering.
+ * @return mixed The filtered value, or null if the value does not match the type.
+ */
 function filter_param( $val, string $type ) {
 	switch ( $type ) {
 		case 'string':
@@ -86,6 +101,12 @@ function filter_param( $val, string $type ) {
 	return null;
 }
 
+/**
+ * Creates a tax query from a taxonomy-to-terms array and adds it to an args array.
+ *
+ * @param array<string, string[]> $tt   The taxonomy-to-terms array.
+ * @param array<string, mixed>    $args The args array to add the tax query to.
+ */
 function create_tax_query_from_taxonomy_to_terms( array $tt, array &$args ): void {
 	$tq = [];
 	foreach ( $tt as $tax => $ts ) {

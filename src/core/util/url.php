@@ -3,11 +3,18 @@
  * Functions for URLs
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-26
  */
 
 namespace nt;
 
+/**
+ * Resolves a URL.
+ *
+ * @param string $target The target string.
+ * @param string $base   The base string.
+ * @return string The resolved URL.
+ */
 function resolve_url( string $target, string $base ): string {
 	$target = trim( $target );
 	if ( strpos( $target, '#' ) === 0 ) return $target;
@@ -51,12 +58,24 @@ function resolve_url( string $target, string $base ): string {
 	return $target;
 }
 
+/**
+ * Gets a URL from a path.
+ *
+ * @param string $target The target string.
+ * @return string The URL.
+ */
 function get_url_from_path( string $target ): string {
 	$target = str_replace( '/', DIRECTORY_SEPARATOR, $target );
 	$target = realpath( $target );
+	if ( ! is_string( $target ) ) {
+		return '';
+	}
 	$target = str_replace( DIRECTORY_SEPARATOR, '/', $target );
 
 	$path = realpath( $_SERVER['SCRIPT_FILENAME'] );
+	if ( ! is_string( $path ) ) {
+		return '';
+	}
 	$path = str_replace( DIRECTORY_SEPARATOR, '/', $path );
 	$url  = $_SERVER['SCRIPT_NAME'];
 
@@ -66,6 +85,13 @@ function get_url_from_path( string $target ): string {
 	return str_replace( $doc_root, $url_root, $target );
 }
 
+/**
+ * Gets the right intersection of two strings.
+ *
+ * @param string $str1 The first string.
+ * @param string $str2 The second string.
+ * @return string The right intersection of the two strings.
+ */
 function get_right_intersection( string $str1, string $str2 ): string {
 	$str1_len = mb_strlen( $str1 );
 	$str2_len = mb_strlen( $str2 );

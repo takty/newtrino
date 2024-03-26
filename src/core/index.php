@@ -3,7 +3,7 @@
  * Definitions of Constants and Functions
  *
  * @author Takuto Yanagida
- * @version 2021-06-28
+ * @version 2024-03-24
  */
 
 namespace nt;
@@ -45,6 +45,13 @@ Logger::$debug = NT_DEBUG;
 // Functions Used in Initial Process -------------------------------------------
 
 
+/**
+ * Loads the configuration from a JSON file in the specified directory.
+ * If the file does not exist or is not readable, it returns a default configuration.
+ *
+ * @param string $dirData The directory where the configuration file is located.
+ * @return array<string, mixed> The loaded configuration.
+ */
 function load_config( string $dirData ): array {
 	$conf = [];
 	$path = $dirData . 'config.json';

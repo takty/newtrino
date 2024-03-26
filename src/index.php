@@ -3,7 +3,7 @@
  * Index (PHP)
  *
  * @author Takuto Yanagida
- * @version 2024-03-22
+ * @version 2024-03-26
  */
 
 namespace nt;
@@ -25,6 +25,11 @@ if ( $is_direct ) {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Handles an AJAX query.
+ *
+ * @param array<string, mixed> $req The request array.
+ */
 function query_ajax( array $req ): void {
 	$query  = isset( $req['query' ] ) ? ( json_decode( $req['query' ], true ) ?? [] ) : [];
 	$filter = isset( $req['filter'] ) ? ( json_decode( $req['filter'], true ) ?? [] ) : [];
@@ -40,6 +45,11 @@ function query_ajax( array $req ): void {
 	echo json_encode( $d, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 }
 
+/**
+ * Handles a media query.
+ *
+ * @param array<string, mixed> $req The request array.
+ */
 function query_media( array $req ): void {
 	$id    = null;
 	$media = null;
@@ -84,6 +94,12 @@ function query_media( array $req ): void {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Handles a query.
+ *
+ * @param array<string, mixed> $args The arguments array.
+ * @return array<string, mixed> The view array.
+ */
 function query( array $args = [] ): array {
 	$query    = $args['query']    ?? [];
 	$filter   = $args['filter']   ?? [];
@@ -109,6 +125,12 @@ function query( array $args = [] ): array {
 	}
 }
 
+/**
+ * Handles a recent posts query.
+ *
+ * @param array<string, mixed> $args The arguments array.
+ * @return array<string, mixed> The view array.
+ */
 function query_recent_posts( array $args = [] ): array {
 	$count    = $args['count']    ?? 10;
 	$query    = $args['query']    ?? [];
@@ -141,6 +163,14 @@ function query_recent_posts( array $args = [] ): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates the view archive.
+ *
+ * @param array<string, mixed> $msg      The message array.
+ * @param string               $base_url The base URL.
+ * @param int                  $count    The count integer.
+ * @return array<string, mixed> The view archive array.
+ */
 function _create_view_archive( array $msg, string $base_url, int $count = -1 ): array {
 	$res = create_response_archive( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['posts'] = [];
@@ -158,6 +188,13 @@ function _create_view_archive( array $msg, string $base_url, int $count = -1 ): 
 	return $view;
 }
 
+/**
+ * Creates the view single.
+ *
+ * @param array<string, mixed> $msg      The message array.
+ * @param string               $base_url The base URL.
+ * @return array<string, mixed> The view single array.
+ */
 function _create_view_single( array $msg, string $base_url ): array {
 	$res = create_response_single( $msg['query'], $msg['filter'], $msg['option'] );
 	if ( $res['status'] !== 'success' ) $res['post'] = null;
@@ -175,6 +212,14 @@ function _create_view_single( array $msg, string $base_url ): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Processes the posts for view.
+ *
+ * @param array<string, mixed>[] $items       The items array.
+ * @param string|null            $date_format The date format string.
+ * @param string                 $base_url    The base URL.
+ * @return array<string, mixed>[] The processed posts for view array.
+ */
 function _process_posts_for_view( array $items, ?string $date_format, string $base_url ): array {
 	foreach ( $items as &$p ) {
 		if ( ! $p || ! is_string( $p['id'] ?? null ) ) continue;
@@ -187,8 +232,8 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 		}
 		$p['url'] = $base_url . '?' . urlencode( $p['id'] );
 		if ( $date_format ) {
-			$p['date']     = date_create( $p['date']     )->format( $date_format );
-			$p['modified'] = date_create( $p['modified'] )->format( $date_format );
+			$p['date']     = date_create_format( $p['date'],     $date_format );
+			$p['modified'] = date_create_format( $p['modified'], $date_format );
 		}
 		if ( isset( $p['meta'] ) ) {
 			foreach ( $p['meta'] as $key => &$val ) {
@@ -196,11 +241,11 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 				if ( ! isset( $p['meta']["$key@type"] ) ) continue;
 				if ( $date_format ) {
 					if ( $p['meta']["$key@type"] === 'date' ) {
-						$val = date_create( $val )->format( $date_format );
+						$val = date_create_format( $val, $date_format );
 					}
 					if ( $p['meta']["$key@type"] === 'date_range' ) {
-						$val['from'] = is_string( $val['from'] ?? null ) ? date_create( $val['from'] )->format( $date_format ) : '';
-						$val['to']   = is_string( $val['to']   ?? null ) ? date_create( $val['to']   )->format( $date_format ) : '';
+						$val['from'] = is_string( $val['from'] ?? null ) ? date_create_format( $val['from'], $date_format ) : '';
+						$val['to']   = is_string( $val['to']   ?? null ) ? date_create_format( $val['to'],   $date_format ) : '';
 					}
 				}
 			}
@@ -213,6 +258,14 @@ function _process_posts_for_view( array $items, ?string $date_format, string $ba
 	return $items;
 }
 
+/**
+ * Creates the pagination view.
+ *
+ * @param array<string, mixed> $msg        The message array.
+ * @param int                  $page_count The page count integer.
+ * @param string               $base_url   The base URL.
+ * @return array<string, mixed>|null The pagination view array or null if there is only one page.
+ */
 function _create_pagination_view( array $msg, int $page_count, string $base_url ): ?array {
 	$c = intval( $msg['query']['page'] ?? 1 );
 	$cur = max( 1, min( $c, $page_count ) );
@@ -231,6 +284,14 @@ function _create_pagination_view( array $msg, int $page_count, string $base_url 
 	];
 }
 
+/**
+ * Creates the post navigation view.
+ *
+ * @param array<string, mixed> $msg            The message array.
+ * @param array<string, mixed> $adjacent_posts The adjacent posts array.
+ * @param string               $base_url       The base URL.
+ * @return array<string, mixed> The post navigation view array.
+ */
 function _create_post_navigation_view( array $msg, array $adjacent_posts, string $base_url ): array {
 	$df = isset( $msg['option']['date_format'] ) ? $msg['option']['date_format'] : null;
 	$ps = _process_posts_for_view( [ $adjacent_posts['previous'], $adjacent_posts['next'] ], $df, $base_url );
@@ -244,6 +305,14 @@ function _create_post_navigation_view( array $msg, array $adjacent_posts, string
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates the filter view.
+ *
+ * @param array<string, mixed> $msg      The message array.
+ * @param array<string, mixed> $res      The result array.
+ * @param string               $base_url The base URL.
+ * @return array<string, mixed> The filter view array.
+ */
 function _create_filter_view( array $msg, array $res, string $base_url ): array {
 	$v = [];
 	if ( isset( $res['date'] ) ) {
@@ -265,6 +334,15 @@ function _create_filter_view( array $msg, array $res, string $base_url ): array 
 	return $v;
 }
 
+/**
+ * Creates the filter view date.
+ *
+ * @param array<string, mixed>   $msg      The message array.
+ * @param string                 $type     The type string.
+ * @param array<string, mixed>[] $dates    The dates array.
+ * @param string                 $base_url The base URL.
+ * @return array<string, mixed> The filter view date array.
+ */
 function _create_filter_view_date( array $msg, string $type, array $dates, string $base_url ): array {
 	$cur = $msg['query']['date'] ?? '';
 	if ( isset( $msg['filter']['date_format'] ) ) {
@@ -288,15 +366,30 @@ function _create_filter_view_date( array $msg, string $type, array $dates, strin
 	return [ $type => $as ];
 }
 
+/**
+ * Formats the date label.
+ *
+ * @param string $slug The slug string.
+ * @param string $df   The date format string.
+ * @return string The formatted date label.
+ */
 function _format_date_label( string $slug, string $df ): string {
 	$y = substr( $slug, 0, 4 );
 	$m = substr( $slug, 4, 2 );
 	$d = substr( $slug, 6, 2 );
 	$date = ( $y ? $y : '1970' ) . '-' . ( $m ? $m : '01' ) . '-' . ( $d ? $d : '01' );
-	$date = date_create( $date );
-	return $date->format( $df );
+	return date_create_format( $date, $df );
 }
 
+/**
+ * Creates the taxonomy filter view.
+ *
+ * @param array<string, mixed>   $msg      The message array.
+ * @param string                 $tax      The taxonomy string.
+ * @param array<string, mixed>[] $terms    The terms array.
+ * @param string                 $base_url The base URL.
+ * @return array<string, mixed> The taxonomy filter view array.
+ */
 function _create_taxonomy_filter_view( array $msg, string $tax, array $terms, string $base_url ): array {
 	$cur = $msg['query'][ $tax ] ?? '';
 	$as = [];

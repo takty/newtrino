@@ -3,7 +3,7 @@
  * Taxonomy
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-26
  */
 
 namespace nt;
@@ -13,10 +13,33 @@ require_once( __DIR__ . '/util/label.php' );
 
 class Taxonomy {
 
+	/**
+	 * Directory of data.
+	 *
+	 * @var string
+	 */
 	private $_dir  = '';
+
+	/**
+	 * Language.
+	 *
+	 * @var string
+	 */
 	private $_lang = '';
+
+	/**
+	 * Data.
+	 *
+	 * @var array<string, mixed>
+	 */
 	private $_data = array();
 
+	/**
+	 * Constructor for the class.
+	 *
+	 * @param string               $data_dir The directory of the data.
+	 * @param array<string, mixed> $args     The arguments for the constructor.
+	 */
 	public function __construct( string $data_dir, array $args = [] ) {
 		$this->_dir = $data_dir;
 
@@ -30,12 +53,27 @@ class Taxonomy {
 	// -------------------------------------------------------------------------
 
 
+	/**
+	 * Gets the label of the term.
+	 *
+	 * @param string $tax_slug    The slug of the taxonomy.
+	 * @param string $term_slug   The slug of the term.
+	 * @param bool   $is_singular Whether to get the singular label.
+	 * @return string The label of the term.
+	 */
 	public function getTermLabel( string $tax_slug, string $term_slug, bool $is_singular = false ): string {
 		$t = $this->getTerm( $tax_slug, $term_slug );
 		if ( ! $t ) return '';
 		return $t[ $is_singular ? 'sg_label' : 'label' ];
 	}
 
+	/**
+	 * Gets the term.
+	 *
+	 * @param string $tax_slug  The slug of the taxonomy.
+	 * @param string $term_slug The slug of the term.
+	 * @return ?array<string, mixed> The term.
+	 */
 	public function getTerm( string $tax_slug, string $term_slug ): ?array {
 		$tax = $this->getTaxonomy( $tax_slug );
 		if ( $tax === null ) return null;
@@ -47,6 +85,13 @@ class Taxonomy {
 		return null;
 	}
 
+	/**
+	 * Gets all terms.
+	 *
+	 * @param string    $tax_slug           The slug of the taxonomy.
+	 * @param ?string[] $current_term_slugs The current term slugs.
+	 * @return array<string, mixed>[] All terms.
+	 */
 	public function getTermAll( string $tax_slug, ?array $current_term_slugs = null ): array {
 		$tax = $this->getTaxonomy( $tax_slug );
 		if ( empty( $tax ) ) return [];
@@ -61,6 +106,12 @@ class Taxonomy {
 		return $ret;
 	}
 
+	/**
+	 * Gets the taxonomy.
+	 *
+	 * @param string $tax_slug The slug of the taxonomy.
+	 * @return ?array<string, mixed> The taxonomy.
+	 */
 	public function getTaxonomy( string $tax_slug ): ?array {
 		$taxes = $this->_loadData();
 		if ( isset( $taxes[ $tax_slug ] ) ) {
@@ -69,6 +120,11 @@ class Taxonomy {
 		return null;
 	}
 
+	/**
+	 * Gets all taxonomies.
+	 *
+	 * @return array<string, mixed> All taxonomies.
+	 */
 	public function getTaxonomyAll(): array {
 		return $this->_loadData();
 	}
@@ -77,6 +133,11 @@ class Taxonomy {
 	// -------------------------------------------------------------------------
 
 
+	/**
+	 * Loads the data.
+	 *
+	 * @return array<string, mixed>[] The data.
+	 */
 	private function _loadData(): array {
 		if ( $this->_data ) return $this->_data;
 
@@ -96,6 +157,12 @@ class Taxonomy {
 		return $this->_data = $this->_processData( $data );;
 	}
 
+	/**
+	 * Processes the data.
+	 *
+	 * @param array<string, mixed>[] $data The data to process.
+	 * @return array<string, mixed> The processed data.
+	 */
 	private function _processData( array $data ): array {
 		$ret = [];
 

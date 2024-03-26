@@ -3,19 +3,34 @@
  * Indexer
  *
  * @author Takuto Yanagida
- * @version 2024-03-22
+ * @version 2024-03-26
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/class-logger.php' );
 
+/**
+ * Indexer class for creating and calculating search indexes.
+ */
 class Indexer {
 
+	/**
+	 * Segments a search query into bigrams.
+	 *
+	 * @param string $searchQuery The search query to segment.
+	 * @return string[] An array of bigrams.
+	 */
 	static public function segmentSearchQuery( string $searchQuery ): array {
 		return self::_createBigram( $searchQuery );
 	}
 
+	/**
+	 * Creates a search index from a text.
+	 *
+	 * @param string $text The text to create the search index from.
+	 * @return string The created search index.
+	 */
 	static public function createSearchIndex( string $text ): string {
 		$ws = self::_createBigram( $text );
 		$sum = [];
@@ -32,6 +47,13 @@ class Indexer {
 		return implode( "\n", $idx );
 	}
 
+	/**
+	 * Calculates the score of a search index.
+	 *
+	 * @param string[] $words  An array of words to calculate the score for.
+	 * @param string   $bfPath The path to the bigram file.
+	 * @return float The calculated score.
+	 */
 	static public function calcIndexScore( array $words, string $bfPath ): float {
 		if ( ! is_readable( $bfPath ) ) {
 			Logger::error( __METHOD__, 'The bigram file is not readable', $bfPath );
@@ -73,6 +95,12 @@ class Indexer {
 	// -------------------------------------------------------------------------
 
 
+	/**
+	 * Creates bigrams from a text.
+	 *
+	 * @param string $text The text to create bigrams from.
+	 * @return string[] An array of bigrams.
+	 */
 	static private function _createBigram( string $text ): array {
 		$ret = [];
 
@@ -80,8 +108,15 @@ class Indexer {
 		$text = mb_strtolower( $text );
 
 		$sts = mb_split( "[\s｢｣\(\)\[\]{}<>\"\'\`\\/~､,｡.?!:;･　「」『』（）［］｛｝〈〉《》【】〔〕〖〗〘〙〚〛＜＞“”‘’＼／～、，。．？！：；・]+", $text );
-		$sts = array_map( function ( $e ) { return preg_replace( '/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $e ); }, $sts );
-
+		if ( ! is_array( $sts ) ) {
+			$sts = [ $text ];
+		}
+		$sts = array_map(
+			function ( $e ) {
+				return preg_replace( '/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $e );
+			},
+			$sts
+		);
 		foreach ( $sts as $st ) {
 			if ( empty( $st ) ) continue;
 			self::_splitTerm( $st, $ret );
@@ -90,6 +125,12 @@ class Indexer {
 		return $ret;
 	}
 
+	/**
+	 * Splits a term into bigrams.
+	 *
+	 * @param string   $term The term to split.
+	 * @param string[] &$bis An array to store the bigrams.
+	 */
 	static private function _splitTerm( string $term, array &$bis ): void {
 		$len = mb_strlen( $term, 'UTF-8' );
 		$ng  = 2;

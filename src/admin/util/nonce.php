@@ -3,18 +3,28 @@
  * Function for Nonce and Tokens
  *
  * @author Takuto Yanagida
- * @version 2021-12-01
+ * @version 2024-03-26
  */
 
 namespace nt;
 
 require_once( __DIR__ . '/file.php' );
 
+/**
+ * Issues a token.
+ *
+ * @param string $path    The path of the file.
+ * @param int    $timeout The timeout for the token.
+ * @return string The issued token.
+ */
 function issue_token( $path, $timeout ): string {
 	$token = \nt\create_nonce( 16 );
 	$now   = time();
 	$new   = [];
 	$rs    = is_file( $path ) ? file( $path, FILE_IGNORE_NEW_LINES ) : [];
+	if ( ! is_array( $rs ) ) {
+		$rs = [];
+	}
 
 	foreach( $rs as $r ) {
 		if ( empty( trim( $r ) ) ) continue;
@@ -28,15 +38,25 @@ function issue_token( $path, $timeout ): string {
 	$dir = pathinfo( $path, PATHINFO_DIRNAME );
 	if ( ! is_dir( $dir ) && ! \nt\ensure_dir( $dir, NT_MODE_DIR ) ) return '';
 	$res = file_put_contents( $path, implode( "\n", $new ) );
-	if ( $res === false ) return '';
+	if ( false === $res ) return '';
 	return $token;
 }
 
-function check_token( $path, $token ): bool {
+/**
+ * Checks the token.
+ *
+ * @param string $path  The path of the file.
+ * @param string $token The token to check.
+ * @return bool Whether the token is valid.
+ */
+function check_token( string $path, string $token ): bool {
 	$valid = false;
 	$now   = time();
 	$new   = [];
 	$rs    = is_file( $path ) ? file( $path, FILE_IGNORE_NEW_LINES ) : [];
+	if ( ! is_array( $rs ) ) {
+		$rs = [];
+	}
 
 	foreach( $rs as $r ) {
 		if ( empty( trim( $r ) ) ) continue;
@@ -61,6 +81,13 @@ function check_token( $path, $token ): bool {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Gets a nonce.
+ *
+ * @param int $granularity The granularity of time.
+ * @param int $step        The step for the nonce.
+ * @return string The nonce.
+ */
 function get_nonce( int $granularity, int $step = 1 ): string {
 	$time = intval( ceil( time() / $granularity ) );
 	$time += $step;
@@ -68,6 +95,12 @@ function get_nonce( int $granularity, int $step = 1 ): string {
 	return hash( 'sha256', $seed . $time );
 }
 
+/**
+ * Gets possible nonces.
+ *
+ * @param int $granularity The granularity of time.
+ * @return array{string, string} The possible nonces.
+ */
 function get_possible_nonce( int $granularity ): array {
 	return [ \nt\get_nonce( $granularity, 0 ), \nt\get_nonce( $granularity, 1 ) ];
 }
@@ -76,6 +109,12 @@ function get_possible_nonce( int $granularity ): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates a nonce.
+ *
+ * @param int $bytes The number of bytes for the nonce.
+ * @return string The created nonce.
+ */
 function create_nonce( $bytes ): string {
-	return bin2hex( openssl_random_pseudo_bytes( $bytes ) );
+	return bin2hex( (string) openssl_random_pseudo_bytes( $bytes ) );
 }

@@ -3,7 +3,7 @@
  * Handler - Post
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-25
  */
 
 namespace nt;
@@ -17,6 +17,16 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
 
+/**
+ * Handles the query post.
+ *
+ * @global array<string, mixed> $nt_config  The NT configuration array.
+ * @global Store                $nt_store   The NT store object.
+ * @global Session              $nt_session The NT session object.
+ *
+ * @param array<string, mixed> $q The query array.
+ * @return array<string, mixed> An array containing the processed post and other related information.
+ */
 function handle_query_post( array $q ): array {
 	global $nt_config, $nt_store, $nt_session;
 	$list_url = NT_URL_ADMIN . 'list.php';
@@ -83,6 +93,12 @@ function handle_query_post( array $q ): array {
 	];
 }
 
+/**
+ * Gets the editor option.
+ *
+ * @param string $lang The language string.
+ * @return string The editor option string.
+ */
 function get_editor_option( string $lang ): string {
 	$fn = '';
 	foreach ( [ "editor.$lang.json", 'editor.json' ] as $f ) {
@@ -96,13 +112,23 @@ function get_editor_option( string $lang ): string {
 	if ( $json === false ) return '';
 	$opt = json_decode( $json, true );
 	if ( $opt === null ) return '';
-	return json_encode( $opt, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+	$ret = json_encode( $opt, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+	if ( is_string( $ret ) ) {
+		return $ret;
+	}
+	return '';
 }
 
 
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Rearranges the query.
+ *
+ * @param array<string, mixed> $query The original query array.
+ * @return array<string, mixed> The rearranged query array.
+ */
 function _rearrange_query( array $query ): array {
 	return \nt\get_query_vars( $query, [
 		'id'       => 'int',
@@ -113,6 +139,12 @@ function _rearrange_query( array $query ): array {
 	], 'taxonomy' );
 }
 
+/**
+ * Creates the status select.
+ *
+ * @param Post $p The post object.
+ * @return array<string, mixed>[] The status select array.
+ */
 function _create_status_select( Post $p ): array {
 	$ss = [];
 
@@ -135,6 +167,13 @@ function _create_status_select( Post $p ): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Echoes the taxonomy metaboxes.
+ *
+ * @global Store $nt_store The NT store object.
+ *
+ * @param Post $post The post object.
+ */
 function echo_taxonomy_metaboxes( Post $post ): void {
 	global $nt_store;
 	$type = $post->getType();
@@ -144,6 +183,14 @@ function echo_taxonomy_metaboxes( Post $post ): void {
 	}
 }
 
+/**
+ * Echoes the metabox taxonomy.
+ *
+ * @global Store $nt_store The NT store object.
+ *
+ * @param string $tax_slug The taxonomy slug.
+ * @param Post   $post     The post object.
+ */
 function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 	global $nt_store;
 	$tax = $nt_store->taxonomy()->getTaxonomy( $tax_slug );
@@ -179,6 +226,13 @@ function echo_metabox_taxonomy( string $tax_slug, Post $post ): void {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Echoes the meta metaboxes.
+ *
+ * @global Store $nt_store The store object.
+ *
+ * @param Post $post The post object.
+ */
 function echo_meta_metaboxes( Post $post ): void {
 	global $nt_store;
 	$type = $post->getType();
@@ -186,6 +240,13 @@ function echo_meta_metaboxes( Post $post ): void {
 	echo_meta_metaboxes_internal( $post, $ms );
 }
 
+/**
+ * Echoes the meta metaboxes internally.
+ *
+ * @param Post                   $post     The post object.
+ * @param array<string, mixed>[] $ms       The meta data array.
+ * @param bool                   $internal The internal boolean.
+ */
 function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = false ): void {
 	foreach ( $ms as $m ) {
 		$label = $m['label'] ?? '';
@@ -218,6 +279,13 @@ function echo_meta_metaboxes_internal( Post $post, array $ms, bool $internal = f
 	}
 }
 
+/**
+ * Echoes the metabox group.
+ *
+ * @param Post                 $post  The post object.
+ * @param array<string, mixed> $m     The meta data array.
+ * @param string               $label The label string.
+ */
 function echo_metabox_group( Post $post, array $m, string $label ): void {
 	$items = $m['items'];
 ?>
@@ -234,6 +302,14 @@ function echo_metabox_group( Post $post, array $m, string $label ): void {
 <?php
 }
 
+/**
+ * Echoes the metabox text.
+ *
+ * @param Post                 $post     The post object.
+ * @param array<string, mixed> $m        The meta data array.
+ * @param string               $label    The label string.
+ * @param bool                 $internal The internal boolean.
+ */
 function echo_metabox_text( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$val  = $post->getMetaValue( $key );
@@ -248,6 +324,14 @@ function echo_metabox_text( Post $post, array $m, string $label, bool $internal 
 <?php
 }
 
+/**
+ * Echoes the metabox checkbox.
+ *
+ * @param Post                 $post     The post object.
+ * @param array<string, mixed> $m        The meta data array.
+ * @param string               $label    The label string.
+ * @param bool                 $internal The internal boolean.
+ */
 function echo_metabox_checkbox( Post $post, array $m, string $label, bool $internal ): void {
 	$key   = $m['key'];
 	$val   = $post->getMetaValue( $key );
@@ -264,6 +348,14 @@ function echo_metabox_checkbox( Post $post, array $m, string $label, bool $inter
 <?php
 }
 
+/**
+ * Echoes the metabox date.
+ *
+ * @param Post                 $post     The post object.
+ * @param array<string, mixed> $m        The meta data array.
+ * @param string               $label    The label string.
+ * @param bool                 $internal The internal boolean.
+ */
 function echo_metabox_date( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$val  = $post->getMetaValue( $key );
@@ -282,6 +374,14 @@ function echo_metabox_date( Post $post, array $m, string $label, bool $internal 
 <?php
 }
 
+/**
+ * Echoes the metabox date range.
+ *
+ * @param Post                 $post     The post object.
+ * @param array<string, mixed> $m        The meta data array.
+ * @param string               $label    The label string.
+ * @param bool                 $internal The internal boolean.
+ */
 function echo_metabox_date_range( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
@@ -305,6 +405,14 @@ function echo_metabox_date_range( Post $post, array $m, string $label, bool $int
 <?php
 }
 
+/**
+ * Echoes the metabox media.
+ *
+ * @param Post                 $post     The post object.
+ * @param array<string, mixed> $m        The meta data array.
+ * @param string               $label    The label string.
+ * @param bool                 $internal The internal boolean.
+ */
 function echo_metabox_media( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$mv   = $post->getMetaValue( $key );
@@ -328,6 +436,14 @@ function echo_metabox_media( Post $post, array $m, string $label, bool $internal
 <?php
 }
 
+/**
+ * Echoes the metabox media image.
+ *
+ * @param Post                 $post     he post object.
+ * @param array<string, mixed> $m        he meta data array.
+ * @param string               $label    The label string.
+ * @param bool                 $internal The internal boolean.
+ */
 function echo_metabox_media_image( Post $post, array $m, string $label, bool $internal ): void {
 	$key  = $m['key'];
 	$size = $m['option']['size'] ?? 'medium';

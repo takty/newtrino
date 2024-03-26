@@ -3,11 +3,18 @@
  * Function for Sending Files
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-25
  */
 
 namespace nt;
 
+/**
+ * Sends a file.
+ *
+ * @param string      $path The   path of the file.
+ * @param string|null $mimeType   The MIME type of the file.
+ * @param bool        $isDownload The download flag.
+ */
 function send_file( string $path, ?string $mimeType = null, bool $isDownload = false ): void {
 	if ( ! is_file( $path ) || ! is_readable( $path ) ) {
 		http_response_code( 404 );
@@ -19,7 +26,8 @@ function send_file( string $path, ?string $mimeType = null, bool $isDownload = f
 	}
 	$size = filesize( $path );
 	$name = rawurlencode( pathinfo( $path, PATHINFO_BASENAME ) );
-	$time = date( 'r', filemtime( $path ) );
+	$ft   = filemtime( $path );
+	$time = is_int( $ft ) ? date( 'r', $ft ) : date( 'r' );
 	$at   = $isDownload ? ' attachment;' : '';
 
 	$max  = 10000000;  // 10 MB
@@ -51,14 +59,16 @@ function send_file( string $path, ?string $mimeType = null, bool $isDownload = f
   	header( "Last-Modified: $time" );
   	header( "X-Content-Type-Options: nosniff" );  // Suppress MIME type inference by browsers
 
-	if ( 0 < $from || $to < $size - 1 ) {
+	if ( ( 0 < $from || $to < $size - 1 ) && 0 < $to - $from + 1 ) {
 		$fp = fopen( $path, 'rb' );
-		fseek( $fp, $from );
-		$cont = fread( $fp, $to - $from + 1 );
-		if ( false !== $cont ) {
-			echo $cont;
+		if ( is_resource( $fp ) ) {
+			fseek( $fp, $from );
+			$cont = fread( $fp, $to - $from + 1 );
+			if ( false !== $cont ) {
+				echo $cont;
+			}
+			fclose( $fp );
 		}
-		fclose( $fp );
 	} else {
 		readfile( $path );
 	}

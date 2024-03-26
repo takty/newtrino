@@ -3,7 +3,7 @@
  * Response
  *
  * @author Takuto Yanagida
- * @version 2024-03-22
+ * @version 2024-03-26
  */
 
 namespace nt;
@@ -19,6 +19,14 @@ $nt_config = load_config( NT_DIR_DATA );
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates a response for an archive page.
+ *
+ * @param array<string|int, mixed> $query  The query parameters.
+ * @param array<string, mixed>     $filter The filter parameters.
+ * @param array<string, mixed>     $option The option parameters.
+ * @return array<string, mixed> The response.
+ */
 function create_response_archive( array $query, array $filter, array $option = [] ): array {
 	global $nt_store, $nt_config;
 	$nt_config += $option;
@@ -49,6 +57,14 @@ function create_response_archive( array $query, array $filter, array $option = [
 	return $res;
 }
 
+/**
+ * Creates a response for a single post page.
+ *
+ * @param array<string, mixed> $query  The query parameters.
+ * @param array<string, mixed> $filter The filter parameters.
+ * @param array<string, mixed> $option The option parameters.
+ * @return array<string, mixed> The response.
+ */
 function create_response_single( array $query, array $filter, array $option = [] ): array {
 	global $nt_store, $nt_config;
 	$nt_config += $option;
@@ -80,6 +96,12 @@ function create_response_single( array $query, array $filter, array $option = []
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates the arguments for a query.
+ *
+ * @param array<string, mixed> $query The query parameters.
+ * @return array<string, mixed> The arguments.
+ */
 function _create_args( array $query ): array {
 	$args = [];
 
@@ -101,6 +123,12 @@ function _create_args( array $query ): array {
 	return $args;
 }
 
+/**
+ * Rearranges the query parameters.
+ *
+ * @param array<string, mixed> $query The query parameters.
+ * @return array<string, mixed> The rearranged query parameters.
+ */
 function _rearrange_query( array $query ): array {
 	return \nt\get_query_vars( $query, [
 		'id'       => 'int',
@@ -112,6 +140,12 @@ function _rearrange_query( array $query ): array {
 	], 'taxonomy' );
 }
 
+/**
+ * Rearranges the filter parameters.
+ *
+ * @param array<string, mixed> $filter The filter parameters.
+ * @return array<string, mixed> The rearranged filter parameters.
+ */
 function _rearrange_filter( array $filter ): array {
 	return \nt\get_query_vars( $filter, [
 		'date'        => 'slug',
@@ -124,6 +158,13 @@ function _rearrange_filter( array $filter ): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates the data for a post.
+ *
+ * @param Post|null $p               The post.
+ * @param bool      $include_content Whether to include the content of the post.
+ * @return array<string, mixed>|null The post data, or null if the post is null.
+ */
 function _create_post_data( ?Post $p, bool $include_content = false ): ?array {
 	global $nt_store;
 	if ( $p === null ) return null;
@@ -144,6 +185,12 @@ function _create_post_data( ?Post $p, bool $include_content = false ): ?array {
 	return $d;
 }
 
+/**
+ * Retrieves the taxonomy of a post.
+ *
+ * @param Post $p The post object.
+ * @return array<string, mixed> An associative array of taxonomies and their terms.
+ */
 function _get_taxonomy( Post $p ): array {
 	global $nt_store;
 	$ret = [];
@@ -158,6 +205,13 @@ function _get_taxonomy( Post $p ): array {
 	return $ret;
 }
 
+/**
+ * Retrieves the meta data of a post.
+ *
+ * @param Post     $p    The post object.
+ * @param string[] &$cls An array to store the classes.
+ * @return array<string, mixed> An associative array of meta data.
+ */
 function _get_meta( Post $p, array &$cls ): array {
 	global $nt_store;
 	$ms = $nt_store->type()->getMetaAll( $p->getType() );
@@ -197,6 +251,12 @@ function _get_meta( Post $p, array &$cls ): array {
 	return $ret;
 }
 
+/**
+ * Flattens the meta structure.
+ *
+ * @param array<string, mixed>[] $ms   The meta structure.
+ * @param array<string, mixed>[] &$ret The array to store the result.
+ */
 function _flatten_meta_structure( array $ms, array &$ret ): void {
 	foreach ( $ms as $m ) {
 		$type = $m['type'];
@@ -209,6 +269,13 @@ function _flatten_meta_structure( array $ms, array &$ret ): void {
 	}
 }
 
+/**
+ * Gets the date status.
+ *
+ * @param string $bgn The beginning date.
+ * @param string $end The ending date.
+ * @return string The date status.
+ */
 function _get_date_status( string $bgn, string $end ): string {
 	$now = date( 'Ymd' );
 	$es = Post::DATE_STATUS_ONGOING;
@@ -217,13 +284,24 @@ function _get_date_status( string $bgn, string $end ): string {
 	return $es;
 }
 
+/**
+ * Gets the class of a post.
+ *
+ * @param Post     $p   The post object.
+ * @param string[] $cls An array to store the classes.
+ * @return string[] An array of classes.
+ */
 function _get_class( Post $p, array $cls ): array {
 	global $nt_config;
 	if ( $nt_config['new_arrival_period'] > 0 ) {
 		$now  = date_create( date( 'Y-m-d' ) );
 		$data = date_create( substr( $p->getDate(), 0, 10 ) );
-		$int  = date_diff( $now, $data );
-		if ( $int->invert === 1 && $int->days <= $nt_config['new_arrival_period'] ) $cls[] = 'new';
+		if ( $now instanceof \DateTime && $data instanceof \DateTime ) {
+			$int = date_diff( $now, $data );
+			if ( $int->invert === 1 && $int->days <= $nt_config['new_arrival_period'] ) {
+				$cls[] = 'new';
+			}
+		}
 	}
 	$cls[] = 'status-' . $p->getStatus();
 	$cls[] = 'type-' . $p->getType();
@@ -234,6 +312,12 @@ function _get_class( Post $p, array $cls ): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates archive data.
+ *
+ * @param array<string, mixed> $filter The filter parameters.
+ * @return array<string, mixed> An associative array of archive data.
+ */
 function _create_archive_data( array $filter ): array {
 	if ( empty( $filter ) ) return [];
 	$res = [];
@@ -248,6 +332,13 @@ function _create_archive_data( array $filter ): array {
 	return $res;
 }
 
+/**
+ * Gets the date archive.
+ *
+ * @param string               $type   The type of date.
+ * @param array<string, mixed> $filter The filter parameters.
+ * @return array<string, array{slug: string, count: int}[]> An associative array of date archives.
+ */
 function _get_date_archive( string $type, array $filter ): array {
 	global $nt_store;
 	$ds = $nt_store->getCountByDate( $type, $filter );
@@ -258,6 +349,12 @@ function _get_date_archive( string $type, array $filter ): array {
 	return [ $type => $cs ];
 }
 
+/**
+ * Gets the taxonomy archive.
+ *
+ * @param string[] $taxes The taxonomies.
+ * @return array<string, array{slug: string, label: string}[]> An associative array of taxonomy archives.
+ */
 function _get_taxonomy_archive( array $taxes ): array {
 	global $nt_store;
 	$ret = [];

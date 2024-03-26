@@ -3,7 +3,7 @@
  * Handler - Media
  *
  * @author Takuto Yanagida
- * @version 2023-06-22
+ * @version 2024-03-26
  */
 
 namespace nt;
@@ -15,6 +15,12 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true, true );
 
+/**
+ * Handles the query media.
+ *
+ * @param array<string, mixed> $q The query.
+ * @return array<string, mixed> The handled query media.
+ */
 function handle_query_media( array $q ): array {
 	$q_id   = $q['id']   ?? null;
 	$q_mode = $q['mode'] ?? '';
@@ -78,6 +84,11 @@ function handle_query_media( array $q ): array {
 	];
 }
 
+/**
+ * Creates align options.
+ *
+ * @return array<string, mixed>[] The align options.
+ */
 function _create_align_options(): array {
 	return [
 		[ 'value' => 'alignleft',   'label' => _ht( 'Left' ) ],
@@ -87,6 +98,11 @@ function _create_align_options(): array {
 	];
 }
 
+/**
+ * Creates size options.
+ *
+ * @return array<string, mixed>[] The size options.
+ */
 function _create_size_options(): array {
 	global $nt_config;
 	$ret = [];
@@ -100,12 +116,31 @@ function _create_size_options(): array {
 	return $ret;
 }
 
+/**
+ * Gets the maximum file size.
+ *
+ * @return int The maximum file size.
+ */
 function _get_max_file_size(): int {
-	$a = _return_bytes( ini_get( 'post_max_size' ) );
-	$b = _return_bytes( ini_get( 'upload_max_filesize' ) );
+	$pms = ini_get( 'post_max_size' );
+	if ( ! is_string( $pms ) || '' === $pms ) {
+		$pms = '8M';
+	}
+	$umf = ini_get( 'upload_max_filesize' );
+	if ( ! is_string( $umf ) || '' === $umf ) {
+		$umf = '2M';
+	}
+	$a = _return_bytes( $pms );
+	$b = _return_bytes( $umf );
 	return min( $a, $b );
 }
 
+/**
+ * Returns the number of bytes.
+ *
+ * @param string $val The value to convert.
+ * @return int The number of bytes.
+ */
 function _return_bytes( string $val ): int {
 	$val = trim( $val );
 	$unit = strtolower( $val[ strlen( $val ) - 1 ] );

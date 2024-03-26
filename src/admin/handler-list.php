@@ -3,7 +3,7 @@
  * Handler - List
  *
  * @author Takuto Yanagida
- * @version 2024-03-22
+ * @version 2024-03-26
  */
 
 namespace nt;
@@ -17,6 +17,15 @@ require_once( __DIR__ . '/../core/util/template.php' );
 
 start_session( true );
 
+/**
+ * Handles the query list.
+ *
+ * @global array<string, mixed> $nt_config  The NT configuration array.
+ * @global Store                $nt_store   The NT store object.
+ * @global Session              $nt_session The NT session object.
+ *
+ * @return array<string, mixed> An array containing the processed posts and other related information.
+ */
 function handle_query_list(): array {
 	global $nt_config, $nt_store, $nt_session;
 	$post_url = NT_URL_ADMIN . 'post.php';
@@ -99,6 +108,12 @@ function handle_query_list(): array {
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Rearranges the query.
+ *
+ * @param array<string, mixed> $query The original query array.
+ * @return array<string, mixed> The rearranged query array.
+ */
 function _rearrange_query( array $query ): array {
 	return \nt\get_query_vars( $query, [
 		'id'       => 'int',
@@ -115,7 +130,15 @@ function _rearrange_query( array $query ): array {
 // -----------------------------------------------------------------------------
 
 
-function _create_type_filter_view( array $query, array $types, string $list_url ): array {
+/**
+ * Creates the type filter view.
+ *
+ * @param array<string, mixed> $query    The query array.
+ * @param array<string, mixed> $types    The types array.
+ * @param string               $list_url The list URL.
+ * @return array<string, mixed>[] The type filter view array.
+ */
+ function _create_type_filter_view( array $query, array $types, string $list_url ): array {
 	$cur = $query['type'] ?? '';
 	$as  = [];
 	foreach ( $types as $slug => $d ) {
@@ -129,13 +152,22 @@ function _create_type_filter_view( array $query, array $types, string $list_url 
 	return $as;
 }
 
-function _create_date_filter_view( array $query, string $type, string $dateType, string $list_url ): array {
+/**
+ * Creates the date filter view.
+ *
+ * @param array<string, mixed> $query     The query array.
+ * @param string               $type      The type string.
+ * @param string               $date_type The dateType string.
+ * @param string               $list_url  The list URL.
+ * @return array<string, mixed> The date filter view array.
+ */
+function _create_date_filter_view( array $query, string $type, string $date_type, string $list_url ): array {
 	global $nt_store;
-	$dates = $nt_store->getCountByDate( $dateType, [ 'type' => $type, 'status' => $query['status'] ?? null ] );
+	$dates = $nt_store->getCountByDate( $date_type, [ 'type' => $type, 'status' => $query['status'] ?? null ] );
 
 	$cur = $query['date'] ?? '';
 	$df  = '';
-	switch ( $dateType ) {
+	switch ( $date_type ) {
 		case 'year' : $df = 'Y';     break;
 		case 'month': $df = 'Y-m';   break;
 		case 'day'  : $df = 'Y-m-d'; break;
@@ -158,18 +190,32 @@ function _create_date_filter_view( array $query, string $type, string $dateType,
 		}
 		$as[] = $p;
 	}
-	return [ $dateType => $as ];
+	return [ $date_type => $as ];
 }
 
+/**
+ * Formats the date label.
+ *
+ * @param string $slug The slug string.
+ * @param string $df   The df string.
+ * @return string The formatted date label.
+ */
 function _format_date_label( string $slug, string $df ): string {
 	$y    = substr( $slug, 0, 4 );
 	$m    = substr( $slug, 4, 2 );
 	$d    = substr( $slug, 6, 2 );
 	$date = ( $y ? $y : '1970' ) . '-' . ( $m ? $m : '01' ) . '-' . ( $d ? $d : '01' );
-	$date = date_create( $date );
-	return $date->format( $df );
+	return date_create_format( $date, $df );
 }
 
+/**
+ * Creates the per page filter view.
+ *
+ * @param array<string, mixed> $query    The query array.
+ * @param int[]                $per_s    The array of per page.
+ * @param string               $list_url The list URL.
+ * @return array<string, mixed>[] The per page filter view array.
+ */
 function _create_per_page_filter_view( array $query, array $per_s, string $list_url ): array {
 	$cur = $query['per_page'] ?? '';
 	$as  = [];
@@ -184,6 +230,14 @@ function _create_per_page_filter_view( array $query, array $per_s, string $list_
 	return $as;
 }
 
+/**
+ * Creates the new filter view.
+ *
+ * @param array<string, mixed> $query    The query array.
+ * @param array<string, mixed> $types    The types array.
+ * @param string               $post_url The post URL.
+ * @return array<string, mixed>[] The new filter view array.
+ */
 function _create_new_filter_view( array $query, array $types, string $post_url ): array {
 	$as = [];
 	foreach ( $types as $slug => $d ) {
@@ -198,6 +252,14 @@ function _create_new_filter_view( array $query, array $types, string $post_url )
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Creates the pagination view.
+ *
+ * @param array<string, mixed> $query      The query array.
+ * @param int                  $page_count The page count.
+ * @param string               $list_url   The list URL.
+ * @return array<string, mixed>|null The pagination view array or null if the page count is less than or equal to 1.
+ */
 function _create_pagination_view( array $query, int $page_count, string $list_url ): ?array {
 	$cur   = isset( $query['page'] ) ? max( 1, min( intval( $query['page'] ), $page_count ) ) : 1;
 	$pages = [];
@@ -219,6 +281,12 @@ function _create_pagination_view( array $query, int $page_count, string $list_ur
 	];
 }
 
+/**
+ * Creates the header taxonomy columns.
+ *
+ * @param string $type The type string.
+ * @return array<string, mixed>[] The header taxonomy columns array.
+ */
 function _create_header_taxonomy_cols( string $type ): array {
 	global $nt_store;
 	$labs  = [];
@@ -229,6 +297,12 @@ function _create_header_taxonomy_cols( string $type ): array {
 	return $labs;
 }
 
+/**
+ * Creates the header meta columns.
+ *
+ * @param string $type The type string.
+ * @return array<string, mixed>[] The header meta columns array.
+ */
 function _create_header_meta_cols( string $type ): array {
 	global $nt_store;
 	$labs = [];
@@ -242,6 +316,13 @@ function _create_header_meta_cols( string $type ): array {
 	return $labs;
 }
 
+/**
+ * Creates the header taxonomy cancels.
+ *
+ * @param array{ taxonomy?: array<string, string[]> } $query    The query array.
+ * @param string                                      $list_url The list URL.
+ * @return array<string, mixed>[]|null The header taxonomy cancels array or null if the taxonomy is not set in the query.
+ */
 function _create_header_taxonomy_cancels( array $query, string $list_url ): ?array {
 	if ( ! isset( $query['taxonomy'] ) ) {
 		return null;
@@ -262,6 +343,16 @@ function _create_header_taxonomy_cancels( array $query, string $list_url ): ?arr
 // -----------------------------------------------------------------------------
 
 
+/**
+ * Processes the post for view.
+ *
+ * @param Post|null            $p        The post object.
+ * @param array<string, mixed> $query    The query array.
+ * @param string               $list_url The list URL.
+ * @param string               $post_url The post URL.
+ * @param bool                 $is_trash The is_trash boolean.
+ * @return array<string, mixed>|null The processed post for view array or null if the post object is null.
+ */
 function _process_post_for_view( ?Post $p, array $query, string $list_url, string $post_url, bool $is_trash ): ?array {
 	if ( $p === null ) {
 		return null;
@@ -295,6 +386,12 @@ function _process_post_for_view( ?Post $p, array $query, string $list_url, strin
 	return $ret;
 }
 
+/**
+ * Creates the status select.
+ *
+ * @param Post $p The post object.
+ * @return array<string, mixed>[] The status select array.
+ */
 function _create_status_select( Post $p ): array {
 	$ss = [];
 	if ( $p->canPublished() ) {
@@ -318,8 +415,21 @@ function _create_status_select( Post $p ): array {
 	return $ss;
 }
 
+/**
+ * Creates the taxonomy columns.
+ *
+ * @param Post                 $p        The post object.
+ * @param array<string, mixed> $query    The query array.
+ * @param string               $list_url The list URL.
+ * @return array<string, mixed>[] The taxonomy columns array.
+ */
 function _create_taxonomy_cols( Post $p, array $query, string $list_url ): array {
 	global $nt_store;
+	/**
+	 * Taxonomy slugs.
+	 *
+	 * @var string[]
+	 */
 	$taxes = $nt_store->type()->getTaxonomySlugAll( $p->getType() );
 
 	$cols = [];
@@ -336,6 +446,12 @@ function _create_taxonomy_cols( Post $p, array $query, string $list_url ): array
 	return $cols;
 }
 
+/**
+ * Creates the meta columns.
+ *
+ * @param Post $p The post object.
+ * @return array<string, mixed>[] The meta columns array.
+ */
 function _create_meta_cols( Post $p ): array {
 	global $nt_store;
 	$cols = [];
@@ -369,6 +485,13 @@ function _create_meta_cols( Post $p ): array {
 	return $cols;
 }
 
+/**
+ * Gets the meta data of a post.
+ *
+ * @param Post     $p    The post object.
+ * @param string[] &$cls The classes array passed by reference.
+ * @return array<string, mixed> The processed meta data array.
+ */
 function _get_meta( Post $p, array &$cls ): array {
 	global $nt_store;
 	$ms = $nt_store->type()->getMetaAll( $p->getType() );
@@ -412,6 +535,12 @@ function _get_meta( Post $p, array &$cls ): array {
 	return $ret;
 }
 
+/**
+ * Flattens the meta structure.
+ *
+ * @param array<string, mixed>[] $ms   The meta structure array.
+ * @param array<string, mixed>[] &$ret The result array passed by reference.
+ */
 function _flatten_meta_structure( array $ms, array &$ret ): void {
 	foreach ( $ms as $m ) {
 		$type = $m['type'];
