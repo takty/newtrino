@@ -2,7 +2,7 @@
  *
  * Index (JS)
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-10-23
  *
  */

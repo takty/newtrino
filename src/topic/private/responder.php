@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Responder
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-10-18
  *
  */
 
+namespace nt;
 
 require_once(__DIR__ . '/init-private.php');
 

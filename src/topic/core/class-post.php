@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Post
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2023-06-22
  *
  */
 
+namespace nt;
 
 require_once(__DIR__ . '/lib/simple_html_dom.php');
 require_once(__DIR__ . '/class-indexer.php');

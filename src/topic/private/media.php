@@ -1,15 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Media Chooser
  *
- * @author Takuto Yanagida @ Space-Time Inc.
- * @author Yusuke Manabe @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-10-23
  *
  */
 
+namespace nt;
 
 require_once(__DIR__ . '/init-private.php');
 

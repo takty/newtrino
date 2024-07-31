@@ -1,5 +1,4 @@
 <?php
-namespace nt;
 /**
  *
  * Store
@@ -9,6 +8,7 @@ namespace nt;
  *
  */
 
+namespace nt;
 
 require_once(__DIR__ . '/class-logger.php');
 require_once(__DIR__ . '/class-indexer.php');

@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Indexer
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-11-02
  *
  */
 
+namespace nt;
 
 require_once(__DIR__ . '/lib/class-tiny-segmenter.php');
 require_once(__DIR__ . '/class-logger.php');

@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Functions
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2023-06-22
  *
  */
 
+namespace nt;
 
 // Functions Used in Initial Process -------------------------------------------
 

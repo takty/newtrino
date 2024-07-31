@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Init for Private
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-10-23
  *
  */
 
+namespace nt;
 
  define('NT_PRIVATE', true);
 

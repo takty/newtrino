@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Init
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-10-19
  *
  */
 
+namespace nt;
 
 require_once(__DIR__ . '/define.php');
 require_once(__DIR__ . '/function.php');

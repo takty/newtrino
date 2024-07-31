@@ -2,7 +2,7 @@
  *
  * Login (JS)
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2019-07-16
  *
  */

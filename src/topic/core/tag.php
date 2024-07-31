@@ -1,5 +1,4 @@
 <?php
-namespace nt;
 /**
  *
  * Template Tags
@@ -9,6 +8,7 @@ namespace nt;
  *
  */
 
+namespace nt;
 
 function get_permalink($base, $post) {
 	global $nt_q;

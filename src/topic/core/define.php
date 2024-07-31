@@ -1,14 +1,14 @@
 <?php
-namespace nt;
 /**
  *
  * Definitions of Constants
  *
- * @author Takuto Yanagida @ Space-Time Inc.
+ * @author Space-Time Inc.
  * @version 2018-10-18
  *
  */
 
+namespace nt;
 
 define('NT_DIR_BASE', __DIR__ . '/../');
 define('NT_DIR_DATA', __DIR__ . '/../data/');
