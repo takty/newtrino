@@ -37,6 +37,6 @@
 		"gulp-sass": "^5.1.0",
 		"gulp-uglify": "^3.0.2",
 		"sass": "^1.50.1",
-		"stile": "git+https://github.com/takty/stile.git#v3.x"
+		"stile": "git+https://gitlab.com/stxst/stile.git#v3.x"
 	}
 }
