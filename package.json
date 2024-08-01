@@ -13,7 +13,10 @@
 		"start": "gulp"
 	},
 	"browserslist": [
-		"ie >= 11"
+		"> 1%",
+		"last 2 versions",
+		"not ie <= 11",
+		"not dead"
 	],
 	"dependencies": {
 		"flatpickr": "^4.6.13",
