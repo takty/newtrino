@@ -9,17 +9,10 @@
 	"author": "Takuto Yanagida",
 	"license": "MIT",
 	"scripts": {
-		"postinstall": "composer i && gulp build",
+		"postinstall": "composer i && node build.mjs build",
 		"composer": "composer i",
-		"build": "gulp build",
-		"start": "gulp"
-	},
-	"babel": {
-		"presets": [
-			[
-				"@babel/preset-env"
-			]
-		]
+		"build": "node build.mjs build",
+		"start": "node build.mjs"
 	},
 	"browserslist": [
 		"> 1%",
@@ -28,26 +21,15 @@
 		"not dead"
 	],
 	"dependencies": {
-		"@babel/core": "^7.29.6",
-		"@babel/preset-env": "^7.24.3",
-		"current-git-branch": "^1.1.0",
+		"current-git-branch": "^2.0.2",
 		"flatpickr": "^4.6.13",
-		"gulp": "^4.0.2",
-		"gulp-autoprefixer": "^9.0.0",
-		"gulp-babel": "^8.0.0",
-		"gulp-changed": "^5.0.2",
-		"gulp-ignore": "^3.0.0",
-		"gulp-plumber": "^1.2.1",
-		"gulp-preprocess": "^5.0.0",
-		"gulp-rename": "^2.0.0",
-		"gulp-replace": "^1.1.4",
-		"gulp-sass": "^5.1.0",
-		"gulp-terser": "^2.1.0",
 		"jssha": "^3.3.1",
 		"luxon": "^3.4.4",
-		"nacss-reset": "git+https://github.com/takty/nacss-reset.git",
+		"nacss-reset": "github:takty/nacss-reset",
 		"sass": "^1.72.0",
+		"terser": "^5.49.0",
 		"tinymce": "^5.10.9",
 		"tinymce-i18n": "^24.3.11"
-	}
+	},
+	"packageManager": "yarn@4.18.0"
 }
