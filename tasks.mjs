@@ -1,5 +1,5 @@
 import { watch as nodeWatch } from 'node:fs';
-import { copyFile, mkdir, readdir, readFile, writeFile, cp } from 'node:fs/promises';
+import { copyFile, cp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
@@ -54,20 +54,63 @@ export async function copyFilesFiltered(srcDir, dstDir, filter = () => true) {
 	return copied;
 }
 
-// Existing API is preserved.
-export async function copyFiles(srcDir, dstDir, suffix) {
+export async function copyFiles(srcDir, dstDir, suffix = '') {
 	return copyFilesFiltered(srcDir, dstDir, srcPath => srcPath.endsWith(suffix));
 }
 
-export function resolvePackageDir(name) {
-	const require = createRequire(import.meta.url);
-	let packagePath;
+export async function copyDirectory(srcDir, dstDir) {
+	await cp(srcDir, dstDir, { recursive: true });
+}
+
+export async function writeFileIfChanged(filePath, content) {
 	try {
-		packagePath = require.resolve(`${name}/package.json`);
-	} catch {
-		packagePath = require.resolve(name);
+		const cur = await readFile(filePath, 'utf8');
+		if (cur === content) {
+			return false;
+		}
+	} catch (e) {
+		if (e.code !== 'ENOENT') {
+			throw e;
+		}
 	}
-	return path.dirname(packagePath);
+	await mkdir(path.dirname(filePath), { recursive: true });
+	await writeFile(filePath, content, 'utf8');
+	return true;
+}
+
+export async function processFiles(srcDir, dstDir, filter, transform) {
+	let written = 0;
+
+	for await (const srcPath of walk(srcDir)) {
+		const relPath = path.relative(srcDir, srcPath);
+
+		if (!filter(srcPath, relPath)) {
+			continue;
+		}
+		const src     = await readFile(srcPath, 'utf8');
+		const res     = await transform(src, srcPath);
+		const dstPath = path.join(dstDir, relPath);
+
+		if (await writeFileIfChanged(dstPath, res)) {
+			console.log(`written: ${srcPath} -> ${dstPath}`);
+			written++;
+		}
+	}
+	if (written === 0) {
+		console.log('no changes');
+	}
+	return written;
+}
+
+export function resolvePackageDir(name) {
+	const req = createRequire(import.meta.url);
+	let pkgPath;
+	try {
+		pkgPath = req.resolve(`${name}/package.json`);
+	} catch {
+		pkgPath = req.resolve(name);
+	}
+	return path.dirname(pkgPath);
 }
 
 export function preventOverlap(fn) {
@@ -105,49 +148,6 @@ export function watch(srcDir, suffix, fn) {
 	});
 }
 
-export async function processFiles(srcDir, dstDir, filter, transform) {
-	let written = 0;
-
-	for await (const srcPath of walk(srcDir)) {
-		const relPath = path.relative(srcDir, srcPath);
-
-		if (!filter(srcPath, relPath)) {
-			continue;
-		}
-		const src     = await readFile(srcPath, 'utf8');
-		const res     = await transform(src, srcPath);
-		const dstPath = path.join(dstDir, relPath);
-
-		if (await writeFileIfChanged(dstPath, res)) {
-			written++;
-		}
-	}
-	if (written === 0) {
-		console.log('no changes');
-	}
-	return written;
-}
-
-export async function copyDirectory(srcDir, dstDir) {
-	await cp(srcDir, dstDir, { recursive: true });
-}
-
-export async function writeFileIfChanged(filePath, content) {
-	try {
-		const cur = await readFile(filePath, 'utf8');
-		if (cur === content) {
-			return false;
-		}
-	} catch (e) {
-		if (e.code !== 'ENOENT') {
-			throw e;
-		}
-	}
-	await mkdir(path.dirname(filePath), { recursive: true });
-	await writeFile(filePath, content, 'utf8');
-	return true;
-}
-
 export async function buildJavaScriptFile(srcPath, dstPath, { preprocess = async source => source, terserOptions = {} } = {}) {
 	const { minify } = await import('terser');
 
@@ -158,20 +158,16 @@ export async function buildJavaScriptFile(srcPath, dstPath, { preprocess = async
 	const result = await minify(processed, {
 		sourceMap: {
 			filename: path.basename(dstPath),
-			url: path.basename(mapPath),
+			url     : path.basename(mapPath),
 		},
 		...terserOptions,
 	});
 	if (!result.code) {
 		throw new Error(`Terser did not generate code: ${srcPath}`);
 	}
-	const results = [
-		await writeFileIfChanged(dstPath, result.code),
-	];
+	const results = [await writeFileIfChanged(dstPath, result.code)];
 	if (result.map) {
-		results.push(
-			await writeFileIfChanged(mapPath, result.map),
-		);
+		results.push(await writeFileIfChanged(mapPath, result.map));
 	}
 	if (results.some(Boolean)) {
 		console.log(`written: ${srcPath} -> ${dstPath}`);
@@ -193,7 +189,6 @@ export async function buildJavaScriptFiles(srcDir, dstDir, filter = () => true, 
 		const dstPath = path.join(dstDir, parsed.dir, `${parsed.name}.min.js`);
 
 		if (await buildJavaScriptFile(srcPath, dstPath, options)) {
-			console.log(`written: ${srcPath} -> ${dstPath}`);
 			written++;
 		}
 	}
@@ -203,18 +198,14 @@ export async function buildJavaScriptFiles(srcDir, dstDir, filter = () => true, 
 	return written;
 }
 
-export async function buildSassFile(srcPath, dstPath, { sassOptions = {}, autoprefixerOptions = { remove: false }} = {}) {
-	const [
-		sass,
-		{ default: postcss },
-		{ default: autoprefixer },
-	] = await Promise.all([
+export async function buildSassFile(srcPath, dstPath, { sassOptions = {}, autoprefixerOptions = { remove: false } } = {}) {
+	const [sass, { default: postcss }, { default: autoprefixer }] = await Promise.all([
 		import('sass'),
 		import('postcss'),
 		import('autoprefixer'),
 	]);
 	const compiled = await sass.compileAsync(srcPath, {
-		style: 'compressed',
+		style    : 'compressed',
 		sourceMap: true,
 		...sassOptions,
 	});
