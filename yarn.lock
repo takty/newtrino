@@ -1557,7 +1557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jssha@npm:^3.3.1":
+"jssha@npm:^3.3.2":
   version: 3.3.2
   resolution: "jssha@npm:3.3.2"
   checksum: 10c0/e44a5e98eb83a5315b087789550451ecdba6c72093584256fbee5ac67010be3036cbbb14c5b1669c41cd9abd942dc22239c54ac14aff7ce17c0324b5f477b2bd
@@ -1694,7 +1694,7 @@ __metadata:
     autoprefixer: "npm:^10.5.4"
     current-git-branch: "npm:^2.0.2"
     flatpickr: "npm:^4.6.13"
-    jssha: "npm:^3.3.1"
+    jssha: "npm:^3.3.2"
     luxon: "npm:^3.7.2"
     nacss-reset: "github:takty/nacss-reset"
     postcss: "npm:^8.5.26"

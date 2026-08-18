@@ -24,7 +24,7 @@
 		"autoprefixer": "^10.5.4",
 		"current-git-branch": "^2.0.2",
 		"flatpickr": "^4.6.13",
-		"jssha": "^3.3.1",
+		"jssha": "^3.3.2",
 		"luxon": "^3.7.2",
 		"nacss-reset": "github:takty/nacss-reset",
 		"postcss": "^8.5.26",
