@@ -62,7 +62,6 @@ async function getVersion() {
 	} catch {
 		// Use the package version without a development suffix outside a Git repository.
 	}
-
 	return `v${packageJson.version}${branch === 'develop' ? ' [dev]' : ''}`;
 }
 
@@ -75,66 +74,24 @@ async function copyAdminLibraries() {
 	const tinymceI18nDir = path.resolve(tinymceDir, '..', 'tinymce-i18n');
 
 	await Promise.all([
-		copyFileIfChanged(
-			path.join(nacssResetDir, 'dist/css/reset.min.css'),
-			path.join(ADMIN_DIST_DIR, 'css/reset.min.css'),
-		),
-		copyFileIfChanged(
-			path.join(nacssResetDir, 'dist/css/reset.min.css.map'),
-			path.join(ADMIN_DIST_DIR, 'css/reset.min.css.map'),
-		),
-		copyFileIfChanged(
-			path.join(jsshaDir, 'dist/sha256.js'),
-			path.join(ADMIN_DIST_DIR, 'js/jssha/sha256.js'),
-		),
-		copyFileIfChanged(
-			path.join(luxonDir, 'build/global/luxon.min.js'),
-			path.join(ADMIN_DIST_DIR, 'js/luxon/luxon.min.js'),
-		),
-		copyFileIfChanged(
-			path.join(luxonDir, 'build/global/luxon.min.js.map'),
-			path.join(ADMIN_DIST_DIR, 'js/luxon/luxon.min.js.map'),
-		),
-		copyFileIfChanged(
-			path.join(flatpickrDir, 'dist/flatpickr.min.js'),
-			path.join(ADMIN_DIST_DIR, 'js/flatpickr/flatpickr.min.js'),
-		),
-		copyFileIfChanged(
-			path.join(flatpickrDir, 'dist/flatpickr.min.css'),
-			path.join(ADMIN_DIST_DIR, 'css/flatpickr/flatpickr.min.css'),
-		),
-		copyFileIfChanged(
-			path.join(flatpickrDir, 'dist/l10n/ja.js'),
-			path.join(ADMIN_DIST_DIR, 'js/flatpickr/ja.js'),
-		),
-		copyFileIfChanged(
-			path.join(tinymceDir, 'tinymce.min.js'),
-			path.join(ADMIN_DIST_DIR, 'js/tinymce/tinymce.min.js'),
-		),
-		copyFileIfChanged(
-			path.join(tinymceI18nDir, 'langs5/ja.js'),
-			path.join(ADMIN_DIST_DIR, 'js/tinymce/langs/ja.js'),
-		),
-		copyFilesFiltered(
-			path.join(tinymceDir, 'skins'),
-			path.join(ADMIN_DIST_DIR, 'js/tinymce/skins'),
-		),
-		copyFilesFiltered(
-			path.join(tinymceDir, 'icons'),
-			path.join(ADMIN_DIST_DIR, 'js/tinymce/icons'),
-		),
-		copyFilesFiltered(
-			path.join(tinymceDir, 'themes/silver'),
-			path.join(ADMIN_DIST_DIR, 'js/tinymce/themes/silver'),
-		),
-		copyFilesFiltered(
-			path.join(tinymceDir, 'plugins'),
-			path.join(ADMIN_DIST_DIR, 'js/tinymce/plugins'),
-			(_srcPath, relPath) => {
-				const [plugin] = relPath.split(path.sep);
-				return !UNUSED_TINYMCE_PLUGINS.has(plugin);
-			},
-		),
+		copyFileIfChanged(path.join(nacssResetDir, 'reset.min.css'), path.join(ADMIN_DIST_DIR, 'css/reset.min.css')),
+		copyFileIfChanged(path.join(nacssResetDir, 'reset.min.css.map'), path.join(ADMIN_DIST_DIR, 'css/reset.min.css.map')),
+		copyFileIfChanged(path.join(jsshaDir, 'dist/sha256.js'), path.join(ADMIN_DIST_DIR, 'js/jssha/sha256.js')),
+		copyFileIfChanged(path.join(luxonDir, 'build/global/luxon.min.js'), path.join(ADMIN_DIST_DIR, 'js/luxon/luxon.min.js')),
+		copyFileIfChanged(path.join(luxonDir, 'build/global/luxon.min.js.map'), path.join(ADMIN_DIST_DIR, 'js/luxon/luxon.min.js.map')),
+		copyFileIfChanged(path.join(flatpickrDir, 'dist/flatpickr.min.js'), path.join(ADMIN_DIST_DIR, 'js/flatpickr/flatpickr.min.js')),
+		copyFileIfChanged(path.join(flatpickrDir, 'dist/flatpickr.min.css'), path.join(ADMIN_DIST_DIR, 'css/flatpickr/flatpickr.min.css')),
+		copyFileIfChanged(path.join(flatpickrDir, 'dist/l10n/ja.js'), path.join(ADMIN_DIST_DIR, 'js/flatpickr/ja.js')),
+		copyFileIfChanged(path.join(tinymceDir, 'tinymce.min.js'), path.join(ADMIN_DIST_DIR, 'js/tinymce/tinymce.min.js')),
+		copyFileIfChanged(path.join(tinymceI18nDir, 'langs5/ja.js'), path.join(ADMIN_DIST_DIR, 'js/tinymce/langs/ja.js')),
+
+		copyFilesFiltered(path.join(tinymceDir, 'skins'), path.join(ADMIN_DIST_DIR, 'js/tinymce/skins')),
+		copyFilesFiltered(path.join(tinymceDir, 'icons'), path.join(ADMIN_DIST_DIR, 'js/tinymce/icons')),
+		copyFilesFiltered(path.join(tinymceDir, 'themes/silver'), path.join(ADMIN_DIST_DIR, 'js/tinymce/themes/silver')),
+		copyFilesFiltered(path.join(tinymceDir, 'plugins'), path.join(ADMIN_DIST_DIR, 'js/tinymce/plugins'), (_srcPath, relPath) => {
+			const [plugin] = relPath.split(path.sep);
+			return !UNUSED_TINYMCE_PLUGINS.has(plugin);
+		}),
 	]);
 }
 
@@ -143,16 +100,10 @@ async function copyAdminSource() {
 		path.join(SRC_DIR, 'login.php'),
 		path.join(DIST_DIR, 'login.php'),
 	);
-
 	await copyFilesFiltered(ADMIN_SRC_DIR, ADMIN_DIST_DIR, (_srcPath, relPath) => {
 		const parts = relPath.split(path.sep);
-
-		if (parts[0] === 'sass') {
-			return false;
-		}
-		if (parts[0] !== 'js') {
-			return true;
-		}
+		if (parts[0] === 'sass') return false;
+		if (parts[0] !== 'js')   return true;
 		return parts[1] === 'tinymce' && parts[2] === 'langs';
 	});
 }
@@ -162,10 +113,7 @@ async function copyAdminCss() {
 		path.join(ADMIN_SRC_DIR, 'sass'),
 		path.join(ADMIN_DIST_DIR, 'css'),
 		(_srcPath, relPath) => {
-			if (relPath.includes(path.sep)) {
-				return false;
-			}
-
+			if (relPath.includes(path.sep)) return false;
 			const ext = path.extname(relPath);
 			return ['.css', '.svg', '.png', '.woff2'].includes(ext);
 		},
@@ -179,10 +127,7 @@ async function buildAdminJavaScript() {
 		(_srcPath, relPath) => {
 			const parts = relPath.split(path.sep);
 			const name  = path.basename(relPath);
-
-			if (name.startsWith('_')) {
-				return false;
-			}
+			if (name.startsWith('_')) return false;
 			return !(parts[0] === 'tinymce' && parts[1] === 'langs');
 		},
 	);
@@ -256,11 +201,7 @@ async function buildSampleJavaScript() {
 	const srcDir = path.join(SRC_DIR, 'data');
 	const dstDir = path.join(SAMPLE_DIR, 'data');
 
-	await buildJavaScriptFiles(
-		srcDir,
-		dstDir,
-		(_srcPath, relPath) => path.dirname(relPath) === '.',
-	);
+	await buildJavaScriptFiles(srcDir, dstDir, (_srcPath, relPath) => path.dirname(relPath) === '.');
 }
 
 async function buildSample() {
@@ -292,22 +233,18 @@ function startWatch() {
 		await rebuildAdminSass();
 		await rebuildSample();
 	});
-
 	watch(CORE_SRC_DIR, '', async () => {
 		await rebuildCoreSource();
 		await rebuildSample();
 	});
-
 	watch(SRC_DIR, 'index.php', async () => {
 		await rebuildCoreSource();
 		await rebuildSample();
 	});
-
 	watch(SRC_DIR, 'index.js', async () => {
 		await rebuildCoreJavaScript();
 		await rebuildSample();
 	});
-
 	watch(path.join(SRC_DIR, 'data'), '', rebuildSample);
 }
 
@@ -320,26 +257,10 @@ async function start() {
 const command = process.argv[2] ?? 'start';
 
 switch (command) {
-	case 'admin':
-		await buildAdmin();
-		break;
-
-	case 'core':
-		await buildCore();
-		break;
-
-	case 'sample':
-		await buildSample();
-		break;
-
-	case 'build':
-		await build();
-		break;
-
-	case 'start':
-		await start();
-		break;
-
-	default:
-		throw new Error(`Unknown command: ${command}`);
+	case 'admin' : await buildAdmin(); break;
+	case 'core'  : await buildCore(); break;
+	case 'sample': await buildSample(); break;
+	case 'build' : await build(); break;
+	case 'start' : await start(); break;
+	default      : throw new Error(`Unknown command: ${command}`);
 }
