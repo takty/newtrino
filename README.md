@@ -3,12 +3,7 @@
 A Simple Flat-File Content Managing System
 
 ```console
-npm install gulp-cli -g
-npm install gulp -D
 npm install
-```
-
-```console
 npm start
 ```
 
