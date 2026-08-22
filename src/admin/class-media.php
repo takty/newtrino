@@ -3,7 +3,7 @@
  * Media Manager
  *
  * @author Takuto Yanagida
- * @version 2024-03-26
+ * @version 2026-08-23
  */
 
 namespace nt;
@@ -148,7 +148,10 @@ class Media {
 
 		$list = [];
 		foreach ( $meta as $m ) {
-			$is_image = in_array( $m['extension'], self::IMG_EXTS, true );
+			$sizes    = $m['sizes'] ?? null;
+			$is_image = in_array( $m['extension'], self::IMG_EXTS, true )
+				&& isset( $sizes[ self::SIZE_NAME_ORIG ] );
+
 			if ( 'image' === $filter && ! $is_image ) {
 				continue;
 			}
@@ -158,10 +161,10 @@ class Media {
 				'url'       => $this->_mediaUrl( $m['file_name'] ),
 			];
 			if ( $is_image ) {
-				$sn = isset( $m['sizes'][ self::SIZE_NAME_MIN ] ) ? self::SIZE_NAME_MIN : self::SIZE_NAME_ORIG;
+				$sn = isset( $sizes[ self::SIZE_NAME_MIN ] ) ? self::SIZE_NAME_MIN : self::SIZE_NAME_ORIG;
 
 				$it['is_image']   = true;
-				$it['sizes_json'] = json_encode( $this->_createSizesWithUrl( $m['sizes'] ), self::JSON_OPTS );
+				$it['sizes_json'] = json_encode( $this->_createSizesWithUrl( $sizes ), self::JSON_OPTS );
 				$it['url@min']    = $this->_mediaUrl( $m['sizes'][ $sn ]['file_name'] );
 			}
 			$list[] = $it;
