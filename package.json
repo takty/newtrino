@@ -28,10 +28,10 @@
 		"luxon": "^3.7.2",
 		"nacss-reset": "github:takty/nacss-reset",
 		"postcss": "^8.5.26",
-		"sass": "^1.103.0",
+		"sass": "^1.103.1",
 		"terser": "^5.50.0",
-		"tinymce": "^5.10.9",
-		"tinymce-i18n": "^24.3.11"
+		"tinymce": "^6.8.3",
+		"tinymce-i18n": "^26.8.2"
 	},
 	"packageManager": "yarn@4.18.0"
 }

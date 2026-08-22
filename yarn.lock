@@ -562,10 +562,10 @@ __metadata:
     luxon: "npm:^3.7.2"
     nacss-reset: "github:takty/nacss-reset"
     postcss: "npm:^8.5.26"
-    sass: "npm:^1.103.0"
+    sass: "npm:^1.103.1"
     terser: "npm:^5.50.0"
     tinymce: "npm:^5.10.9"
-    tinymce-i18n: "npm:^24.3.11"
+    tinymce-i18n: "npm:^26.8.2"
   languageName: unknown
   linkType: soft
 
@@ -719,6 +719,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sass@npm:^1.103.1":
+  version: 1.103.1
+  resolution: "sass@npm:1.103.1"
+  dependencies:
+    "@parcel/watcher": "npm:^2.4.1"
+    chokidar: "npm:^5.0.0"
+    immutable: "npm:^5.1.5"
+    source-map-js: "npm:>=0.6.2 <2.0.0"
+  dependenciesMeta:
+    "@parcel/watcher":
+      optional: true
+  bin:
+    sass: sass.js
+  checksum: 10c0/8c786a201d9484e9968784d672372fabb342f3b4d1c4629ffdcfba92e4f2c00e659f4e32244c870850f7c2d254ce773da3fc1ec40b4282ccd113c0c086fa36bd
+  languageName: node
+  linkType: hard
+
 "semver@npm:^7.3.5":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
@@ -819,10 +836,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce-i18n@npm:^24.3.11":
-  version: 24.12.30
-  resolution: "tinymce-i18n@npm:24.12.30"
-  checksum: 10c0/e3a1008eab61a4e1d1a8717af770b364610ff1a2a725738c2ab398883f118b456229abe8f60f2662d50cbe50ce0814e7e8fe14bfc7f5fed3cb58935ce563b52f
+"tinymce-i18n@npm:^26.8.2":
+  version: 26.8.2
+  resolution: "tinymce-i18n@npm:26.8.2"
+  checksum: 10c0/bfafb9c32aec70e316aea67d6c0f437fac7638f3a03f9c257059aadf42c2d37bd31d83be70506196e0b46933ad3182cfc6b61c1cc591d64015cd66aa96b59330
   languageName: node
   linkType: hard
 
