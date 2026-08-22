@@ -1,6 +1,6 @@
 {
 	"name": "newtrino",
-	"version": "2.7.3",
+	"version": "2.8.0",
 	"description": "A Simple Flat-File Content Managing System",
 	"keywords": [
 		"cms",
@@ -22,7 +22,6 @@
 	],
 	"dependencies": {
 		"autoprefixer": "^10.5.4",
-		"current-git-branch": "^2.0.2",
 		"flatpickr": "^4.6.13",
 		"jssha": "^3.3.2",
 		"luxon": "^3.7.2",
