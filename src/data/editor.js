@@ -2,7 +2,7 @@
  * Editor Commands for TinyMCE (Sample)
  *
  * @author Takuto Yanagida
- * @version 2021-06-02
+ * @version 2026-08-22
  */
 
 window.NT.tiny_mce_before_init.push(function (args, lang, urlAssets) {
@@ -21,22 +21,19 @@ window.NT.tiny_mce_before_init.push(function (args, lang, urlAssets) {
 		column_4: '<svg width="16" height="16"><path d="M1 2h2v12H1zM5 2h2v12H5zM9 2h2v12H9zM13 2h2v12h-2z"/></svg>',
 	}
 	function insert(ed, str) {
-		ed.execCommand('mceInsertContent', false, { content: str, merge: true, paste: true });
+		ed.insertContent(str, { merge: true, paste: true });
 	}
-	tinymce.create('tinymce.plugins.columns', {
-		init: function (ed, url) {
-			for (const key of Object.keys(ls)) {
-				ed.addCommand(key, () => { insert(ed, htmls[key]); });
-				ed.ui.registry.addIcon(key, icons[key]);
-				ed.ui.registry.addButton(key, {
-					icon: key,
-					tooltip: ls[key],
-					onAction: function () { ed.execCommand(key); },
-				});
-			}
+	tinymce.PluginManager.add('columns', ed => {
+		for (const key of Object.keys(ls)) {
+			ed.addCommand(key, () => { insert(ed, htmls[key]); });
+			ed.ui.registry.addIcon(key, icons[key]);
+			ed.ui.registry.addButton(key, {
+				icon   : key,
+				tooltip: ls[key],
+				onAction() { ed.execCommand(key); },
+			});
 		}
 	});
-	tinymce.PluginManager.add('columns', tinymce.plugins.columns);
 
 	args.plugins.push('columns');
 	args.toolbar2 += ' column_2 column_3 column_4';

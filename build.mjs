@@ -83,11 +83,12 @@ async function copyAdminLibraries() {
 		copyFileIfChanged(path.join(flatpickrDir, 'dist/flatpickr.min.css'), path.join(ADMIN_DIST_DIR, 'css/flatpickr/flatpickr.min.css')),
 		copyFileIfChanged(path.join(flatpickrDir, 'dist/l10n/ja.js'), path.join(ADMIN_DIST_DIR, 'js/flatpickr/ja.js')),
 		copyFileIfChanged(path.join(tinymceDir, 'tinymce.min.js'), path.join(ADMIN_DIST_DIR, 'js/tinymce/tinymce.min.js')),
-		copyFileIfChanged(path.join(tinymceI18nDir, 'langs5/ja.js'), path.join(ADMIN_DIST_DIR, 'js/tinymce/langs/ja.js')),
+		copyFileIfChanged(path.join(tinymceI18nDir, 'langs6/ja.js'), path.join(ADMIN_DIST_DIR, 'js/tinymce/langs/ja.js')),
 
 		copyFilesFiltered(path.join(tinymceDir, 'skins'), path.join(ADMIN_DIST_DIR, 'js/tinymce/skins')),
 		copyFilesFiltered(path.join(tinymceDir, 'icons'), path.join(ADMIN_DIST_DIR, 'js/tinymce/icons')),
 		copyFilesFiltered(path.join(tinymceDir, 'themes/silver'), path.join(ADMIN_DIST_DIR, 'js/tinymce/themes/silver')),
+		copyFilesFiltered(path.join(tinymceDir, 'models'), path.join(ADMIN_DIST_DIR, 'js/tinymce/models')),
 		copyFilesFiltered(path.join(tinymceDir, 'plugins'), path.join(ADMIN_DIST_DIR, 'js/tinymce/plugins'), (_srcPath, relPath) => {
 			const [plugin] = relPath.split(path.sep);
 			return !UNUSED_TINYMCE_PLUGINS.has(plugin);

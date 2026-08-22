@@ -2,7 +2,7 @@
  * Post
  *
  * @author Takuto Yanagida
- * @version 2023-01-11
+ * @version 2026-08-22
  */
 
 window.NT = window['NT'] || {};
@@ -205,12 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function initEditorPane() {
 		const plugins = [
-			'advlist anchor autolink charmap code directionality hr image insertdatetime',
-			'link lists media nonbreaking noneditable paste print searchreplace table textpattern visualblocks visualchars',
+			'advlist', 'anchor', 'autolink', 'charmap', 'code', 'directionality', 'image', 'insertdatetime',
+			'link', 'lists', 'media', 'nonbreaking', 'searchreplace', 'table', 'visualblocks', 'visualchars',
 		];
 		const toolbars = [
 			'undo redo | bold italic underline strikethrough | superscript subscript | link unlink | forecolor backcolor | removeformat |',
-			'formatselect | bullist numlist | blockquote | alignleft aligncenter alignright | styleselect |',
+			'blocks | bullist numlist | blockquote | alignleft aligncenter alignright | styles |',
 		];
 		const formats = [
 			'Paragraph=p',
@@ -223,13 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		let args = Object.assign({
 			// Integration and setup options
-			plugins : plugins,
-			selector: '#post-content',
-			setup   : e => { e.on('change', () => { isModified = true; }); },
+			plugins  : plugins,
+			selector : '#post-content',
+			setup    : e => { e.on('change', () => { isModified = true; }); },
+			promotion: false,
 
 			// User interface options
 			block_formats    : formats,
-			removed_menuitems: 'newdocument fontformats fontsizes lineheight',
+			removed_menuitems: 'newdocument fontfamily fontsize lineheight',
 			toolbar1         : toolbars[0],
 			toolbar2         : toolbars[1],
 
@@ -244,11 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			language: lang,
 
 			// Advanced editing behaviors
-			object_resizing: 'img',
+			object_resizing  : 'img',
+			paste_data_images: false,
 
-
-			// Code Plugin
-			code_dialog_width: 800,
 
 			// Link plugin
 			link_context_toolbar: true,
