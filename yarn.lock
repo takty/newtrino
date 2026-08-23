@@ -446,7 +446,7 @@ __metadata:
     postcss: "npm:^8.5.26"
     sass: "npm:^1.103.1"
     terser: "npm:^5.50.0"
-    tinymce: "npm:^6.8.6"
+    tinymce: "npm:^7.9.3"
     tinymce-i18n: "npm:^26.8.2"
   languageName: unknown
   linkType: soft
@@ -638,10 +638,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^6.8.6":
-  version: 6.8.6
-  resolution: "tinymce@npm:6.8.6"
-  checksum: 10c0/69d48677366fa95dc7126f8474db92f2903ebc8b1f287541ac0c3a19e9fcd0eee8515278d6424a4a4c9fb7e6313de985c00dc37fcaa01ae676139634d793e2ee
+"tinymce@npm:^7.9.3":
+  version: 7.9.3
+  resolution: "tinymce@npm:7.9.3"
+  checksum: 10c0/37f6661fe242264f3db6a805e22cefce0ecbc3c9c23db274733e275eb1e4663e337385ce9feac0e1a389fe32ceb844dd981d35f489158cce91d5e8cea3ca396b
   languageName: node
   linkType: hard
 
