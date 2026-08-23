@@ -1,5 +1,11 @@
 /**
- * TinyMCE version 6.8.6 (TBD)
+ * TinyMCE version 6.8.6
+ *
+ * Based on TinyMCE 6.8.6 (MIT License).
+ * Security fixes for Newtrino:
+ * - CVE-2026-47759
+ * - CVE-2026-47760
+ * - CVE-2026-47762
  */
 
 (function () {
@@ -2380,7 +2386,7 @@
           scopes.push(node);
         }
         let currentScope = peek();
-        if (currentScope && !currentScope.contains(node)) {
+        while (currentScope && !currentScope.contains(node)) {
           scopes.pop();
           currentScope = peek();
         }
@@ -18890,10 +18896,20 @@
             node.type = 4;
             node.value = dom.decode(value.replace(/^\[CDATA\[|\]\]$/g, ''));
           } else if ((value === null || value === void 0 ? void 0 : value.indexOf('mce:protected ')) === 0) {
-            node.name = '#text';
-            node.type = 3;
-            node.raw = true;
-            node.value = unescape(value).substr(14);
+            const protectedHtml = unescape(value).substr(14);
+            const protect = settings.protect;
+            const valid = protect && exists(protect, pattern => {
+              const match = protectedHtml.match(pattern);
+              return match !== null && match[0] === protectedHtml;
+            });
+            if (valid) {
+              node.name = '#text';
+              node.type = 3;
+              node.raw = true;
+              node.value = protectedHtml;
+            } else {
+              node.remove();
+            }
           }
         }
       });
@@ -28450,12 +28466,19 @@
           entity_encoding: getOption('entity_encoding'),
           indent: getOption('indent'),
           indent_after: getOption('indent_after'),
-          indent_before: getOption('indent_before')
+          indent_before: getOption('indent_before'),
+          protect: getOption('protect'),
         })
       };
     };
     const createParser = editor => {
       const parser = DomParser(mkParserSettings(editor), editor.schema);
+      parser.addAttributeFilter('data-mce-src,data-mce-href,data-mce-style', (nodes, name) => {
+        let i = nodes.length;
+        while (i--) {
+          nodes[i].attr(name, null);
+        }
+      });
       parser.addAttributeFilter('src,href,style,tabindex', (nodes, name) => {
         const dom = editor.dom;
         const internalName = 'data-mce-' + name;

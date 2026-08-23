@@ -1,5 +1,9 @@
 /**
- * TinyMCE version 6.8.6 (TBD)
+ * TinyMCE version 6.8.6
+ *
+ * Based on TinyMCE 6.8.6 (MIT License).
+ * Security fix for Newtrino:
+ * - CVE-2026-47761
  */
 
 (function () {
@@ -1078,13 +1082,16 @@
     };
 
     const parseAndSanitize = (editor, context, html) => {
-      const getEditorOption = editor.options.get;
-      const sanitize = getEditorOption('xss_sanitization');
       const validate = shouldFilterHtml(editor);
       return Parser(editor.schema, {
-        sanitize,
+        sanitize: true,
         validate
       }).parse(html, { context });
+    };
+
+    const sanitizeElement = (editor, node) => {
+      const html = global$1({}, editor.schema).serialize(node);
+      return parseAndSanitize(editor, 'div', html).firstChild;
     };
 
     const setup$1 = editor => {
@@ -1113,6 +1120,10 @@
               continue;
             }
             const realElmName = node.attr(name);
+            if (!['iframe', 'video', 'audio', 'object', 'embed'].includes(realElmName)) {
+              node.remove();
+              continue;
+            }
             const realElm = new global$2(realElmName, 1);
             if (realElmName !== 'audio') {
               const className = node.attr('class');
@@ -1142,7 +1153,12 @@
               const fragment = parseAndSanitize(editor, realElmName, unescape(innerHtml));
               each$1(fragment.children(), child => realElm.append(child));
             }
-            node.replace(realElm);
+            const sanitizedElm = sanitizeElement(editor, realElm);
+            if (sanitizedElm) {
+              node.replace(sanitizedElm);
+            } else {
+              node.remove();
+            }
           }
         });
       });
