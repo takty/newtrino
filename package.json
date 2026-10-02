@@ -21,16 +21,16 @@
 		"not dead"
 	],
 	"dependencies": {
-		"autoprefixer": "^10.5.4",
+		"autoprefixer": "^10.6.1",
 		"flatpickr": "^4.6.13",
 		"jssha": "^3.3.2",
 		"luxon": "^3.7.2",
 		"nacss-reset": "github:takty/nacss-reset",
-		"postcss": "^8.5.26",
-		"sass": "^1.103.1",
-		"terser": "^5.50.0",
+		"postcss": "^8.5.28",
+		"sass": "^1.105.1",
+		"terser": "^5.51.2",
 		"tinymce": "^6.8.6",
-		"tinymce-i18n": "^26.8.2"
+		"tinymce-i18n": "^26.9.28"
 	},
 	"packageManager": "yarn@4.18.0"
 }
